@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
             role,
             stripe_subscription_id: subscriptionId,
             subscription_status: 'active',
-            current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+            current_period_end: new Date((subscription as any).current_period_end * 1000).toISOString(),
           })
           .eq('id', userId)
 
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
       // 구독 갱신 성공
       case 'invoice.payment_succeeded': {
         const invoice = event.data.object as Stripe.Invoice
-        const subscriptionId = invoice.subscription as string
+        const subscriptionId = (invoice as any).subscription as string
         if (!subscriptionId) break
 
         const subscription = await stripe.subscriptions.retrieve(subscriptionId)
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
           .from('profiles')
           .update({
             subscription_status: 'active',
-            current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+            current_period_end: new Date((subscription as any).current_period_end * 1000).toISOString(),
           })
           .eq('stripe_subscription_id', subscriptionId)
 
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
       // 결제 실패
       case 'invoice.payment_failed': {
         const invoice = event.data.object as Stripe.Invoice
-        const subscriptionId = invoice.subscription as string
+        const subscriptionId = (invoice as any).subscription as string
         if (!subscriptionId) break
 
         await supabaseAdmin
