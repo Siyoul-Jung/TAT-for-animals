@@ -5,25 +5,42 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Heart, User, ShoppingBag } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
+import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
+import LogoMark from '@/components/LogoMark';
+
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const pathname = usePathname();
+  const supabase = createClient();
+
+  // 실제 로그인 상태 감지
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setIsLoggedIn(!!user);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session?.user);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+
   const navLinks = [
-    { name: 'For Your Animal', href: '/for-your-animal', primary: true },
-    { name: 'Membership', href: '/membership' },
+    { name: 'For Animals (and You)', href: '/for-animals' },
+    { name: 'For People', href: '/for-people' },
     { name: 'Work with Tapas', href: '/work-with-tapas' },
     { name: 'Find a Pro', href: '/find-a-pro' },
     { name: 'Certification', href: '/certification' },
@@ -31,29 +48,40 @@ export default function Navbar() {
 
   if (pathname === '/session') return null;
 
+  const textClass = isScrolled ? 'text-charcoal/70 hover:text-brand' : 'text-cream/70 hover:text-cream';
+  const activeTextClass = isScrolled ? 'text-brand' : 'text-cream';
+
   return (
     <nav
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-500 px-6 py-4',
-        isScrolled ? 'bg-white/70 backdrop-blur-xl shadow-[0_8px_32px_rgba(244,114,22,0.08)] py-3 border-b border-brand/5' : 'bg-transparent'
+        isScrolled
+          ? 'bg-cream/95 backdrop-blur-xl shadow-sm border-b border-brand/10 py-3'
+          : 'bg-transparent'
       )}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
+
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-11 h-11 bg-brand rounded-2xl flex items-center justify-center text-cream shadow-lg shadow-brand/20 transition-all group-hover:scale-110 group-hover:rotate-3">
-            <Heart size={22} fill="currentColor" />
-          </div>
-          <span className="text-2xl font-bold tracking-tighter text-charcoal font-outfit uppercase">
-            TAT<span className="text-brand font-light">®</span> Calm
+        <Link href="/" className="group flex items-center gap-2.5">
+          <LogoMark
+            size={34}
+            orange="#D4703A"
+            green={isScrolled ? '#6B7A52' : '#9AAD84'}
+          />
+          <span className={cn(
+            'text-xl tracking-wide transition-colors duration-300',
+            'font-[family-name:var(--font-dm-serif)]',
+            isScrolled ? 'text-charcoal' : 'text-cream'
+          )}>
+            TATLife<span className="text-brand">®</span>
           </span>
         </Link>
 
         {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden md:flex items-center gap-7">
           {navLinks.map((link) => {
             const isComingSoon = link.href === '/find-a-pro' || link.href === '/certification';
-            
             return (
               <Link
                 key={link.name}
@@ -61,16 +89,14 @@ export default function Navbar() {
                 onClick={(e) => {
                   if (isComingSoon) {
                     e.preventDefault();
-                    alert(`${link.name} is coming in Phase 2! We're focusing on the core experience first.`);
+                    alert(`${link.name} is coming soon!`);
                   }
                 }}
                 className={cn(
-                  'text-sm font-bold transition-all hover:text-brand relative py-1 tracking-wide',
-                  pathname === link.href 
-                    ? 'text-brand' 
-                    : 'text-charcoal/60 hover:text-charcoal',
-                  pathname === link.href && "after:absolute after:bottom-0 after:left-0 after:right-0 after:h-1 after:bg-gradient-to-r after:from-brand after:to-brand-light after:rounded-full",
-                  isComingSoon && "cursor-help opacity-30 hover:opacity-100"
+                  'text-sm font-medium transition-all relative py-1 tracking-wide',
+                  pathname === link.href ? activeTextClass : textClass,
+                  pathname === link.href && 'after:absolute after:bottom-0 after:left-0 after:right-0 after:h-px after:bg-brand after:rounded-full',
+                  isComingSoon && 'opacity-40 hover:opacity-80 cursor-help'
                 )}
               >
                 {link.name}
@@ -79,28 +105,54 @@ export default function Navbar() {
           })}
         </div>
 
-        {/* Action Icons */}
-        <div className="hidden md:flex items-center gap-5">
-          <button className="text-charcoal/70 hover:text-brand transition-colors">
-            <User size={20} />
-          </button>
-          <button className="text-charcoal/70 hover:text-brand transition-colors">
-            <ShoppingBag size={20} />
-          </button>
-          <Link
-            href="/membership"
-            className="bg-brand text-cream px-5 py-2 rounded-full text-sm font-semibold hover:bg-brand/90 transition-all hover:shadow-lg active:scale-95"
-          >
-            Membership
-          </Link>
+        {/* CTA — Join dropdown or My Account */}
+        <div className="hidden md:flex items-center">
+          {isLoggedIn ? (
+            /* 로그인 상태 — 대시보드 링크 + 로그아웃 */
+            <div className="flex items-center gap-3">
+              <Link
+                href="/dashboard"
+                className={cn(
+                  'text-sm font-medium transition-colors',
+                  isScrolled ? 'text-charcoal/70 hover:text-brand' : 'text-cream/70 hover:text-cream'
+                )}
+              >
+                My Account
+              </Link>
+              <form action="/api/auth/logout" method="POST">
+                <button
+                  type="submit"
+                  className={cn(
+                    'text-sm font-semibold px-4 py-2 rounded-full border transition-all',
+                    isScrolled
+                      ? 'border-charcoal/20 text-charcoal/70 hover:border-brand hover:text-brand'
+                      : 'border-cream/30 text-cream/70 hover:border-cream hover:text-cream'
+                  )}
+                >
+                  Sign out
+                </button>
+              </form>
+            </div>
+          ) : (
+            /* Join — 직접 멤버십 페이지로 */
+            <Link
+              href="/membership"
+              className="bg-brand text-cream px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-brand-dark transition-all hover:shadow-lg hover:shadow-brand/20 active:scale-95"
+            >
+              See Membership
+            </Link>
+          )}
         </div>
 
         {/* Mobile Toggle */}
         <button
-          className="md:hidden text-charcoal"
+          className={cn(
+            'md:hidden transition-colors duration-300',
+            isScrolled ? 'text-charcoal' : 'text-cream'
+          )}
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
-          {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+          {isMobileMenuOpen ? <X size={26} /> : <Menu size={26} />}
         </button>
       </div>
 
@@ -108,10 +160,11 @@ export default function Navbar() {
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
+            initial={{ opacity: 0, y: -12 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="absolute top-full left-0 right-0 bg-cream shadow-xl p-6 md:hidden flex flex-col gap-4 border-t border-brand/10"
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.2 }}
+            className="absolute top-full left-0 right-0 bg-cream/98 backdrop-blur-xl shadow-xl p-6 md:hidden flex flex-col gap-4 border-t border-brand/10"
           >
             {navLinks.map((link) => (
               <Link
@@ -119,25 +172,20 @@ export default function Navbar() {
                 href={link.href}
                 onClick={() => setIsMobileMenuOpen(false)}
                 className={cn(
-                  'text-lg font-medium py-2 transition-colors',
-                  pathname === link.href ? 'text-brand font-bold' : 'text-charcoal/80'
+                  'text-lg font-medium py-2 transition-colors border-b border-charcoal/5 last:border-0',
+                  pathname === link.href ? 'text-brand font-semibold' : 'text-charcoal/80'
                 )}
               >
                 {link.name}
               </Link>
             ))}
-            <hr className="border-brand/10 my-2" />
-            <div className="flex items-center justify-between pt-2">
-              <button className="flex items-center gap-2 text-charcoal/70">
-                <User size={20} /> Account
-              </button>
-              <Link
-                href="/membership"
-                className="bg-brand text-cream px-6 py-2 rounded-full font-semibold"
-              >
-                Join Now
-              </Link>
-            </div>
+            <Link
+              href="/membership"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="mt-2 block text-center px-5 py-3.5 rounded-full bg-brand text-cream font-semibold hover:bg-brand-dark transition-all"
+            >
+              See Membership Options
+            </Link>
           </motion.div>
         )}
       </AnimatePresence>

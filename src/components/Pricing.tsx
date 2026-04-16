@@ -2,128 +2,220 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Check, Info, Sparkles, Heart } from 'lucide-react';
+import { Check } from 'lucide-react';
 import Link from 'next/link';
-import Button from '@/components/ui/Button';
+
+const tiers = [
+  {
+    name: 'Help Yourself',
+    price: '$24',
+    description: 'A quiet, self-guided space to begin healing — for you and your animal.',
+    features: [
+      'Healing ACEs video library',
+      'TAT for Animals videos',
+      'Self-guided practice',
+      'Community access',
+    ],
+    cta: 'Join Help Yourself',
+    popular: false,
+  },
+  {
+    name: 'Professional Support',
+    price: '$47',
+    description: 'Live guidance, deeper sessions, and direct access to Tapas herself.',
+    features: [
+      'Everything in Help Yourself',
+      'Monthly live webinars',
+      'Animals + People sessions',
+      'All past recordings',
+      'Direct support from Tapas',
+    ],
+    cta: 'Join Professional Support',
+    popular: true,
+  },
+];
 
 export default function Pricing() {
-  const tiers = [
-    {
-      name: 'The Home Practice',
-      price: '$24',
-      description: 'Quiet, independent space for your daily ritual of calm.',
-      features: [
-        'Full Course Library',
-        'Practice Dashboard',
-        'Community Access',
-        'Progress Tracking'
-      ],
-      cta: 'Start Your Practice',
-      popular: false
-    },
-    {
-      name: 'The Guided Circle',
-      price: '$59',
-      description: 'Direct connection and weekly live support for profound healing.',
-      features: [
-        'Everything in Home Practice',
-        'Weekly Live Sessions',
-        'Direct Q&A with Tapas',
-        'Priority Support'
-      ],
-      cta: 'Join The Circle',
-      popular: true
-    }
-  ];
-
   return (
-    <section id="membership" className="py-24 md:py-40 bg-white relative overflow-hidden">
-      {/* Decorative Brand Accent */}
-      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-brand/5 rounded-full blur-[120px] -z-10 translate-y-1/2 -translate-x-1/4" />
-      <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-brand/10 rounded-full blur-[100px] -z-10 -translate-y-1/4 translate-x-1/4" />
+    <section
+      id="membership"
+      className="relative py-28 px-6 overflow-hidden"
+      style={{ backgroundColor: '#2B4019' }}
+    >
+      {/* Background glow */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            'radial-gradient(ellipse 70% 50% at 20% 60%, rgba(212,112,58,0.12) 0%, transparent 65%)',
+        }}
+      />
 
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-20 md:mb-28">
-          <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-4xl md:text-5xl font-bold text-charcoal mb-8 tracking-tight"
-          >
-            Choose Your <span className="text-brand italic serif font-normal">Path to Calm.</span>
-          </motion.h2>
-          <p className="text-lg md:text-xl text-charcoal/60 max-w-2xl mx-auto leading-relaxed">
-            Whether you&apos;re just starting your daily ritual or looking for deep transformation, find the circle that resonates with your journey.
+      <div className="relative z-10 max-w-5xl mx-auto">
+
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="text-center mb-16"
+        >
+          <p className="text-xs tracking-[0.2em] uppercase font-medium mb-5"
+            style={{ color: 'rgba(212,168,67,0.7)' }}>
+            Membership
           </p>
-        </div>
+          <h2 className="font-serif text-4xl sm:text-5xl text-cream font-medium leading-tight">
+            Choose your path to calm.
+          </h2>
+        </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-10 max-w-5xl mx-auto">
-          {tiers.map((tier, idx) => (
-            <motion.div 
+        {/* Cards */}
+        <div className="grid md:grid-cols-2 gap-5">
+          {tiers.map((tier, i) => (
+            <motion.div
               key={tier.name}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 32 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: idx * 0.15, type: 'spring', stiffness: 50 }}
-              className={`p-12 rounded-[4rem] border-2 transition-all duration-500 hover:shadow-[0_40px_80px_-20px_rgba(244,114,22,0.15)] flex flex-col relative group ${
-                tier.popular 
-                  ? 'border-brand bg-white shadow-xl translate-y-[-8px]' 
-                  : 'border-brand/10 bg-white/40 backdrop-blur-sm'
-              }`}
+              transition={{
+                duration: 0.8,
+                delay: i * 0.12,
+                ease: [0.16, 1, 0.3, 1],
+              }}
+              whileHover={{ y: -6, transition: { duration: 0.3 } }}
+              className="relative flex flex-col rounded-2xl p-8 sm:p-10"
+              style={
+                tier.popular
+                  ? {
+                      background: 'rgba(250,246,241,0.07)',
+                      border: '1px solid rgba(212,112,58,0.45)',
+                      boxShadow: '0 24px 64px rgba(212,112,58,0.12)',
+                    }
+                  : {
+                      background: 'rgba(250,246,241,0.04)',
+                      border: '1px solid rgba(250,246,241,0.10)',
+                    }
+              }
             >
+              {/* Popular badge */}
               {tier.popular && (
-                <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-brand text-white text-[10px] font-bold uppercase tracking-[0.2em] px-6 py-2 rounded-full shadow-lg z-20">
-                  Most Proactive Ritual
+                <div
+                  className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-5 py-1.5 rounded-full text-[11px] font-semibold tracking-widest uppercase text-cream"
+                  style={{ backgroundColor: '#D4703A' }}
+                >
+                  ★ Most Popular
                 </div>
               )}
-              
-              <div className="mb-10">
-                <h3 className="text-2xl font-bold text-charcoal mb-4 flex items-center gap-2">
-                   {tier.popular ? <Sparkles className="text-brand w-5 h-5 fill-brand/20" /> : <Heart className="text-brand/40 w-5 h-5" />}
-                   {tier.name}
+
+              {/* Plan name + price */}
+              <div className="mb-8">
+                <h3
+                  className="font-serif text-2xl font-medium mb-5"
+                  style={{ color: tier.popular ? '#FAF6F1' : 'rgba(250,246,241,0.75)' }}
+                >
+                  {tier.name}
                 </h3>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-5xl font-bold text-charcoal tracking-tighter">{tier.price}</span>
-                  <span className="text-sm text-charcoal/30 font-bold uppercase tracking-widest">/ month</span>
+                  <span className="font-serif text-5xl font-semibold text-cream">
+                    {tier.price}
+                  </span>
+                  <span
+                    className="text-base font-light"
+                    style={{ color: 'rgba(250,246,241,0.70)' }}
+                  >
+                    / month
+                  </span>
                 </div>
               </div>
 
-              <p className="text-charcoal/60 mb-10 text-lg leading-relaxed italic">
+              {/* Description */}
+              <p
+                className="text-base leading-relaxed mb-8"
+                style={{ color: 'rgba(250,246,241,0.80)' }}
+              >
                 {tier.description}
               </p>
 
-              <div className="space-y-5 mb-12 flex-grow">
-                {tier.features.map((feature) => (
-                  <div key={feature} className="flex items-center gap-4 group/item">
-                    <div className="w-6 h-6 rounded-full bg-brand/10 flex items-center justify-center group-hover/item:bg-brand/20 transition-colors">
-                      <Check className="w-4 h-4 text-brand" />
-                    </div>
-                    <span className="text-base font-medium text-charcoal/80">{feature}</span>
-                  </div>
+              {/* Features */}
+              <ul className="flex flex-col gap-3.5 mb-10 grow">
+                {tier.features.map((f) => (
+                  <li key={f} className="flex items-start gap-3">
+                    <span
+                      className="mt-0.5 w-4 h-4 rounded-full flex items-center justify-center shrink-0"
+                      style={{
+                        backgroundColor: tier.popular
+                          ? 'rgba(212,112,58,0.25)'
+                          : 'rgba(250,246,241,0.08)',
+                      }}
+                    >
+                      <Check
+                        size={10}
+                        style={{
+                          color: tier.popular ? '#D4703A' : 'rgba(250,246,241,0.5)',
+                        }}
+                      />
+                    </span>
+                    <span
+                      className="text-base leading-snug"
+                      style={{ color: 'rgba(250,246,241,0.90)' }}
+                    >
+                      {f}
+                    </span>
+                  </li>
                 ))}
-              </div>
+              </ul>
 
-                <Link href="/thank-you" className="w-full">
-                  <Button 
-                    variant={tier.popular ? "primary" : "outline"} 
-                    className={`w-full py-8 text-lg font-bold rounded-[2rem] transition-all ${
-                      tier.popular 
-                        ? 'bg-brand text-cream border-brand shadow-lg shadow-brand/20 hover:scale-[1.02]' 
-                        : 'border-brand/20 text-brand hover:bg-brand/5 hover:border-brand/40'
-                    }`}
-                    size="lg"
-                  >
-                    {tier.cta}
-                  </Button>
-                </Link>
-              
-              <p className="text-center mt-8 text-xs text-charcoal/30 font-bold uppercase tracking-[0.15em] flex items-center justify-center gap-2 cursor-help opacity-60 hover:opacity-100 transition-opacity">
-                 <Info className="w-3.5 h-3.5" />
-                 Flexibility First. Cancel Anytime.
+              {/* CTA */}
+              <Link
+                href="/membership"
+                className="block text-center py-4 rounded-xl text-base font-semibold transition-all"
+                style={
+                  tier.popular
+                    ? {
+                        backgroundColor: '#D4703A',
+                        color: '#FAF6F1',
+                        boxShadow: '0 8px 24px rgba(212,112,58,0.25)',
+                      }
+                    : {
+                        backgroundColor: 'transparent',
+                        color: 'rgba(250,246,241,0.70)',
+                        border: '1px solid rgba(250,246,241,0.18)',
+                      }
+                }
+                onMouseEnter={(e) => {
+                  if (!tier.popular) {
+                    (e.currentTarget as HTMLElement).style.borderColor =
+                      'rgba(250,246,241,0.40)';
+                    (e.currentTarget as HTMLElement).style.color = '#FAF6F1';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!tier.popular) {
+                    (e.currentTarget as HTMLElement).style.borderColor =
+                      'rgba(250,246,241,0.18)';
+                    (e.currentTarget as HTMLElement).style.color =
+                      'rgba(250,246,241,0.70)';
+                  }
+                }}
+              >
+                {tier.cta}
+              </Link>
+
+              {/* Cancel note */}
+              <p
+                className="text-center text-sm mt-4 flex items-center justify-center gap-1.5"
+                style={{ color: 'rgba(250,246,241,0.60)' }}
+              >
+                <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Cancel anytime — no questions asked
               </p>
             </motion.div>
           ))}
         </div>
+
       </div>
     </section>
   );

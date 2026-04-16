@@ -1,36 +1,70 @@
 @import "tailwindcss";
 
 :root {
-  --background: #F9F7F2; /* Cream */
-  --foreground: #2C2C2C; /* Charcoal */
-  
-  /* Muted Orange (Terracotta) Palette */
-  --brand-primary: #D68A67; 
-  --brand-light: #F2C9B1;
-  --cream: #F9F7F2;
-  --charcoal: #2C2C2C;
+  /* Warm cream base */
+  --background: #FAF6F1;
+  --foreground: #1C1007;
+
+  /* Primary — terracotta orange */
+  --brand-primary:   #D4703A;  /* warm terracotta — bright but grounded */
+  --brand-light:     #ECC4A0;  /* soft peach tint */
+  --brand-dark:      #B05A28;  /* deep terracotta */
+
+  /* Accent sage green (Tapas brand: orange + green) */
+  --sage:       #6B7A52;  /* muted sage — natural, grounded */
+  --sage-light: #9AAD84;  /* light sage tint */
+
+  /* Neutrals */
+  --cream:    #FAF6F1;  /* warm cream background */
+  --surface:  #F2EAE0;  /* warm tinted section bg */
+  --dark:     #2B4019;  /* forest green — hero/dark sections */
+  --charcoal: #1C1007;  /* warm near-black */
+  --muted:    #8B6F5E;  /* warm taupe */
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  
-  --color-brand: var(--brand-primary);
+  --color-background:  var(--background);
+  --color-foreground:  var(--foreground);
+
+  --color-brand:       var(--brand-primary);
   --color-brand-light: var(--brand-light);
-  --color-cream: var(--cream);
+  --color-brand-dark:  var(--brand-dark);
+
+  --color-sage:        var(--sage);
+  --color-sage-light:  var(--sage-light);
+
+  --color-cream:    var(--cream);
+  --color-surface:  var(--surface);
+  --color-dark:     var(--dark);
   --color-charcoal: var(--charcoal);
+  --color-muted:    var(--muted);
 
-  /* Legacy aliases to avoid breaking components immediately, but mapped to new colors */
-  --color-sage: var(--brand-primary);
-  --color-sage-light: var(--brand-light);
-
-  --font-sans: "Outfit", var(--font-geist-sans);
+  --font-sans:  var(--font-dm-sans), system-ui, sans-serif;
+  --font-serif: var(--font-cormorant), Georgia, serif;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* 최소 터치 타겟 — 버튼에만 적용 (텍스트 링크 제외)
+   개별 컴포넌트에서 padding으로 조정하는 것이 더 안전함 */
+button:not(.no-min-touch) {
+  min-height: 44px;
+}
+
+/* 움직임 민감 사용자 — 모든 애니메이션 비활성화 */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

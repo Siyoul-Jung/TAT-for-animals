@@ -1,125 +1,137 @@
 // src/components/VideoSection.tsx
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Play, CheckCircle2 } from 'lucide-react';
-import Button from '@/components/ui/Button';
+import { Play } from 'lucide-react';
+
+const EMBED_SRC = 'https://www.youtube.com/embed/UpbujaNsKKA?rel=0&autoplay=1';
 
 export default function VideoSection() {
-  const benefits = [
-    "Reduces immediate stress in animals",
-    "Calms the owner's nervous system",
-    "Deepens the human-animal bond",
-    "No equipment or complex training needed"
-  ];
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const pathname = usePathname();
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  // Stop playback when navigating away
+  useEffect(() => {
+    if (pathname !== '/' && iframeRef.current) {
+      iframeRef.current.src = '';
+      setIsPlaying(false);
+    }
+  }, [pathname]);
+
+  // Stop on unmount
+  useEffect(() => {
+    return () => {
+      if (iframeRef.current) iframeRef.current.src = '';
+    };
+  }, []);
 
   return (
-    <section id="experience" className="py-32 bg-gradient-to-b from-cream via-brand/5 to-white relative overflow-hidden">
-      {/* Decorative Blobs */}
-      <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-brand/5 rounded-full blur-[100px] -z-10" />
-      <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-brand/10 rounded-full blur-[80px] -z-10" />
+    <section id="experience" className="bg-cream py-28 px-6 overflow-hidden">
+      <div className="max-w-4xl mx-auto">
 
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-24">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-brand/10 text-brand rounded-full text-xs font-bold uppercase tracking-[0.2em] mb-6"
-          >
-            <Play size={14} className="fill-brand" />
-            <span>The 2-Minute Calm</span>
-          </motion.div>
-          
-          <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-4xl md:text-5xl font-bold mb-8 text-charcoal leading-tight"
-          >
-            Experience the <span className="text-brand italic serif font-normal">Immediate Shift.</span>
-          </motion.h2>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="text-lg md:text-xl text-charcoal/60 max-w-2xl mx-auto leading-relaxed"
-          >
-            TAT® works at the speed of sight. Play the session below with your animal and witness the calm settle in.
-          </motion.p>
-        </div>
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="text-center mb-14"
+        >
+          <p className="text-xs tracking-[0.2em] uppercase font-medium text-brand mb-5">
+            Experience it now
+          </p>
+          <h2 className="font-serif text-4xl sm:text-5xl text-charcoal font-medium leading-tight mb-6">
+            Try it now —<br className="hidden sm:block" /> with your animal.
+          </h2>
+          <p className="text-base sm:text-lg text-charcoal/60 font-light leading-relaxed max-w-xl mx-auto">
+            Play this video with your animal nearby.
+            You don&apos;t need to do anything except watch and follow along.
+          </p>
+        </motion.div>
 
-        <div className="grid lg:grid-cols-12 gap-16 items-center">
-          {/* Video Player Area */}
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.98 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="lg:col-span-7 relative group"
+        {/* Video player */}
+        <motion.div
+          initial={{ opacity: 0, y: 32 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+          className="relative"
+        >
+          {/* Warm glow */}
+          <div
+            className="absolute -inset-4 rounded-[2.5rem] blur-2xl opacity-30 pointer-events-none"
+            style={{
+              background:
+                'radial-gradient(ellipse at center, rgba(212,112,58,0.4) 0%, transparent 70%)',
+            }}
+          />
+
+          {/* Frame */}
+          <div
+            className="relative aspect-video rounded-2xl overflow-hidden"
+            style={{
+              boxShadow:
+                '0 0 0 1.5px rgba(212,112,58,0.35), 0 24px 64px rgba(28,15,7,0.18)',
+            }}
           >
-            <div className="aspect-video bg-charcoal rounded-[3rem] overflow-hidden shadow-[0_32px_64px_-16px_rgba(244,114,22,0.15)] relative border-8 border-white">
-              <iframe 
-                className="absolute inset-0 w-full h-full"
-                src="https://www.youtube.com/embed/UpbujaNsKKA?autoplay=0&rel=0"
-                title="TAT for Your Pet - Home Page Experience"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                allowFullScreen
-              ></iframe>
-            </div>
-            {/* Playful Floating Badge */}
-            <motion.div
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 3, repeat: Infinity }}
-              className="absolute -top-4 -right-4 md:-top-6 md:-right-6 bg-brand text-cream p-4 md:p-6 rounded-[2.5rem] shadow-xl z-20 font-bold text-xs md:text-sm"
-            >
-               Try it now →
-            </motion.div>
-          </motion.div>
-
-          {/* Value Props & CTA */}
-          <div className="lg:col-span-5 flex flex-col gap-10">
-            <div className="grid gap-4">
-               {benefits.map((benefit, i) => (
-                 <motion.div 
-                   key={i}
-                   initial={{ opacity: 0, x: 20 }}
-                   whileInView={{ opacity: 1, x: 0 }}
-                   viewport={{ once: true }}
-                   transition={{ delay: 0.3 + (i * 0.1) }}
-                   className="flex items-center gap-4 p-6 bg-white/40 backdrop-blur-sm border border-white/60 rounded-[2rem] hover:bg-white transition-colors"
-                 >
-                   <div className="w-10 h-10 bg-brand/10 rounded-xl flex items-center justify-center shrink-0">
-                     <CheckCircle2 className="w-6 h-6 text-brand" />
-                   </div>
-                   <p className="text-lg font-semibold text-charcoal/80 tracking-tight">{benefit}</p>
-                 </motion.div>
-               ))}
-            </div>
-
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.8 }}
-              className="bg-brand text-cream p-10 rounded-[4rem] shadow-2xl shadow-brand/20 relative overflow-hidden group"
-            >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700" />
-              <h4 className="text-2xl font-bold mb-4 relative z-10 font-outfit uppercase tracking-wider">Ready for the Full Journey?</h4>
-              <p className="text-cream/80 mb-8 leading-relaxed text-lg relative z-10">
-                Unlock hundreds of specialized sessions designed to bring lasting calm to every corner of your life together.
-              </p>
-              <Button 
-                variant="outline"
-                className="w-full bg-white text-brand border-white hover:bg-cream/90 font-bold py-6 text-lg" 
-                size="lg"
-                onClick={() => document.getElementById('membership')?.scrollIntoView({ behavior: 'smooth' })}
+            {/* Thumbnail — shown before play */}
+            {!isPlaying && (
+              <button
+                onClick={() => setIsPlaying(true)}
+                className="absolute inset-0 z-10 w-full h-full flex flex-col items-center justify-center group"
+                style={{ backgroundColor: '#2B4019' }}
+                aria-label="Play video"
               >
-                Unlock the Full Library
-              </Button>
-            </motion.div>
+                {/* Play button */}
+                <motion.div
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="w-20 h-20 rounded-full flex items-center justify-center mb-5"
+                  style={{
+                    backgroundColor: '#D4703A',
+                    boxShadow: '0 0 0 14px rgba(212,112,58,0.15)',
+                  }}
+                >
+                  <Play size={28} fill="white" className="text-white ml-1" />
+                </motion.div>
+
+                <p
+                  className="text-sm font-light tracking-wide"
+                  style={{ color: 'rgba(250,246,241,0.45)' }}
+                >
+                  Watch how TAT® works
+                </p>
+              </button>
+            )}
+
+            {/* iframe — only mounted after click */}
+            {isPlaying && (
+              <iframe
+                ref={iframeRef}
+                className="absolute inset-0 w-full h-full"
+                src={EMBED_SRC}
+                title="TAT® — Try it with your animal"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            )}
           </div>
-        </div>
+        </motion.div>
+
+        {/* Bottom note */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="text-center text-sm text-charcoal/40 font-light mt-8"
+        >
+          Used by hundreds of thousands of people in over 80 countries.
+        </motion.p>
+
       </div>
     </section>
   );

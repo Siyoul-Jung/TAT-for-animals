@@ -30,8 +30,9 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -42,6 +43,15 @@ next-env.d.ts
 
 # internal drafts & reviews
 email_draft_to_betty.md
-technical_review.md
+docs/technical_review.md
 AGENTS.md
 CLAUDE.md
+
+# large media — serve from CDN
+/public/videos/
+
+# dev-only pages
+/src/app/logo-preview/
+
+# unused placeholders
+/public/images/landing_1.jfif

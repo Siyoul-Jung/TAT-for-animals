@@ -1,30 +1,35 @@
+import fs from 'fs';
+import path from 'path';
 import Hero from "@/components/Hero";
 import VideoSection from "@/components/VideoSection";
 import HealingLoop from "@/components/HealingLoop";
-import Pricing from "@/components/Pricing";
-
 import Testimonials from "@/components/Testimonials";
+import Pricing from "@/components/Pricing";
+import AboutTapas from "@/components/AboutTapas";
+import Footer from "@/components/Footer";
+
+function getHeroImages() {
+  const dir = path.join(process.cwd(), 'public/images/hero');
+  try {
+    return fs.readdirSync(dir)
+      .filter(f => /\.(jpe?g|png|webp)$/i.test(f))
+      .map(f => ({ src: `/images/hero/${f}`, alt: 'A calm animal moment' }));
+  } catch {
+    return [{ src: '/images/tat_animal_calm.jpg', alt: 'A calm animal moment' }];
+  }
+}
 
 export default function Home() {
+  const heroImages = getHeroImages();
   return (
     <div className="flex flex-col">
-      <Hero />
-      <VideoSection />
-      <HealingLoop />
-      <Testimonials />
-      <Pricing />
-      
-      {/* Footer Placeholder */}
-      <footer className="py-20 bg-charcoal text-cream/50 text-center text-sm border-t border-cream/10">
-        <div className="max-w-7xl mx-auto px-6">
-          <p>© 2026 TAT® Calm for Animals (and You). All rights reserved.</p>
-          <div className="flex justify-center gap-6 mt-4">
-             <a href="#" className="hover:text-cream transition-colors">Privacy Policy</a>
-             <a href="#" className="hover:text-cream transition-colors">Terms of Service</a>
-             <a href="#" className="hover:text-cream transition-colors">Contact</a>
-          </div>
-        </div>
-      </footer>
+      <Hero images={heroImages} />        {/* 1. 약속 */}
+      <VideoSection />                    {/* 2. 즉각 증명 */}
+      <HealingLoop />                     {/* 3. 개념 이해 */}
+      <Testimonials />                    {/* 4. 사회적 증명 */}
+      <Pricing />                         {/* 5. 전환 */}
+      <AboutTapas />                      {/* 6. 최후 신뢰 */}
+      <Footer />                          {/* 7. 내비게이션 */}
     </div>
   );
 }

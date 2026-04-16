@@ -2,94 +2,155 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import Button from '@/components/ui/Button';
-import { MousePointer2, PlayCircle } from 'lucide-react';
 import Link from 'next/link';
+import { Play } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
-export default function Hero() {
+type HeroImage = { src: string; alt: string };
+
+function shuffle<T>(arr: T[]): T[] {
+  return [...arr].sort(() => Math.random() - 0.5);
+}
+
+export default function Hero({ images }: { images: HeroImage[] }) {
+  const [shuffled] = useState(() => shuffle(images));
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (shuffled.length <= 1) return;
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % shuffled.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [shuffled.length]);
+
   return (
-    <section className="relative min-h-[90vh] flex items-center pt-32 pb-20 overflow-hidden bg-gradient-to-br from-cream via-white to-brand/5">
-      {/* Dynamic Background Decor */}
-      <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-brand/10 rounded-full blur-[120px] animate-pulse" />
-      <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-brand/5 rounded-full blur-[100px]" />
+    <section
+      className="relative min-h-screen flex items-center overflow-hidden"
+      style={{ backgroundColor: '#2B4019' }}
+    >
+      {/* Radial glow — warm orange/gold emanating from center */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: [
+            'radial-gradient(ellipse 80% 60% at 50% 50%, rgba(212,112,58,0.18) 0%, rgba(212,160,67,0.08) 40%, transparent 70%)',
+            'radial-gradient(ellipse 40% 40% at 30% 60%, rgba(212,112,58,0.10) 0%, transparent 60%)',
+          ].join(', '),
+        }}
+      />
 
-      <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center relative z-10">
-        {/* Text Content */}
+      {/* Grain texture overlay */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.04]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E")`,
+          backgroundSize: '200px 200px',
+        }}
+      />
+
+      {/* 2단 그리드 — 텍스트 40% / 이미지 60%, 이미지는 오른쪽 끝까지 블리드 */}
+      <div className="relative z-10 w-full min-h-screen grid lg:grid-cols-[2fr_3fr]">
+
+        {/* Left — Text */}
         <motion.div
-          initial={{ opacity: 0, x: -40 }}
-          animate={{ opacity: 1, x: 0 }}
+          initial={{ opacity: 0, y: 32 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-          className="text-center lg:text-left pt-10 lg:pt-0"
+          className="flex flex-col justify-center px-8 lg:px-14 xl:px-20 pt-32 pb-20"
         >
-          <div className="inline-flex items-center gap-3 px-4 py-2 bg-brand/10 text-brand rounded-full text-[10px] sm:text-xs font-bold tracking-[0.2em] uppercase mb-8 shadow-sm">
-            <span className="w-2 h-2 bg-brand rounded-full animate-ping" />
-            Vibrant Health, Expert Vision
-          </div>
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.1] text-charcoal mb-8 tracking-tighter">
-            Healing for <br />
-            <span className="text-brand italic serif font-normal drop-shadow-sm">Them</span>, 
-            Peace for <br />
-            <span className="text-brand italic serif font-normal drop-shadow-sm">You.</span>
+          <h1 className="font-serif text-5xl sm:text-6xl lg:text-[4rem] xl:text-[4.5rem] leading-[1.1] text-cream mb-5 font-semibold">
+            Help your animal<br />
+            feel calm and at ease.
           </h1>
-          <p className="text-lg sm:text-xl lg:text-2xl text-charcoal/60 mb-12 max-w-xl mx-auto lg:mx-0 leading-relaxed font-medium">
-            Experience the calming power of TAT®. Start with a 2-minute signature session for your animal, and feel the relief yourself.
+
+          <p className="font-serif italic text-xl sm:text-2xl mb-8 font-normal"
+            style={{ color: 'rgba(250,246,241,0.65)' }}>
+            And notice what happens in you.
           </p>
-          <div className="flex flex-col sm:flex-row gap-6 items-center">
-            <Link href="/session">
-              <Button size="lg" className="group px-10 py-8 text-lg font-bold shadow-xl shadow-brand/20 hover:scale-105 transition-all">
-                Help Your Pet Find Calm
-                <MousePointer2 className="ml-3 w-6 h-6 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-              </Button>
-            </Link>
-            <button 
-              onClick={() => document.getElementById('experience')?.scrollIntoView({ behavior: 'smooth' })}
-              className="flex items-center gap-3 text-charcoal/60 font-bold hover:text-brand transition-colors px-6 py-4 group text-lg"
+
+          <p className="text-base sm:text-lg leading-relaxed mb-12"
+            style={{ color: 'rgba(250,246,241,0.55)' }}>
+            No special training. No reliving anything painful.
+            Just a few quiet minutes with your animal — and something shifts.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 items-start">
+            <Link
+              href="/membership"
+              className="px-8 py-4 rounded-full text-cream font-semibold text-base transition-all hover:scale-105 hover:shadow-lg active:scale-95"
+              style={{
+                backgroundColor: '#D4703A',
+                boxShadow: '0 8px 32px rgba(212,112,58,0.30)',
+              }}
             >
-              <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-md group-hover:shadow-lg transition-all group-hover:scale-110">
-                 <PlayCircle className="w-8 h-8 text-brand fill-brand/10" />
+              Start with Your Animal
+            </Link>
+            <button
+              onClick={() => document.getElementById('experience')?.scrollIntoView({ behavior: 'smooth' })}
+              className="flex items-center gap-3 px-6 py-4 rounded-full border font-medium text-base transition-all hover:border-cream/40 hover:text-cream group"
+              style={{
+                borderColor: 'rgba(250,246,241,0.25)',
+                color: 'rgba(250,246,241,0.70)',
+              }}
+            >
+              <div className="w-8 h-8 rounded-full flex items-center justify-center border transition-all group-hover:border-cream/40"
+                style={{ borderColor: 'rgba(250,246,241,0.25)' }}>
+                <Play size={12} fill="currentColor" />
               </div>
               Watch How It Works
             </button>
           </div>
         </motion.div>
 
-        {/* Visual Content (High-end image: Dog & Cat) */}
+        {/* Right — 이미지 crossfade 슬라이드쇼 */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1, delay: 0.2 }}
-          className="relative aspect-square md:aspect-auto md:h-[600px] w-full"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.2, delay: 0.15 }}
+          className="relative hidden lg:block overflow-hidden"
         >
-          <div className="absolute inset-0 bg-brand-light/10 rounded-[2rem] overflow-hidden shadow-2xl">
-              <img 
-                src="https://images.unsplash.com/photo-1560807707-8cc77767d783?q=80&w=2000&auto=format&fit=crop" 
-                alt="Peaceful Dog and Cat Together" 
-                className="w-full h-full object-cover object-center opacity-100"
+          {shuffled.map((img, i) => (
+            <motion.div
+              key={img.src}
+              animate={{ opacity: i === currentIndex ? 1 : 0 }}
+              transition={{ duration: 1.5, ease: 'easeInOut' }}
+              className="absolute inset-0"
+            >
+              {/* 흐린 배경 — 어떤 비율이든 컨테이너를 채움 */}
+              <img
+                src={img.src}
+                alt=""
+                aria-hidden="true"
+                loading={i === 0 ? 'eager' : 'lazy'}
+                className="absolute inset-0 w-full h-full object-cover object-center scale-110"
+                style={{ filter: 'blur(24px)', opacity: 0.6 }}
               />
-              <div className="absolute inset-0 bg-gradient-to-tr from-brand/10 to-transparent" />
-          </div>
-          
-          {/* Floating Element 1 */}
-          <motion.div 
-            animate={{ y: [0, -10, 0] }}
-            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-            className="absolute -top-6 -right-6 bg-cream p-5 rounded-2xl shadow-xl border border-brand-light max-w-[200px]"
-          >
-            <p className="text-xs font-bold text-brand mb-1 uppercase tracking-tighter">Recent Relief</p>
-            <p className="text-sm text-charcoal/80 italic font-medium">&quot;My dog settled in 2 minutes, and I finally felt the tension leave my neck.&quot;</p>
-          </motion.div>
-
-          {/* Floating Element 2 */}
-          <div className="absolute -bottom-6 -left-6 bg-sage-deep text-cream p-5 rounded-2xl shadow-xl flex items-center gap-4">
-            <div className="flex -space-x-3">
-              {[1,2,3].map(i => <div key={i} className="w-8 h-8 rounded-full border-2 border-sage-deep bg-sage-light flex items-center justify-center text-[10px] text-sage-deep font-bold">U{i}</div>)}
-            </div>
-            <div className="text-xs">
-               <p className="font-bold">1,200+ Owners</p>
-               <p className="opacity-70">Joined this week</p>
-            </div>
-          </div>
+              {/* 선명한 원본 — 항상 전체가 보임 */}
+              <img
+                src={img.src}
+                alt={img.alt}
+                loading={i === 0 ? 'eager' : 'lazy'}
+                className="absolute inset-0 w-full h-full object-contain object-center"
+              />
+            </motion.div>
+          ))}
+          {/* 왼쪽 경계 — 배경색과 자연스럽게 연결 */}
+          <div
+            className="absolute inset-0 z-10"
+            style={{
+              background: 'linear-gradient(to right, rgba(43,64,25,1) 0%, rgba(43,64,25,0.2) 25%, transparent 55%)',
+            }}
+          />
+          {/* 하단 페이드 */}
+          <div
+            className="absolute inset-0 z-10"
+            style={{
+              background: 'linear-gradient(to top, rgba(43,64,25,0.6) 0%, transparent 35%)',
+            }}
+          />
         </motion.div>
+
       </div>
     </section>
   );

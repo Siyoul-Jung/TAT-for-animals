@@ -1,84 +1,90 @@
-// src/components/Testimonials.tsx
 'use client';
 
 import { motion } from 'framer-motion';
-import { Quote } from 'lucide-react';
 
-const TESTIMONIALS = [
+const testimonials = [
   {
-    quote: "My cat, Luna, had persistent anxiety after our move. Two sessions of TAT® Calm, and she's finally sleeping in her favorite sunspot again. I feel so much lighter too.",
-    author: "Sarah J.",
-    role: "Cat Owner",
-    image: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=200&auto=format&fit=crop"
+    name: 'Sarah M.',
+    location: 'Oregon, USA',
+    animal: 'Bowie — Golden Retriever',
+    quote: 'Bowie had been anxious for years. Within a few sessions of TAT®, he started sleeping through the night. But what surprised me most was how much calmer I felt too. I didn\'t expect that.',
+    image: '/images/testimonial.jpg',
   },
   {
-    quote: "I was skeptical, but seeing my dog's immediate reaction was incredible. He literal sighed out his tension. It's the most profound bonding experience we've had.",
-    author: "Mark T.",
-    role: "Rescue Dog Parent",
-    image: "/images/testimonial-mark.jpg"
+    name: 'Claire T.',
+    location: 'London, UK',
+    animal: 'Misty — Rescue Cat',
+    quote: 'Misty was terrified of everything when we adopted her. TAT® helped her come out of her shell — slowly, gently. Watching her relax, I felt something release in me too. It\'s hard to explain but impossible to ignore.',
+    image: '/images/testimonial2.jpg',
   },
-  {
-    quote: "As a professional trainer, I've seen it all. TAT® provides that missing emotional piece that training alone often can't reach. It's gentle, fast, and lasting.",
-    author: "Elena R.",
-    role: "Professional Canine Instructor",
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=200&auto=format&fit=crop"
-  }
 ];
 
 export default function Testimonials() {
   return (
-    <section className="py-24 md:py-40 bg-white relative overflow-hidden">
-      {/* Dynamic Background Element */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[600px] bg-gradient-to-b from-brand/10 to-transparent -z-10 blur-3xl rounded-full opacity-30" />
+    <section className="bg-cream py-28 px-6 overflow-hidden">
+      <div className="max-w-5xl mx-auto">
 
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-16 md:mb-24">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="w-16 h-16 bg-brand/10 text-brand rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-inner"
-          >
-            <Quote size={32} className="fill-brand" />
-          </motion.div>
-          
-          <h2 className="text-4xl md:text-5xl font-bold text-charcoal mb-8 tracking-tight">
-            Voices of <br/><span className="text-brand italic serif font-normal">Transformation.</span>
-          </h2>
-          <p className="text-lg md:text-xl text-charcoal/60 max-w-xl mx-auto leading-relaxed">
-            The resonance of TAT® is felt across continents, connecting hearts and clearing paths for thousands of families.
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="mb-20"
+        >
+          <p className="text-xs tracking-[0.2em] uppercase font-medium mb-5"
+            style={{ color: 'rgba(212,112,58,0.7)' }}>
+            Real Stories
           </p>
-        </div>
+          <h2 className="font-serif text-4xl sm:text-5xl text-charcoal font-medium leading-tight">
+            They felt it too.
+          </h2>
+        </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-10">
-          {TESTIMONIALS.map((t, idx) => (
+        <div className="flex flex-col gap-24">
+          {testimonials.map((t, i) => (
             <motion.div
-              key={t.author}
-              initial={{ opacity: 0, y: 30 }}
+              key={i}
+              initial={{ opacity: 0, y: 32 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: idx * 0.15, type: 'spring', stiffness: 50 }}
-              className="group p-1 bg-white hover:bg-gradient-to-br hover:from-brand/20 hover:to-brand/5 rounded-[4rem] transition-all duration-700 shadow-[0_10px_30px_rgba(0,0,0,0.05)] md:shadow-none hover:shadow-[0_40px_80px_-20px_rgba(244,114,22,0.15)] border border-brand/5"
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+              className={`grid lg:grid-cols-[1fr_1.6fr] gap-12 lg:gap-20 items-center ${
+                i % 2 === 1 ? 'lg:[direction:rtl]' : ''
+              }`}
             >
-              <div className="bg-white h-full p-12 rounded-[3.8rem] flex flex-col">
-                <blockquote className="text-xl text-charcoal/80 mb-10 leading-relaxed italic flex-grow relative">
-                   <span className="text-brand/20 text-6xl absolute -top-8 -left-4 font-serif group-hover:text-brand/40 transition-colors">&ldquo;</span>
-                   {t.quote}
-                </blockquote>
+              {/* 사진 */}
+              <div
+                className="relative rounded-2xl overflow-hidden aspect-[4/5] lg:[direction:ltr]"
+                style={{ boxShadow: '0 24px 64px rgba(28,16,7,0.10)' }}
+              >
+                <img
+                  src={t.image}
+                  alt={t.name}
+                  className="absolute inset-0 w-full h-full object-cover object-center"
+                />
+              </div>
 
-                <div className="flex items-center gap-5 pt-8 border-t border-brand/5">
-                  <div className="w-14 h-14 rounded-2xl overflow-hidden shadow-sm border-2 border-brand/10 group-hover:border-brand/30 transition-colors">
-                     <img src={t.image} alt={t.author} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" />
-                  </div>
-                  <div>
-                     <p className="font-bold text-xl text-charcoal leading-none mb-1">{t.author}</p>
-                     <p className="text-xs text-brand font-bold uppercase tracking-widest">{t.role}</p>
-                  </div>
+              {/* 텍스트 */}
+              <div className="lg:[direction:ltr] flex flex-col justify-center">
+                <p className="text-xs tracking-[0.15em] uppercase font-medium mb-6"
+                  style={{ color: 'rgba(212,112,58,0.6)' }}>
+                  {t.animal}
+                </p>
+                <blockquote className="font-serif text-xl sm:text-2xl text-charcoal leading-[1.6] mb-8">
+                  "{t.quote}"
+                </blockquote>
+                <div>
+                  <p className="font-medium text-charcoal">{t.name}</p>
+                  <p className="text-sm mt-0.5" style={{ color: 'rgba(28,16,7,0.4)' }}>
+                    {t.location}
+                  </p>
                 </div>
               </div>
+
             </motion.div>
           ))}
         </div>
+
       </div>
     </section>
   );

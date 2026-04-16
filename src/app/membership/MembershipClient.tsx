@@ -8,21 +8,50 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 import { useState, useEffect } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 export default function MembershipClient() {
   const pathname = usePathname();
+  const router = useRouter();
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
 
   useEffect(() => {
-    // Force scroll to top on navigation to this page,
-    // unless the user specifically targeted a hash.
     if (!window.location.hash) {
       window.scrollTo(0, 0);
     }
   }, [pathname]);
 
+  async function handleCheckout(plan: string) {
+    setLoadingPlan(plan);
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan }),
+      });
+
+      if (res.status === 401) {
+        // 로그인 안 된 경우 → 로그인 페이지로
+        router.push('/login?next=/membership');
+        return;
+      }
+
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert('Something went wrong. Please try again.');
+        setLoadingPlan(null);
+      }
+    } catch {
+      alert('Something went wrong. Please try again.');
+      setLoadingPlan(null);
+    }
+  }
+
   const tiers = [
     {
+      plan: 'self',
       name: "The Home Practice",
       price: "24",
       icon: Sprout,
@@ -37,8 +66,9 @@ export default function MembershipClient() {
       popular: false
     },
     {
+      plan: 'pro',
       name: "The Guided Circle",
-      price: "59",
+      price: "47",
       icon: Sun,
       description: "Direct connection and weekly live support for profound healing.",
       features: [
@@ -180,18 +210,18 @@ export default function MembershipClient() {
                   ))}
                 </div>
 
-                <Link href="/thank-you">
-                  <Button 
-                    variant={tier.popular ? "primary" : "outline"}
-                    className={`w-full py-8 text-lg font-bold rounded-[2.5rem] transition-all ${
-                      tier.popular 
-                        ? 'bg-brand text-cream border-brand shadow-lg shadow-brand/20 hover:scale-[1.02]' 
-                        : 'border-brand/20 text-brand hover:bg-brand/5 hover:border-brand/40'
-                    }`}
-                  >
-                    {tier.buttonText}
-                  </Button>
-                </Link>
+                <Button
+                  variant={tier.popular ? "primary" : "outline"}
+                  className={`w-full py-8 text-lg font-bold rounded-[2.5rem] transition-all disabled:opacity-60 disabled:cursor-not-allowed ${
+                    tier.popular
+                      ? 'bg-brand text-cream border-brand shadow-lg shadow-brand/20 hover:scale-[1.02]'
+                      : 'border-brand/20 text-brand hover:bg-brand/5 hover:border-brand/40'
+                  }`}
+                  onClick={() => handleCheckout(tier.plan)}
+                  disabled={loadingPlan !== null}
+                >
+                  {loadingPlan === tier.plan ? 'Connecting...' : tier.buttonText}
+                </Button>
               </motion.div>
             ))}
           </div>
