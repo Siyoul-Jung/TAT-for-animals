@@ -53,6 +53,23 @@ export default function Hero({ images }: { images: HeroImage[] }) {
         }}
       />
 
+      {/* Mobile background image — 이미지를 배경으로 깔고 overlay로 어둡게 */}
+      {shuffled.length > 0 && (
+        <div className="lg:hidden absolute inset-0 z-0">
+          <img
+            src={shuffled[currentIndex]?.src}
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 w-full h-full object-cover object-center"
+          />
+          {/* 다크 그린 오버레이 — 텍스트 가독성 + 브랜드 컬러 유지 */}
+          <div
+            className="absolute inset-0"
+            style={{ backgroundColor: 'rgba(43,64,25,0.68)' }}
+          />
+        </div>
+      )}
+
       {/* 2단 그리드 — 텍스트 40% / 이미지 60%, 이미지는 오른쪽 끝까지 블리드 */}
       <div className="relative z-10 w-full min-h-screen grid lg:grid-cols-[2fr_3fr]">
 
@@ -61,9 +78,9 @@ export default function Hero({ images }: { images: HeroImage[] }) {
           initial={{ opacity: 0, y: 32 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-          className="flex flex-col justify-center px-8 lg:px-14 xl:px-20 pt-32 pb-20"
+          className="flex flex-col justify-center px-6 lg:px-14 xl:px-20 pt-28 pb-16 lg:pt-32 lg:pb-20"
         >
-          <h1 className="font-serif text-5xl sm:text-6xl lg:text-[4rem] xl:text-[4.5rem] leading-[1.1] text-cream mb-5 font-semibold">
+          <h1 className="font-serif text-4xl sm:text-5xl lg:text-[4rem] xl:text-[4.5rem] leading-[1.1] text-cream mb-5 font-semibold">
             Help your animal<br />
             feel calm and at ease.
           </h1>
@@ -105,6 +122,7 @@ export default function Hero({ images }: { images: HeroImage[] }) {
               Watch How It Works
             </button>
           </div>
+
         </motion.div>
 
         {/* Right — 이미지 crossfade 슬라이드쇼 */}

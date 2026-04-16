@@ -36,8 +36,8 @@ const socials = [
 
 export default function AboutTapas() {
   return (
-    <section className="bg-cream py-28 px-6 overflow-hidden">
-      <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+    <section className="bg-cream py-20 lg:py-28 px-6 overflow-hidden">
+      <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-10 lg:gap-24 items-center">
 
         {/* Left — Photo */}
         <motion.div
@@ -57,7 +57,7 @@ export default function AboutTapas() {
           />
 
           <div
-            className="relative w-full aspect-3/4 rounded-2xl overflow-hidden"
+            className="relative w-full aspect-[4/3] sm:aspect-[3/4] rounded-2xl overflow-hidden"
             style={{
               boxShadow: '0 24px 64px rgba(31,46,20,0.12), 0 0 0 1px rgba(31,46,20,0.06)',
             }}
@@ -83,7 +83,7 @@ export default function AboutTapas() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="absolute -bottom-5 -right-5 bg-cream rounded-2xl px-6 py-4 flex flex-col gap-0.5"
+            className="absolute bottom-3 right-3 lg:-bottom-5 lg:-right-5 bg-cream rounded-2xl px-5 py-3 lg:px-6 lg:py-4 flex flex-col gap-0.5"
             style={{
               boxShadow: '0 8px 32px rgba(31,46,20,0.10), 0 0 0 1px rgba(31,46,20,0.07)',
             }}
@@ -105,17 +105,17 @@ export default function AboutTapas() {
             The founder
           </p>
 
-          <h2 className="font-serif text-4xl sm:text-5xl text-charcoal font-medium leading-tight mb-2">
+          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-charcoal font-medium leading-tight mb-2">
             Tapas Fleming
           </h2>
-          <p className="font-serif italic text-lg text-muted mb-10">
+          <p className="font-serif italic text-base sm:text-lg text-muted mb-6 lg:mb-10">
             Creator and Founder of TAT®
           </p>
 
           {/* Divider */}
-          <div className="h-px bg-charcoal/8 mb-10" />
+          <div className="h-px bg-charcoal/8 mb-6 lg:mb-10" />
 
-          <div className="flex flex-col gap-6 text-base sm:text-lg text-charcoal/65 font-light leading-relaxed mb-12">
+          <div className="flex flex-col gap-4 lg:gap-6 text-base sm:text-lg text-charcoal/65 font-light leading-relaxed mb-8 lg:mb-12">
             <p>
               After years of searching for a simpler, gentler way to help people heal —
               without reliving their pain — Tapas developed TAT® in 1993.
@@ -127,7 +127,7 @@ export default function AboutTapas() {
               </span>{' '}
               Her mission remains the same:
             </p>
-            <p className="font-serif italic text-xl sm:text-2xl text-charcoal/80 leading-snug">
+            <p className="font-serif italic text-lg sm:text-xl lg:text-2xl text-charcoal/80 leading-snug">
               &ldquo;Help people find peace. One person —<br className="hidden sm:block" />
               and one animal — at a time.&rdquo;
             </p>

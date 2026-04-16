@@ -29,7 +29,7 @@ export default function VideoSection() {
   }, []);
 
   return (
-    <section id="experience" className="bg-cream py-28 px-6 overflow-hidden">
+    <section id="experience" className="bg-cream py-20 lg:py-28 px-6 overflow-hidden">
       <div className="max-w-4xl mx-auto">
 
         {/* Header */}
@@ -43,7 +43,7 @@ export default function VideoSection() {
           <p className="text-xs tracking-[0.2em] uppercase font-medium text-brand mb-5">
             Experience it now
           </p>
-          <h2 className="font-serif text-4xl sm:text-5xl text-charcoal font-medium leading-tight mb-6">
+          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-charcoal font-medium leading-tight mb-6">
             Try it now —<br className="hidden sm:block" /> with your animal.
           </h2>
           <p className="text-base sm:text-lg text-charcoal/60 font-light leading-relaxed max-w-xl mx-auto">

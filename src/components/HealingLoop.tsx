@@ -15,15 +15,15 @@ export default function HealingLoop() {
         }}
       />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 grid lg:grid-cols-2 min-h-[70vh] items-center gap-16 lg:gap-24 py-24">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 grid lg:grid-cols-2 items-center gap-10 lg:gap-24 py-20 lg:py-28">
 
-        {/* Left — 짧고 강하게 */}
+        {/* Left — 짧고 강하게 (모바일에서는 이미지 아래에 표시) */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          className="flex flex-col justify-center"
+          className="flex flex-col justify-center order-2 lg:order-1"
         >
           <p className="text-xs tracking-[0.2em] uppercase font-medium mb-8"
             style={{ color: 'rgba(212,168,67,0.6)' }}>
@@ -40,19 +40,18 @@ export default function HealingLoop() {
           </p>
         </motion.div>
 
-        {/* Right — image */}
+        {/* Right — image (모바일에서는 텍스트 위에 표시) */}
         <motion.div
           initial={{ opacity: 0, scale: 0.97 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
-          className="relative hidden lg:block rounded-2xl overflow-hidden"
-          style={{ aspectRatio: '4/5' }}
+          className="relative rounded-2xl overflow-hidden aspect-[4/3] lg:aspect-[4/5] order-1 lg:order-2"
         >
           <img
             src="/images/Mirror2.jpg"
             alt="A person and their animal reflecting calm together"
-            className="absolute inset-0 w-full h-full object-cover object-center"
+            className="absolute inset-0 w-full h-full object-cover object-[center_30%]"
           />
           {/* Subtle dark vignette */}
           <div

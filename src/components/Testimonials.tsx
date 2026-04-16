@@ -21,7 +21,7 @@ const testimonials = [
 
 export default function Testimonials() {
   return (
-    <section className="bg-cream py-28 px-6 overflow-hidden">
+    <section className="bg-cream py-20 lg:py-28 px-6 overflow-hidden">
       <div className="max-w-5xl mx-auto">
 
         <motion.div
@@ -29,7 +29,7 @@ export default function Testimonials() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="mb-20"
+          className="mb-12 lg:mb-20"
         >
           <p className="text-xs tracking-[0.2em] uppercase font-medium mb-5"
             style={{ color: 'rgba(212,112,58,0.7)' }}>
@@ -40,7 +40,7 @@ export default function Testimonials() {
           </h2>
         </motion.div>
 
-        <div className="flex flex-col gap-24">
+        <div className="flex flex-col gap-16 lg:gap-24">
           {testimonials.map((t, i) => (
             <motion.div
               key={i}
@@ -48,13 +48,13 @@ export default function Testimonials() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-60px' }}
               transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-              className={`grid lg:grid-cols-[1fr_1.6fr] gap-12 lg:gap-20 items-center ${
+              className={`grid lg:grid-cols-[1fr_1.6fr] gap-8 lg:gap-20 items-center ${
                 i % 2 === 1 ? 'lg:[direction:rtl]' : ''
               }`}
             >
               {/* 사진 */}
               <div
-                className="relative rounded-2xl overflow-hidden aspect-[4/5] lg:[direction:ltr]"
+                className="relative rounded-2xl overflow-hidden aspect-[4/3] sm:aspect-[3/4] lg:aspect-[4/5] lg:[direction:ltr]"
                 style={{ boxShadow: '0 24px 64px rgba(28,16,7,0.10)' }}
               >
                 <img
@@ -70,7 +70,7 @@ export default function Testimonials() {
                   style={{ color: 'rgba(212,112,58,0.6)' }}>
                   {t.animal}
                 </p>
-                <blockquote className="font-serif text-xl sm:text-2xl text-charcoal leading-[1.6] mb-8">
+                <blockquote className="font-serif text-lg sm:text-xl lg:text-2xl text-charcoal leading-[1.6] mb-8">
                   "{t.quote}"
                 </blockquote>
                 <div>

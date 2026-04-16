@@ -48,8 +48,11 @@ export default function Navbar() {
 
   if (pathname === '/session') return null;
 
-  const textClass = isScrolled ? 'text-charcoal/70 hover:text-brand' : 'text-cream/70 hover:text-cream';
-  const activeTextClass = isScrolled ? 'text-brand' : 'text-cream';
+  // 다크 배경: 골드 호버 (대비 6.5:1 ✓), 크림 배경: 오렌지 호버 (골드는 크림에서 안보임)
+  const textClass = isScrolled
+    ? 'text-charcoal/70 hover:text-brand'
+    : 'text-cream/70 hover:[color:#D4A843]';
+  const activeTextClass = isScrolled ? 'text-brand' : '[color:#D4A843]';
 
   return (
     <nav

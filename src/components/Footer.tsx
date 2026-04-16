@@ -5,8 +5,8 @@ import Link from 'next/link';
 import LogoMark from '@/components/LogoMark';
 
 const navLinks = [
-  { name: 'For Your Animal', href: '/for-your-animal' },
-  { name: 'Membership', href: '/membership' },
+  { name: 'For Animals (and You)', href: '/for-animals' },
+  { name: 'For People', href: '/for-people' },
   { name: 'Work with Tapas', href: '/work-with-tapas' },
   { name: 'Find a Pro', href: '/find-a-pro' },
   { name: 'Certification', href: '/certification' },
@@ -65,8 +65,8 @@ export default function Footer() {
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-2.5">
               <LogoMark size={32} orange="#D4703A" green="#9AAD84" />
-              <span className="font-serif text-xl tracking-wide text-cream">
-                TAT<span className="text-brand">®</span> CALM
+              <span className="text-xl tracking-wide text-cream font-[family-name:var(--font-dm-serif)]">
+                TATLife<span className="text-brand">®</span>
               </span>
             </div>
             <span
@@ -92,8 +92,8 @@ export default function Footer() {
                   border: '1px solid rgba(250,246,241,0.10)',
                 }}
                 onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.color = '#D4703A';
-                  (e.currentTarget as HTMLElement).style.borderColor = 'rgba(212,112,58,0.40)';
+                  (e.currentTarget as HTMLElement).style.color = '#D4A843';
+                  (e.currentTarget as HTMLElement).style.borderColor = 'rgba(212,168,67,0.40)';
                 }}
                 onMouseLeave={(e) => {
                   (e.currentTarget as HTMLElement).style.color = 'rgba(250,246,241,0.40)';
@@ -117,7 +117,7 @@ export default function Footer() {
               className="text-sm font-light transition-colors"
               style={{ color: 'rgba(250,246,241,0.45)' }}
               onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.color = '#FAF6F1';
+                (e.currentTarget as HTMLElement).style.color = '#D4A843';
               }}
               onMouseLeave={(e) => {
                 (e.currentTarget as HTMLElement).style.color = 'rgba(250,246,241,0.45)';

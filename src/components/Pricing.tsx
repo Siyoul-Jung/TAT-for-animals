@@ -8,7 +8,7 @@ import Link from 'next/link';
 const tiers = [
   {
     name: 'Help Yourself',
-    price: '$24',
+    price: '24',
     description: 'A quiet, self-guided space to begin healing — for you and your animal.',
     features: [
       'Healing ACEs video library',
@@ -21,7 +21,7 @@ const tiers = [
   },
   {
     name: 'Professional Support',
-    price: '$47',
+    price: '47',
     description: 'Live guidance, deeper sessions, and direct access to Tapas herself.',
     features: [
       'Everything in Help Yourself',
@@ -39,7 +39,7 @@ export default function Pricing() {
   return (
     <section
       id="membership"
-      className="relative py-28 px-6 overflow-hidden"
+      className="relative py-20 lg:py-28 px-6 overflow-hidden"
       style={{ backgroundColor: '#2B4019' }}
     >
       {/* Background glow */}
@@ -59,19 +59,19 @@ export default function Pricing() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="text-center mb-16"
+          className="text-center mb-10 lg:mb-16"
         >
           <p className="text-xs tracking-[0.2em] uppercase font-medium mb-5"
             style={{ color: 'rgba(212,168,67,0.7)' }}>
             Membership
           </p>
-          <h2 className="font-serif text-4xl sm:text-5xl text-cream font-medium leading-tight">
+          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-cream font-medium leading-tight">
             Choose your path to calm.
           </h2>
         </motion.div>
 
         {/* Cards */}
-        <div className="grid md:grid-cols-2 gap-5">
+        <div className="grid md:grid-cols-2 gap-4">
           {tiers.map((tier, i) => (
             <motion.div
               key={tier.name}
@@ -84,7 +84,7 @@ export default function Pricing() {
                 ease: [0.16, 1, 0.3, 1],
               }}
               whileHover={{ y: -6, transition: { duration: 0.3 } }}
-              className="relative flex flex-col rounded-2xl p-8 sm:p-10"
+              className="relative flex flex-col rounded-2xl p-6 sm:p-8 lg:p-10"
               style={
                 tier.popular
                   ? {
@@ -98,47 +98,51 @@ export default function Pricing() {
                     }
               }
             >
-              {/* Popular badge */}
+              {/* Popular badge — 카드 내부 상단 인라인 배치 (모바일 안전) */}
               {tier.popular && (
-                <div
-                  className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-5 py-1.5 rounded-full text-[11px] font-semibold tracking-widest uppercase text-cream"
-                  style={{ backgroundColor: '#D4703A' }}
-                >
-                  ★ Most Popular
+                <div className="mb-5">
+                  <span
+                    className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full text-[11px] font-semibold tracking-widest uppercase text-cream"
+                    style={{ backgroundColor: '#D4703A' }}
+                  >
+                    ★ Most Popular
+                  </span>
                 </div>
               )}
 
               {/* Plan name + price */}
-              <div className="mb-8">
+              <div className="mb-5">
                 <h3
-                  className="font-serif text-2xl font-medium mb-5"
+                  className="font-serif text-xl sm:text-2xl font-medium mb-3"
                   style={{ color: tier.popular ? '#FAF6F1' : 'rgba(250,246,241,0.75)' }}
                 >
                   {tier.name}
                 </h3>
-                <div className="flex items-baseline gap-2">
-                  <span className="font-serif text-5xl font-semibold text-cream">
+                <div className="flex items-baseline gap-1.5">
+                  {/* $ — sans-serif로 분리해 Playfair의 이중선 달러 기호 회피 */}
+                  <span className="font-sans text-2xl font-medium text-cream/70">$</span>
+                  <span className="font-serif text-4xl sm:text-5xl font-semibold text-cream">
                     {tier.price}
                   </span>
                   <span
-                    className="text-base font-light"
-                    style={{ color: 'rgba(250,246,241,0.70)' }}
+                    className="text-sm font-light ml-0.5"
+                    style={{ color: 'rgba(250,246,241,0.55)' }}
                   >
-                    / month
+                    / mo
                   </span>
                 </div>
               </div>
 
-              {/* Description */}
+              {/* Description — 모바일에서 숨김 (카드 길이 단축) */}
               <p
-                className="text-base leading-relaxed mb-8"
-                style={{ color: 'rgba(250,246,241,0.80)' }}
+                className="hidden sm:block text-sm leading-relaxed mb-5"
+                style={{ color: 'rgba(250,246,241,0.70)' }}
               >
                 {tier.description}
               </p>
 
               {/* Features */}
-              <ul className="flex flex-col gap-3.5 mb-10 grow">
+              <ul className="flex flex-col gap-2.5 mb-6 grow">
                 {tier.features.map((f) => (
                   <li key={f} className="flex items-start gap-3">
                     <span
@@ -157,7 +161,7 @@ export default function Pricing() {
                       />
                     </span>
                     <span
-                      className="text-base leading-snug"
+                      className="text-sm sm:text-base leading-snug"
                       style={{ color: 'rgba(250,246,241,0.90)' }}
                     >
                       {f}
@@ -169,7 +173,7 @@ export default function Pricing() {
               {/* CTA */}
               <Link
                 href="/membership"
-                className="block text-center py-4 rounded-xl text-base font-semibold transition-all"
+                className="block text-center py-3.5 rounded-xl text-sm sm:text-base font-semibold transition-all"
                 style={
                   tier.popular
                     ? {
