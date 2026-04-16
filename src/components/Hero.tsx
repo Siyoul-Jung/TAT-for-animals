@@ -13,8 +13,12 @@ function shuffle<T>(arr: T[]): T[] {
 }
 
 export default function Hero({ images }: { images: HeroImage[] }) {
-  const [shuffled] = useState(() => shuffle(images));
+  const [shuffled, setShuffled] = useState(images);
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    setShuffled(shuffle(images));
+  }, []);
 
   useEffect(() => {
     if (shuffled.length <= 1) return;

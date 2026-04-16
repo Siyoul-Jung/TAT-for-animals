@@ -79,32 +79,44 @@ export default function VideoSection() {
           >
             {/* Thumbnail — shown before play */}
             {!isPlaying && (
-              <button
-                onClick={() => setIsPlaying(true)}
-                className="absolute inset-0 z-10 w-full h-full flex flex-col items-center justify-center group"
-                style={{ backgroundColor: '#2B4019' }}
-                aria-label="Play video"
-              >
-                {/* Play button */}
-                <motion.div
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="w-20 h-20 rounded-full flex items-center justify-center mb-5"
-                  style={{
-                    backgroundColor: '#D4703A',
-                    boxShadow: '0 0 0 14px rgba(212,112,58,0.15)',
-                  }}
+              <div className="absolute inset-0 z-10">
+                {/* 배경 이미지 */}
+                <img
+                  src="/images/hero/tat_animal_calm9.jpg"
+                  alt=""
+                  aria-hidden="true"
+                  className="absolute inset-0 w-full h-full object-cover object-center"
+                />
+                {/* 다크 오버레이 */}
+                <div
+                  className="absolute inset-0"
+                  style={{ backgroundColor: 'rgba(43,64,25,0.50)' }}
+                />
+                {/* 플레이 버튼 */}
+                <button
+                  onClick={() => setIsPlaying(true)}
+                  className="absolute inset-0 w-full h-full flex flex-col items-center justify-center group"
+                  aria-label="Play video"
                 >
-                  <Play size={28} fill="white" className="text-white ml-1" />
-                </motion.div>
-
-                <p
-                  className="text-sm font-light tracking-wide"
-                  style={{ color: 'rgba(250,246,241,0.45)' }}
-                >
-                  Watch how TAT® works
-                </p>
-              </button>
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="w-20 h-20 rounded-full flex items-center justify-center mb-5"
+                    style={{
+                      backgroundColor: '#D4703A',
+                      boxShadow: '0 0 0 14px rgba(212,112,58,0.15)',
+                    }}
+                  >
+                    <Play size={28} fill="white" className="text-white ml-1" />
+                  </motion.div>
+                  <p
+                    className="text-sm font-light tracking-wide"
+                    style={{ color: 'rgba(250,246,241,0.6)' }}
+                  >
+                    Watch how TAT® works
+                  </p>
+                </button>
+              </div>
             )}
 
             {/* iframe — only mounted after click */}

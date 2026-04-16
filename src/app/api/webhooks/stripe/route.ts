@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
 
       // 결제 완료 → 구독 활성화
       case 'checkout.session.completed': {
-        const session = event.data.object as Stripe.CheckoutSession
+        const session = event.data.object as Stripe.Checkout.Session
         if (session.mode !== 'subscription') break
 
         const subscriptionId = session.subscription as string
