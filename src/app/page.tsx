@@ -1,8 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import Hero from "@/components/Hero";
-import VideoSection from "@/components/VideoSection";
-import HealingLoop from "@/components/HealingLoop";
+import ForAnimals from "@/components/ForAnimals";
+import ForPeople from "@/components/ForPeople";
 import Testimonials from "@/components/Testimonials";
 import Pricing from "@/components/Pricing";
 import AboutTapas from "@/components/AboutTapas";
@@ -24,8 +24,8 @@ export default function Home() {
   return (
     <div className="flex flex-col">
       <Hero images={heroImages} />        {/* 1. 약속 */}
-      <VideoSection />                    {/* 2. 즉각 증명 */}
-      <HealingLoop />                     {/* 3. 개념 이해 */}
+      <ForAnimals />                      {/* 2. 즉각 증명 */}
+      <ForPeople />                       {/* 3. 개념 이해 */}
       <Testimonials />                    {/* 4. 사회적 증명 */}
       <Pricing />                         {/* 5. 전환 */}
       <AboutTapas />                      {/* 6. 최후 신뢰 */}

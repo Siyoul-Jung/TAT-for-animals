@@ -96,10 +96,10 @@ export default function Hero({ images }: { images: HeroImage[] }) {
             Just a few quiet minutes with your animal — and something shifts.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 items-start">
+          <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-4 items-start">
             <Link
               href="/membership"
-              className="px-8 py-4 rounded-full text-cream font-semibold text-base transition-all hover:scale-105 hover:shadow-lg active:scale-95"
+              className="w-full sm:w-auto lg:w-full xl:w-auto px-8 py-4 rounded-full text-cream font-semibold text-base text-center transition-all hover:scale-105 hover:shadow-lg active:scale-95"
               style={{
                 backgroundColor: '#D4703A',
                 boxShadow: '0 8px 32px rgba(212,112,58,0.30)',
@@ -109,13 +109,13 @@ export default function Hero({ images }: { images: HeroImage[] }) {
             </Link>
             <button
               onClick={() => document.getElementById('experience')?.scrollIntoView({ behavior: 'smooth' })}
-              className="flex items-center gap-3 px-6 py-4 rounded-full border font-medium text-base transition-all hover:border-cream/40 hover:text-cream group"
+              className="w-full sm:w-auto lg:w-full xl:w-auto flex items-center justify-center sm:justify-start gap-3 px-6 py-4 rounded-full border font-medium text-base whitespace-nowrap transition-all hover:border-cream/40 hover:text-cream group"
               style={{
                 borderColor: 'rgba(250,246,241,0.25)',
                 color: 'rgba(250,246,241,0.70)',
               }}
             >
-              <div className="w-8 h-8 rounded-full flex items-center justify-center border transition-all group-hover:border-cream/40"
+              <div className="w-8 h-8 shrink-0 rounded-full flex items-center justify-center border transition-all group-hover:border-cream/40"
                 style={{ borderColor: 'rgba(250,246,241,0.25)' }}>
                 <Play size={12} fill="currentColor" />
               </div>

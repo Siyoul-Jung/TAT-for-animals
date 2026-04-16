@@ -1,19 +1,20 @@
-// src/components/VideoSection.tsx
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Play } from 'lucide-react';
+import Link from 'next/link';
 
 const EMBED_SRC = 'https://www.youtube.com/embed/UpbujaNsKKA?rel=0&autoplay=1';
+const THUMBNAIL = 'https://img.youtube.com/vi/UpbujaNsKKA/maxresdefault.jpg';
 
-export default function VideoSection() {
+
+export default function ForAnimals() {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const pathname = usePathname();
   const [isPlaying, setIsPlaying] = useState(false);
 
-  // Stop playback when navigating away
   useEffect(() => {
     if (pathname !== '/' && iframeRef.current) {
       iframeRef.current.src = '';
@@ -21,7 +22,6 @@ export default function VideoSection() {
     }
   }, [pathname]);
 
-  // Stop on unmount
   useEffect(() => {
     return () => {
       if (iframeRef.current) iframeRef.current.src = '';
@@ -40,15 +40,17 @@ export default function VideoSection() {
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           className="text-center mb-14"
         >
-          <p className="text-xs tracking-[0.2em] uppercase font-medium text-brand mb-5">
-            Experience it now
+          <p className="text-xs tracking-[0.2em] uppercase font-medium mb-5"
+            style={{ color: 'rgba(212,112,58,0.7)' }}>
+            TAT for Animals
           </p>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-charcoal font-medium leading-tight mb-6">
-            Try it now —<br className="hidden sm:block" /> with your animal.
+            Help your animal feel more<br className="hidden sm:block" /> joyful, relaxed, and at peace.
           </h2>
           <p className="text-base sm:text-lg text-charcoal/60 font-light leading-relaxed max-w-xl mx-auto">
-            Play this video with your animal nearby.
-            You don&apos;t need to do anything except watch and follow along.
+            TAT helped Luna reconnect with the world around her
+            in a way that felt safe and joyful.
+            You can do the same for your cat, your dog, or any animal.
           </p>
         </motion.div>
 
@@ -58,14 +60,13 @@ export default function VideoSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-          className="relative"
+          className="relative mb-14"
         >
           {/* Warm glow */}
           <div
             className="absolute -inset-4 rounded-[2.5rem] blur-2xl opacity-30 pointer-events-none"
             style={{
-              background:
-                'radial-gradient(ellipse at center, rgba(212,112,58,0.4) 0%, transparent 70%)',
+              background: 'radial-gradient(ellipse at center, rgba(212,112,58,0.4) 0%, transparent 70%)',
             }}
           />
 
@@ -73,30 +74,25 @@ export default function VideoSection() {
           <div
             className="relative aspect-video rounded-2xl overflow-hidden"
             style={{
-              boxShadow:
-                '0 0 0 1.5px rgba(212,112,58,0.35), 0 24px 64px rgba(28,15,7,0.18)',
+              boxShadow: '0 0 0 1.5px rgba(212,112,58,0.35), 0 24px 64px rgba(28,15,7,0.18)',
             }}
           >
-            {/* Thumbnail — shown before play */}
             {!isPlaying && (
               <div className="absolute inset-0 z-10">
-                {/* 배경 이미지 */}
                 <img
-                  src="/images/hero/tat_animal_calm9.jpg"
+                  src={THUMBNAIL}
                   alt=""
                   aria-hidden="true"
-                  className="absolute inset-0 w-full h-full object-cover object-center"
+                  className="absolute inset-0 w-full h-full object-cover"
                 />
-                {/* 다크 오버레이 */}
                 <div
                   className="absolute inset-0"
                   style={{ backgroundColor: 'rgba(43,64,25,0.50)' }}
                 />
-                {/* 플레이 버튼 */}
                 <button
                   onClick={() => setIsPlaying(true)}
-                  className="absolute inset-0 w-full h-full flex flex-col items-center justify-center group"
-                  aria-label="Play video"
+                  className="absolute inset-0 w-full h-full flex flex-col items-center justify-center"
+                  aria-label="Play TAT for Animals video"
                 >
                   <motion.div
                     whileHover={{ scale: 1.1 }}
@@ -111,21 +107,20 @@ export default function VideoSection() {
                   </motion.div>
                   <p
                     className="text-sm font-light tracking-wide"
-                    style={{ color: 'rgba(250,246,241,0.6)' }}
+                    style={{ color: 'rgba(250,246,241,0.7)' }}
                   >
-                    Watch how TAT® works
+                    Watch how TAT works for animals
                   </p>
                 </button>
               </div>
             )}
 
-            {/* iframe — only mounted after click */}
             {isPlaying && (
               <iframe
                 ref={iframeRef}
                 className="absolute inset-0 w-full h-full"
                 src={EMBED_SRC}
-                title="TAT® — Try it with your animal"
+                title="TAT for Animals"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               />
@@ -133,16 +128,22 @@ export default function VideoSection() {
           </div>
         </motion.div>
 
-        {/* Bottom note */}
-        <motion.p
+        {/* CTA */}
+        <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="text-center text-sm text-charcoal/40 font-light mt-8"
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="text-center"
         >
-          Used by hundreds of thousands of people in over 80 countries.
-        </motion.p>
+          <Link
+            href="/for-animals"
+            className="inline-flex items-center gap-2 text-sm font-medium tracking-wide transition-opacity duration-200 hover:opacity-70"
+            style={{ color: 'rgba(212,112,58,0.9)' }}
+          >
+            Learn more about TAT for Animals →
+          </Link>
+        </motion.div>
 
       </div>
     </section>

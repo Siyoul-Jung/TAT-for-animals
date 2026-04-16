@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 const testimonials = [
   {
@@ -13,7 +14,7 @@ const testimonials = [
   {
     name: 'Claire T.',
     location: 'London, UK',
-    animal: 'Misty — Rescue Cat',
+    animal: 'Misty — Rescue Dog',
     quote: 'Misty was terrified of everything when we adopted her. TAT® helped her come out of her shell — slowly, gently. Watching her relax, I felt something release in me too. It\'s hard to explain but impossible to ignore.',
     image: '/images/testimonial2.jpg',
   },
@@ -84,6 +85,23 @@ export default function Testimonials() {
             </motion.div>
           ))}
         </div>
+
+        {/* CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          className="text-center mt-16 lg:mt-24"
+        >
+          <Link
+            href="/stories"
+            className="inline-flex items-center gap-2 text-sm font-medium tracking-wide transition-opacity duration-200 hover:opacity-70"
+            style={{ color: 'rgba(212,112,58,0.9)' }}
+          >
+            Read more stories →
+          </Link>
+        </motion.div>
 
       </div>
     </section>

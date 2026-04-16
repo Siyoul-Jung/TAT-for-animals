@@ -2,6 +2,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 const socials = [
   {
@@ -132,6 +133,15 @@ export default function AboutTapas() {
               and one animal — at a time.&rdquo;
             </p>
           </div>
+
+          {/* CTA */}
+          <Link
+            href="/about"
+            className="inline-flex items-center gap-2 text-sm font-medium tracking-wide transition-opacity duration-200 hover:opacity-70 mb-8"
+            style={{ color: 'rgba(212,112,58,0.9)' }}
+          >
+            Learn more about Tapas →
+          </Link>
 
           {/* Social links */}
           <div className="flex items-center gap-3">
