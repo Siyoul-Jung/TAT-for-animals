@@ -60,14 +60,13 @@ src/
 │
 └── components/
     ├── Navbar.tsx          — 고정 내비게이션 (스크롤 감지)
-    ├── Hero.tsx            — 다크 앰버 Hero (섹션 1)
-    ├── SevenBeliefs.tsx    — 7가지 믿음 인터랙션 (섹션 2)
-    ├── HealingLoop.tsx     — For Your Animal (섹션 3)
-    ├── VideoSection.tsx    — 비디오 체험 (섹션 4)
-    ├── Community.tsx       — 커뮤니티 (섹션 5)
-    ├── Pricing.tsx         — 멤버십 카드 (섹션 6)
-    ├── AboutTapas.tsx      — Tapas 소개 (섹션 7)
-    ├── Footer.tsx          — 푸터 (섹션 8)
+    ├── Hero.tsx            — 다크 그린 Hero, 슬라이드쇼 (섹션 1)
+    ├── ForAnimals.tsx      — TAT for Animals 소개 + YouTube 비디오 (섹션 2)
+    ├── ForPeople.tsx       — Mirror of Calm + Healing ACEs Plus 소개 (섹션 3)
+    ├── Testimonials.tsx    — 실제 후기 2개 + /stories CTA (섹션 4)
+    ├── Pricing.tsx         — 멤버십 카드 2단계 (섹션 5)
+    ├── AboutTapas.tsx      — Tapas 프로필 + /about CTA (섹션 6)
+    ├── Footer.tsx          — 푸터 (섹션 7)
     └── ui/
         └── Button.tsx      — 재사용 버튼 컴포넌트
 ```
