@@ -103,7 +103,7 @@ export default function Hero({ images }: { images: HeroImage[] }) {
           <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-4 items-start">
             <Link
               href="/membership"
-              className="w-full sm:w-auto lg:w-full xl:w-auto px-8 py-4 rounded-full text-cream font-semibold text-base text-center transition-all hover:scale-105 hover:shadow-lg active:scale-95"
+              className="w-full sm:w-auto lg:w-full xl:w-auto px-8 py-4 rounded-full text-cream font-semibold text-base text-center whitespace-nowrap transition-all hover:scale-105 hover:shadow-lg active:scale-95"
               style={{
                 backgroundColor: '#D4703A',
                 boxShadow: '0 8px 32px rgba(212,112,58,0.30)',
