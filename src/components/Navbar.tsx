@@ -48,11 +48,14 @@ export default function Navbar() {
 
   if (pathname === '/session') return null;
 
-  // 다크 배경: 골드 호버 (대비 6.5:1 ✓), 크림 배경: 오렌지 호버 (골드는 크림에서 안보임)
+  // 홈페이지만 다크 Hero — 나머지 페이지는 라이트 배경이므로 charcoal 텍스트
+  const isDarkHero = pathname === '/';
   const textClass = isScrolled
     ? 'text-charcoal/70 hover:text-brand'
-    : 'text-cream/70 hover:[color:#D4A843]';
-  const activeTextClass = isScrolled ? 'text-brand' : '[color:#D4A843]';
+    : isDarkHero
+      ? 'text-cream/70 hover:[color:#D4A843]'
+      : 'text-charcoal/70 hover:text-brand';
+  const activeTextClass = isScrolled || !isDarkHero ? 'text-brand' : '[color:#D4A843]';
 
   return (
     <nav
@@ -70,12 +73,12 @@ export default function Navbar() {
           <LogoMark
             size={34}
             orange="#D4703A"
-            green={isScrolled ? '#6B7A52' : '#9AAD84'}
+            green={isScrolled || !isDarkHero ? '#6B7A52' : '#9AAD84'}
           />
           <span className={cn(
             'text-xl tracking-wide transition-colors duration-300',
             'font-[family-name:var(--font-dm-serif)]',
-            isScrolled ? 'text-charcoal' : 'text-cream'
+            isScrolled || !isDarkHero ? 'text-charcoal' : 'text-cream'
           )}>
             TATLife<span className="text-brand">®</span>
           </span>
@@ -151,7 +154,7 @@ export default function Navbar() {
         <button
           className={cn(
             'md:hidden transition-colors duration-300',
-            isScrolled ? 'text-charcoal' : 'text-cream'
+            isScrolled || !isDarkHero ? 'text-charcoal' : 'text-cream'
           )}
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
