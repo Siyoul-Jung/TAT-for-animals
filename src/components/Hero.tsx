@@ -134,12 +134,14 @@ export default function Hero({ images }: { images: HeroImage[] }) {
           className="relative hidden lg:block overflow-hidden"
         >
           {shuffled.map((img, i) => (
-            <motion.div
+            <div
               key={img.src}
-              animate={{ opacity: i === currentIndex ? 1 : 0 }}
-              transition={{ duration: 2, ease: 'easeInOut' }}
               className="absolute inset-0"
-              style={{ willChange: 'opacity' }}
+              style={{
+                opacity: i === currentIndex ? 1 : 0,
+                transition: 'opacity 2s ease-in-out',
+                willChange: 'opacity',
+              }}
             >
               {/* 흐린 배경 — 어떤 비율이든 컨테이너를 채움 */}
               <img
@@ -157,7 +159,7 @@ export default function Hero({ images }: { images: HeroImage[] }) {
                 loading="eager"
                 className="absolute inset-0 w-full h-full object-contain object-center"
               />
-            </motion.div>
+            </div>
           ))}
           {/* 왼쪽 경계 — 배경색과 자연스럽게 연결 */}
           <div
