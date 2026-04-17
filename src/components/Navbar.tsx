@@ -48,8 +48,9 @@ export default function Navbar() {
 
   if (pathname === '/session') return null;
 
-  // 홈페이지만 다크 Hero — 나머지 페이지는 라이트 배경이므로 charcoal 텍스트
-  const isDarkHero = pathname === '/';
+  // 다크 Hero가 있는 페이지 목록 — 상단 섹션이 어두운 배경이라 cream 텍스트가 필요
+  const darkHeroPages = ['/', '/membership'];
+  const isDarkHero = darkHeroPages.includes(pathname);
   const textClass = isScrolled
     ? 'text-charcoal/70 hover:text-brand'
     : isDarkHero
