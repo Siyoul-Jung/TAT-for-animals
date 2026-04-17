@@ -3,6 +3,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Play } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
@@ -56,12 +57,14 @@ export default function Hero({ images }: { images: HeroImage[] }) {
       {/* Mobile background image — 이미지를 배경으로 깔고 overlay로 어둡게 */}
       {shuffled.length > 0 && (
         <div className="lg:hidden absolute inset-0 z-0">
-          <img
-            src={shuffled[currentIndex]?.src}
+          <Image
+            src={shuffled[currentIndex]?.src ?? '/images/hero/tat_animal_calm.jpg'}
             alt=""
             aria-hidden="true"
-            loading="eager"
-            className="absolute inset-0 w-full h-full object-cover object-center"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-center"
           />
           {/* 다크 그린 오버레이 — 텍스트 가독성 + 브랜드 컬러 유지 */}
           <div
@@ -144,20 +147,24 @@ export default function Hero({ images }: { images: HeroImage[] }) {
               }}
             >
               {/* 흐린 배경 — 어떤 비율이든 컨테이너를 채움 */}
-              <img
+              <Image
                 src={img.src}
                 alt=""
                 aria-hidden="true"
-                loading="eager"
-                className="absolute inset-0 w-full h-full object-cover object-center scale-110"
+                fill
+                priority={i === 0}
+                sizes="60vw"
+                className="object-cover object-center scale-110"
                 style={{ filter: 'blur(24px)', opacity: 0.6 }}
               />
               {/* 선명한 원본 — 항상 전체가 보임 */}
-              <img
+              <Image
                 src={img.src}
                 alt={img.alt}
-                loading="eager"
-                className="absolute inset-0 w-full h-full object-contain object-center"
+                fill
+                priority={i === 0}
+                sizes="60vw"
+                className="object-contain object-center"
               />
             </div>
           ))}
