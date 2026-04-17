@@ -60,6 +60,7 @@ export default function Hero({ images }: { images: HeroImage[] }) {
             src={shuffled[currentIndex]?.src}
             alt=""
             aria-hidden="true"
+            loading="eager"
             className="absolute inset-0 w-full h-full object-cover object-center"
           />
           {/* 다크 그린 오버레이 — 텍스트 가독성 + 브랜드 컬러 유지 */}
@@ -136,15 +137,16 @@ export default function Hero({ images }: { images: HeroImage[] }) {
             <motion.div
               key={img.src}
               animate={{ opacity: i === currentIndex ? 1 : 0 }}
-              transition={{ duration: 1.5, ease: 'easeInOut' }}
+              transition={{ duration: 2, ease: 'easeInOut' }}
               className="absolute inset-0"
+              style={{ willChange: 'opacity' }}
             >
               {/* 흐린 배경 — 어떤 비율이든 컨테이너를 채움 */}
               <img
                 src={img.src}
                 alt=""
                 aria-hidden="true"
-                loading={i === 0 ? 'eager' : 'lazy'}
+                loading="eager"
                 className="absolute inset-0 w-full h-full object-cover object-center scale-110"
                 style={{ filter: 'blur(24px)', opacity: 0.6 }}
               />
@@ -152,7 +154,7 @@ export default function Hero({ images }: { images: HeroImage[] }) {
               <img
                 src={img.src}
                 alt={img.alt}
-                loading={i === 0 ? 'eager' : 'lazy'}
+                loading="eager"
                 className="absolute inset-0 w-full h-full object-contain object-center"
               />
             </motion.div>
