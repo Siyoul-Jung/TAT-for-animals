@@ -73,21 +73,43 @@ export default function MembershipClient() {
   return (
     <div className="min-h-screen">
 
-      {/* 1. Hero — 다크 그린 */}
+      {/* 1. Hero — 배경 이미지 + 다크 오버레이 */}
       <section
         className="relative min-h-screen flex items-center overflow-hidden"
         style={{ backgroundColor: '#2B4019' }}
       >
+        {/* 배경 이미지 */}
+        <Image
+          src="/images/membership_img.jpg"
+          alt=""
+          aria-hidden="true"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+
+        {/* 다크 그린 오버레이 */}
+        <div
+          className="absolute inset-0"
+          style={{ backgroundColor: 'rgba(43,64,25,0.68)' }}
+        />
+
+        {/* 웜 래디얼 글로우 */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: 'radial-gradient(ellipse 60% 60% at 65% 50%, rgba(212,112,58,0.12) 0%, transparent 70%)',
+            background: 'radial-gradient(ellipse 70% 60% at 50% 50%, rgba(212,112,58,0.14) 0%, transparent 70%)',
           }}
         />
 
-        <div className="relative z-10 w-full max-w-6xl mx-auto px-6 grid lg:grid-cols-2 gap-12 lg:gap-20 items-center py-40 lg:py-32">
+        {/* 하단 페이드 — 다음 섹션으로 자연스럽게 */}
+        <div
+          className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none"
+          style={{ background: 'linear-gradient(to bottom, transparent, rgba(43,64,25,0.5))' }}
+        />
 
-          {/* 텍스트 */}
+        <div className="relative z-10 w-full max-w-3xl mx-auto px-6 text-center py-40">
           <motion.div
             initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
@@ -99,51 +121,26 @@ export default function MembershipClient() {
             >
               Membership
             </p>
-            <h1 className="font-serif text-4xl sm:text-5xl lg:text-[3.5rem] leading-[1.1] text-cream font-medium mb-6">
+            <h1 className="font-serif text-4xl sm:text-5xl lg:text-[4rem] leading-[1.1] text-cream font-medium mb-6">
               Choose your path<br />to calm.
             </h1>
             <p
               className="font-serif italic text-xl sm:text-2xl mb-10"
-              style={{ color: 'rgba(250,246,241,0.55)' }}
+              style={{ color: 'rgba(250,246,241,0.60)' }}
             >
-              For you. For your animal. At your own pace.
+              For your animal and you. At your own pace.
             </p>
             <button
               onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
               className="px-8 py-4 rounded-full text-cream font-semibold text-base transition-all hover:scale-105 hover:shadow-lg active:scale-95"
               style={{
                 backgroundColor: '#D4703A',
-                boxShadow: '0 8px 32px rgba(212,112,58,0.30)',
+                boxShadow: '0 8px 32px rgba(212,112,58,0.35)',
               }}
             >
               See Membership Options
             </button>
           </motion.div>
-
-          {/* 이미지 */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.97 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="relative rounded-2xl overflow-hidden aspect-[4/5]"
-            style={{ boxShadow: '0 32px 80px rgba(0,0,0,0.25)' }}
-          >
-            <Image
-              src="/images/membership_img.jpg"
-              alt="A person with their animal, calm and connected"
-              fill
-              priority
-              sizes="(min-width: 1024px) 50vw, 100vw"
-              className="object-cover object-center"
-            />
-            <div
-              className="absolute inset-0"
-              style={{
-                background: 'linear-gradient(to top, rgba(43,64,25,0.4) 0%, transparent 50%)',
-              }}
-            />
-          </motion.div>
-
         </div>
       </section>
 
@@ -319,10 +316,16 @@ export default function MembershipClient() {
 
                 <div className="flex items-baseline gap-1.5 mb-3">
                   <span
+                    className="font-sans text-2xl font-medium"
+                    style={{ color: tier.popular ? 'rgba(250,246,241,0.7)' : 'rgba(28,16,7,0.5)' }}
+                  >
+                    $
+                  </span>
+                  <span
                     className="font-serif text-5xl font-medium"
                     style={{ color: tier.popular ? '#FAF6F1' : '#1C1007' }}
                   >
-                    ${tier.price}
+                    {tier.price}
                   </span>
                   <span
                     className="text-sm font-light"

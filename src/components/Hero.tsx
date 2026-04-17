@@ -64,7 +64,7 @@ export default function Hero({ images }: { images: HeroImage[] }) {
             fill
             priority
             sizes="100vw"
-            className="object-cover object-center"
+            className="object-cover object-top"
           />
           {/* 다크 그린 오버레이 — 텍스트 가독성 + 브랜드 컬러 유지 */}
           <div
