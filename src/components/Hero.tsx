@@ -63,7 +63,7 @@ export default function Hero({ images }: { images: HeroImage[] }) {
             aria-hidden="true"
             fill
             priority
-            sizes="100vw"
+            sizes="(max-width: 1024px) 100vw, 0px"
             className="object-cover object-top"
           />
           {/* 다크 그린 오버레이 — 텍스트 가독성 + 브랜드 컬러 유지 */}
