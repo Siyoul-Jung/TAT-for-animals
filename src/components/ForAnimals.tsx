@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import { Play } from 'lucide-react';
 import Link from 'next/link';
 
@@ -12,8 +12,10 @@ const THUMBNAIL = 'https://img.youtube.com/vi/UpbujaNsKKA/maxresdefault.jpg';
 
 export default function ForAnimals() {
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const videoRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const [isPlaying, setIsPlaying] = useState(false);
+  const isInView = useInView(videoRef, { once: true, margin: '-15% 0px' });
 
   useEffect(() => {
     if (pathname !== '/' && iframeRef.current) {
@@ -56,6 +58,7 @@ export default function ForAnimals() {
 
         {/* Video player */}
         <motion.div
+          ref={videoRef}
           initial={{ opacity: 0, y: 32 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -79,12 +82,20 @@ export default function ForAnimals() {
           >
             {!isPlaying && (
               <div className="absolute inset-0 z-10">
-                <img
-                  src={THUMBNAIL}
-                  alt=""
-                  aria-hidden="true"
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
+                <div className="absolute inset-0 overflow-hidden">
+                  <motion.div
+                    className="absolute inset-0"
+                    animate={{ scale: isInView ? 1.06 : 1 }}
+                    transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                  >
+                    <img
+                      src={THUMBNAIL}
+                      alt=""
+                      aria-hidden="true"
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                  </motion.div>
+                </div>
                 <div
                   className="absolute inset-0"
                   style={{ backgroundColor: 'rgba(43,64,25,0.50)' }}
@@ -94,17 +105,28 @@ export default function ForAnimals() {
                   className="absolute inset-0 w-full h-full flex flex-col items-center justify-center"
                   aria-label="Play TAT for Animals video"
                 >
-                  <motion.div
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="w-20 h-20 rounded-full flex items-center justify-center mb-5"
-                    style={{
-                      backgroundColor: '#D4703A',
-                      boxShadow: '0 0 0 14px rgba(212,112,58,0.15)',
-                    }}
-                  >
-                    <Play size={28} fill="white" className="text-white ml-1" />
-                  </motion.div>
+                  <div className="relative mb-5">
+                    {/* Pulse ring */}
+                    {isInView && (
+                      <motion.div
+                        className="absolute inset-0 rounded-full"
+                        style={{ backgroundColor: 'rgba(212,112,58,0.3)' }}
+                        animate={{ scale: [1, 1.7], opacity: [0.6, 0] }}
+                        transition={{ duration: 1.8, repeat: Infinity, ease: 'easeOut' }}
+                      />
+                    )}
+                    <motion.div
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="relative w-20 h-20 rounded-full flex items-center justify-center"
+                      style={{
+                        backgroundColor: '#D4703A',
+                        boxShadow: '0 0 0 14px rgba(212,112,58,0.15)',
+                      }}
+                    >
+                      <Play size={28} fill="white" className="text-white ml-1" />
+                    </motion.div>
+                  </div>
                   <p
                     className="text-sm font-light tracking-wide"
                     style={{ color: 'rgba(250,246,241,0.7)' }}

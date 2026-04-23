@@ -36,6 +36,8 @@ export default function Navbar() {
 
 
 // 다크 Hero가 있는 페이지 목록 — 상단 섹션이 어두운 배경이라 cream 텍스트가 필요
+  if (pathname === '/coming-soon') return null;
+
   const darkHeroPages = ['/', '/membership'];
   const isDarkHero = darkHeroPages.includes(pathname);
   return (

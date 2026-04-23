@@ -1,15 +1,21 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
+const COMING_SOON = process.env.NODE_ENV === 'production';
+
 // 로그인이 필요한 경로
-const PROTECTED_PATHS = ['/dashboard', '/session']
+const PROTECTED_PATHS = ['/dashboard']
 
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname
+
+  // Coming soon — 프로덕션에서만 활성화
+  if (COMING_SOON && !pathname.startsWith('/coming-soon') && !pathname.startsWith('/api')) {
+    return NextResponse.redirect(new URL('/coming-soon', request.url))
+  }
+
   const isProtected = PROTECTED_PATHS.some((p) => pathname.startsWith(p))
 
-  // 보호 경로가 아니면 Supabase 호출 없이 즉시 통과
-  // → 공개 페이지 로딩 속도에 영향 없음
   if (!isProtected) {
     return NextResponse.next({ request })
   }

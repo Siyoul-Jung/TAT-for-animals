@@ -1,7 +1,6 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import Link from 'next/link';
 import { useState, useEffect } from 'react';
 
 type Testimonial = {
@@ -171,22 +170,6 @@ export default function Testimonials() {
           </div>
         </motion.div>
 
-        {/* CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          className="text-center mt-12"
-        >
-          <Link
-            href="/stories"
-            className="inline-flex items-center gap-2 text-sm font-medium tracking-wide transition-opacity duration-200 hover:opacity-70"
-            style={{ color: 'rgba(212,112,58,0.9)' }}
-          >
-            Read more stories →
-          </Link>
-        </motion.div>
 
       </div>
     </section>
