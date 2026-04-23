@@ -34,7 +34,7 @@ export default function ComingSoon() {
           className="text-xs tracking-[0.2em] uppercase font-light"
           style={{ color: 'rgba(212,168,67,0.7)' }}
         >
-          Tapas Fleming · TAT®
+          Tapas Fleming · TATLife®
         </p>
         <h1
           className="text-3xl sm:text-4xl font-medium leading-tight"
