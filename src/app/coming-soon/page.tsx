@@ -30,10 +30,16 @@ export default function ComingSoon() {
 
       {/* Text */}
       <div className="relative z-10 text-center flex flex-col items-center gap-3">
+        <p
+          className="text-xs tracking-[0.2em] uppercase font-light"
+          style={{ color: 'rgba(212,168,67,0.7)' }}
+        >
+          Tapas Fleming · TAT®
+        </p>
         <h1
           className="text-3xl sm:text-4xl font-medium leading-tight"
           style={{
-            fontFamily: 'var(--font-dm-serif)',
+            fontFamily: 'var(--font-dm-sans)',
             color: '#FAF6F1',
           }}
         >
