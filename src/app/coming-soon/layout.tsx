@@ -7,7 +7,7 @@ export default function ComingSoonLayout({ children }: { children: React.ReactNo
         <LogoMark size={34} orange="#D4703A" green="#9AAD84" />
         <span
           className="text-xl tracking-wide"
-          style={{ fontFamily: 'var(--font-dm-sans)', color: '#FAF6F1' }}
+          style={{ fontFamily: 'var(--font-dm-sans)', color: '#1C1007' }}
         >
           TAT for Animals<span style={{ color: '#D4703A' }}>®</span>
         </span>

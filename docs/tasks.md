@@ -1,13 +1,24 @@
 # TAT for Animals — 할 일 목록
 
-*Last updated: April 21, 2026*
+*Last updated: April 24, 2026*
+
+---
+
+## 📋 이번 미팅 팔로업 (Tapas 확인 필요)
+
+- [ ] **디자인 방향 확정** — 색상/폰트/전체 비주얼 방향 ("overall vision" 재검토 요청)
+- [ ] **폰트 선택** — `/font-preview` 페이지 보여주고 Sans-serif 옵션 중 선택 받기
+- [ ] **홈페이지 영상 확인** — YouTube 채널에 TAT for Animals 전용 공개 영상 없음. 기존 영상 중 공개 가능한 것 있는지, 또는 짧은 소개 영상(2-3분) 신규 촬영 필요 여부 확인
+- [ ] **멤버십 가격 확정** — 티어 구성/혜택은 SRS에 확정. Basic($X/월) + Premium($X/월) 가격만 미확정
 
 ---
 
 ## 🔴 즉시 (지금 당장)
 
 - [ ] tatlife.com 백엔드 로그인 → TAT for Animals 멤버십 섹션 구조 파악
-- [ ] 비디오 12개 검토 → 재촬영 필요 여부 판단 후 Tapas에게 피드백
+- [x] 비디오 12개 검토 → 재촬영 필요 여부 판단 후 Tapas에게 피드백
+  - Chapter 2 (Tips, TAT Terms, Poses), Chapter 3 (Three Blockages, Cat/Dog Happier, Five Essential Ways, Animal Has Passed, Is Your Animal Acting Weird) 분석 완료
+  - 결론: 기존 영상은 대시보드 콘텐츠로 충분. 홈페이지용 신규 소개 영상(2-3분) 필요
 
 ---
 
@@ -23,7 +34,9 @@
 
 - [x] 네비게이션 변경 — `[Logo] + [Join]` 구조로
 - [x] 불필요한 페이지 제거 — `/for-your-animal`, `/work-with-tapas`, `/session`
-- [ ] 홈페이지 섹션 재구성 — Animals 전용 구조로
+- [x] `/faq` 페이지 초안 구현 — 아코디언 형식, 첫 방문자 대상 12개 Q&A
+- [x] Supabase `video_watch_events` 테이블 생성 + RLS + 인덱스 설정
+- [ ] 홈페이지 섹션 재구성 — Animals 전용 구조로 (Hero → How It Works → Stories → Membership → About Tapas)
 - [ ] Sanity CMS 스키마 설계 — 비디오 + 웨비나 녹화
 - [ ] 대시보드 — 웨비나 일정 + 초대 이메일 + 녹화 업로드 알림 구현
 

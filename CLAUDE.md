@@ -1,5 +1,5 @@
 @AGENTS.md
-@docs/srs.md
+@docs/srs_tat_for_animals.md
 @docs/design_spec.md
 
 # TAT® Calm — 프로젝트 가이드라인
@@ -34,9 +34,9 @@
 ---
 
 ## 프로젝트 개요
-tatlife.com의 전면 리디자인 프로젝트입니다.
-동물을 치유의 첫 진입점으로 내세우는 새로운 포지셔닝을 구현합니다.
-자세한 내용은 위에 참조된 `srs.md` 및 `design_spec.md`를 확인하세요.
+tatforanimals.com — TAT for Animals 전용 독립 멤버십 플랫폼 신규 구축 프로젝트입니다.
+tatlife.com과 완전히 분리된 독립 사이트입니다.
+자세한 내용은 위에 참조된 `srs_tat_for_animals.md` 및 `design_spec.md`를 확인하세요.
 
 ---
 
