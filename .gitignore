@@ -47,6 +47,13 @@ docs/technical_review.md
 AGENTS.md
 CLAUDE.md
 
+# private business documents
+docs/invoice*.html
+docs/estimate.md
+
+# temp files
+supabase/.temp/
+
 # large media — serve from CDN
 /public/videos/
 

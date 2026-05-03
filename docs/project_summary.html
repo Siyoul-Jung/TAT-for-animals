@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TAT for Animals — Project Summary</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      color: #2a1a0a;
+      background: #fff;
+      padding: 60px;
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* Header */
+    .doc-header {
+      border-bottom: 2px solid #D4703A;
+      padding-bottom: 28px;
+      margin-bottom: 40px;
+    }
+    .doc-header h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 6px;
+    }
+    .doc-header p {
+      font-size: 13px;
+      color: #888;
+    }
+
+    /* Section */
+    section {
+      margin-bottom: 44px;
+    }
+    h2 {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #D4703A;
+      margin-bottom: 16px;
+    }
+    h3 {
+      font-size: 15px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+    }
+    p {
+      font-size: 14px;
+      color: #444;
+      margin-bottom: 12px;
+    }
+
+    /* Cards */
+    .card-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 4px;
+    }
+    .card {
+      border: 1px solid #e8e0d8;
+      border-radius: 10px;
+      padding: 20px;
+    }
+    .card.featured {
+      border-color: #D4703A;
+      background: #fdf8f4;
+    }
+    .card .tier-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #D4703A;
+      margin-bottom: 4px;
+    }
+    .card h3 {
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+    .card .price {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 14px;
+    }
+    .card .price span {
+      font-size: 13px;
+      font-weight: 400;
+      color: #888;
+    }
+    .card ul {
+      list-style: none;
+      font-size: 13px;
+      color: #555;
+    }
+    .card ul li {
+      padding: 4px 0;
+      border-bottom: 1px solid #f0e8e0;
+    }
+    .card ul li:last-child { border-bottom: none; }
+    .card ul li::before {
+      content: '✓ ';
+      color: #D4703A;
+      font-weight: 600;
+    }
+
+    /* Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th {
+      text-align: left;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #999;
+      padding: 8px 12px;
+      border-bottom: 1px solid #e5e5e5;
+    }
+    td {
+      padding: 11px 12px;
+      border-bottom: 1px solid #f2f2f2;
+      color: #444;
+      vertical-align: top;
+    }
+    td:first-child { font-weight: 500; color: #1a1a1a; }
+    tr:last-child td { border-bottom: none; }
+
+    /* Status badges */
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+    .badge.done { background: #eaf5ea; color: #2d7a2d; }
+    .badge.pending { background: #fff4ec; color: #c05a20; }
+
+    /* Timeline */
+    .timeline {
+      border-left: 2px solid #e8e0d8;
+      padding-left: 20px;
+    }
+    .timeline-item {
+      position: relative;
+      margin-bottom: 20px;
+    }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -26px;
+      top: 5px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #D4703A;
+    }
+    .timeline-item h3 {
+      font-size: 14px;
+      margin-bottom: 2px;
+    }
+    .timeline-item p {
+      font-size: 12px;
+      color: #888;
+      margin: 0;
+    }
+
+    /* Cost table */
+    .cost-total {
+      font-weight: 700;
+      font-size: 14px;
+      color: #1a1a1a;
+      border-top: 2px solid #e5e5e5 !important;
+    }
+
+    /* Footer note */
+    .doc-footer {
+      border-top: 1px solid #e5e5e5;
+      padding-top: 20px;
+      margin-top: 20px;
+      font-size: 12px;
+      color: #aaa;
+    }
+
+    @media print {
+      body { padding: 40px; }
+      section { page-break-inside: avoid; }
+      table { page-break-inside: avoid; }
+      .card-grid { page-break-inside: avoid; }
+      .timeline { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="doc-header">
+    <h1>TAT for Animals — Project Summary</h1>
+    <p>tatforanimals.com &nbsp;·&nbsp; Prepared by Siyoul &nbsp;·&nbsp; April 26, 2026</p>
+  </div>
+
+  <!-- Overview -->
+  <section>
+    <h2>Overview</h2>
+    <p>
+      tatforanimals.com is a new, independent membership platform built specifically for animal owners.
+      It is completely separate from tatlife.com — nothing on the existing site changes.
+    </p>
+    <p>
+      The site is designed to feel calm, warm, and easy to use. A visitor's first impression should be felt before it is understood — the design puts experience first, information second.
+    </p>
+  </section>
+
+  <!-- Pages -->
+  <section>
+    <h2>Pages</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Page</th>
+          <th>What it does</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Homepage</td>
+          <td>Introduces TAT for Animals — emotional hook, how it works, real stories, membership options, and Tapas</td>
+        </tr>
+        <tr>
+          <td>Membership</td>
+          <td>Two-tier pricing cards and signup flow</td>
+        </tr>
+        <tr>
+          <td>Member Dashboard</td>
+          <td>Video library, webinar recordings, and upcoming webinar schedule — for members only</td>
+        </tr>
+        <tr>
+          <td>Login</td>
+          <td>Simple email and password login / sign up</td>
+        </tr>
+        <tr>
+          <td>About</td>
+          <td>Tapas's story and the TAT for Animals background</td>
+        </tr>
+        <tr>
+          <td>FAQ</td>
+          <td>Answers to common questions for first-time visitors</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Membership -->
+  <section>
+    <h2>Membership Tiers</h2>
+    <div class="card-grid">
+      <div class="card">
+        <div class="tier-label">Tier 1</div>
+        <h3>The Calm Library</h3>
+        <div class="price">$27 <span>/ month</span></div>
+        <ul>
+          <li>24 TAT for Animals videos</li>
+          <li>4 content categories</li>
+          <li>Access anytime, on any device</li>
+          <li>Cancel anytime</li>
+        </ul>
+      </div>
+      <div class="card featured">
+        <div class="tier-label">Tier 2</div>
+        <h3>The Calm Circle</h3>
+        <div class="price">$47 <span>/ month</span></div>
+        <ul>
+          <li>Everything in The Calm Library</li>
+          <li>Monthly live webinar access</li>
+          <li>Full archive of past recordings</li>
+          <li>Cancel anytime</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Member Dashboard -->
+  <section>
+    <h2>Member Dashboard</h2>
+    <p>Once logged in, members see everything in one place:</p>
+    <table>
+      <thead>
+        <tr><th>Section</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Video Library</td>
+          <td>24 videos organized across 4 categories — Foundational, Main Content, Bonus 2025, Bonus 2026</td>
+        </tr>
+        <tr>
+          <td>Webinar Recordings</td>
+          <td>Past webinar recordings, added automatically after each session (The Calm Circle)</td>
+        </tr>
+        <tr>
+          <td>Upcoming Webinars</td>
+          <td>Schedule of upcoming live sessions with dates and times</td>
+        </tr>
+        <tr>
+          <td>My Subscription</td>
+          <td>View current plan, upgrade, or cancel — all self-service</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Content Management -->
+  <section>
+    <h2>Content Management</h2>
+    <p>Jez can manage all content independently — no developer needed for day-to-day updates.</p>
+    <p>For design changes, new features, or structural updates to the site, a developer with Next.js experience will be needed. Any experienced Next.js developer can get up to speed with this codebase in 1–2 days.</p>
+    <table>
+      <thead>
+        <tr><th>Task</th><th>How</th><th>Time</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Add a new webinar recording</td>
+          <td>Log in → create entry + paste link → publish</td>
+          <td>~5 min</td>
+        </tr>
+        <tr>
+          <td>Upload a new video</td>
+          <td>Log in → create entry + paste link → publish</td>
+          <td>~5 min</td>
+        </tr>
+        <tr>
+          <td>Update text or images</td>
+          <td>Log in → find entry → edit → publish</td>
+          <td>~10 min</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Timeline -->
+  <section>
+    <h2>Timeline</h2>
+    <p style="margin-bottom: 20px;">Total estimated duration: <strong>8–10 weeks</strong> (started April 12, 2026 — 2 weeks completed). Estimated completion: <strong>early to mid-June 2026</strong>.</p>
+    <div class="timeline">
+      <div class="timeline-item">
+        <h3>Phase A — Content System Setup &nbsp;<span style="color:#aaa;font-weight:400;font-size:12px;">1 week</span></h3>
+        <p>Setting up the content management system and connecting it to the site</p>
+      </div>
+      <div class="timeline-item">
+        <h3>Phase B — Homepage &nbsp;<span style="color:#aaa;font-weight:400;font-size:12px;">1.5 weeks</span></h3>
+        <p>Hero, How It Works, Stories, Membership, About Tapas</p>
+      </div>
+      <div class="timeline-item">
+        <h3>Phase C — Member Dashboard &nbsp;<span style="color:#aaa;font-weight:400;font-size:12px;">1.5 weeks</span></h3>
+        <p>Video library, webinar recordings, upcoming schedule</p>
+      </div>
+      <div class="timeline-item">
+        <h3>Phase D — Supporting Pages &nbsp;<span style="color:#aaa;font-weight:400;font-size:12px;">0.5 weeks</span></h3>
+        <p>About and FAQ pages</p>
+      </div>
+      <div class="timeline-item">
+        <h3>Phase E — Automation &nbsp;<span style="color:#aaa;font-weight:400;font-size:12px;">1 week</span></h3>
+        <p>Welcome emails, webinar invitations, recording upload notifications</p>
+      </div>
+      <div class="timeline-item">
+        <h3>Phase F — PayPal Integration &nbsp;<span style="color:#aaa;font-weight:400;font-size:12px;">0.5 weeks</span></h3>
+        <p>PayPal as a second payment option alongside Stripe</p>
+      </div>
+      <div class="timeline-item">
+        <h3>Phase G — QA & Launch &nbsp;<span style="color:#aaa;font-weight:400;font-size:12px;">1 week</span></h3>
+        <p>Testing, mobile optimization, domain setup</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Monthly Costs -->
+  <section>
+    <h2>Monthly Service Costs</h2>
+    <p style="margin-bottom: 12px;">All services run on free tiers at launch. The figures below are estimated costs — actual usage may vary depending on subscriber volume and activity. Paid plans are only needed as the subscriber base grows.</p>
+    <table>
+      <thead>
+        <tr><th>Service</th><th>Purpose</th><th>At Launch</th><th>At Scale</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Vercel</td>
+          <td>Website hosting</td>
+          <td>Free</td>
+          <td>$20/mo</td>
+        </tr>
+        <tr>
+          <td>Supabase</td>
+          <td>Member accounts & data</td>
+          <td>Free</td>
+          <td>$25/mo</td>
+        </tr>
+        <tr>
+          <td>Sanity</td>
+          <td>Content management</td>
+          <td>Free</td>
+          <td>$15/mo</td>
+        </tr>
+        <tr>
+          <td>Stripe</td>
+          <td>Subscription billing</td>
+          <td>2.9% + $0.30/txn</td>
+          <td>Same</td>
+        </tr>
+        <tr>
+          <td>Resend</td>
+          <td>Email delivery</td>
+          <td>Free</td>
+          <td>$20/mo</td>
+        </tr>
+        <tr>
+          <td>Make.com</td>
+          <td>Workflow automation</td>
+          <td>Free</td>
+          <td>$9/mo</td>
+        </tr>
+        <tr>
+          <td class="cost-total">Estimated Total</td>
+          <td class="cost-total"></td>
+          <td class="cost-total">$0/mo</td>
+          <td class="cost-total">~$90/mo</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Still Needed -->
+  <section>
+    <h2>Still Needed</h2>
+    <table>
+      <thead>
+        <tr><th>Item</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Animal healing stories for homepage (2–3 stories)</td>
+          <td><span class="badge pending">Pending — Tapas / Jez</span></td>
+        </tr>
+        <tr>
+          <td>PayPal Business account</td>
+          <td><span class="badge pending">Pending — Jez</span></td>
+        </tr>
+        <tr>
+          <td>Final color and font direction</td>
+          <td><span class="badge pending">Pending — Tapas & Bruce</span></td>
+        </tr>
+        <tr>
+          <td>Tapas bio text — for About page and homepage</td>
+          <td><span class="badge pending">Pending — Tapas</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Service Terms -->
+  <section>
+    <h2>Service Terms</h2>
+    <table>
+      <tbody>
+        <tr>
+          <td>Design revisions</td>
+          <td>Unlimited. The design isn't finished until B&amp;B say so.</td>
+        </tr>
+        <tr>
+          <td>Bug fixes</td>
+          <td>Found something that doesn't work? Consider it already fixed.</td>
+        </tr>
+        <tr>
+          <td>Code ownership</td>
+          <td>All code is owned by Tapas Fleming / TATLife®, Inc. upon project completion</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="doc-footer">
+    TAT for Animals &nbsp;·&nbsp; tatforanimals.com &nbsp;·&nbsp; April 2026 &nbsp;·&nbsp; Siyoul &nbsp;·&nbsp; philoleben@gmail.com
+  </div>
+
+</body>
+</html>
