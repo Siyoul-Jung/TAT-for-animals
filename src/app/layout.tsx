@@ -59,7 +59,9 @@ export default function RootLayout({
       className={`${playfair.variable} ${dmSans.variable} ${dmSerifDisplay.variable} ${outfit.variable} ${plusJakarta.variable} ${manrope.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans bg-cream text-charcoal selection:bg-brand/20">
-        <Navbar />
+        <Suspense fallback={null}>
+          <Navbar />
+        </Suspense>
         <main className="flex-grow">
           <Suspense fallback={<div className="min-h-screen bg-cream" />}>
             {children}

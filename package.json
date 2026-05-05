@@ -3,22 +3,25 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "node --max-old-space-size=4096 node_modules/next/dist/bin/next dev --webpack",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
     "@sanity/client": "^7.21.0",
+    "@sanity/vision": "^5.23.0",
     "@supabase/ssr": "^0.10.2",
     "@supabase/supabase-js": "^2.103.2",
     "clsx": "^2.1.1",
     "framer-motion": "^12.38.0",
     "lucide-react": "^1.6.0",
     "next": "16.2.1",
+    "next-sanity": "^12.4.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "resend": "^6.11.0",
+    "sanity": "^5.23.0",
     "stripe": "^22.0.1",
     "tailwind-merge": "^3.5.0"
   },

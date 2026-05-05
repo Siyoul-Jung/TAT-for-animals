@@ -50,9 +50,12 @@ CLAUDE.md
 # private business documents
 docs/invoice*.html
 docs/estimate.md
+docs/marketing_plan*.md
 
 # temp files
 supabase/.temp/
+debug.log
+/videos/
 
 # large media — serve from CDN
 /public/videos/
