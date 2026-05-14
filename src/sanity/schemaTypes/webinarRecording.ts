@@ -31,20 +31,6 @@ export const webinarRecordingType = defineType({
       rows: 3,
       description: '2–3 sentence description',
     }),
-    defineField({
-      name: 'status',
-      title: 'Status',
-      type: 'string',
-      options: {
-        list: [
-          { title: 'Draft', value: 'draft' },
-          { title: 'Ready', value: 'ready' },
-          { title: 'Published', value: 'published' },
-        ],
-      },
-      initialValue: 'draft',
-      validation: (r) => r.required(),
-    }),
   ],
   preview: {
     select: {

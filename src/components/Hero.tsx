@@ -31,50 +31,17 @@ export default function Hero({ images }: { images: HeroImage[] }) {
 
   return (
     <section
-      className="relative min-h-screen flex items-center overflow-hidden"
-      style={{ backgroundColor: '#2B4019' }}
+      className="relative min-h-screen flex items-center overflow-hidden bg-cream"
     >
-      {/* Radial glow — warm orange/gold emanating from center */}
+      {/* Subtle warm glow */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: [
-            'radial-gradient(ellipse 80% 60% at 50% 50%, rgba(212,112,58,0.18) 0%, rgba(212,160,67,0.08) 40%, transparent 70%)',
-            'radial-gradient(ellipse 40% 40% at 30% 60%, rgba(212,112,58,0.10) 0%, transparent 60%)',
-          ].join(', '),
+          background: 'radial-gradient(ellipse 60% 50% at 30% 60%, rgba(212,112,58,0.07) 0%, transparent 65%)',
         }}
       />
 
-      {/* Grain texture overlay */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-[0.04]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E")`,
-          backgroundSize: '200px 200px',
-        }}
-      />
-
-      {/* Mobile background image — 이미지를 배경으로 깔고 overlay로 어둡게 */}
-      {shuffled.length > 0 && (
-        <div className="lg:hidden absolute inset-0 z-0">
-          <Image
-            src={shuffled[currentIndex]?.src ?? '/images/hero/tat_animal_calm.jpg'}
-            alt=""
-            aria-hidden="true"
-            fill
-            priority
-            sizes="(max-width: 1024px) 100vw, 0px"
-            className="object-cover object-top"
-          />
-          {/* 다크 그린 오버레이 — 텍스트 가독성 + 브랜드 컬러 유지 */}
-          <div
-            className="absolute inset-0"
-            style={{ backgroundColor: 'rgba(43,64,25,0.68)' }}
-          />
-        </div>
-      )}
-
-      {/* 2단 그리드 — 텍스트 40% / 이미지 60%, 이미지는 오른쪽 끝까지 블리드 */}
+      {/* 2단 그리드 */}
       <div className="relative z-10 w-full min-h-screen grid lg:grid-cols-[2fr_3fr]">
 
         {/* Left — Text */}
@@ -84,18 +51,29 @@ export default function Hero({ images }: { images: HeroImage[] }) {
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
           className="flex flex-col justify-center px-6 lg:px-14 xl:px-20 pt-28 pb-16 lg:pt-32 lg:pb-20"
         >
-          <h1 className="font-serif text-4xl sm:text-5xl lg:text-[4rem] xl:text-[4.5rem] leading-[1.1] text-cream mb-5 font-semibold">
+          <p
+            className="text-xs tracking-[0.2em] uppercase font-semibold mb-5"
+            style={{ color: '#5E9635' }}
+          >
+            TAT for Animals
+          </p>
+
+          <h1 className="font-serif text-4xl sm:text-5xl lg:text-[2.5rem] xl:text-[3rem] leading-[1.15] text-charcoal mb-5 font-semibold">
             Help your animal<br />
             feel calm and at ease.
           </h1>
 
-          <p className="font-serif italic text-xl sm:text-2xl mb-8 font-normal"
-            style={{ color: 'rgba(250,246,241,0.65)' }}>
+          <p
+            className="font-sans text-lg sm:text-xl mb-8 font-normal"
+            style={{ color: '#5E9635' }}
+          >
             And notice what happens in you.
           </p>
 
-          <p className="text-base sm:text-lg leading-relaxed mb-12"
-            style={{ color: 'rgba(250,246,241,0.55)' }}>
+          <p
+            className="text-base sm:text-lg leading-relaxed mb-12"
+            style={{ color: 'rgba(28,16,7,0.55)' }}
+          >
             No special training. No reliving anything painful.
             Just a few quiet minutes with your animal — and something shifts.
           </p>
@@ -106,21 +84,31 @@ export default function Hero({ images }: { images: HeroImage[] }) {
               className="w-full sm:w-auto lg:w-full xl:w-auto px-8 py-4 rounded-full text-cream font-semibold text-base text-center whitespace-nowrap transition-all hover:scale-105 hover:shadow-lg active:scale-95"
               style={{
                 backgroundColor: '#D4703A',
-                boxShadow: '0 8px 32px rgba(212,112,58,0.30)',
+                boxShadow: '0 8px 32px rgba(212,112,58,0.25)',
               }}
             >
               Start with Your Animal
             </Link>
             <button
               onClick={() => document.getElementById('experience')?.scrollIntoView({ behavior: 'smooth' })}
-              className="w-full sm:w-auto lg:w-full xl:w-auto flex items-center justify-center sm:justify-start gap-3 px-6 py-4 rounded-full border font-medium text-base whitespace-nowrap transition-all hover:border-cream/40 hover:text-cream group"
+              className="w-full sm:w-auto lg:w-full xl:w-auto flex items-center justify-center gap-3 px-6 py-4 rounded-full border font-medium text-base whitespace-nowrap transition-all group"
               style={{
-                borderColor: 'rgba(250,246,241,0.25)',
-                color: 'rgba(250,246,241,0.70)',
+                borderColor: 'rgba(28,16,7,0.15)',
+                color: 'rgba(28,16,7,0.60)',
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.borderColor = '#5E9635';
+                (e.currentTarget as HTMLElement).style.color = '#5E9635';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.borderColor = 'rgba(28,16,7,0.15)';
+                (e.currentTarget as HTMLElement).style.color = 'rgba(28,16,7,0.60)';
               }}
             >
-              <div className="w-8 h-8 shrink-0 rounded-full flex items-center justify-center border transition-all group-hover:border-cream/40"
-                style={{ borderColor: 'rgba(250,246,241,0.25)' }}>
+              <div
+                className="w-8 h-8 shrink-0 rounded-full flex items-center justify-center border transition-all"
+                style={{ borderColor: 'rgba(28,16,7,0.15)' }}
+              >
                 <Play size={12} fill="currentColor" />
               </div>
               Watch How It Works
@@ -146,7 +134,6 @@ export default function Hero({ images }: { images: HeroImage[] }) {
                 willChange: 'opacity',
               }}
             >
-              {/* 흐린 배경 — 어떤 비율이든 컨테이너를 채움 */}
               <Image
                 src={img.src}
                 alt=""
@@ -155,9 +142,8 @@ export default function Hero({ images }: { images: HeroImage[] }) {
                 priority={i === 0}
                 sizes="60vw"
                 className="object-cover object-center scale-110"
-                style={{ filter: 'blur(24px)', opacity: 0.6 }}
+                style={{ filter: 'blur(24px)', opacity: 0.5 }}
               />
-              {/* 선명한 원본 — 항상 전체가 보임 */}
               <Image
                 src={img.src}
                 alt={img.alt}
@@ -168,18 +154,17 @@ export default function Hero({ images }: { images: HeroImage[] }) {
               />
             </div>
           ))}
-          {/* 왼쪽 경계 — 배경색과 자연스럽게 연결 */}
+          {/* 크림 배경과 자연스럽게 blend */}
           <div
             className="absolute inset-0 z-10"
             style={{
-              background: 'linear-gradient(to right, rgba(43,64,25,1) 0%, rgba(43,64,25,0.2) 25%, transparent 55%)',
+              background: 'linear-gradient(to right, rgba(250,246,241,1) 0%, rgba(250,246,241,0.15) 20%, transparent 50%)',
             }}
           />
-          {/* 하단 페이드 */}
           <div
             className="absolute inset-0 z-10"
             style={{
-              background: 'linear-gradient(to top, rgba(43,64,25,0.6) 0%, transparent 35%)',
+              background: 'linear-gradient(to top, rgba(250,246,241,0.5) 0%, transparent 30%)',
             }}
           />
         </motion.div>

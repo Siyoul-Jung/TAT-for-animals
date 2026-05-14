@@ -5,11 +5,9 @@ import Link from 'next/link';
 import LogoMark from '@/components/LogoMark';
 
 const navLinks = [
-  { name: 'For Animals (and You)', href: '/for-animals' },
-  { name: 'For People', href: '/for-people' },
-  { name: 'Work with Tapas', href: '/work-with-tapas' },
-  { name: 'Find a Pro', href: '/find-a-pro' },
-  { name: 'Certification', href: '/certification' },
+  { name: 'About', href: '/about' },
+  { name: 'FAQ', href: '/faq' },
+  { name: 'Membership', href: '/membership' },
   { name: 'Contact', href: '/contact' },
 ];
 
@@ -34,7 +32,7 @@ const socials = [
     icon: (
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
         <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.96-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z" />
-        <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#2B4019" />
+        <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#1C1007" />
       </svg>
     ),
   },
@@ -53,7 +51,7 @@ export default function Footer() {
   return (
     <footer
       className="px-6 pt-20 pb-10"
-      style={{ backgroundColor: '#2B4019' }}
+      style={{ backgroundColor: '#1C1007' }}
     >
       <div className="max-w-6xl mx-auto">
 
@@ -66,7 +64,7 @@ export default function Footer() {
             <div className="flex items-center gap-2.5">
               <LogoMark size={32} orange="#D4703A" green="#9AAD84" />
               <span className="text-xl tracking-wide text-cream font-[family-name:var(--font-dm-serif)]">
-                TATLife<span className="text-brand">®</span>
+                TAT for Animals<span className="text-brand">®</span>
               </span>
             </div>
             <span

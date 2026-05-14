@@ -236,9 +236,9 @@ export default function LoginClient() {
         {/* 하단 */}
         <div className="text-center mt-6 space-y-2">
           <p className="text-sm text-muted">
-            Forgot your password?{' '}
+            Need to set a new password?{' '}
             <a href="/reset-password" className="text-brand hover:underline font-medium">
-              Reset it
+              Reset it here
             </a>
           </p>
           <p className="text-sm text-muted">

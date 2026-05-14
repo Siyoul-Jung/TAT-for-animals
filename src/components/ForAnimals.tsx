@@ -31,7 +31,7 @@ export default function ForAnimals() {
   }, []);
 
   return (
-    <section id="experience" className="bg-cream py-20 lg:py-28 px-6 overflow-hidden">
+    <section id="experience" className="bg-white py-20 lg:py-28 px-6 overflow-hidden">
       <div className="max-w-4xl mx-auto">
 
         {/* Header */}
@@ -98,7 +98,7 @@ export default function ForAnimals() {
                 </div>
                 <div
                   className="absolute inset-0"
-                  style={{ backgroundColor: 'rgba(43,64,25,0.50)' }}
+                  style={{ backgroundColor: 'transparent' }}
                 />
                 <button
                   onClick={() => setIsPlaying(true)}
@@ -159,11 +159,11 @@ export default function ForAnimals() {
           className="text-center"
         >
           <Link
-            href="/for-animals"
+            href="/membership"
             className="inline-flex items-center gap-2 text-sm font-medium tracking-wide transition-opacity duration-200 hover:opacity-70"
             style={{ color: 'rgba(212,112,58,0.9)' }}
           >
-            Learn more about TAT for Animals →
+            Start helping your animal →
           </Link>
         </motion.div>
 

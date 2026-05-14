@@ -4,9 +4,9 @@ import { NextResponse, type NextRequest } from 'next/server'
 const COMING_SOON = process.env.NODE_ENV === 'production';
 
 // 로그인이 필요한 경로
-const PROTECTED_PATHS = ['/dashboard']
+const PROTECTED_PATHS = ['/dashboard', '/library']
 
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
 
   // Coming soon — 프로덕션에서만 활성화

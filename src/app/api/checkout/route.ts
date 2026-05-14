@@ -4,8 +4,8 @@ import { NextRequest, NextResponse } from 'next/server'
 
 // 플랜별 Stripe Price ID — 가격 확정 후 .env에서 관리
 const PRICE_IDS: Record<string, string> = {
-  self: process.env.STRIPE_PRICE_HELP_YOURSELF!,
-  pro:  process.env.STRIPE_PRICE_PROFESSIONAL!,
+  calm_library: process.env.STRIPE_PRICE_CALM_LIBRARY!,
+  calm_circle:  process.env.STRIPE_PRICE_CALM_CIRCLE!,
 }
 
 export async function POST(request: NextRequest) {

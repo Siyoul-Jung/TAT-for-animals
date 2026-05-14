@@ -90,7 +90,7 @@ export default function AboutTapas() {
             }}
           >
             <span className="font-serif text-2xl font-semibold text-charcoal">1993</span>
-            <span className="text-xs text-charcoal/45 font-light tracking-wide">TAT® Founded</span>
+            <span className="text-xs text-charcoal/45 font-light tracking-wide">TATLife® Founded</span>
           </motion.div>
         </motion.div>
 
@@ -109,8 +109,8 @@ export default function AboutTapas() {
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-charcoal font-medium leading-tight mb-2">
             Tapas Fleming
           </h2>
-          <p className="font-serif italic text-base sm:text-lg text-muted mb-6 lg:mb-10">
-            Creator and Founder of TAT®
+          <p className="font-sans text-base sm:text-lg text-muted mb-6 lg:mb-10">
+            Creator and Founder of TATLife®
           </p>
 
           {/* Divider */}
@@ -128,7 +128,7 @@ export default function AboutTapas() {
               </span>{' '}
               Her mission remains the same:
             </p>
-            <p className="font-serif italic text-lg sm:text-xl lg:text-2xl text-charcoal/80 leading-snug">
+            <p className="font-sans text-lg sm:text-xl lg:text-2xl text-charcoal/80 leading-snug">
               &ldquo;Help people find peace. One person —<br className="hidden sm:block" />
               and one animal — at a time.&rdquo;
             </p>

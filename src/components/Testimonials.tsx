@@ -170,7 +170,6 @@ export default function Testimonials() {
           </div>
         </motion.div>
 
-
       </div>
     </section>
   );

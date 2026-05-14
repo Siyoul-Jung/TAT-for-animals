@@ -3,12 +3,14 @@
 
 import { motion } from 'framer-motion';
 import { Check } from 'lucide-react';
-import Link from 'next/link';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 const tiers = [
   {
-    name: 'Help Yourself',
-    price: '24',
+    plan: 'calm_library',
+    name: 'The Calm Library',
+    price: '27',
     description: 'Everything you need to begin — at your own pace, in your own time.',
     features: [
       'TAT for Animals full video library',
@@ -16,41 +18,62 @@ const tiers = [
       'Self-guided practice materials',
       'Community access',
     ],
-    cta: 'Join Help Yourself',
+    cta: 'Join The Calm Library',
     popular: false,
   },
   {
-    name: 'Professional Support',
+    plan: 'calm_circle',
+    name: 'The Calm Circle',
     price: '47',
-    description: 'Live connection with Tapas, plus everything in Help Yourself.',
+    description: 'Live connection with Tapas, plus everything in The Calm Library.',
     features: [
-      'Everything in Help Yourself',
+      'Everything in The Calm Library',
       'Monthly live webinars with Tapas',
       'TAT for Animals live sessions',
       'Healing ACEs Plus live sessions',
       'Full archive of all past recordings',
     ],
-    cta: 'Join Professional Support',
+    cta: 'Join The Calm Circle',
     popular: true,
   },
 ];
 
 export default function Pricing() {
+  const router = useRouter();
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+
+  async function handleCheckout(plan: string) {
+    setLoadingPlan(plan);
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan }),
+      });
+
+      if (res.status === 401) {
+        router.push('/login?next=/membership');
+        return;
+      }
+
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert('Something went wrong. Please try again.');
+        setLoadingPlan(null);
+      }
+    } catch {
+      alert('Something went wrong. Please try again.');
+      setLoadingPlan(null);
+    }
+  }
+
   return (
     <section
       id="membership"
-      className="relative py-20 lg:py-28 px-6 overflow-hidden"
-      style={{ backgroundColor: '#2B4019' }}
+      className="relative py-20 lg:py-28 px-6 overflow-hidden bg-white"
     >
-      {/* Background glow */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            'radial-gradient(ellipse 70% 50% at 20% 60%, rgba(212,112,58,0.12) 0%, transparent 65%)',
-        }}
-      />
-
       <div className="relative z-10 max-w-5xl mx-auto">
 
         {/* Header */}
@@ -61,11 +84,13 @@ export default function Pricing() {
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           className="text-center mb-10 lg:mb-16"
         >
-          <p className="text-xs tracking-[0.2em] uppercase font-medium mb-5"
-            style={{ color: 'rgba(212,168,67,0.7)' }}>
+          <p
+            className="text-xs tracking-[0.2em] uppercase font-semibold mb-5"
+            style={{ color: '#5E9635' }}
+          >
             Membership
           </p>
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-cream font-medium leading-tight">
+          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-charcoal font-medium leading-tight">
             Choose your path to calm.
           </h2>
         </motion.div>
@@ -84,26 +109,25 @@ export default function Pricing() {
                 ease: [0.16, 1, 0.3, 1],
               }}
               whileHover={{ y: -6, transition: { duration: 0.3 } }}
-              className="relative flex flex-col rounded-2xl p-6 sm:p-8 lg:p-10"
+              className="relative flex flex-col rounded-2xl p-6 sm:p-8 lg:p-10 bg-white"
               style={
                 tier.popular
                   ? {
-                      background: 'rgba(250,246,241,0.07)',
-                      border: '1px solid rgba(212,112,58,0.45)',
-                      boxShadow: '0 24px 64px rgba(212,112,58,0.12)',
+                      border: '2px solid #5E9635',
+                      boxShadow: '0 16px 48px rgba(94,150,53,0.12)',
                     }
                   : {
-                      background: 'rgba(250,246,241,0.04)',
-                      border: '1px solid rgba(250,246,241,0.10)',
+                      border: '1px solid rgba(28,16,7,0.08)',
+                      boxShadow: '0 4px 24px rgba(28,16,7,0.04)',
                     }
               }
             >
-              {/* Popular badge — 카드 내부 상단 인라인 배치 (모바일 안전) */}
+              {/* Popular badge */}
               {tier.popular && (
                 <div className="mb-5">
                   <span
                     className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full text-[11px] font-semibold tracking-widest uppercase text-cream"
-                    style={{ backgroundColor: '#D4703A' }}
+                    style={{ backgroundColor: '#5E9635' }}
                   >
                     ★ Most Popular
                   </span>
@@ -112,32 +136,20 @@ export default function Pricing() {
 
               {/* Plan name + price */}
               <div className="mb-5">
-                <h3
-                  className="font-serif text-xl sm:text-2xl font-medium mb-3"
-                  style={{ color: tier.popular ? '#FAF6F1' : 'rgba(250,246,241,0.75)' }}
-                >
+                <h3 className="font-serif text-xl sm:text-2xl font-medium mb-3 text-charcoal">
                   {tier.name}
                 </h3>
                 <div className="flex items-baseline gap-1.5">
-                  {/* $ — sans-serif로 분리해 Playfair의 이중선 달러 기호 회피 */}
-                  <span className="font-sans text-2xl font-medium text-cream/70">$</span>
-                  <span className="font-serif text-4xl sm:text-5xl font-semibold text-cream">
+                  <span className="font-sans text-2xl font-medium text-charcoal/50">$</span>
+                  <span className="font-serif text-4xl sm:text-5xl font-semibold text-charcoal">
                     {tier.price}
                   </span>
-                  <span
-                    className="text-sm font-light ml-0.5"
-                    style={{ color: 'rgba(250,246,241,0.55)' }}
-                  >
-                    / mo
-                  </span>
+                  <span className="text-sm font-light ml-0.5 text-charcoal/40">/ mo</span>
                 </div>
               </div>
 
-              {/* Description — 모바일에서 숨김 (카드 길이 단축) */}
-              <p
-                className="hidden sm:block text-sm leading-relaxed mb-5"
-                style={{ color: 'rgba(250,246,241,0.70)' }}
-              >
+              {/* Description */}
+              <p className="hidden sm:block text-sm leading-relaxed mb-5 text-charcoal/55">
                 {tier.description}
               </p>
 
@@ -147,23 +159,11 @@ export default function Pricing() {
                   <li key={f} className="flex items-start gap-3">
                     <span
                       className="mt-0.5 w-4 h-4 rounded-full flex items-center justify-center shrink-0"
-                      style={{
-                        backgroundColor: tier.popular
-                          ? 'rgba(212,112,58,0.25)'
-                          : 'rgba(250,246,241,0.08)',
-                      }}
+                      style={{ backgroundColor: 'rgba(94,150,53,0.12)' }}
                     >
-                      <Check
-                        size={10}
-                        style={{
-                          color: tier.popular ? '#D4703A' : 'rgba(250,246,241,0.5)',
-                        }}
-                      />
+                      <Check size={10} style={{ color: '#5E9635' }} />
                     </span>
-                    <span
-                      className="text-sm sm:text-base leading-snug"
-                      style={{ color: 'rgba(250,246,241,0.90)' }}
-                    >
+                    <span className="text-sm sm:text-base leading-snug text-charcoal/80">
                       {f}
                     </span>
                   </li>
@@ -171,50 +171,25 @@ export default function Pricing() {
               </ul>
 
               {/* CTA */}
-              <Link
-                href="/membership"
-                className="block text-center py-3.5 rounded-xl text-sm sm:text-base font-semibold transition-all"
-                style={
-                  tier.popular
-                    ? {
-                        backgroundColor: '#D4703A',
-                        color: '#FAF6F1',
-                        boxShadow: '0 8px 24px rgba(212,112,58,0.25)',
-                      }
-                    : {
-                        backgroundColor: 'transparent',
-                        color: 'rgba(250,246,241,0.70)',
-                        border: '1px solid rgba(250,246,241,0.18)',
-                      }
-                }
-                onMouseEnter={(e) => {
-                  if (!tier.popular) {
-                    (e.currentTarget as HTMLElement).style.borderColor =
-                      'rgba(250,246,241,0.40)';
-                    (e.currentTarget as HTMLElement).style.color = '#FAF6F1';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!tier.popular) {
-                    (e.currentTarget as HTMLElement).style.borderColor =
-                      'rgba(250,246,241,0.18)';
-                    (e.currentTarget as HTMLElement).style.color =
-                      'rgba(250,246,241,0.70)';
-                  }
+              <button
+                onClick={() => handleCheckout(tier.plan)}
+                disabled={loadingPlan !== null}
+                className="block w-full text-center py-3.5 rounded-xl text-sm sm:text-base font-semibold transition-all hover:opacity-90 active:scale-95 disabled:opacity-50"
+                style={{
+                  backgroundColor: '#D4703A',
+                  color: '#FAF6F1',
+                  boxShadow: '0 8px 24px rgba(212,112,58,0.20)',
                 }}
               >
-                {tier.cta}
-              </Link>
+                {loadingPlan === tier.plan ? 'Connecting...' : tier.cta}
+              </button>
 
               {/* Cancel note */}
-              <p
-                className="text-center text-sm mt-4 flex items-center justify-center gap-1.5"
-                style={{ color: 'rgba(250,246,241,0.60)' }}
-              >
+              <p className="text-center text-sm mt-4 flex items-center justify-center gap-1.5 text-charcoal/35">
                 <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                Cancel anytime — no questions asked
+                Cancel anytime
               </p>
             </motion.div>
           ))}

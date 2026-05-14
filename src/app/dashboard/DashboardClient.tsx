@@ -13,8 +13,8 @@ type Props = {
 }
 
 const PLAN_INFO: Record<string, { name: string; price: string }> = {
-  subscriber:     { name: 'Help Yourself',        price: '$24 / month' },
-  pro_subscriber: { name: 'Professional Support', price: '$47 / month' },
+  subscriber:     { name: 'The Calm Library', price: '$27 / month' },
+  pro_subscriber: { name: 'The Calm Circle',  price: '$47 / month' },
 }
 
 const STATUS_BADGE: Record<string, { label: string; classes: string }> = {
@@ -39,7 +39,7 @@ export default function DashboardClient({
   currentPeriodEnd,
 }: Props) {
   const nextChargeDate = formatPeriodEnd(currentPeriodEnd)
-  const displayName = fullName || email.split('@')[0]
+  const displayName = fullName || null
   const plan = PLAN_INFO[role]
   const badge = STATUS_BADGE[subscriptionStatus] ?? STATUS_BADGE.inactive
 
@@ -53,7 +53,7 @@ export default function DashboardClient({
             My Account
           </p>
           <h1 className="font-serif text-3xl text-charcoal">
-            Welcome back, {displayName}.
+            {displayName ? `Welcome back, ${displayName}.` : 'Welcome back.'}
           </h1>
           <p className="text-charcoal/50 mt-1 text-base">{email}</p>
         </div>
@@ -85,7 +85,7 @@ export default function DashboardClient({
                   )}
                   <ManageSubscriptionButton />
                   <p className="text-sm text-charcoal/40">
-                    Cancel anytime · No questions asked
+                    Cancel anytime
                   </p>
                 </div>
               )}
@@ -117,17 +117,12 @@ export default function DashboardClient({
                 description="Video library for helping your animal find calm"
                 href="/library/animals"
               />
-              <ContentCard
-                title="Healing ACEs"
-                description="Self-guided practice videos for your own healing"
-                href="/library/healing"
-              />
               {role === 'pro_subscriber' && (
                 <ContentCard
-                  title="Live Webinars"
+                  title="Live Sessions"
                   description="Monthly sessions with Tapas · Past recordings included"
                   href="/library/webinars"
-                  badge="Pro"
+                  badge="The Calm Circle"
                 />
               )}
             </div>

@@ -10,14 +10,14 @@
   --brand-light:     #ECC4A0;  /* soft peach tint */
   --brand-dark:      #B05A28;  /* deep terracotta */
 
-  /* Accent sage green (Tapas brand: orange + green) */
-  --sage:       #6B7A52;  /* muted sage — natural, grounded */
-  --sage-light: #9AAD84;  /* light sage tint */
+  /* Green — brand accent (NOT used as section background) */
+  --green:       #5E9635;  /* bright forest green — labels, icons, borders */
+  --green-light: #EBF5E1;  /* very light green tint — subtle bg accent */
 
   /* Neutrals */
-  --cream:    #FAF6F1;  /* warm cream background */
+  --cream:    #FAF6F1;  /* neutral off-white background */
   --surface:  #F2EAE0;  /* warm tinted section bg */
-  --dark:     #2B4019;  /* forest green — hero/dark sections */
+  --dark:     #1C1007;  /* warm charcoal — footer only */
   --charcoal: #1C1007;  /* warm near-black */
   --muted:    #8B6F5E;  /* warm taupe */
 }
@@ -30,8 +30,8 @@
   --color-brand-light: var(--brand-light);
   --color-brand-dark:  var(--brand-dark);
 
-  --color-sage:        var(--sage);
-  --color-sage-light:  var(--sage-light);
+  --color-green:       var(--green);
+  --color-green-light: var(--green-light);
 
   --color-cream:    var(--cream);
   --color-surface:  var(--surface);

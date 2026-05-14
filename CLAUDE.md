@@ -49,27 +49,65 @@ tatlife.com과 완전히 분리된 독립 사이트입니다.
 
 ---
 
-## 컴포넌트 구조 (홈페이지 섹션 순서)
+## 파일 구조
 
 ```
 src/
 ├── app/
-│   ├── layout.tsx         — 폰트 설정 (Playfair Display + DM Sans)
-│   ├── globals.css        — CSS 변수 및 Tailwind @theme 토큰
-│   └── page.tsx           — 홈페이지 (섹션 조립)
+│   ├── layout.tsx                        — 폰트 설정 (Playfair Display + DM Sans)
+│   ├── globals.css                       — CSS 변수 및 Tailwind @theme 토큰
+│   ├── page.tsx                          — 홈페이지
+│   ├── membership/                       — 가격 카드 + Stripe 체크아웃
+│   ├── dashboard/                        — 내 계정 (구독 정보, 콘텐츠 링크)
+│   ├── library/
+│   │   ├── animals/                      — 영상 라이브러리 (subscriber 이상)
+│   │   └── webinars/                     — 라이브 세션 아카이브 (pro_subscriber 전용)
+│   ├── login/ · signup/                  — 인증 페이지
+│   ├── reset-password/ · update-password/
+│   ├── faq/                              — FAQ 페이지
+│   ├── thank-you/                        — 결제 완료 페이지
+│   ├── coming-soon/                      — 론칭 전 대기 페이지
+│   ├── studio/[[...tool]]/               — Sanity Studio
+│   ├── auth/callback/                    — Supabase OAuth 콜백
+│   └── api/
+│       ├── checkout/                     — Stripe 세션 생성
+│       ├── portal/                       — Stripe 구독 관리 포털
+│       ├── auth/logout/
+│       └── webhooks/stripe/              — 구독 상태 동기화
 │
-└── components/
-    ├── Navbar.tsx          — 고정 내비게이션 (스크롤 감지)
-    ├── Hero.tsx            — 다크 그린 Hero, 슬라이드쇼 (섹션 1)
-    ├── ForAnimals.tsx      — TAT for Animals 소개 + YouTube 비디오 (섹션 2)
-    ├── ForPeople.tsx       — Mirror of Calm + Healing ACEs Plus 소개 (섹션 3)
-    ├── Testimonials.tsx    — 실제 후기 2개 + /stories CTA (섹션 4)
-    ├── Pricing.tsx         — 멤버십 카드 2단계 (섹션 5)
-    ├── AboutTapas.tsx      — Tapas 프로필 + /about CTA (섹션 6)
-    ├── Footer.tsx          — 푸터 (섹션 7)
-    └── ui/
-        └── Button.tsx      — 재사용 버튼 컴포넌트
+├── components/
+│   ├── Navbar.tsx                        — 고정 내비게이션 (스크롤 감지)
+│   ├── Hero.tsx                          — 슬라이드쇼 Hero (섹션 1)
+│   ├── ForAnimals.tsx                    — TAT for Animals + YouTube 영상 (섹션 2)
+│   ├── Testimonials.tsx                  — 실제 후기 (섹션 3)
+│   ├── Pricing.tsx                       — 멤버십 카드 2단계 (섹션 4)
+│   ├── AboutTapas.tsx                    — Tapas 프로필 (섹션 5)
+│   ├── Footer.tsx                        — 푸터
+│   ├── LogoMark.tsx                      — SVG 로고마크
+│   ├── DashboardUpgradeBanner.tsx        — 업그레이드 배너 (대시보드 내)
+│   └── ui/Button.tsx                     — 재사용 버튼
+│
+├── lib/
+│   ├── sanity.ts                         — Sanity 클라이언트
+│   ├── stripe.ts                         — Stripe 클라이언트
+│   ├── utils.ts                          — cn() 헬퍼
+│   └── supabase/ client.ts · server.ts
+│
+└── sanity/schemaTypes/
+    ├── video.ts                          — 영상 스키마 (tier: basic/premium)
+    ├── webinarRecording.ts               — 웨비나 녹화
+    └── webinarSchedule.ts               — 예정 세션
 ```
+
+### 홈페이지 섹션 순서 (page.tsx 기준)
+| # | 컴포넌트 | 목적 |
+|---|----------|------|
+| 1 | `Hero` | 감정적 훅 — 슬라이드쇼 |
+| 2 | `ForAnimals` | TAT for Animals 소개 + 영상 |
+| 3 | `Testimonials` | 실제 후기 (사회적 증명) |
+| 4 | `Pricing` | 멤버십 카드 + CTA |
+| 5 | `AboutTapas` | 신뢰 — Tapas 프로필 |
+| 6 | `Footer` | 내비게이션 |
 
 ---
 
@@ -99,10 +137,12 @@ TAT®의 핵심 사용자층은 **시니어 및 기술에 익숙하지 않은 �
 ## 코딩 규칙
 
 ### 색상 사용
-- **메인 컬러**: 오렌지 (`#D4703A`) + 다크 그린 (`#1F2E14`) — 이 두 가지가 브랜드의 핵심
-- Tailwind 토큰 우선: `bg-cream`, `text-charcoal`, `text-brand` 등
-- 다크 섹션 배경: `style={{ backgroundColor: '#1F2E14' }}`
-- rgba gradient 값: `rgba(31,46,20,...)` (#1F2E14의 rgba 표현)
+- **메인 컬러**: 오렌지 (`#D4703A`) + 브라이트 그린 (`#5E9635`) — 두 가지 모두 배경이 아닌 액센트로만 사용
+- 섹션 배경은 항상 `bg-cream` 또는 `bg-white` — 그린은 배경으로 쓰지 않음
+- 그린 액센트: 섹션 라벨, 아이콘, 체크마크, 보더, 이탤릭 서브헤딩
+- 오렌지 액센트: 버튼(CTA), 링크, 강조
+- Footer만 예외: `style={{ backgroundColor: '#1C1007' }}` (charcoal 다크)
+- rgba 그린 값: `rgba(94,150,53,...)` (#5E9635의 rgba 표현)
 - 골드 강조색: `rgba(212,168,67,...)` (#D4A843의 rgba 표현)
 
 ### 폰트
@@ -113,10 +153,10 @@ TAT®의 핵심 사용자층은 **시니어 및 기술에 익숙하지 않은 �
 ### 다크 섹션 vs 라이트 섹션
 | 섹션 | 배경 | 텍스트 |
 |------|------|--------|
-| Hero, HealingLoop, Pricing | `#1F2E14` (다크 그린) | `text-cream` |
-| SevenBeliefs, VideoSection, AboutTapas | `bg-cream` (라이트) | `text-charcoal` |
-| Community | `bg-surface` (라이트) | `text-charcoal` |
-| Footer | `#1F2E14` (다크 그린) | cream 계열 |
+| 모든 섹션 (Hero, Pricing, ForAnimals 등) | `bg-cream` 또는 `bg-white` | `text-charcoal` |
+| Membership Hero | `#1C1007` (이미지 위 다크 오버레이) | `text-cream` |
+| Footer | `#1C1007` (charcoal 다크) | `text-cream` |
+| 그린/오렌지 사용처 | 배경 아님 — 라벨, 아이콘, 보더, 버튼 액센트 | — |
 
 ### 애니메이션 패턴
 ```tsx
@@ -136,7 +176,17 @@ TAT®의 핵심 사용자층은 **시니어 및 기술에 익숙하지 않은 �
 ---
 
 ## 미결 항목 (코드 작업 전 확인 필요)
-- 멤버십 가격: $24/$47 확정 여부 (Tapas 확인 필요)
-- 홈페이지 비디오: 실제 영상 (Jez 제공 예정)
-- Tapas 실제 고해상도 사진 (현재 Unsplash 플레이스홀더)
+
+**✅ 확정 완료 (SRS v0.2 기준)**
+- 멤버십 이름: The Calm Library / The Calm Circle
+- 멤버십 가격: $27/mo / $47/mo (코드 반영 완료)
+- 각 티어 혜택 범위
+- Vimeo 접근 권한 (개발자 멤버 추가 완료)
+- Tapas 사진 수신 완료
+- 홈페이지 소개 영상: Tapas 직접 녹화 예정 (확인됨)
+- Post-surgery 영상: Tapas 녹화 예정 (확인됨)
+
+**⚠️ 아직 미확정**
 - 실제 후기 콘텐츠 — Kai/Bowie/Misty 이야기 (Jez/Tapas 제공 예정)
+- PayPal Business 계정 — 기존 계정 사용 가능 여부 (Jez 확인 중)
+- /about 페이지 — Phase D 미착수

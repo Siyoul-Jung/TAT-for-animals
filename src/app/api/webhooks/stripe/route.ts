@@ -12,8 +12,8 @@ const supabaseAdmin = createClient(
 // 구독 플랜 → role 매핑
 // 가격 확정 후 Price ID와 role을 여기서 관리
 const PRICE_ROLE_MAP: Record<string, string> = {
-  [process.env.STRIPE_PRICE_HELP_YOURSELF!]: 'subscriber',
-  [process.env.STRIPE_PRICE_PROFESSIONAL!]:  'pro_subscriber',
+  [process.env.STRIPE_PRICE_CALM_LIBRARY!]: 'subscriber',
+  [process.env.STRIPE_PRICE_CALM_CIRCLE!]:  'pro_subscriber',
 }
 
 export async function POST(request: NextRequest) {
@@ -51,14 +51,19 @@ export async function POST(request: NextRequest) {
           ?? subscription.metadata?.supabase_user_id
         if (!userId) break
 
+        const updatePayload: Record<string, unknown> = {
+          role,
+          stripe_subscription_id: subscriptionId,
+          subscription_status: 'active',
+          current_period_end: new Date((subscription as any).current_period_end * 1000).toISOString(),
+        }
+
+        const customerName = session.customer_details?.name
+        if (customerName) updatePayload.full_name = customerName
+
         await supabaseAdmin
           .from('profiles')
-          .update({
-            role,
-            stripe_subscription_id: subscriptionId,
-            subscription_status: 'active',
-            current_period_end: new Date((subscription as any).current_period_end * 1000).toISOString(),
-          })
+          .update(updatePayload)
           .eq('id', userId)
 
         break

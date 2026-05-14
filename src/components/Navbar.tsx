@@ -38,7 +38,7 @@ export default function Navbar() {
 // 다크 Hero가 있는 페이지 목록 — 상단 섹션이 어두운 배경이라 cream 텍스트가 필요
   if (pathname === '/coming-soon') return null;
 
-  const darkHeroPages = ['/', '/membership'];
+  const darkHeroPages: string[] = [];
   const isDarkHero = darkHeroPages.includes(pathname);
   return (
     <nav
@@ -76,7 +76,7 @@ export default function Navbar() {
                 href="/dashboard"
                 className={cn(
                   'text-sm font-medium transition-colors',
-                  isScrolled ? 'text-charcoal/70 hover:text-brand' : 'text-cream/70 hover:text-cream'
+                  isScrolled || !isDarkHero ? 'text-charcoal/70 hover:text-brand' : 'text-cream/70 hover:text-cream'
                 )}
               >
                 My Account
@@ -86,7 +86,7 @@ export default function Navbar() {
                   type="submit"
                   className={cn(
                     'text-sm font-semibold px-4 py-2 rounded-full border transition-all',
-                    isScrolled
+                    isScrolled || !isDarkHero
                       ? 'border-charcoal/20 text-charcoal/70 hover:border-brand hover:text-brand'
                       : 'border-cream/30 text-cream/70 hover:border-cream hover:text-cream'
                   )}

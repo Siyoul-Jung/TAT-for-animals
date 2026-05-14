@@ -48,18 +48,6 @@ export const videoType = defineType({
       initialValue: ['subscribers'],
     }),
     defineField({
-      name: 'tier',
-      title: 'Access Tier',
-      type: 'string',
-      options: {
-        list: [
-          { title: 'Basic (The Calm Library)', value: 'basic' },
-          { title: 'Premium (The Calm Circle)', value: 'premium' },
-        ],
-      },
-      validation: (r) => r.required(),
-    }),
-    defineField({
       name: 'level',
       title: 'Level',
       type: 'string',
@@ -116,31 +104,16 @@ export const videoType = defineType({
       initialValue: 'Vimeo',
       readOnly: true,
     }),
-    defineField({
-      name: 'status',
-      title: 'Status',
-      type: 'string',
-      options: {
-        list: [
-          { title: 'Draft', value: 'draft' },
-          { title: 'Ready', value: 'ready' },
-          { title: 'Published', value: 'published' },
-        ],
-      },
-      initialValue: 'draft',
-      validation: (r) => r.required(),
-    }),
   ],
   preview: {
     select: {
       title: 'title',
       subtitle: 'category',
-      status: 'status',
     },
-    prepare({ title, subtitle, status }) {
+    prepare({ title, subtitle }) {
       return {
         title,
-        subtitle: `${subtitle ?? ''} · ${status ?? ''}`,
+        subtitle: subtitle ?? '',
       }
     },
   },

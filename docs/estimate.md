@@ -12,7 +12,7 @@
 | Phase | Scope | Duration | Hours |
 |-------|-------|----------|-------|
 | **A** | Sanity CMS schema + Next.js integration | 1 week | 20 hrs |
-| **B** | Homepage — Hero, How It Works, Stories, Membership CTA, About Tapas | 1.5 weeks | 30 hrs |
+| **B** | Homepage — Hero, How It Works, Stories, Membership CTA, About Tapas + Stripe subscription integration | 1.5 weeks | 30 hrs |
 | **C** | Dashboard — video library, webinar recordings, upcoming schedule | 1.5 weeks | 30 hrs |
 | **D** | /about and /faq pages | 0.5 weeks | 10 hrs |
 | **E** | Automation — Make.com + Resend (webinar invitations, recording notifications) | 1 week | 20 hrs |
