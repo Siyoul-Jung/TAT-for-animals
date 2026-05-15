@@ -2,8 +2,9 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
+import { ChevronDown } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
 import LogoMark from '@/components/LogoMark';
@@ -12,17 +13,32 @@ import LogoMark from '@/components/LogoMark';
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState('');
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const supabase = createClient();
 
   // 실제 로그인 상태 감지
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    async function loadUser() {
+      const { data: { user } } = await supabase.auth.getUser();
       setIsLoggedIn(!!user);
-    });
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('full_name')
+          .eq('id', user.id)
+          .single();
+        const name = profile?.full_name || user.email?.split('@')[0] || 'Account';
+        setUserName(name);
+      }
+    }
+    loadUser();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsLoggedIn(!!session?.user);
+      if (!session?.user) setUserName('');
     });
 
     return () => subscription.unsubscribe();
@@ -33,6 +49,17 @@ export default function Navbar() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (!dropdownOpen) return;
+    function handleClickOutside(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [dropdownOpen]);
 
 
 // 다크 Hero가 있는 페이지 목록 — 상단 섹션이 어두운 배경이라 cream 텍스트가 필요
@@ -70,30 +97,67 @@ export default function Navbar() {
         {/* CTA — Join or My Account */}
         <div className="flex items-center">
           {isLoggedIn ? (
-            /* 로그인 상태 — 대시보드 링크 + 로그아웃 */
+            /* 로그인 상태 — My Library 직접 링크 + My Account 드롭다운 */
             <div className="flex items-center gap-3">
               <Link
-                href="/dashboard"
+                href="/library/animals"
                 className={cn(
                   'text-sm font-medium transition-colors',
                   isScrolled || !isDarkHero ? 'text-charcoal/70 hover:text-brand' : 'text-cream/70 hover:text-cream'
                 )}
               >
-                My Account
+                Library
               </Link>
-              <form action="/api/auth/logout" method="POST">
+
+              <div className="relative" ref={dropdownRef}>
                 <button
-                  type="submit"
+                  onClick={() => setDropdownOpen((o) => !o)}
                   className={cn(
-                    'text-sm font-semibold px-4 py-2 rounded-full border transition-all',
+                    'flex items-center gap-1.5 text-sm font-semibold px-5 py-2.5 rounded-full border transition-all',
                     isScrolled || !isDarkHero
                       ? 'border-charcoal/20 text-charcoal/70 hover:border-brand hover:text-brand'
                       : 'border-cream/30 text-cream/70 hover:border-cream hover:text-cream'
                   )}
                 >
-                  Sign out
+                  {userName || 'Account'}
+                  <ChevronDown
+                    size={14}
+                    className="transition-transform duration-200"
+                    style={{ transform: dropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                  />
                 </button>
-              </form>
+
+                {dropdownOpen && (
+                  <div
+                    className="absolute right-0 top-full mt-2 min-w-[140px] rounded-xl overflow-hidden"
+                    style={{
+                      backgroundColor: '#FAF6F1',
+                      border: '1px solid rgba(28,16,7,0.08)',
+                      boxShadow: '0 8px 32px rgba(28,16,7,0.10)',
+                    }}
+                  >
+                    <Link
+                      href="/dashboard"
+                      onClick={() => setDropdownOpen(false)}
+                      className="block px-5 py-3 text-sm font-medium transition-colors hover:bg-black/5"
+                      style={{ color: 'rgba(28,16,7,0.75)' }}
+                    >
+                      Dashboard
+                    </Link>
+                    <div style={{ borderTop: '1px solid rgba(28,16,7,0.06)' }}>
+                      <form action="/api/auth/logout" method="POST">
+                        <button
+                          type="submit"
+                          className="block w-full text-left px-5 py-3 text-sm transition-colors hover:bg-black/5"
+                          style={{ color: 'rgba(28,16,7,0.40)' }}
+                        >
+                          Sign out
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           ) : (
             /* Join — 직접 멤버십 페이지로 */
