@@ -124,6 +124,21 @@ export default function Footer() {
               {link.name}
             </Link>
           ))}
+          <a
+            href="https://tatlife.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm font-light transition-colors"
+            style={{ color: 'rgba(250,246,241,0.45)' }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLElement).style.color = '#D4A843';
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.color = 'rgba(250,246,241,0.45)';
+            }}
+          >
+            TATLife.com ↗
+          </a>
         </div>
 
         {/* Bottom row — copyright + legal */}

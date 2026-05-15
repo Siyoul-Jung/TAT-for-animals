@@ -1,99 +1,120 @@
 # Using Claude for Your Business
-### A Simple Guide for Tapas
+### A Practical Guide for Tapas
 
 ---
 
-## The Most Important Thing: Projects
+## First: The One-Time Setup (30 minutes)
 
-Before anything else, set up a **Project**.
+Go to [claude.ai](https://claude.ai) and create a **Project**.
 
-A Project is a space where Claude remembers everything about your business — so you never have to explain who you are or what you do. Every conversation inside the project builds on that foundation.
+A Project is a private space where Claude remembers everything about TATLife® — your voice, your terms, your members — so you never have to explain yourself again. Every conversation inside the project builds on that foundation.
 
-**Think of it like hiring an assistant who has already read everything about TATLife® before their first day.**
+**Think of it like an assistant who has already read everything about your work before day one.**
 
----
-
-## Step 1 — Create Your Project
+### 1. Create Your Project
 
 1. Open [claude.ai](https://claude.ai)
 2. Click **"New Project"** in the left sidebar
-3. Name it something like `TATLife - Business`
+3. Name it: `TATLife - Business`
 
----
-
-## Step 2 — Upload These Files
-
-Once your project is created, upload the following. Claude will read them and remember them forever.
+### 2. Upload These Files
 
 | What to upload | Why |
 |----------------|-----|
 | Your bio | So Claude always introduces you correctly |
+| A few emails you love | So Claude learns your voice and warmth |
 | Membership descriptions | The Calm Library / The Calm Circle details |
-| 2–3 emails you love | So Claude learns your tone and voice |
-| FAQs | So Claude can answer member questions accurately |
+| Your FAQ | So Claude can answer member questions accurately |
+
+### 3. Add Standing Instructions
+
+In the Project settings, paste something like:
+
+> "Always write in a warm, personal tone — like I'm speaking directly to someone I care about. Use 'TATLife®' not 'TAT'. Use 'TAT®' when referring to the technique. Never use clinical or medical language — speak about healing in terms of peace, ease, and releasing what we carry. End all emails with: *With love and healing, Tapas Fleming, Founder of TAT®*"
+
+Claude will follow these in every conversation inside this project.
 
 ---
 
-## Step 3 — Tell Claude How to Always Behave
+## Your Monthly Webinar Cycle
 
-In the Project settings, add instructions like:
-
-> "Always write in a warm, personal tone. Use 'TATLife®' not 'TAT'. End emails with my signature: Tapas Fleming, Founder of TATLife®."
-
-Claude will follow these rules in every conversation inside this project.
+This is where Claude saves the most time. Copy and adapt these prompts each month.
 
 ---
 
-## What You Can Do Every Day
+### Before the Webinar — Invitation Email
 
-Once your project is set up, here's what becomes easy:
+Paste this and fill in the blanks:
 
-**Emails**
-- "Write an invitation email for next month's webinar"
-- "A member asked me this question — help me reply warmly"
-- "Write a welcome email for new Calm Circle members"
-
-**Social Media**
-- "Turn this webinar topic into an Instagram caption"
-- "Write 3 Facebook posts for this week"
-
-**Webinar Prep**
-- "Create an outline for a 60-minute session on [topic]"
-- "Summarize the key points from this session transcript"
-
-**Thinking Through Decisions**
-- "I'm thinking about adding a new membership tier — what should I consider?"
-- "How could I re-engage members who haven't logged in recently?"
+> "Write an invitation email for our [Month] TAT for Animals live webinar. It's on [date] at [time] [timezone]. The topic is [topic]. This is for Calm Circle members. Keep it warm and personal — like I'm inviting a close friend."
 
 ---
 
-## Bonus: Artifacts
+### Before the Webinar — Session Outline
 
-When you ask Claude to create something — an email, a document, a schedule — it appears in a **side panel** as a finished piece you can copy, download, or share directly.
-
-No more copying from a chat window. The result just appears, ready to use.
+> "Help me create an outline for a [length]-minute TAT for Animals live session on [topic]. Include: a brief opening, the main practice flow, a moment for questions, and a gentle close. Keep it conversational — not clinical."
 
 ---
 
-## Bonus: Connect Google
+### After the Webinar — Recording Notification Email
 
-If you use Gmail or Google Docs, you can connect them in **Settings → Connectors**.
-
-Once connected, Claude can:
-- Read a document from your Drive and turn it into an email
-- Look at your calendar and write a webinar reminder around your schedule
+> "Write an email to notify Calm Circle members that the recording from [Month]'s session is now available in their library. The session was about [topic]. Keep it warm — like I'm sharing something I'm proud of."
 
 ---
 
-## The 30-Minute Setup
+### After the Webinar — Session Summary
 
-| Time | Task |
-|------|------|
-| 5 min | Create the project |
-| 15 min | Upload your bio, membership info, and a few sample emails |
-| 10 min | Write your standing instructions (tone, signature, terminology) |
+> "Here is the transcript from my [Month] session: [paste transcript]. Please write a warm 2–3 paragraph summary that captures the heart of what we explored — something a member who missed it would love to read."
 
-**After that, every email, post, and webinar outline takes minutes — not hours.**
+---
+
+## When You Upload a New Video
+
+Every video in your library needs a short description. Instead of writing it yourself:
+
+> "Write a 2–3 sentence description for a TAT for Animals video. The video is about [topic]. It's for animal owners who want to help their animal feel more calm and at ease. Write it in my voice — warm, simple, and inviting."
+
+---
+
+## Replying to Member Questions
+
+When a member writes to you and you're not sure how to respond:
+
+> "A member sent me this message: [paste their message]. Help me write a warm, personal reply. I want them to feel heard and gently guided — not rushed. Sign off with my usual signature."
+
+---
+
+## Social Media
+
+### From a Webinar Topic
+
+> "Turn this webinar topic into 3 Instagram captions: [topic]. Keep it warm and human — not marketing-speak. One caption per post, each standing on its own."
+
+### From a Member Story
+
+> "A member shared this experience with me: [paste story]. Help me turn it into a short Facebook post that honors their journey without oversharing. Keep it gentle and real."
+
+### Weekly Rhythm
+
+> "It's [day of week]. Help me write 2–3 social posts for this week. Our theme is [theme or topic]. One for Instagram, one for Facebook. Keep them warm and personal."
+
+---
+
+## Thinking Through Decisions
+
+Claude is also good for this — just talk to it like you'd talk to a trusted colleague.
+
+- *"I'm thinking about adding a bonus session next month on [topic]. What should I consider?"*
+- *"A few members have asked about [topic]. Should I address it in the next webinar or in an email first?"*
+- *"How could I welcome a new Calm Circle member in a way that feels personal, not automated?"*
+
+---
+
+## One More Thing: Artifacts
+
+When Claude writes something — an email, an outline, a social post — it appears in a **side panel** as a finished piece you can copy directly.
+
+No more selecting text from a chat window. The result just appears, clean and ready.
 
 ---
 

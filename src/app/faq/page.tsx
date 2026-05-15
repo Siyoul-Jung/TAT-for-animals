@@ -125,7 +125,7 @@ export default function FAQ() {
             style={{ color: 'rgba(28,16,7,0.55)', fontFamily: 'var(--font-dm-sans)' }}
           >
             Still have questions?{' '}
-            <a href="mailto:tapas@tatlife.com" style={{ color: '#D4703A' }}>
+            <a href="mailto:customerservice@tatlife.com" style={{ color: '#D4703A' }}>
               Email us
             </a>
             {' '}— we'd love to hear from you.

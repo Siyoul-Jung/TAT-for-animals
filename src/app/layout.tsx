@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Playfair_Display, DM_Sans, DM_Serif_Display, Outfit, Plus_Jakarta_Sans, Manrope } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import CookieBanner from "@/components/CookieBanner";
 
 const playfair = Playfair_Display({
   variable: "--font-cormorant",
@@ -67,6 +68,7 @@ export default function RootLayout({
             {children}
           </Suspense>
         </main>
+        <CookieBanner />
       </body>
     </html>
   );
