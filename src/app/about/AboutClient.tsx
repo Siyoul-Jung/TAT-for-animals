@@ -52,11 +52,12 @@ export default function AboutClient() {
               }}
             >
               <Image
-                src="/images/tmp_profile.jpg"
+                src="/images/Tapas-Thanks.jpg"
                 alt="Tapas Fleming — Creator of TAT®"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover object-center"
+                style={{ inset: '-15%', width: '130%', height: '130%' }}
               />
               <div
                 className="absolute inset-0"

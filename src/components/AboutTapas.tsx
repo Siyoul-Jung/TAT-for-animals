@@ -48,23 +48,15 @@ export default function AboutTapas() {
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
           className="relative"
         >
-          {/* Decorative amber ring behind photo */}
-          <div
-            className="absolute -inset-4 rounded-3xl pointer-events-none"
-            style={{
-              background:
-                'radial-gradient(ellipse at 30% 70%, rgba(212,112,58,0.12) 0%, transparent 65%)',
-            }}
-          />
 
           <div
-            className="relative w-full aspect-[4/3] sm:aspect-[3/4] rounded-2xl overflow-hidden"
+            className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden"
             style={{
               boxShadow: '0 24px 64px rgba(31,46,20,0.12), 0 0 0 1px rgba(31,46,20,0.06)',
             }}
           >
             <img
-              src="/images/tmp_profile.jpg"
+              src="/images/Tapas-Thanks.jpg"
               alt="Tapas Fleming — Creator of TAT®"
               className="w-full h-full object-cover object-center"
             />

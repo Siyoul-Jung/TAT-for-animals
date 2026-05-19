@@ -50,13 +50,13 @@ const socials = [
 export default function Footer() {
   return (
     <footer
-      className="px-6 pt-20 pb-10"
+      className="px-6 pt-14 pb-8"
       style={{ backgroundColor: '#1C1007' }}
     >
       <div className="max-w-6xl mx-auto">
 
         {/* Top row — logo + tagline + socials */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-8 pb-12"
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-7 pb-10"
           style={{ borderBottom: '1px solid rgba(250,246,241,0.08)' }}
         >
           {/* Logo + tagline */}
@@ -105,7 +105,7 @@ export default function Footer() {
         </div>
 
         {/* Nav links */}
-        <div className="flex flex-wrap gap-x-8 gap-y-3 py-10"
+        <div className="flex flex-wrap gap-x-8 gap-y-3 py-8"
           style={{ borderBottom: '1px solid rgba(250,246,241,0.06)' }}
         >
           {navLinks.map((link) => (
@@ -142,7 +142,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom row — copyright + legal */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-6">
           <p
             className="text-xs font-light"
             style={{ color: 'rgba(250,246,241,0.25)' }}
