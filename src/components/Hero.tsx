@@ -45,11 +45,11 @@ export default function Hero({ images }: { images: HeroImage[] }) {
     <section className="relative overflow-hidden bg-cream">
 
       {/* ── Mobile: 한 화면 안에 황금비 레이아웃 ── */}
-      <div className="lg:hidden flex min-h-[100svh] flex-col pt-[72px]">
+      <div className="lg:hidden flex min-h-[100svh] flex-col pt-16">
 
         {/* 이미지 — 61.8% */}
         <div className="relative min-h-[280px] flex-[1.35]">
-          {slideshow('100vw')}
+          {slideshow('(max-width: 1024px) 100vw, 60vw')}
         </div>
 
         {/* 텍스트 — 38.2% */}
@@ -60,28 +60,27 @@ export default function Hero({ images }: { images: HeroImage[] }) {
           <p className="text-[10px] tracking-[0.2em] uppercase font-semibold mb-2" style={{ color: '#5E9635' }}>
             TAT for Animals
           </p>
-          <h1 className="font-serif text-[1.65rem] sm:text-[1.9rem] leading-[1.15] text-charcoal mb-2 font-semibold">
-            Help your animal feel calm and at ease.
+          <h1 className="font-serif text-3xl sm:text-4xl leading-[1.2] text-charcoal mb-2 font-semibold">
+            Help your animal<br />feel calm and at&nbsp;ease.
           </h1>
           <p className="font-sans text-sm mb-4 font-normal" style={{ color: '#5E9635' }}>
             And notice what happens in you.
           </p>
-          <div className="flex flex-col min-[420px]:flex-row gap-3">
+          <div className="flex flex-col items-start gap-3">
             <Link
-              href="/membership"
-              className="flex min-h-[44px] flex-1 items-center justify-center px-5 py-3 rounded-full text-cream font-semibold text-sm text-center transition-all active:scale-95"
+              href="#experience"
+              className="inline-flex min-h-[44px] items-center px-6 py-3 rounded-full text-cream font-semibold text-sm transition-all active:scale-95"
               style={{ backgroundColor: '#D4703A', boxShadow: '0 6px 20px rgba(212,112,58,0.25)' }}
             >
-              Start with Your Animal
+              Try a session
             </Link>
-            <button
-              onClick={() => document.getElementById('experience')?.scrollIntoView({ behavior: 'smooth' })}
-              className="flex min-h-[44px] flex-1 items-center justify-center gap-2 px-5 py-3 rounded-full border text-sm font-medium transition-all active:scale-95"
-              style={{ borderColor: 'rgba(28,16,7,0.15)', color: 'rgba(28,16,7,0.60)' }}
+            <Link
+              href="/membership"
+              className="inline-flex min-h-[44px] items-center text-sm font-medium transition-all hover:opacity-70"
+              style={{ color: 'rgba(28,16,7,0.50)' }}
             >
-              <Play size={10} fill="currentColor" />
-              Watch How It Works
-            </button>
+              Join the members →
+            </Link>
           </div>
         </div>
 
@@ -104,8 +103,8 @@ export default function Hero({ images }: { images: HeroImage[] }) {
           <p className="text-xs tracking-[0.2em] uppercase font-semibold mb-5" style={{ color: '#5E9635' }}>
             TAT for Animals
           </p>
-          <h1 className="font-serif text-[2.5rem] xl:text-[3rem] leading-[1.15] text-charcoal mb-5 font-semibold">
-            Help your animal<br />feel calm and at ease.
+          <h1 className="font-serif text-4xl xl:text-5xl 2xl:text-6xl leading-[1.2] text-charcoal mb-5 font-semibold">
+            Help your animal<br />feel calm and at&nbsp;ease.
           </h1>
           <p className="font-sans text-xl mb-8 font-normal" style={{ color: '#5E9635' }}>
             And notice what happens in you.
@@ -114,32 +113,21 @@ export default function Hero({ images }: { images: HeroImage[] }) {
             No special training. No reliving anything painful.
             Just a few quiet minutes with your animal — and something shifts.
           </p>
-          <div className="flex flex-wrap gap-3 items-start">
+          <div className="flex flex-col gap-3 items-start">
             <Link
-              href="/membership"
+              href="#experience"
               className="px-8 py-4 rounded-full text-cream font-semibold text-base text-center whitespace-nowrap transition-all hover:scale-105 hover:shadow-lg active:scale-95"
               style={{ backgroundColor: '#D4703A', boxShadow: '0 8px 32px rgba(212,112,58,0.25)' }}
             >
-              Start with Your Animal
+              Try a session
             </Link>
-            <button
-              onClick={() => document.getElementById('experience')?.scrollIntoView({ behavior: 'smooth' })}
-              className="flex items-center justify-center gap-3 px-6 py-4 rounded-full border font-medium text-base whitespace-nowrap transition-all"
-              style={{ borderColor: 'rgba(28,16,7,0.15)', color: 'rgba(28,16,7,0.60)' }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.borderColor = '#5E9635';
-                (e.currentTarget as HTMLElement).style.color = '#5E9635';
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.borderColor = 'rgba(28,16,7,0.15)';
-                (e.currentTarget as HTMLElement).style.color = 'rgba(28,16,7,0.60)';
-              }}
+            <Link
+              href="/membership"
+              className="flex items-center gap-1 font-medium text-base whitespace-nowrap transition-all hover:opacity-70"
+              style={{ color: 'rgba(28,16,7,0.50)' }}
             >
-              <div className="w-8 h-8 shrink-0 rounded-full flex items-center justify-center border" style={{ borderColor: 'rgba(28,16,7,0.15)' }}>
-                <Play size={12} fill="currentColor" />
-              </div>
-              Watch How It Works
-            </button>
+              Join the members →
+            </Link>
           </div>
         </motion.div>
 
@@ -167,7 +155,7 @@ export default function Hero({ images }: { images: HeroImage[] }) {
                 priority={i === 0}
                 sizes="60vw"
                 className="object-cover object-center scale-110"
-                style={{ filter: 'blur(24px)', opacity: 0.5 }}
+                style={{ filter: 'blur(8px)', opacity: 0.25 }}
               />
               <Image
                 src={img.src}
@@ -179,7 +167,8 @@ export default function Hero({ images }: { images: HeroImage[] }) {
               />
             </div>
           ))}
-          <div className="absolute inset-0 z-10" style={{ background: 'linear-gradient(to right, rgba(250,246,241,1) 0%, rgba(250,246,241,0.15) 20%, transparent 50%)' }} />
+          <div className="absolute inset-0 z-10" style={{ background: 'rgba(250,246,241,0.15)' }} />
+          <div className="absolute inset-0 z-10" style={{ background: 'linear-gradient(to right, rgba(250,246,241,1) 0%, rgba(250,246,241,0.6) 25%, rgba(250,246,241,0.1) 55%, transparent 70%)' }} />
           <div className="absolute inset-0 z-10" style={{ background: 'linear-gradient(to top, rgba(250,246,241,0.5) 0%, transparent 30%)' }} />
         </motion.div>
 

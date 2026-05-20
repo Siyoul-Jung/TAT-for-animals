@@ -10,7 +10,7 @@ const EMBED_SRC = 'https://www.youtube.com/embed/UpbujaNsKKA?rel=0&autoplay=1';
 const THUMBNAIL = 'https://img.youtube.com/vi/UpbujaNsKKA/maxresdefault.jpg';
 
 
-export default function ForAnimals() {
+export default function TrySession() {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const videoRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
@@ -63,7 +63,7 @@ export default function ForAnimals() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-          className="relative mb-14"
+          className="relative mb-14 max-w-2xl mx-auto"
         >
           {/* Warm glow */}
           <div

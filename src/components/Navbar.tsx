@@ -2,12 +2,13 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { ChevronDown } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
-import LogoMark from '@/components/LogoMark';
+
 
 
 export default function Navbar() {
@@ -89,34 +90,30 @@ export default function Navbar() {
   return (
     <nav
       className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-500 px-4 sm:px-6 py-4',
+        'fixed top-0 left-0 right-0 z-40 transition-all duration-500 px-4 sm:px-6 py-3',
         isScrolled
-          ? 'bg-cream/95 backdrop-blur-xl shadow-sm border-b border-brand/10'
-          : 'bg-cream/95 backdrop-blur-xl shadow-sm border-b border-brand/10 sm:bg-transparent sm:backdrop-blur-none sm:shadow-none sm:border-transparent'
+          ? 'bg-cream/95 backdrop-blur-xl shadow-sm'
+          : 'bg-cream/95 backdrop-blur-xl'
       )}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
 
         {/* Logo */}
-        <Link href="/" className="group flex min-w-0 items-center gap-2.5">
-          <LogoMark
-            size={34}
-            orange="#D4703A"
-            green={isScrolled || !isDarkHero ? '#6B7A52' : '#9AAD84'}
+        <Link href="/" className="group flex min-w-0 items-center gap-1.5">
+          <Image
+            src="/images/logo.png"
+            alt="TAT for Animals logo"
+            width={40}
+            height={40}
+            className="h-10 w-auto object-contain shrink-0"
+            priority
           />
           <span className={cn(
             'hidden sm:inline text-xl tracking-wide transition-colors duration-300 whitespace-nowrap',
-            'font-[family-name:var(--font-dm-serif)]',
+            'font-[family-name:var(--font-open-sans)]',
             isScrolled || !isDarkHero ? 'text-charcoal' : 'text-cream'
           )}>
-            TAT for Animals<span className="text-brand">®</span>
-          </span>
-          <span className={cn(
-            'sm:hidden text-lg tracking-wide transition-colors duration-300 whitespace-nowrap',
-            'font-[family-name:var(--font-dm-serif)]',
-            isScrolled || !isDarkHero ? 'text-charcoal' : 'text-cream'
-          )}>
-            TAT
+            TAT for Animals<span className="text-brand text-sm align-super">®</span>
           </span>
         </Link>
 
@@ -136,10 +133,10 @@ export default function Navbar() {
                 <button
                   onClick={() => setDropdownOpen((o) => !o)}
                   className={cn(
-                    'flex items-center gap-1.5 text-sm font-semibold px-4 sm:px-5 py-2.5 rounded-full border transition-all',
+                    'flex items-center gap-1.5 text-xs sm:text-sm font-medium transition-all',
                     isScrolled || !isDarkHero
-                      ? 'border-charcoal/20 text-charcoal/70 hover:border-brand hover:text-brand'
-                      : 'border-cream/30 text-cream/70 hover:border-cream hover:text-cream'
+                      ? 'text-charcoal/70 hover:text-brand'
+                      : 'text-cream/70 hover:text-cream'
                   )}
                 >
                   <span>Account</span>
@@ -199,6 +196,14 @@ export default function Navbar() {
         </div>
 
       </div>
+
+      {/* 브랜드 그라디언트 바 — Navbar 하단 */}
+      <div
+        className="absolute bottom-0 left-0 right-0 h-[8px]"
+        style={{
+          background: 'linear-gradient(to right, #b0aec8, #e8a0a0, #8fba7a, #e8a890)',
+        }}
+      />
     </nav>
   );
 }

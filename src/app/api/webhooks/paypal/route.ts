@@ -1,0 +1,110 @@
+import { createClient } from '@supabase/supabase-js'
+import { paypalRequest, PLAN_ROLE_MAP } from '@/lib/paypal'
+import { NextRequest, NextResponse } from 'next/server'
+
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
+
+async function verifyWebhook(request: NextRequest, body: string): Promise<boolean> {
+  const webhookId = process.env.PAYPAL_WEBHOOK_ID
+  if (!webhookId) return true // 개발 환경 — 검증 스킵
+
+  const res = await paypalRequest('/v1/notifications/verify-webhook-signature', {
+    method: 'POST',
+    body: JSON.stringify({
+      auth_algo:         request.headers.get('paypal-auth-algo'),
+      cert_url:          request.headers.get('paypal-cert-url'),
+      transmission_id:   request.headers.get('paypal-transmission-id'),
+      transmission_sig:  request.headers.get('paypal-transmission-sig'),
+      transmission_time: request.headers.get('paypal-transmission-time'),
+      webhook_id:        webhookId,
+      webhook_event:     JSON.parse(body),
+    }),
+  })
+
+  const data = await res.json()
+  return data.verification_status === 'SUCCESS'
+}
+
+export async function POST(request: NextRequest) {
+  const body = await request.text()
+
+  const isValid = await verifyWebhook(request, body)
+  if (!isValid) {
+    return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
+  }
+
+  const event = JSON.parse(body)
+  const resource = event.resource
+
+  try {
+    switch (event.event_type) {
+
+      // 구독 활성화 (PayPal 승인 완료)
+      case 'BILLING.SUBSCRIPTION.ACTIVATED': {
+        const userId = resource.custom_id
+        const role = PLAN_ROLE_MAP[resource.plan_id] ?? 'subscriber'
+        if (!userId) break
+
+        await supabaseAdmin
+          .from('profiles')
+          .update({
+            role,
+            paypal_subscription_id: resource.id,
+            subscription_status: 'active',
+          })
+          .eq('id', userId)
+        break
+      }
+
+      // 결제 완료 → 갱신 기간 업데이트
+      case 'PAYMENT.SALE.COMPLETED': {
+        const subscriptionId = resource.billing_agreement_id
+        if (!subscriptionId) break
+
+        await supabaseAdmin
+          .from('profiles')
+          .update({ subscription_status: 'active' })
+          .eq('paypal_subscription_id', subscriptionId)
+        break
+      }
+
+      // 결제 실패
+      case 'BILLING.SUBSCRIPTION.PAYMENT.FAILED': {
+        const userId = resource.custom_id
+        if (!userId) break
+
+        await supabaseAdmin
+          .from('profiles')
+          .update({ subscription_status: 'past_due' })
+          .eq('id', userId)
+        break
+      }
+
+      // 구독 취소 / 만료
+      case 'BILLING.SUBSCRIPTION.CANCELLED':
+      case 'BILLING.SUBSCRIPTION.EXPIRED': {
+        const userId = resource.custom_id
+        if (!userId) break
+
+        await supabaseAdmin
+          .from('profiles')
+          .update({
+            role: 'guest',
+            paypal_subscription_id: null,
+            subscription_status: 'inactive',
+          })
+          .eq('id', userId)
+        break
+      }
+    }
+
+    return NextResponse.json({ received: true })
+
+  } catch (error) {
+    console.error('PayPal webhook error:', error)
+    return NextResponse.json({ error: 'Webhook handler failed' }, { status: 500 })
+  }
+}

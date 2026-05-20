@@ -51,6 +51,13 @@ CLAUDE.md
 docs/invoice*.html
 docs/estimate.md
 docs/marketing_plan*.md
+docs/design_spec.md
+docs/claude_guide_for_tapas.md
+docs/homepage_plan.md
+docs/meeting_prep*.md
+docs/project_summary.html
+docs/srs.md
+docs/tasks.md
 
 # temp files
 supabase/.temp/

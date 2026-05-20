@@ -42,10 +42,11 @@ export default function Pricing() {
   const router = useRouter();
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
 
-  async function handleCheckout(plan: string) {
-    setLoadingPlan(plan);
+  async function handleCheckout(plan: string, provider: 'stripe' | 'paypal' = 'stripe') {
+    setLoadingPlan(`${provider}_${plan}`);
+    const endpoint = provider === 'paypal' ? '/api/paypal/checkout' : '/api/checkout';
     try {
-      const res = await fetch('/api/checkout', {
+      const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ plan }),
@@ -170,9 +171,9 @@ export default function Pricing() {
                 ))}
               </ul>
 
-              {/* CTA */}
+              {/* CTA — Card */}
               <button
-                onClick={() => handleCheckout(tier.plan)}
+                onClick={() => handleCheckout(tier.plan, 'stripe')}
                 disabled={loadingPlan !== null}
                 className="block w-full text-center py-3.5 rounded-xl text-sm sm:text-base font-semibold transition-all hover:opacity-90 active:scale-95 disabled:opacity-50"
                 style={{
@@ -181,7 +182,27 @@ export default function Pricing() {
                   boxShadow: '0 8px 24px rgba(212,112,58,0.20)',
                 }}
               >
-                {loadingPlan === tier.plan ? 'Connecting...' : tier.cta}
+                {loadingPlan === `stripe_${tier.plan}` ? 'Connecting...' : tier.cta}
+              </button>
+
+              {/* Divider */}
+              <div className="flex items-center gap-3 my-1">
+                <div className="flex-1 h-px" style={{ backgroundColor: 'rgba(28,16,7,0.07)' }} />
+                <span className="text-xs" style={{ color: 'rgba(28,16,7,0.30)' }}>or</span>
+                <div className="flex-1 h-px" style={{ backgroundColor: 'rgba(28,16,7,0.07)' }} />
+              </div>
+
+              {/* CTA — PayPal */}
+              <button
+                onClick={() => handleCheckout(tier.plan, 'paypal')}
+                disabled={loadingPlan !== null}
+                className="block w-full text-center py-3.5 rounded-xl text-sm sm:text-base font-semibold transition-all hover:opacity-90 active:scale-95 disabled:opacity-50"
+                style={{
+                  backgroundColor: '#FFC439',
+                  color: '#003087',
+                }}
+              >
+                {loadingPlan === `paypal_${tier.plan}` ? 'Connecting...' : 'Pay with PayPal'}
               </button>
 
               {/* Cancel note */}
