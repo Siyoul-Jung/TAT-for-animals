@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display, DM_Sans, DM_Serif_Display, Outfit, Plus_Jakarta_Sans, Manrope } from "next/font/google";
+import { Playfair_Display, DM_Sans, DM_Serif_Display, Outfit, Plus_Jakarta_Sans, Manrope, Open_Sans } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import CookieBanner from "@/components/CookieBanner";
@@ -42,6 +42,12 @@ const manrope = Manrope({
   weight: ["400", "500", "600", "700"],
 });
 
+const openSans = Open_Sans({
+  variable: "--font-open-sans",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
 export const metadata: Metadata = {
   title: "TAT® Calm for Animals (and You) | The Relationship-Driven Way to Heal",
   description: "Experience the calming power of TAT for your animals and yourself. Experience first, simplicity always.",
@@ -57,7 +63,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${playfair.variable} ${dmSans.variable} ${dmSerifDisplay.variable} ${outfit.variable} ${plusJakarta.variable} ${manrope.variable} h-full antialiased`}
+      className={`${playfair.variable} ${dmSans.variable} ${dmSerifDisplay.variable} ${outfit.variable} ${plusJakarta.variable} ${manrope.variable} ${openSans.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans bg-cream text-charcoal selection:bg-brand/20">
         <Suspense fallback={null}>

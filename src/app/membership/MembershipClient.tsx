@@ -43,31 +43,9 @@ export default function MembershipClient() {
   const router = useRouter();
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
 
-  async function handleCheckout(plan: string) {
+  function handleCheckout(plan: string) {
     setLoadingPlan(plan);
-    try {
-      const res = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan }),
-      });
-
-      if (res.status === 401) {
-        router.push('/login?next=/membership');
-        return;
-      }
-
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        alert('Something went wrong. Please try again.');
-        setLoadingPlan(null);
-      }
-    } catch {
-      alert('Something went wrong. Please try again.');
-      setLoadingPlan(null);
-    }
+    router.push(`/checkout?plan=${plan}`);
   }
 
   return (

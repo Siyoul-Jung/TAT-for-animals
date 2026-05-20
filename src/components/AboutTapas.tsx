@@ -114,10 +114,7 @@ export default function AboutTapas() {
               without reliving their pain — Tapas developed TAT® in 1993.
             </p>
             <p>
-              Today, TAT® has reached{' '}
-              <span className="text-charcoal/85 font-normal">
-                hundreds of thousands of people in over 80 countries.
-              </span>{' '}
+              Today, TAT® has reached people around the world.
               Her mission remains the same:
             </p>
             <p className="font-sans text-lg sm:text-xl lg:text-2xl text-charcoal/80 leading-snug">

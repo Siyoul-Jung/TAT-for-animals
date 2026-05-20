@@ -35,7 +35,7 @@ export default function AboutClient() {
 
       {/* 2. 사진 + 초기 스토리 */}
       <section className="py-16 px-6">
-        <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-24 items-start">
+        <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-24 items-center">
 
           {/* 사진 */}
           <motion.div
@@ -43,10 +43,10 @@ export default function AboutClient() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            className="relative lg:sticky lg:top-24"
+            className="relative"
           >
             <div
-              className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden"
+              className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden"
               style={{
                 boxShadow: '0 24px 64px rgba(28,16,7,0.12), 0 0 0 1px rgba(28,16,7,0.06)',
               }}
@@ -56,8 +56,7 @@ export default function AboutClient() {
                 alt="Tapas Fleming — Creator of TAT®"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover object-center"
-                style={{ inset: '-15%', width: '130%', height: '130%' }}
+                className="object-cover object-top"
               />
               <div
                 className="absolute inset-0"
@@ -93,10 +92,8 @@ export default function AboutClient() {
             </p>
             <p>
               What began as a quiet discovery in her acupuncture practice grew into something
-              she could not have imagined: a technique that has since reached{' '}
-              <span className="text-charcoal/85 font-normal">
-                hundreds of thousands of people in over 80 countries.
-              </span>
+              she could not have imagined: a technique that has since reached people
+              around the world.
             </p>
             <p>
               TAT® works by allowing the nervous system to gently release what it has been
