@@ -13,25 +13,25 @@ type Testimonial = {
 
 const testimonials: Testimonial[] = [
   {
-    name: 'Rachel M.',
-    location: 'Portland, Oregon',
-    animal: 'Bowie — From Fear to Fun',
-    quote: 'Bowie was in so much pain — even touching him caused extreme distress. During TAT®, his friend Ziggy stayed right by his side. Immediately after, he got up on his own, became happier, and more playful. I still can\'t quite believe what I witnessed.',
-    image: '/images/testimonials/testimonial.jpg',
-  },
-  {
-    name: 'Diane H.',
-    location: 'Bristol, UK',
+    name: 'Kai\'s family',
+    location: '',
     animal: 'Kai — From Crying to Comfort',
-    quote: 'Kai used to cry, moan, and whine constantly — it broke my heart. Just moments after TAT®, the crying stopped completely and he became so much more relaxed. He\'s a much happier whippet now. Our whole family is so relieved.',
-    image: '/images/testimonials/testimonial2.jpg',
+    quote: 'Before TAT®, Kai used to cry, moan, and whine very frequently. A few moments after TAT®, the crying stopped — and he became so much more relaxed. He\'s a much happier whippet now. His family is so relieved.',
+    image: '/images/testimonials/kai.png',
   },
   {
-    name: 'Tom & Lisa B.',
-    location: 'Austin, Texas',
-    animal: 'Curby — A New Beginning',
-    quote: 'We adopted Curby not knowing what he\'d been through. He was shut down, barely responsive. TAT® opened something in him we didn\'t know was possible. Watching him come back to life — and feeling something shift in us too — was unlike anything we\'ve experienced.',
-    image: '/images/testimonials/curby_story.jpg',
+    name: 'Bowie\'s family',
+    location: '',
+    animal: 'Bowie — From Fear to Fun',
+    quote: 'Before TAT®, Bowie was in pain — touching him caused extreme distress. During TAT®, his friend Ziggy stayed by his side, offering comfort and closeness. Immediately after TAT®, he got up, became happier, and more playful.',
+    image: '/images/testimonials/bowie.png',
+  },
+  {
+    name: 'Marion O.',
+    location: '',
+    animal: 'Misty — A Gentle Shift',
+    quote: 'We are so pleased to witness Misty\'s new-found peace! She now begs less for food, engages lovingly through eye contact and spontaneous cuddles, and waits patiently instead of whining. These changes are without doubt due to your valuable input.',
+    image: '/images/testimonials/misty.jpg',
   },
 ];
 
@@ -39,16 +39,13 @@ const INTERVAL = 7000;
 
 function SlideLayout({ t }: { t: Testimonial }) {
   return (
-    <div className="grid lg:grid-cols-[2fr_3fr] gap-8 lg:gap-16 items-center">
+    <div className="grid lg:grid-cols-[1fr_1fr] gap-8 lg:gap-12 items-center">
       {/* 사진 */}
-      <div
-        className="relative rounded-2xl overflow-hidden aspect-[4/3] lg:aspect-[4/5]"
-        style={{ boxShadow: '0 24px 64px rgba(28,16,7,0.10)' }}
-      >
+      <div className="relative aspect-square">
         <img
           src={t.image}
           alt={t.name}
-          className="absolute inset-0 w-full h-full object-cover object-center"
+          className="absolute inset-0 w-full h-full object-contain object-center"
         />
       </div>
 
@@ -65,9 +62,11 @@ function SlideLayout({ t }: { t: Testimonial }) {
         </blockquote>
         <div>
           <p className="font-medium text-charcoal">{t.name}</p>
-          <p className="text-sm mt-0.5" style={{ color: 'rgba(28,16,7,0.4)' }}>
-            {t.location}
-          </p>
+          {t.location && (
+            <p className="text-sm mt-0.5" style={{ color: 'rgba(28,16,7,0.4)' }}>
+              {t.location}
+            </p>
+          )}
         </div>
       </div>
     </div>
