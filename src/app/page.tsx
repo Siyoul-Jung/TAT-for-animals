@@ -5,7 +5,6 @@ import TrySession from "@/components/TrySession";
 import Testimonials from "@/components/Testimonials";
 import Pricing from "@/components/Pricing";
 import AboutTapas from "@/components/AboutTapas";
-import Footer from "@/components/Footer";
 
 function getHeroImages() {
   const dir = path.join(process.cwd(), 'public/images/hero/vertical');
@@ -27,7 +26,6 @@ export default function Home() {
       <Testimonials />                    {/* 4. 사회적 증명 */}
       <Pricing />                         {/* 5. 전환 */}
       <AboutTapas />                      {/* 6. 최후 신뢰 */}
-      <Footer />                          {/* 7. 내비게이션 */}
     </div>
   );
 }

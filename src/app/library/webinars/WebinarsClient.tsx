@@ -97,6 +97,16 @@ export default function WebinarsClient({
                   {session.description && (
                     <p className="text-sm text-charcoal/60 mt-1 leading-relaxed">{session.description}</p>
                   )}
+                  {session.meetingUrl && (
+                    <a
+                      href={session.meetingUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 mt-3 min-h-[44px] px-5 py-2.5 rounded-full bg-brand text-cream text-sm font-semibold hover:bg-brand-dark transition-all"
+                    >
+                      Join on Zoom →
+                    </a>
+                  )}
                 </div>
               ))}
             </div>

@@ -30,7 +30,13 @@ export const videoType = defineType({
       title: 'Library',
       type: 'string',
       initialValue: 'TAT for Animals',
-      readOnly: true,
+      options: {
+        list: [
+          { title: 'TAT for Animals', value: 'TAT for Animals' },
+          { title: 'Healing ACEs Plus', value: 'Healing ACEs Plus' },
+        ],
+      },
+      validation: (r) => r.required(),
     }),
     defineField({
       name: 'audience',
@@ -104,16 +110,45 @@ export const videoType = defineType({
       initialValue: 'Vimeo',
       readOnly: true,
     }),
+    defineField({
+      name: 'tier',
+      title: 'Access Tier',
+      type: 'string',
+      initialValue: 'basic',
+      options: {
+        list: [
+          { title: 'Basic (Calm Library)', value: 'basic' },
+          { title: 'Premium (Calm Circle)', value: 'premium' },
+        ],
+      },
+      validation: (r) => r.required(),
+    }),
+    defineField({
+      name: 'status',
+      title: 'Status',
+      type: 'string',
+      initialValue: 'draft',
+      options: {
+        list: [
+          { title: 'Draft', value: 'draft' },
+          { title: 'Ready', value: 'ready' },
+          { title: 'Published', value: 'published' },
+        ],
+      },
+      validation: (r) => r.required(),
+    }),
   ],
   preview: {
     select: {
       title: 'title',
-      subtitle: 'category',
+      library: 'library',
+      status: 'status',
     },
-    prepare({ title, subtitle }) {
+    prepare({ title, library, status }) {
+      const lib = library === 'Healing ACEs Plus' ? 'ACEs' : 'Animals'
       return {
         title,
-        subtitle: subtitle ?? '',
+        subtitle: `[${status ?? 'draft'}] ${lib}`,
       }
     },
   },

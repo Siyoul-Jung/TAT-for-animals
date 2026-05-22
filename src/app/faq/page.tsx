@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ChevronDown } from 'lucide-react';
 
 const faqs = [
   {
@@ -57,61 +59,59 @@ function FAQItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <div
-      className="border-b cursor-pointer"
-      style={{ borderColor: 'rgba(28,16,7,0.1)' }}
-      onClick={() => setOpen(!open)}
-    >
-      <div className="flex items-center justify-between gap-4 py-5">
-        <h2
-          className="text-lg font-medium leading-snug"
-          style={{ fontFamily: 'var(--font-dm-sans)', color: '#1C1007' }}
-        >
+    <div className="border-b border-charcoal/10">
+      <button
+        onClick={() => setOpen(!open)}
+        aria-expanded={open}
+        className="w-full flex items-center justify-between gap-4 py-5 text-left min-h-[64px] group"
+      >
+        <span className={`text-base sm:text-lg font-medium leading-snug transition-colors ${
+          open ? 'text-brand' : 'text-charcoal group-hover:text-brand'
+        }`}>
           {q}
-        </h2>
-        <span
-          className="text-xl flex-shrink-0 transition-transform duration-300"
-          style={{
-            color: '#D4703A',
-            transform: open ? 'rotate(45deg)' : 'rotate(0deg)',
-          }}
-        >
-          +
         </span>
-      </div>
+        <ChevronDown
+          size={18}
+          className="text-brand shrink-0 transition-transform duration-300"
+          style={{ transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}
+        />
+      </button>
 
-      {open && (
-        <p
-          className="text-base leading-relaxed pb-6"
-          style={{ color: 'rgba(28,16,7,0.65)', fontFamily: 'var(--font-dm-sans)' }}
-        >
-          {a}
-        </p>
-      )}
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            className="overflow-hidden"
+          >
+            <p className="text-base sm:text-lg leading-relaxed pb-6 text-charcoal/65">
+              {a}
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
 
 export default function FAQ() {
   return (
-    <main
-      className="min-h-screen pt-28 pb-24 px-6"
-      style={{ backgroundColor: 'oklch(98% 0.016 73.684)' }}
-    >
+    <main className="min-h-screen bg-cream pt-28 pb-24 px-6">
       <div className="max-w-2xl mx-auto">
 
-        <h1
-          className="text-3xl sm:text-4xl font-medium mb-4 leading-tight"
-          style={{ fontFamily: 'var(--font-dm-sans)', color: '#1C1007' }}
-        >
-          Questions & Answers
-        </h1>
-        <p
-          className="text-base mb-12 leading-relaxed"
-          style={{ color: 'rgba(28,16,7,0.55)', fontFamily: 'var(--font-dm-sans)' }}
-        >
-          Everything you're wondering about TAT for Animals — answered simply.
-        </p>
+        <div className="mb-12 lg:mb-16">
+          <p className="text-xs tracking-[0.2em] uppercase font-semibold mb-5" style={{ color: '#5E9635' }}>
+            FAQ
+          </p>
+          <h1 className="font-sans text-3xl sm:text-4xl lg:text-5xl text-charcoal font-semibold leading-tight mb-4">
+            Questions & Answers
+          </h1>
+          <p className="text-base sm:text-lg leading-relaxed text-charcoal/55">
+            Everything you're wondering about TAT for Animals — answered simply.
+          </p>
+        </div>
 
         <div>
           {faqs.map(({ q, a }, i) => (
@@ -119,13 +119,13 @@ export default function FAQ() {
           ))}
         </div>
 
-        <div className="mt-16">
-          <p
-            className="text-base leading-relaxed"
-            style={{ color: 'rgba(28,16,7,0.55)', fontFamily: 'var(--font-dm-sans)' }}
-          >
+        <div className="mt-14">
+          <p className="text-base sm:text-lg leading-relaxed text-charcoal/55">
             Still have questions?{' '}
-            <a href="mailto:customerservice@tatlife.com" style={{ color: '#D4703A' }}>
+            <a
+              href="mailto:customerservice@tatlife.com"
+              className="text-brand hover:text-brand-dark transition-colors"
+            >
               Email us
             </a>
             {' '}— we'd love to hear from you.

@@ -22,6 +22,7 @@ export type WebinarSession = {
   title: string
   date: string
   description: string | null
+  meetingUrl: string | null
 }
 
 export default async function WebinarsPage() {
@@ -89,7 +90,7 @@ export default async function WebinarsPage() {
     ),
     sanityClient.fetch<WebinarSession[]>(
       `*[_type == "webinarSchedule" && date > now()] | order(date asc) {
-        _id, title, date, description
+        _id, title, date, description, meetingUrl
       }`
     ),
   ])

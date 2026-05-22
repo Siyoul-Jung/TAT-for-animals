@@ -2,10 +2,10 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import type { Metadata } from 'next'
 import { sanityClient } from '@/lib/sanity'
-import AnimalsLibraryClient from './AnimalsLibraryClient'
+import AcesLibraryClient from './AcesLibraryClient'
 
 export const metadata: Metadata = {
-  title: 'TAT for Animals Library | TAT for Animals',
+  title: 'Healing ACEs Plus Library | TAT for Animals',
 }
 
 export type Video = {
@@ -17,10 +17,10 @@ export type Video = {
   videoUrl: string
 }
 
-export default async function AnimalsLibraryPage() {
+export default async function AcesLibraryPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login?next=/library/animals')
+  if (!user) redirect('/login?next=/library/aces')
 
   const { data: profile } = await supabase
     .from('profiles')
@@ -32,10 +32,10 @@ export default async function AnimalsLibraryPage() {
   if (role === 'guest') redirect('/membership')
 
   const videos: Video[] = await sanityClient.fetch(
-    `*[_type == "video" && status == "published" && library == "TAT for Animals"] | order(category asc, title asc) {
+    `*[_type == "video" && status == "published" && library == "Healing ACEs Plus"] | order(category asc, title asc) {
       _id, title, category, duration, summary, videoUrl
     }`
   )
 
-  return <AnimalsLibraryClient videos={videos} role={role} />
+  return <AcesLibraryClient videos={videos} role={role} />
 }

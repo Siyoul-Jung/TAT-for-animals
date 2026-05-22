@@ -24,6 +24,12 @@ export const webinarScheduleType = defineType({
       rows: 3,
       description: 'Brief description shown to members',
     }),
+    defineField({
+      name: 'meetingUrl',
+      title: 'Zoom Meeting URL',
+      type: 'url',
+      description: 'Paste the Zoom join link here',
+    }),
   ],
   preview: {
     select: {

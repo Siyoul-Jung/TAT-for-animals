@@ -16,7 +16,7 @@ export default function AboutClient() {
     <main className="bg-cream">
 
       {/* 1. 헤더 */}
-      <section className="pt-32 pb-16 px-6">
+      <section className="pt-32 pb-4 px-6">
         <div className="max-w-4xl mx-auto">
           <motion.div {...fadeUp}>
             <p className="text-xs tracking-[0.2em] uppercase font-semibold mb-5"
@@ -34,7 +34,7 @@ export default function AboutClient() {
       </section>
 
       {/* 2. 사진 + 초기 스토리 */}
-      <section className="py-16 px-6">
+      <section className="pt-4 pb-16 px-6">
         <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-24 items-center">
 
           {/* 사진 */}
@@ -157,32 +157,20 @@ export default function AboutClient() {
       </section>
 
       {/* 4. CTA */}
-      <section className="py-20 px-6">
+      <section className="pb-24 px-6">
         <div className="max-w-3xl mx-auto">
-          <div className="h-px bg-charcoal/8 mb-16" />
+          <div className="h-px bg-charcoal/8 mb-14" />
 
-          <motion.div
-            {...fadeUp}
-            className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-8"
-          >
-            <div>
-              <h3 className="font-serif text-2xl text-charcoal font-medium mb-2">
-                Ready to begin?
-              </h3>
-              <p className="text-charcoal/50 font-light text-base leading-relaxed">
-                Join Tapas and a growing community of animal owners around the world.
-              </p>
-            </div>
+          <motion.div {...fadeUp}>
+            <p className="font-sans text-lg text-charcoal/55 font-light leading-relaxed mb-6">
+              Whenever you feel ready, Tapas is here.
+            </p>
             <Link
               href="/membership"
-              className="inline-flex items-center min-h-[44px] px-8 py-3.5 rounded-full font-semibold text-base transition-all hover:opacity-90 active:scale-95 whitespace-nowrap shrink-0"
-              style={{
-                backgroundColor: '#D4703A',
-                color: '#FAF6F1',
-                boxShadow: '0 8px 32px rgba(212,112,58,0.25)',
-              }}
+              className="inline-flex items-center min-h-[44px] text-base font-medium transition-colors hover:opacity-70"
+              style={{ color: '#D4703A' }}
             >
-              See Membership Options
+              See membership options →
             </Link>
           </motion.div>
         </div>

@@ -117,6 +117,11 @@ export default function DashboardClient({
                 description="Video library for helping your animal find calm"
                 href="/library/animals"
               />
+              <ContentCard
+                title="Healing ACEs Plus"
+                description="Gently release what you carry — at your own pace"
+                href="/library/aces"
+              />
               {role === 'pro_subscriber' && (
                 <ContentCard
                   title="Live Sessions"

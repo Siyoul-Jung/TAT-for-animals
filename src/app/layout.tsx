@@ -54,6 +54,7 @@ export const metadata: Metadata = {
 };
 
 import { Suspense } from "react";
+import Footer from "@/components/Footer";
 
 export default function RootLayout({
   children,
@@ -74,6 +75,7 @@ export default function RootLayout({
             {children}
           </Suspense>
         </main>
+        <Footer />
         <CookieBanner />
       </body>
     </html>
