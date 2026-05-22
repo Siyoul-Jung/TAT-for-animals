@@ -2,7 +2,7 @@
 
 :root {
   /* Warm cream base */
-  --background: #FAF6F1;
+  --background: #FBF5F3;
   --foreground: #1C1007;
 
   /* Primary — terracotta orange */
@@ -15,7 +15,7 @@
   --green-light: #EBF5E1;  /* very light green tint — subtle bg accent */
 
   /* Neutrals */
-  --cream:    #FAF6F1;  /* neutral off-white background */
+  --cream:    #FBF5F3;  /* neutral off-white background */
   --surface:  #F2EAE0;  /* warm tinted section bg */
   --dark:     #1C1007;  /* warm charcoal — footer only */
   --charcoal: #1C1007;  /* warm near-black */

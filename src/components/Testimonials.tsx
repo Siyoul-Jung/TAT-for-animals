@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 type Testimonial = {
   name: string;
@@ -39,7 +39,7 @@ const INTERVAL = 7000;
 
 function SlideLayout({ t }: { t: Testimonial }) {
   return (
-    <div className="grid lg:grid-cols-[1fr_1fr] gap-8 lg:gap-12 items-center">
+    <div className="grid lg:grid-cols-[1fr_1fr] gap-5 lg:gap-12 items-center">
       {/* 사진 */}
       <div className="relative aspect-square">
         <img
@@ -52,12 +52,12 @@ function SlideLayout({ t }: { t: Testimonial }) {
       {/* 텍스트 */}
       <div className="flex flex-col justify-center">
         <p
-          className="text-xs tracking-[0.15em] uppercase font-medium mb-6"
+          className="text-xs tracking-[0.15em] uppercase font-medium mb-3 lg:mb-5"
           style={{ color: 'rgba(212,112,58,0.6)' }}
         >
           {t.animal}
         </p>
-        <blockquote className="font-serif text-lg sm:text-xl lg:text-2xl text-charcoal leading-[1.6] mb-8">
+        <blockquote className="font-serif text-lg sm:text-xl lg:text-2xl text-charcoal leading-[1.6] mb-5 lg:mb-8">
           &ldquo;{t.quote}&rdquo;
         </blockquote>
         <div>
@@ -76,6 +76,22 @@ function SlideLayout({ t }: { t: Testimonial }) {
 export default function Testimonials() {
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
+  const touchStartX = useRef<number>(0);
+
+  function handleTouchStart(e: React.TouchEvent) {
+    touchStartX.current = e.touches[0].clientX;
+  }
+
+  function handleTouchEnd(e: React.TouchEvent) {
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) {
+      setCurrent((p) =>
+        diff > 0
+          ? (p + 1) % testimonials.length
+          : (p - 1 + testimonials.length) % testimonials.length
+      );
+    }
+  }
 
   useEffect(() => {
     if (paused || testimonials.length <= 1) return;
@@ -96,7 +112,7 @@ export default function Testimonials() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="mb-12 lg:mb-16"
+          className="mb-7 lg:mb-10"
         >
           <p
             className="text-xs tracking-[0.2em] uppercase font-medium mb-5"
@@ -104,7 +120,7 @@ export default function Testimonials() {
           >
             Real Stories
           </p>
-          <h2 className="font-serif text-4xl sm:text-5xl text-charcoal font-medium leading-tight">
+          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-charcoal font-medium leading-tight">
             They felt it too.
           </h2>
         </motion.div>
@@ -119,7 +135,11 @@ export default function Testimonials() {
           onMouseLeave={() => setPaused(false)}
         >
           {/* 슬라이드 영역 */}
-          <div className="relative">
+          <div
+            className="relative"
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+          >
             {/* Invisible spacer — 컨테이너 높이를 자연스럽게 잡아줌 */}
             <div className="invisible pointer-events-none" aria-hidden="true">
               <SlideLayout t={testimonials[0]} />
@@ -143,7 +163,7 @@ export default function Testimonials() {
           </div>
 
           {/* Dot indicators */}
-          <div className="flex items-center justify-center gap-3 mt-10">
+          <div className="flex items-center justify-center gap-3 mt-6 lg:mt-6">
             {testimonials.map((_, i) => (
               <button
                 key={i}

@@ -16,7 +16,6 @@ const tiers = [
       'TAT for Animals full video library',
       'Healing ACEs Plus full video library',
       'Self-guided practice materials',
-      'Community access',
     ],
     cta: 'Join The Calm Library',
     popular: false,
@@ -41,6 +40,7 @@ const tiers = [
 export default function Pricing() {
   const router = useRouter();
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<string>('calm_circle');
 
   function handleCheckout(plan: string) {
     setLoadingPlan(plan);
@@ -68,8 +68,8 @@ export default function Pricing() {
           >
             Membership
           </p>
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-charcoal font-medium leading-tight">
-            Choose your path to calm.
+          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-charcoal font-medium leading-tight text-balance">
+            Give your animal the gift of calm.
           </h2>
         </motion.div>
 
@@ -87,9 +87,10 @@ export default function Pricing() {
                 ease: [0.16, 1, 0.3, 1],
               }}
               whileHover={{ y: -6, transition: { duration: 0.3 } }}
-              className="relative flex flex-col rounded-2xl p-6 sm:p-8 lg:p-10 bg-white"
+              onClick={() => setSelectedPlan(tier.plan)}
+              className="relative flex flex-col rounded-2xl p-5 sm:p-7 lg:p-8 bg-white cursor-pointer"
               style={
-                tier.popular
+                selectedPlan === tier.plan
                   ? {
                       border: '2px solid #5E9635',
                       boxShadow: '0 16px 48px rgba(94,150,53,0.12)',
@@ -102,7 +103,7 @@ export default function Pricing() {
             >
               {/* Popular badge */}
               {tier.popular && (
-                <div className="mb-5">
+                <div className="mb-3">
                   <span
                     className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full text-[11px] font-semibold tracking-widest uppercase text-cream"
                     style={{ backgroundColor: '#5E9635' }}
@@ -113,8 +114,8 @@ export default function Pricing() {
               )}
 
               {/* Plan name + price */}
-              <div className="mb-5">
-                <h3 className="font-serif text-xl sm:text-2xl font-medium mb-3 text-charcoal">
+              <div className="mb-4">
+                <h3 className="font-serif text-xl sm:text-2xl font-medium mb-2 text-charcoal">
                   {tier.name}
                 </h3>
                 <div className="flex items-baseline gap-1.5">
@@ -127,12 +128,12 @@ export default function Pricing() {
               </div>
 
               {/* Description */}
-              <p className="hidden sm:block text-sm leading-relaxed mb-5 text-charcoal/55">
+              <p className="hidden sm:block text-sm leading-relaxed mb-4 text-charcoal/55">
                 {tier.description}
               </p>
 
               {/* Features */}
-              <ul className="flex flex-col gap-2.5 mb-6 grow">
+              <ul className="flex flex-col gap-2 mb-5 grow">
                 {tier.features.map((f) => (
                   <li key={f} className="flex items-start gap-3">
                     <span

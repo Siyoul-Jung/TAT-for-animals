@@ -2,7 +2,7 @@
 'use client';
 
 import Link from 'next/link';
-import LogoMark from '@/components/LogoMark';
+import Image from 'next/image';
 
 const navLinks = [
   { name: 'About', href: '/about' },
@@ -12,8 +12,8 @@ const navLinks = [
 ];
 
 const legalLinks = [
-  { name: 'Privacy Policy', href: '/privacy' },
-  { name: 'Terms of Service', href: '/terms' },
+  { name: 'Privacy Policy', short: 'Privacy', href: '/privacy' },
+  { name: 'Terms of Service', short: 'Terms', href: '/terms' },
 ];
 
 const socials = [
@@ -50,33 +50,31 @@ const socials = [
 export default function Footer() {
   return (
     <footer
-      className="px-6 pt-14 pb-8"
-      style={{ backgroundColor: '#1C1007' }}
+      className="px-6 pt-6 pb-4"
+      style={{ backgroundColor: '#2E1A0C' }}
     >
       <div className="max-w-6xl mx-auto">
 
-        {/* Top row — logo + tagline + socials */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-7 pb-10"
+        {/* Top row — logo + socials */}
+        <div className="flex items-center justify-between pb-3"
           style={{ borderBottom: '1px solid rgba(250,246,241,0.08)' }}
         >
-          {/* Logo + tagline */}
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center gap-2.5">
-              <LogoMark size={32} orange="#D4703A" green="#9AAD84" />
-              <span className="text-xl tracking-wide text-cream font-[family-name:var(--font-dm-serif)]">
-                TAT for Animals<span className="text-brand">®</span>
-              </span>
-            </div>
-            <span
-              className="text-xs font-light tracking-widest uppercase"
-              style={{ color: 'rgba(250,246,241,0.35)' }}
-            >
-              Sharing the Celebration of Love
+          {/* Logo */}
+          <div className="flex items-center gap-2">
+            <Image
+              src="/images/logo.png"
+              alt="TAT for Animals logo"
+              width={28}
+              height={28}
+              className="h-7 w-auto object-contain"
+            />
+            <span className="text-base font-semibold font-serif text-cream/80">
+              TAT for Animals<span className="text-brand text-[10px] align-super">®</span>
             </span>
           </div>
 
           {/* Social icons */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             {socials.map((s) => (
               <a
                 key={s.label}
@@ -84,7 +82,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={s.label}
-                className="w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-110"
+                className="w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-110"
                 style={{
                   color: 'rgba(250,246,241,0.40)',
                   border: '1px solid rgba(250,246,241,0.10)',
@@ -105,14 +103,14 @@ export default function Footer() {
         </div>
 
         {/* Nav links */}
-        <div className="flex flex-wrap gap-x-8 gap-y-3 py-8"
+        <div className="flex flex-wrap gap-x-4 gap-y-1.5 py-3"
           style={{ borderBottom: '1px solid rgba(250,246,241,0.06)' }}
         >
           {navLinks.map((link) => (
             <Link
               key={link.name}
               href={link.href}
-              className="text-sm font-light transition-colors"
+              className="text-xs font-light transition-colors"
               style={{ color: 'rgba(250,246,241,0.45)' }}
               onMouseEnter={(e) => {
                 (e.currentTarget as HTMLElement).style.color = '#D4A843';
@@ -128,7 +126,7 @@ export default function Footer() {
             href="https://tatlife.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm font-light transition-colors"
+            className="text-xs font-light transition-colors"
             style={{ color: 'rgba(250,246,241,0.45)' }}
             onMouseEnter={(e) => {
               (e.currentTarget as HTMLElement).style.color = '#D4A843';
@@ -142,15 +140,16 @@ export default function Footer() {
         </div>
 
         {/* Bottom row — copyright + legal */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-6">
+        <div className="flex items-center justify-between gap-4 pt-2">
           <p
             className="text-xs font-light"
             style={{ color: 'rgba(250,246,241,0.25)' }}
           >
-            © 2026 TATLife®, Inc. All rights reserved.
+            <span className="sm:hidden">© 2026 TATLife®, Inc.</span>
+            <span className="hidden sm:inline">© 2026 TATLife®, Inc. All rights reserved.</span>
           </p>
 
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4">
             {legalLinks.map((link) => (
               <Link
                 key={link.name}
@@ -164,7 +163,8 @@ export default function Footer() {
                   (e.currentTarget as HTMLElement).style.color = 'rgba(250,246,241,0.25)';
                 }}
               >
-                {link.name}
+                <span className="sm:hidden">{link.short}</span>
+                <span className="hidden sm:inline">{link.name}</span>
               </Link>
             ))}
           </div>

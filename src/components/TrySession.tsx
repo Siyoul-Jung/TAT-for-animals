@@ -163,7 +163,7 @@ export default function TrySession() {
             className="inline-flex items-center gap-2 text-sm font-medium tracking-wide transition-opacity duration-200 hover:opacity-70"
             style={{ color: 'rgba(212,112,58,0.9)' }}
           >
-            Start helping your animal →
+            See membership plans →
           </Link>
         </motion.div>
 

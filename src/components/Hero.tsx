@@ -4,7 +4,6 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Play } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 type HeroImage = { src: string; alt: string };
@@ -30,64 +29,59 @@ export default function Hero({ images }: { images: HeroImage[] }) {
     return () => clearInterval(timer);
   }, [shuffled.length]);
 
-  const slideshow = (sizes: string) =>
+  const slides = (sizes: string) =>
     shuffled.map((img, i) => (
       <div
         key={img.src}
         className="absolute inset-0"
-        style={{ opacity: i === currentIndex ? 1 : 0, transition: 'opacity 2s ease-in-out' }}
+        style={{ opacity: i === currentIndex ? 1 : 0, transition: 'opacity 2s ease-in-out', willChange: 'opacity' }}
       >
-        <Image src={img.src} alt={img.alt} fill sizes={sizes} className="object-cover object-center" priority={i === 0} />
+        <Image src={img.src} alt={img.alt} fill sizes={sizes} className="object-cover object-top" priority={i === 0} />
       </div>
     ));
 
   return (
     <section className="relative overflow-hidden bg-cream">
 
-      {/* ── Mobile: 한 화면 안에 황금비 레이아웃 ── */}
-      <div className="lg:hidden flex min-h-[100svh] flex-col pt-16">
-
-        {/* 이미지 — 61.8% */}
-        <div className="relative min-h-[280px] flex-[1.35]">
-          {slideshow('(max-width: 1024px) 100vw, 60vw')}
+      {/* ── Mobile: 스택형 ── */}
+      <div className="lg:hidden flex flex-col" style={{ height: '100dvh' }}>
+        <div className="relative shrink-0 overflow-hidden" style={{ height: '61.8dvh' }}>
+          {slides('100vw')}
+          <div className="absolute inset-0 z-10" style={{ background: 'linear-gradient(to bottom, transparent 55%, rgba(251,245,243,0.5) 80%, rgba(251,245,243,1) 100%)' }} />
         </div>
-
-        {/* 텍스트 — 38.2% */}
-        <div
-          className="flex flex-col justify-center px-6 pt-5 sm:py-7"
-          style={{ paddingBottom: 'calc(1.25rem + var(--cookie-banner-offset, 0px) + env(safe-area-inset-bottom))' }}
-        >
-          <p className="text-[10px] tracking-[0.2em] uppercase font-semibold mb-2" style={{ color: '#5E9635' }}>
-            TAT for Animals
-          </p>
-          <h1 className="font-serif text-3xl sm:text-4xl leading-[1.2] text-charcoal mb-2 font-semibold">
-            Help your animal<br />feel calm and at&nbsp;ease.
-          </h1>
-          <p className="font-sans text-sm mb-4 font-normal" style={{ color: '#5E9635' }}>
-            And notice what happens in you.
-          </p>
-          <div className="flex flex-col items-start gap-3">
-            <Link
-              href="#experience"
-              className="inline-flex min-h-[44px] items-center px-6 py-3 rounded-full text-cream font-semibold text-sm transition-all active:scale-95"
-              style={{ backgroundColor: '#D4703A', boxShadow: '0 6px 20px rgba(212,112,58,0.25)' }}
-            >
-              Try a session
-            </Link>
-            <Link
-              href="/membership"
-              className="inline-flex min-h-[44px] items-center text-sm font-medium transition-all hover:opacity-70"
-              style={{ color: 'rgba(28,16,7,0.50)' }}
-            >
-              Join the members →
-            </Link>
+        <div className="flex-1 flex flex-col justify-center px-6">
+          <div style={{ paddingBottom: 'calc(var(--cookie-banner-offset, 0px) + env(safe-area-inset-bottom))' }}>
+            <p className="text-[10px] tracking-[0.2em] uppercase font-semibold mb-2" style={{ color: '#5E9635' }}>
+              TAT for Animals
+            </p>
+            <h1 className="font-serif text-3xl sm:text-4xl leading-[1.2] text-charcoal mb-2 font-semibold">
+              Help your animal<br />feel calm and at&nbsp;ease.
+            </h1>
+            <p className="font-sans text-sm mb-5 font-normal" style={{ color: '#5E9635' }}>
+              And notice what happens in you.
+            </p>
+            <div className="flex items-center gap-5">
+              <Link
+                href="#experience"
+                className="inline-flex min-h-[44px] items-center px-6 py-3 rounded-full text-cream font-semibold text-sm transition-all active:scale-95"
+                style={{ backgroundColor: '#D4703A', boxShadow: '0 6px 20px rgba(212,112,58,0.25)' }}
+              >
+                Try a session
+              </Link>
+              <Link
+                href="/membership"
+                className="inline-flex min-h-[44px] items-center text-sm font-medium transition-colors hover:text-brand"
+                style={{ color: 'rgba(28,16,7,0.50)' }}
+              >
+                Join the members
+              </Link>
+            </div>
           </div>
         </div>
-
       </div>
 
-      {/* ── Desktop: 2단 그리드 ── */}
-      <div className="hidden lg:grid lg:grid-cols-[2fr_3fr] lg:min-h-screen relative">
+      {/* ── Desktop: 2컬럼 (텍스트 45% / 이미지 55%) ── */}
+      <div className="hidden lg:grid lg:grid-cols-[5fr_6fr] lg:min-h-screen relative">
 
         <div
           className="absolute inset-0 pointer-events-none"
@@ -98,7 +92,7 @@ export default function Hero({ images }: { images: HeroImage[] }) {
           initial={{ opacity: 0, y: 32 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
-          className="flex flex-col justify-center px-14 xl:px-20 pt-32 pb-20"
+          className="flex flex-col justify-center px-14 xl:px-20 2xl:px-28 pt-24 pb-20"
         >
           <p className="text-xs tracking-[0.2em] uppercase font-semibold mb-5" style={{ color: '#5E9635' }}>
             TAT for Animals
@@ -113,20 +107,20 @@ export default function Hero({ images }: { images: HeroImage[] }) {
             No special training. No reliving anything painful.
             Just a few quiet minutes with your animal — and something shifts.
           </p>
-          <div className="flex flex-col gap-3 items-start">
+          <div className="flex items-center gap-6">
             <Link
               href="#experience"
-              className="px-8 py-4 rounded-full text-cream font-semibold text-base text-center whitespace-nowrap transition-all hover:scale-105 hover:shadow-lg active:scale-95"
+              className="px-8 py-4 rounded-full text-cream font-semibold text-base transition-all hover:scale-105 hover:shadow-lg active:scale-95"
               style={{ backgroundColor: '#D4703A', boxShadow: '0 8px 32px rgba(212,112,58,0.25)' }}
             >
               Try a session
             </Link>
             <Link
               href="/membership"
-              className="flex items-center gap-1 font-medium text-base whitespace-nowrap transition-all hover:opacity-70"
+              className="text-base font-medium transition-colors hover:text-brand"
               style={{ color: 'rgba(28,16,7,0.50)' }}
             >
-              Join the members →
+              Join the members
             </Link>
           </div>
         </motion.div>
@@ -137,39 +131,10 @@ export default function Hero({ images }: { images: HeroImage[] }) {
           transition={{ duration: 1.2, delay: 0.15 }}
           className="relative overflow-hidden"
         >
-          {shuffled.map((img, i) => (
-            <div
-              key={img.src}
-              className="absolute inset-0"
-              style={{
-                opacity: i === currentIndex ? 1 : 0,
-                transition: 'opacity 2s ease-in-out',
-                willChange: 'opacity',
-              }}
-            >
-              <Image
-                src={img.src}
-                alt=""
-                aria-hidden="true"
-                fill
-                priority={i === 0}
-                sizes="60vw"
-                className="object-cover object-center scale-110"
-                style={{ filter: 'blur(8px)', opacity: 0.25 }}
-              />
-              <Image
-                src={img.src}
-                alt={img.alt}
-                fill
-                priority={i === 0}
-                sizes="60vw"
-                className="object-contain object-center"
-              />
-            </div>
-          ))}
-          <div className="absolute inset-0 z-10" style={{ background: 'rgba(250,246,241,0.15)' }} />
-          <div className="absolute inset-0 z-10" style={{ background: 'linear-gradient(to right, rgba(250,246,241,1) 0%, rgba(250,246,241,0.6) 25%, rgba(250,246,241,0.1) 55%, transparent 70%)' }} />
-          <div className="absolute inset-0 z-10" style={{ background: 'linear-gradient(to top, rgba(250,246,241,0.5) 0%, transparent 30%)' }} />
+          {slides('55vw')}
+          <div className="absolute inset-0 z-10" style={{ background: 'linear-gradient(to right, rgba(251,245,243,1) 0%, rgba(251,245,243,0.85) 12%, rgba(251,245,243,0.2) 35%, transparent 55%)' }} />
+          <div className="absolute inset-0 z-10" style={{ background: 'linear-gradient(to top, rgba(251,245,243,0.9) 0%, rgba(251,245,243,0.3) 20%, transparent 45%)' }} />
+          <div className="absolute inset-0 z-10" style={{ background: 'linear-gradient(to bottom, rgba(251,245,243,0.9) 0%, rgba(251,245,243,0.3) 15%, transparent 35%)' }} />
         </motion.div>
 
       </div>

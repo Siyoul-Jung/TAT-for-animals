@@ -8,11 +8,11 @@ import AboutTapas from "@/components/AboutTapas";
 import Footer from "@/components/Footer";
 
 function getHeroImages() {
-  const dir = path.join(process.cwd(), 'public/images/hero');
+  const dir = path.join(process.cwd(), 'public/images/hero/vertical');
   try {
     return fs.readdirSync(dir)
       .filter(f => /\.(jpe?g|png|webp)$/i.test(f))
-      .map(f => ({ src: `/images/hero/${f}`, alt: 'A calm animal moment' }));
+      .map(f => ({ src: `/images/hero/vertical/${f}`, alt: 'A calm animal moment' }));
   } catch {
     return [{ src: '/images/tat_animal_calm.jpg', alt: 'A calm animal moment' }];
   }
