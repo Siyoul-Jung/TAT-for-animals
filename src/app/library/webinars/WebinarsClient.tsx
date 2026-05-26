@@ -1,8 +1,4 @@
-'use client'
-
-import { useState } from 'react'
-import Link from 'next/link'
-import type { WebinarRecording, WebinarSession } from './page'
+export {}
 
 function getVimeoId(url: string): string | null {
   const match = url.match(/vimeo\.com\/(?:video\/)?(\d+)/)
