@@ -87,12 +87,27 @@ export default function Terms() {
 
           <section>
             <h2 className="font-serif text-xl font-medium mb-3" style={{ color: '#1C1007' }}>
-              Medical disclaimer
+              Animal Care Disclaimer
             </h2>
-            <p>
-              TAT for Animals is a complementary practice and is not a substitute for
-              veterinary care. Always consult your veterinarian for your animal's health needs.
-              Nothing on this platform constitutes veterinary or medical advice.
+            <p className="mb-4">
+              The information, techniques, and guidance provided through TATLife&apos;s TAT® for Animals
+              content — including streaming videos, webinar recordings, written guides, and Certified TAT
+              Professional or Trainer sessions — are offered for educational and wellness support purposes
+              only. Tapas Acupressure Technique® (TAT®) is a complementary wellness modality and is not
+              a substitute for professional veterinary care, diagnosis, or treatment.
+            </p>
+            <p className="mb-4">By accessing or using any TAT® for Animals content, you acknowledge and agree to the following:</p>
+            <ul className="space-y-3 pl-4">
+              <li>• <strong style={{ color: '#1C1007' }}>Not veterinary advice.</strong> Nothing in this content constitutes veterinary medical advice, and no veterinarian-client-patient relationship is created by your use of TATLife materials.</li>
+              <li>• <strong style={{ color: '#1C1007' }}>Consult your veterinarian.</strong> Always seek the guidance of a licensed veterinarian for any health concerns, injuries, illnesses, behavioral issues, or medical conditions affecting your animal. Do not delay or disregard professional veterinary advice based on anything you learn through TAT® for Animals content.</li>
+              <li>• <strong style={{ color: '#1C1007' }}>Individual results vary.</strong> Animals respond differently to wellness practices. TATLife makes no guarantees, representations, or warranties — express or implied — regarding specific outcomes for any individual animal.</li>
+              <li>• <strong style={{ color: '#1C1007' }}>Assumption of risk.</strong> You assume full responsibility for how you apply TAT® techniques with your animal. TATLife, its founder, Certified TAT Professionals, and Trainers are not liable for any injury, harm, or adverse outcome to you or your animal arising from the use of this content.</li>
+              <li>• <strong style={{ color: '#1C1007' }}>Scope of practice.</strong> Certified TAT Professionals and Trainers are not licensed veterinarians unless separately credentialed as such. Certified TAT Professionals and Trainers offering TAT® for Animals sessions do so within the scope of their TAT® training only and are not providing veterinary services.</li>
+              <li>• <strong style={{ color: '#1C1007' }}>Emergency situations.</strong> If your animal is experiencing a medical emergency, contact a licensed veterinarian or emergency animal hospital immediately. TAT® is not appropriate as a sole response to acute illness or injury.</li>
+            </ul>
+            <p className="mt-4">
+              TATLife reserves the right to update this disclaimer at any time. Continued use of TAT® for
+              Animals content constitutes acceptance of the current disclaimer.
             </p>
           </section>
 
