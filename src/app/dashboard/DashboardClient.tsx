@@ -50,7 +50,7 @@ export default function DashboardClient({
         {/* 헤더 */}
         <div>
           <p className="text-sm font-medium text-charcoal/40 uppercase tracking-widest mb-1">
-            My Account
+            My Membership
           </p>
           <h1 className="font-serif text-3xl text-charcoal">
             {displayName ? `Welcome back, ${displayName}.` : 'Welcome back.'}
@@ -113,14 +113,9 @@ export default function DashboardClient({
             </h2>
             <div className="grid sm:grid-cols-2 gap-4">
               <ContentCard
-                title="TAT for Animals"
-                description="Video library for helping your animal find calm"
-                href="/library/animals"
-              />
-              <ContentCard
-                title="Healing ACEs Plus"
-                description="Gently release what you carry — at your own pace"
-                href="/library/aces"
+                title="Library"
+                description="TAT for Animals · Healing ACEs Plus"
+                href="/library"
               />
               {role === 'pro_subscriber' && (
                 <ContentCard

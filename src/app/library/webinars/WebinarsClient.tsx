@@ -133,10 +133,13 @@ export default function WebinarsClient({
         </section>
 
         <Link
-          href="/dashboard"
-          className="inline-block text-sm text-charcoal/40 hover:text-charcoal/70 transition-colors min-h-[44px] leading-[44px]"
+          href="/library"
+          className="inline-flex items-center gap-2 text-sm text-charcoal/40 hover:text-charcoal/70 transition-colors min-h-[44px]"
         >
-          ← Back to My Account
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10 12L6 8l4-4" />
+          </svg>
+          Library
         </Link>
 
       </div>

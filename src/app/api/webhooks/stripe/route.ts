@@ -1,4 +1,7 @@
 import { stripe } from '@/lib/stripe'
+import { resend, FROM_EMAIL } from '@/lib/resend'
+import { welcomeEmail } from '@/lib/emails/welcome'
+import { cancellationEmail } from '@/lib/emails/cancellation'
 import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
@@ -61,10 +64,27 @@ export async function POST(request: NextRequest) {
         const customerName = session.customer_details?.name
         if (customerName) updatePayload.full_name = customerName
 
+        const customerEmail = session.customer_details?.email
+        if (customerEmail) updatePayload.email = customerEmail
+
         await supabaseAdmin
           .from('profiles')
           .update(updatePayload)
           .eq('id', userId)
+
+        // 웰컴 이메일 발송 — 실패해도 webhook 응답에 영향 없음
+        const toEmail = session.customer_details?.email
+        if (toEmail) {
+          try {
+            const { subject, html } = welcomeEmail(
+              session.customer_details?.name ?? null,
+              role as 'subscriber' | 'pro_subscriber'
+            )
+            await resend.emails.send({ from: FROM_EMAIL, to: toEmail, subject, html })
+          } catch (emailError) {
+            console.error('Welcome email failed:', emailError)
+          }
+        }
 
         break
       }
@@ -119,6 +139,22 @@ export async function POST(request: NextRequest) {
             current_period_end: null,
           })
           .eq('id', userId)
+
+        // 취소 확인 이메일
+        try {
+          const customerId = subscription.customer as string
+          const customer = await stripe.customers.retrieve(customerId)
+          if (customer.deleted) break
+
+          const toEmail = (customer as Stripe.Customer).email
+          const name = (customer as Stripe.Customer).name
+          if (toEmail) {
+            const { subject, html } = cancellationEmail(name ?? null)
+            await resend.emails.send({ from: FROM_EMAIL, to: toEmail, subject, html })
+          }
+        } catch (emailError) {
+          console.error('Cancellation email failed:', emailError)
+        }
 
         break
       }

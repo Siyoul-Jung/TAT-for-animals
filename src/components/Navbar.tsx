@@ -101,7 +101,7 @@ export default function Navbar() {
   return (
     <nav
       className={cn(
-        'fixed top-0 left-0 right-0 z-40 transition-all duration-300 px-4 sm:px-6 pt-2 pb-5',
+        'fixed top-0 left-0 right-0 z-40 transition-all duration-300 pl-2 pr-3 sm:px-6 pt-2 pb-5',
         'bg-cream/95 backdrop-blur-xl'
       )}
       style={{
@@ -113,36 +113,36 @@ export default function Navbar() {
         backgroundColor: 'rgba(250,246,241,0.95)',
       }}
     >
-      <div className="grid grid-cols-3 items-center">
+      <div className="flex justify-between items-center sm:grid sm:grid-cols-3">
 
-        {/* Left */}
-        <div className="flex items-center" />
+        {/* Left spacer — 데스크탑 전용 */}
+        <div className="hidden sm:flex" />
 
-        {/* Center — Logo */}
-        <div className="flex justify-center">
-          <Link href="/" className="flex items-center gap-1.5">
+        {/* Logo + Brand — 모바일: 좌측, 데스크탑: 중앙 */}
+        <div className="flex sm:justify-center">
+          <Link href="/" className="flex items-center gap-0.5">
             <Image
-              src="/images/logo.png"
+              src="/images/logo2.png"
               alt="TAT for Animals logo"
               width={40}
               height={40}
-              className="h-10 w-auto object-contain shrink-0"
+              className="h-9 sm:h-10 w-auto object-contain shrink-0"
               priority
             />
             <span className={cn(
-              'hidden sm:inline text-2xl font-semibold tracking-normal transition-colors duration-300 whitespace-nowrap font-serif',
+              'inline text-base sm:text-2xl font-semibold tracking-normal transition-colors duration-300 whitespace-nowrap font-serif',
               isScrolled || !isDarkHero ? 'text-charcoal/70' : 'text-cream'
             )}>
-              TAT for Animals<span className="text-brand text-sm align-super">®</span>
+              TAT for Animals<span className="text-brand text-[10px] sm:text-sm align-super">®</span>
             </span>
           </Link>
         </div>
 
-        {/* Right */}
+        {/* Right — CTA */}
         <div className="flex items-center justify-end gap-4">
           {isLoggedIn ? (
             <>
-              <Link href={isMember ? '/library/animals' : '/membership'} className={navLinkClasses}>
+              <Link href={isMember ? '/library' : '/membership'} className={navLinkClasses}>
                 {isMember ? 'Library' : 'Membership'}
               </Link>
               <div className="relative" ref={dropdownRef}>
@@ -177,7 +177,7 @@ export default function Navbar() {
                     className="block px-5 py-3 text-sm font-medium transition-colors hover:bg-black/5"
                     style={{ color: 'rgba(28,16,7,0.75)' }}
                   >
-                    Dashboard
+                    My Membership
                   </Link>
                   <div style={{ borderTop: '1px solid rgba(28,16,7,0.06)' }}>
                     <form action="/api/auth/logout" method="POST">

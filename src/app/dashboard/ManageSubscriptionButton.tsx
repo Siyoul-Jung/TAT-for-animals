@@ -13,11 +13,11 @@ export default function ManageSubscriptionButton() {
       if (data.url) {
         window.location.href = data.url
       } else {
-        alert('구독 정보를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.')
+        alert('Unable to load subscription. Please try again.')
         setIsLoading(false)
       }
     } catch {
-      alert('오류가 발생했습니다. 잠시 후 다시 시도해주세요.')
+      alert('Something went wrong. Please try again.')
       setIsLoading(false)
     }
   }
@@ -28,7 +28,7 @@ export default function ManageSubscriptionButton() {
       disabled={isLoading}
       className="min-h-[44px] px-6 py-3 rounded-full border border-charcoal/20 text-charcoal/70 text-base font-medium hover:border-brand hover:text-brand transition-all disabled:opacity-50 disabled:cursor-not-allowed"
     >
-      {isLoading ? '연결 중...' : 'Manage Subscription'}
+      {isLoading ? 'Connecting...' : 'Manage Subscription'}
     </button>
   )
 }
