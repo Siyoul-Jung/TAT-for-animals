@@ -121,7 +121,7 @@ export default function DashboardClient({
                 <ContentCard
                   title="Live Sessions"
                   description="Monthly sessions with Tapas · Past recordings included"
-                  href="/library/webinars"
+                  href="/library?tab=live"
                   badge="The Calm Circle"
                 />
               )}
