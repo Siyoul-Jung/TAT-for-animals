@@ -159,11 +159,11 @@ export default function TrySession() {
           className="text-center"
         >
           <Link
-            href="/membership"
-            className="inline-flex items-center gap-2 text-sm font-medium tracking-wide transition-opacity duration-200 hover:opacity-70"
-            style={{ color: 'rgba(212,112,58,0.9)' }}
+            href="/membership#membership"
+            className="inline-flex items-center min-h-[44px] gap-1 text-base font-medium transition-opacity hover:opacity-70"
+            style={{ color: '#D4703A' }}
           >
-            See membership plans →
+            Start helping your animal →
           </Link>
         </motion.div>
 

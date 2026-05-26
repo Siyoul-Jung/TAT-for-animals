@@ -9,6 +9,7 @@ type Testimonial = {
   animal: string;
   quote: string;
   image: string;
+  isQuote?: boolean;
 };
 
 const testimonials: Testimonial[] = [
@@ -16,8 +17,9 @@ const testimonials: Testimonial[] = [
     name: 'Kai\'s family',
     location: '',
     animal: 'Kai — From Crying to Comfort',
-    quote: 'Before TAT®, Kai used to cry, moan, and whine very frequently. A few moments after TAT®, the crying stopped — and he became so much more relaxed. He\'s a much happier whippet now. His family is so relieved.',
+    quote: 'Before TAT®, Kai used to cry, moan, and whine very frequently. A few moments after TAT®, the crying stopped — and he became so much more relaxed. He\'s a much happier whippet now.',
     image: '/images/testimonials/kai.png',
+    isQuote: false,
   },
   {
     name: 'Bowie\'s family',
@@ -25,6 +27,7 @@ const testimonials: Testimonial[] = [
     animal: 'Bowie — From Fear to Fun',
     quote: 'Before TAT®, Bowie was in pain — touching him caused extreme distress. During TAT®, his friend Ziggy stayed by his side, offering comfort and closeness. Immediately after TAT®, he got up, became happier, and more playful.',
     image: '/images/testimonials/bowie.png',
+    isQuote: false,
   },
   {
     name: 'Marion O.',
@@ -32,6 +35,7 @@ const testimonials: Testimonial[] = [
     animal: 'Misty — A Gentle Shift',
     quote: 'We are so pleased to witness Misty\'s new-found peace! She now begs less for food, engages lovingly through eye contact and spontaneous cuddles, and waits patiently instead of whining. These changes are without doubt due to your valuable input.',
     image: '/images/testimonials/misty.jpg',
+    isQuote: true,
   },
 ];
 
@@ -57,9 +61,15 @@ function SlideLayout({ t }: { t: Testimonial }) {
         >
           {t.animal}
         </p>
-        <blockquote className="font-serif text-lg sm:text-xl lg:text-2xl text-charcoal leading-[1.6] mb-5 lg:mb-8">
-          &ldquo;{t.quote}&rdquo;
-        </blockquote>
+        {t.isQuote ? (
+          <blockquote className="font-serif text-lg sm:text-xl lg:text-2xl text-charcoal leading-[1.6] mb-5 lg:mb-8">
+            &ldquo;{t.quote}&rdquo;
+          </blockquote>
+        ) : (
+          <p className="font-serif text-lg sm:text-xl lg:text-2xl text-charcoal/80 leading-[1.6] mb-5 lg:mb-8">
+            {t.quote}
+          </p>
+        )}
         <div>
           <p className="font-medium text-charcoal">{t.name}</p>
           {t.location && (

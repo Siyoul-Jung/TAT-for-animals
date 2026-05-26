@@ -62,7 +62,7 @@ export default function Footer() {
           {/* Logo */}
           <div className="flex items-center gap-2">
             <Image
-              src="/images/logo.png"
+              src="/images/logo2.png"
               alt="TAT for Animals logo"
               width={28}
               height={28}

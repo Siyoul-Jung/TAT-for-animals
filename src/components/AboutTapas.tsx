@@ -16,44 +16,49 @@ export default function AboutTapas() {
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-          className="relative hidden lg:block"
+          className="hidden lg:flex lg:flex-col"
         >
-
-          <div
-            className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden"
-            style={{
-              boxShadow: '0 24px 64px rgba(31,46,20,0.12), 0 0 0 1px rgba(31,46,20,0.06)',
-            }}
-          >
-            <img
-              src="/images/Tapas-Thanks.jpg"
-              alt="Tapas Fleming — Creator of TAT®"
-              className="w-full h-full object-cover object-center"
-            />
-            {/* Subtle warm overlay */}
+          {/* Photo + badge wrapper */}
+          <div className="relative mb-8">
             <div
-              className="absolute inset-0"
+              className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden"
               style={{
-                background:
-                  'linear-gradient(to top, rgba(31,46,20,0.25) 0%, transparent 50%)',
+                boxShadow: '0 24px 64px rgba(31,46,20,0.12), 0 0 0 1px rgba(31,46,20,0.06)',
               }}
-            />
+            >
+              <img
+                src="/images/Tapas-Thanks.jpg"
+                alt="Tapas Fleming — Creator of TAT®"
+                className="w-full h-full object-cover object-center"
+              />
+              <div
+                className="absolute inset-0"
+                style={{ background: 'linear-gradient(to top, rgba(31,46,20,0.25) 0%, transparent 50%)' }}
+              />
+            </div>
+
+            {/* Founded badge */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="absolute -bottom-5 -right-5 bg-cream rounded-2xl px-6 py-4 flex flex-col gap-0.5"
+              style={{ boxShadow: '0 8px 32px rgba(31,46,20,0.10), 0 0 0 1px rgba(31,46,20,0.07)' }}
+            >
+              <span className="font-serif text-2xl font-semibold text-charcoal">1993</span>
+              <span className="text-xs text-charcoal/45 font-light tracking-wide">TATLife® Founded</span>
+            </motion.div>
           </div>
 
-          {/* Founded badge */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="absolute bottom-3 right-3 lg:-bottom-5 lg:-right-5 bg-cream rounded-2xl px-5 py-3 lg:px-6 lg:py-4 flex flex-col gap-0.5"
-            style={{
-              boxShadow: '0 8px 32px rgba(31,46,20,0.10), 0 0 0 1px rgba(31,46,20,0.07)',
-            }}
+          {/* Ghost link — 데스크탑 전용, 뱃지 아래 */}
+          <Link
+            href="/about"
+            className="inline-flex items-center min-h-[44px] text-sm font-medium transition-opacity hover:opacity-70"
+            style={{ color: 'rgba(28,16,7,0.45)' }}
           >
-            <span className="font-serif text-2xl font-semibold text-charcoal">1993</span>
-            <span className="text-xs text-charcoal/45 font-light tracking-wide">TATLife® Founded</span>
-          </motion.div>
+            Learn more about Tapas →
+          </Link>
         </motion.div>
 
         {/* Right — Text */}
@@ -93,25 +98,42 @@ export default function AboutTapas() {
             </p>
           </div>
 
-          {/* Mobile-only photo */}
-          <div className="lg:hidden relative w-full aspect-[4/3] rounded-2xl overflow-hidden mb-8"
-            style={{ boxShadow: '0 24px 64px rgba(31,46,20,0.12), 0 0 0 1px rgba(31,46,20,0.06)' }}
-          >
-            <img
-              src="/images/Tapas-Thanks.jpg"
-              alt="Tapas Fleming — Creator of TAT®"
-              className="w-full h-full object-cover object-center"
-            />
-            <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(31,46,20,0.25) 0%, transparent 50%)' }} />
+          {/* Mobile: 사진 + ghost + 버튼 — 중앙 정렬 */}
+          <div className="lg:hidden flex flex-col items-start gap-4">
+            <div
+              className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden"
+              style={{ boxShadow: '0 24px 64px rgba(31,46,20,0.12), 0 0 0 1px rgba(31,46,20,0.06)' }}
+            >
+              <img
+                src="/images/Tapas-Thanks.jpg"
+                alt="Tapas Fleming — Creator of TAT®"
+                className="w-full h-full object-cover object-center"
+              />
+              <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(31,46,20,0.25) 0%, transparent 50%)' }} />
+            </div>
+            <Link
+              href="/about"
+              className="inline-flex items-center min-h-[44px] text-sm font-medium transition-opacity hover:opacity-70"
+              style={{ color: 'rgba(28,16,7,0.45)' }}
+            >
+              Learn more about Tapas →
+            </Link>
+            <Link
+              href="/membership#membership"
+              className="inline-flex w-fit min-h-[44px] items-center px-5 py-2 rounded-full text-cream font-semibold text-sm transition-all hover:scale-105 active:scale-95"
+              style={{ backgroundColor: '#D4703A', boxShadow: '0 4px 16px rgba(212,112,58,0.22)' }}
+            >
+              Begin with Tapas
+            </Link>
           </div>
 
-          {/* CTA */}
+          {/* Desktop CTA only */}
           <Link
-            href="/about"
-            className="inline-flex items-center gap-2 text-sm font-medium tracking-wide transition-opacity duration-200 hover:opacity-70"
-            style={{ color: 'rgba(212,112,58,0.9)' }}
+            href="/membership#membership"
+            className="hidden lg:inline-flex w-fit min-h-[44px] items-center px-5 py-2 rounded-full text-cream font-semibold text-sm transition-all hover:scale-105 active:scale-95"
+            style={{ backgroundColor: '#D4703A', boxShadow: '0 4px 16px rgba(212,112,58,0.22)' }}
           >
-            Learn more about Tapas →
+            Begin with Tapas
           </Link>
         </motion.div>
 
