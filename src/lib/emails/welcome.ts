@@ -5,7 +5,7 @@ const PLAN_NAMES: Record<Plan, string> = {
   pro_subscriber: 'The Calm Circle',
 };
 
-const LIBRARY_URL = 'https://tatforanimals.com/library/animals';
+const LIBRARY_URL = `${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://tatforanimals.com'}/library`;
 
 export function welcomeEmail(name: string | null, plan: Plan): { subject: string; html: string } {
   const firstName = name?.split(' ')[0] ?? 'there';
@@ -86,15 +86,7 @@ export function welcomeEmail(name: string | null, plan: Plan): { subject: string
                     </p>
                   </td>
                 </tr>
-                ` : `
-                <tr>
-                  <td style="padding:12px 0;">
-                    <p style="margin:0;font-family:'Helvetica Neue',sans-serif;font-size:15px;color:#1C1007;">
-                      Self-guided practice materials
-                    </p>
-                  </td>
-                </tr>
-                `}
+                ` : ``}
               </table>
             </td>
           </tr>

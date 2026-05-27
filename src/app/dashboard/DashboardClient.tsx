@@ -84,7 +84,7 @@ export default function DashboardClient({
                     </p>
                   )}
                   <ManageSubscriptionButton />
-                  <p className="text-sm text-charcoal/40">
+                  <p className="text-sm text-charcoal/50">
                     Cancel anytime
                   </p>
                 </div>

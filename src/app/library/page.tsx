@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import { sanityClient } from '@/lib/sanity'
 import LibraryClient from './LibraryClient'
 
@@ -33,11 +34,7 @@ export type WebinarSession = {
   meetingUrl: string | null
 }
 
-export default async function LibraryPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ tab?: string }>
-}) {
+export default async function LibraryPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login?next=/library')
@@ -50,9 +47,6 @@ export default async function LibraryPage({
 
   const role = profile?.role ?? 'none'
   if (role !== 'subscriber' && role !== 'pro_subscriber') redirect('/membership')
-
-  const { tab } = await searchParams
-  const defaultTab = tab === 'live' ? 'live' : tab === 'aces' ? 'aces' : 'animals'
 
   const [animalsVideos, acesVideos, recordings, upcoming] = await Promise.all([
     sanityClient.fetch<Video[]>(
@@ -72,23 +66,22 @@ export default async function LibraryPage({
           }`
         )
       : Promise.resolve([]),
-    role === 'pro_subscriber'
-      ? sanityClient.fetch<WebinarSession[]>(
-          `*[_type == "webinarSchedule" && date > now()] | order(date asc) {
-            _id, title, date, description, meetingUrl
-          }`
-        )
-      : Promise.resolve([]),
+    sanityClient.fetch<WebinarSession[]>(
+      `*[_type == "webinarSchedule" && date > now()] | order(date asc) [0..0] {
+        _id, title, date, description, meetingUrl
+      }`
+    ),
   ])
 
   return (
-    <LibraryClient
-      animalsVideos={animalsVideos}
-      acesVideos={acesVideos}
-      recordings={recordings}
-      upcoming={upcoming}
-      role={role}
-      defaultTab={defaultTab}
-    />
+    <Suspense fallback={<div className="min-h-screen bg-cream" />}>
+      <LibraryClient
+        animalsVideos={animalsVideos}
+        acesVideos={acesVideos}
+        recordings={recordings}
+        upcoming={upcoming}
+        role={role}
+      />
+    </Suspense>
   )
 }

@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import type { Video, WebinarRecording, WebinarSession } from './page'
 
@@ -184,18 +185,27 @@ export default function LibraryClient({
   recordings,
   upcoming,
   role,
-  defaultTab,
 }: {
   animalsVideos: Video[]
   acesVideos: Video[]
   recordings: WebinarRecording[]
   upcoming: WebinarSession[]
   role: string
-  defaultTab: string
 }) {
-  const [activeTab, setActiveTab] = useState<Tab>(
-    defaultTab === 'live' ? 'live' : defaultTab === 'aces' ? 'aces' : 'animals'
-  )
+  const searchParams = useSearchParams()
+  const tabParam = searchParams.get('tab')
+
+  function resolveTab(p: string | null): Tab {
+    if (p === 'live') return 'live'
+    if (p === 'aces') return 'aces'
+    return 'animals'
+  }
+
+  const [activeTab, setActiveTab] = useState<Tab>(() => resolveTab(tabParam))
+
+  useEffect(() => {
+    setActiveTab(resolveTab(tabParam))
+  }, [tabParam])
 
   const tabs: { id: Tab; label: string; locked?: boolean }[] = [
     { id: 'animals', label: 'TAT for Animals' },
@@ -215,7 +225,7 @@ export default function LibraryClient({
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M10 12L6 8l4-4" />
           </svg>
-          My Membership
+          Dashboard
         </Link>
 
         <h1 className="font-serif text-3xl text-charcoal mb-6">Library</h1>
@@ -304,20 +314,34 @@ export default function LibraryClient({
               </div>
             </div>
           ) : (
-            <div className="p-7 bg-white rounded-2xl border border-charcoal/10 shadow-sm space-y-4">
+            <div className="p-7 bg-white rounded-2xl border border-charcoal/10 shadow-sm space-y-5">
+              {upcoming[0] && (
+                <div className="flex items-start gap-3 p-4 rounded-xl" style={{ backgroundColor: 'rgba(94,150,53,0.06)', border: '1px solid rgba(94,150,53,0.15)' }}>
+                  <div className="w-1.5 h-1.5 rounded-full mt-2 shrink-0" style={{ backgroundColor: '#5E9635' }} />
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-widest mb-0.5" style={{ color: '#5E9635' }}>
+                      Next live session
+                    </p>
+                    <p className="text-base text-charcoal font-medium">{upcoming[0].title}</p>
+                    <p className="text-sm text-charcoal/55 mt-0.5">{formatDateTime(upcoming[0].date)}</p>
+                  </div>
+                </div>
+              )}
               <div>
-                <p className="font-serif text-xl text-charcoal mb-1">Monthly sessions with Tapas</p>
+                <p className="font-serif text-xl text-charcoal mb-1.5">Join Tapas live every month.</p>
                 <p className="text-charcoal/55 text-base leading-relaxed">
-                  The Calm Circle includes live webinars with Tapas and the full archive of past recordings.
+                  The Calm Circle includes monthly live webinars with Tapas — for your animal and for you — plus the full archive of past recordings.
                 </p>
               </div>
-              <Link
-                href="/membership"
-                className="inline-flex items-center min-h-[44px] px-6 py-2.5 rounded-full bg-brand text-cream text-sm font-semibold hover:bg-brand-dark transition-all"
-              >
-                Upgrade to The Calm Circle →
-              </Link>
-              <p className="text-sm text-charcoal/40">Cancel anytime</p>
+              <div className="space-y-2.5">
+                <Link
+                  href="/membership"
+                  className="inline-flex items-center min-h-[44px] px-6 py-2.5 rounded-full bg-brand text-cream text-sm font-semibold hover:bg-brand-dark transition-all"
+                >
+                  Upgrade to The Calm Circle →
+                </Link>
+                <p className="text-sm text-charcoal/50">Cancel anytime</p>
+              </div>
             </div>
           )
         )}
