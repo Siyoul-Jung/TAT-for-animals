@@ -58,7 +58,9 @@ export async function POST(request: NextRequest) {
           role,
           stripe_subscription_id: subscriptionId,
           subscription_status: 'active',
-          current_period_end: new Date((subscription as any).current_period_end * 1000).toISOString(),
+          current_period_end: (subscription as any).current_period_end
+            ? new Date((subscription as any).current_period_end * 1000).toISOString()
+            : null,
         }
 
         const customerName = session.customer_details?.name
@@ -99,11 +101,12 @@ export async function POST(request: NextRequest) {
         const userId = subscription.metadata?.supabase_user_id
         if (!userId) break
 
+        const periodEnd = (subscription as any).current_period_end
         await supabaseAdmin
           .from('profiles')
           .update({
             subscription_status: 'active',
-            current_period_end: new Date((subscription as any).current_period_end * 1000).toISOString(),
+            ...(periodEnd ? { current_period_end: new Date(periodEnd * 1000).toISOString() } : {}),
           })
           .eq('stripe_subscription_id', subscriptionId)
 

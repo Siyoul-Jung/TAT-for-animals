@@ -50,7 +50,7 @@ export default function DashboardClient({
         {/* 헤더 */}
         <div>
           <p className="text-sm font-medium text-charcoal/40 uppercase tracking-widest mb-1">
-            My Membership
+            Dashboard
           </p>
           <h1 className="font-serif text-3xl text-charcoal">
             {displayName ? `Welcome back, ${displayName}.` : 'Welcome back.'}
@@ -96,7 +96,7 @@ export default function DashboardClient({
                 You don&apos;t have an active membership yet.
               </p>
               <Link
-                href="/membership"
+                href="/membership#membership"
                 className="inline-flex items-center min-h-[44px] px-7 py-3 rounded-full bg-brand text-cream text-base font-semibold hover:bg-brand-dark transition-all"
               >
                 See Membership Options
@@ -150,6 +150,18 @@ export default function DashboardClient({
               >
                 Change
               </Link>
+            </div>
+            <div className="py-3.5">
+              <p className="text-sm text-charcoal/50">Delete account</p>
+              <p className="text-sm text-charcoal/40 mt-0.5 leading-relaxed">
+                To delete your account, send us an email and we&apos;ll take care of it within 5 business days.
+              </p>
+              <a
+                href={`mailto:hello@tatforanimals.com?subject=Account%20Deletion%20Request&body=Hi%2C%0A%0APlease%20delete%20my%20account%20associated%20with%20this%20email%20address%3A%20${encodeURIComponent(email)}%0A%0AThank%20you.`}
+                className="inline-flex items-center text-sm text-charcoal/40 hover:text-red-500 transition-colors mt-2 min-h-[44px]"
+              >
+                Request account deletion →
+              </a>
             </div>
           </div>
         </section>

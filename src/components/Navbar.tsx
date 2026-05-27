@@ -164,7 +164,7 @@ export default function Navbar() {
               </button>
               {dropdownOpen && (
                 <div
-                  className="absolute right-0 top-full mt-2 min-w-[140px] rounded-xl overflow-hidden z-50"
+                  className="absolute right-0 top-full mt-2 min-w-[168px] rounded-xl overflow-hidden z-50"
                   style={{
                     backgroundColor: '#FAF6F1',
                     border: '1px solid rgba(28,16,7,0.08)',
@@ -177,7 +177,7 @@ export default function Navbar() {
                     className="block px-5 py-3 text-sm font-medium transition-colors hover:bg-black/5"
                     style={{ color: 'rgba(28,16,7,0.75)' }}
                   >
-                    My Membership
+                    Dashboard
                   </Link>
                   <div style={{ borderTop: '1px solid rgba(28,16,7,0.06)' }}>
                     <form action="/api/auth/logout" method="POST">

@@ -48,8 +48,8 @@ export default async function LibraryPage({
     .eq('id', user.id)
     .single()
 
-  const role = profile?.role ?? 'guest'
-  if (role === 'guest') redirect('/membership')
+  const role = profile?.role ?? 'none'
+  if (role !== 'subscriber' && role !== 'pro_subscriber') redirect('/membership')
 
   const { tab } = await searchParams
   const defaultTab = tab === 'live' ? 'live' : tab === 'aces' ? 'aces' : 'animals'
