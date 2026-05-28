@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-const COMING_SOON = process.env.NODE_ENV === 'production';
+const COMING_SOON = process.env.COMING_SOON === 'true';
 
 // 로그인이 필요한 경로
 const PROTECTED_PATHS = ['/dashboard', '/library']
