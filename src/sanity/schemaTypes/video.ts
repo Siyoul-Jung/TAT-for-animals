@@ -53,11 +53,32 @@ export const videoType = defineType({
       description: 'Approximate length in minutes',
     }),
     defineField({
+      name: 'dateRecorded',
+      title: 'Date Recorded',
+      type: 'date',
+      description: 'Recording date',
+    }),
+    defineField({
       name: 'summary',
       title: 'Summary',
       type: 'text',
       rows: 3,
       description: '2–3 sentences describing the video',
+    }),
+    defineField({
+      name: 'topicTags',
+      title: 'Topic Tags',
+      type: 'array',
+      of: [{ type: 'string' }],
+      description: '5–8 topic tags for filtering (e.g. "anxiety, trauma, cats")',
+      options: { layout: 'tags' },
+    }),
+    defineField({
+      name: 'keywords',
+      title: 'Keywords',
+      type: 'text',
+      rows: 2,
+      description: '8–12 search keywords, comma-separated',
     }),
     defineField({
       name: 'status',
