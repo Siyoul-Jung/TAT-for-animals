@@ -67,6 +67,7 @@ export default function Footer() {
               width={28}
               height={28}
               className="h-7 w-auto object-contain"
+              style={{ width: 'auto' }}
             />
             <span className="text-base font-semibold font-serif text-cream/80">
               TAT for Animals<span className="text-brand text-[10px] align-super">®</span>

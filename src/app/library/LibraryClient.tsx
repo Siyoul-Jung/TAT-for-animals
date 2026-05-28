@@ -1,9 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import Player from '@vimeo/player'
 import type { Video, WebinarRecording, WebinarSession } from './page'
+import { loadAllProgress, saveProgress, type ProgressMap } from '@/lib/videoProgress'
 
 const CATEGORY_ORDER = ['Foundational', 'Main Content', 'Bonus 2025', 'Bonus 2026']
 
@@ -20,24 +22,103 @@ function formatDuration(minutes: number | null): string | null {
   return `${h}h${m > 0 ? ` ${m}m` : ''}`
 }
 
-function VideoRow({ video }: { video: Video }) {
+function VideoRow({ video, progress, onProgressUpdate }: {
+  video: Video
+  progress: { lastPosition: number; completed: boolean } | undefined
+  onProgressUpdate: (contentId: string, lastPosition: number, completed: boolean) => void
+}) {
   const [open, setOpen] = useState(false)
+  const [completed, setCompleted] = useState(progress?.completed ?? false)
+  const [playerError, setPlayerError] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const playerRef = useRef<Player | null>(null)
+  const saveTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const currentPositionRef = useRef(0)
   const vimeoId = getVimeoId(video.videoUrl)
+  const vimeoUrl = vimeoId ? `https://vimeo.com/${vimeoId}` : null
   const duration = formatDuration(video.duration)
+
+  const cleanup = useCallback(() => {
+    if (saveTimerRef.current) clearInterval(saveTimerRef.current)
+    if (playerRef.current) {
+      playerRef.current.destroy()
+      playerRef.current = null
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!open || !vimeoUrl || !containerRef.current) return
+
+    setPlayerError(false)
+
+    const player = new Player(containerRef.current, {
+      url: vimeoUrl!,
+      autoplay: true,
+      responsive: true,
+    })
+    playerRef.current = player
+
+    const lastPosition = progress?.lastPosition ?? 0
+
+    player.ready()
+      .then(() => {
+        if (lastPosition > 30) player.setCurrentTime(lastPosition)
+      })
+      .catch(() => setPlayerError(true))
+
+    player.on('error', () => setPlayerError(true))
+
+    player.on('timeupdate', ({ seconds }: { seconds: number }) => {
+      currentPositionRef.current = seconds
+    })
+
+    player.on('ended', () => {
+      setCompleted(true)
+      onProgressUpdate(video._id, currentPositionRef.current, true)
+      saveProgress(video._id, currentPositionRef.current, true)
+    })
+
+    saveTimerRef.current = setInterval(() => {
+      const pos = currentPositionRef.current
+      if (pos > 0) {
+        onProgressUpdate(video._id, pos, false)
+        saveProgress(video._id, pos, false)
+      }
+    }, 30000)
+
+    return cleanup
+  }, [open, vimeoId])
+
+  const handleToggle = () => {
+    if (open) {
+      if (currentPositionRef.current > 0) {
+        saveProgress(video._id, currentPositionRef.current, completed)
+      }
+      cleanup()
+    }
+    setOpen((o) => !o)
+  }
 
   return (
     <div className="border-b border-charcoal/8 last:border-0">
       <button
-        onClick={() => setOpen(!open)}
+        onClick={handleToggle}
         className="w-full flex items-center gap-4 py-4 text-left group min-h-[64px]"
       >
         <span className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-colors ${
-          open ? 'bg-brand' : 'bg-charcoal/8 group-hover:bg-brand/10'
+          open ? 'bg-brand' : completed ? 'bg-brand/15' : 'bg-charcoal/8 group-hover:bg-brand/10'
         }`}>
-          <svg width="13" height="13" viewBox="0 0 13 13" fill="currentColor"
-            className={`ml-0.5 transition-colors ${open ? 'text-cream' : 'text-charcoal/50'}`}>
-            <path d="M2 1.5l9 5-9 5V1.5z" />
-          </svg>
+          {completed ? (
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth={2}
+              className={open ? 'text-cream' : 'text-brand'}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M2 7l3.5 3.5L11 3" />
+            </svg>
+          ) : (
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="currentColor"
+              className={`ml-0.5 transition-colors ${open ? 'text-cream' : 'text-charcoal/50'}`}>
+              <path d="M2 1.5l9 5-9 5V1.5z" />
+            </svg>
+          )}
         </span>
         <div className="flex-1 min-w-0">
           <p className={`font-medium text-base leading-snug transition-colors ${
@@ -45,9 +126,13 @@ function VideoRow({ video }: { video: Video }) {
           }`}>
             {video.title}
           </p>
-          {duration && (
-            <p className="text-sm text-charcoal/40 mt-0.5">{duration}</p>
-          )}
+          <p className="text-sm text-charcoal/40 mt-0.5">
+            {completed
+              ? <span style={{ color: '#5E9635' }}>Watched</span>
+              : progress?.lastPosition && progress.lastPosition > 30
+              ? `Paused at ${Math.floor(progress.lastPosition / 60)}:${String(Math.floor(progress.lastPosition % 60)).padStart(2, '0')}`
+              : duration}
+          </p>
         </div>
         <svg
           width="16" height="16" viewBox="0 0 16 16" fill="none"
@@ -60,18 +145,12 @@ function VideoRow({ video }: { video: Video }) {
 
       {open && (
         <div className="pb-5">
-          {vimeoId ? (
-            <div className="relative aspect-video rounded-xl overflow-hidden bg-charcoal">
-              <iframe
-                src={`https://player.vimeo.com/video/${vimeoId}?autoplay=1`}
-                title={video.title}
-                className="absolute inset-0 w-full h-full"
-                allow="autoplay; fullscreen; picture-in-picture"
-                allowFullScreen
-              />
-            </div>
+          {vimeoId && !playerError ? (
+            <div ref={containerRef} className="rounded-xl overflow-hidden bg-charcoal aspect-video" />
           ) : (
-            <p className="text-sm text-charcoal/40 py-2">Video link not available.</p>
+            <div className="rounded-xl bg-charcoal/6 aspect-video flex items-center justify-center">
+              <p className="text-sm text-charcoal/40">Video not available.</p>
+            </div>
           )}
           {video.summary && (
             <p className="text-sm text-charcoal/60 leading-relaxed mt-3">{video.summary}</p>
@@ -82,7 +161,11 @@ function VideoRow({ video }: { video: Video }) {
   )
 }
 
-function VideoTab({ videos }: { videos: Video[] }) {
+function VideoTab({ videos, progressMap, onProgressUpdate }: {
+  videos: Video[]
+  progressMap: ProgressMap
+  onProgressUpdate: (contentId: string, lastPosition: number, completed: boolean) => void
+}) {
   const categorized = CATEGORY_ORDER.filter((cat) => videos.some((v) => v.category === cat))
   const uncategorized = videos.filter((v) => !CATEGORY_ORDER.includes(v.category))
 
@@ -103,7 +186,7 @@ function VideoTab({ videos }: { videos: Video[] }) {
           </div>
           <div className="px-6">
             {videos.filter((v) => v.category === cat).map((video) => (
-              <VideoRow key={video._id} video={video} />
+              <VideoRow key={video._id} video={video} progress={progressMap[video._id]} onProgressUpdate={onProgressUpdate} />
             ))}
           </div>
         </div>
@@ -115,7 +198,7 @@ function VideoTab({ videos }: { videos: Video[] }) {
           </div>
           <div className="px-6">
             {uncategorized.map((video) => (
-              <VideoRow key={video._id} video={video} />
+              <VideoRow key={video._id} video={video} progress={progressMap[video._id]} onProgressUpdate={onProgressUpdate} />
             ))}
           </div>
         </div>
@@ -202,10 +285,28 @@ export default function LibraryClient({
   }
 
   const [activeTab, setActiveTab] = useState<Tab>(() => resolveTab(tabParam))
+  const [progressMap, setProgressMap] = useState<ProgressMap>({})
 
   useEffect(() => {
     setActiveTab(resolveTab(tabParam))
   }, [tabParam])
+
+  const handleTabChange = (tab: Tab) => {
+    setActiveTab(tab)
+    const url = tab === 'animals' ? '/library' : `/library?tab=${tab}`
+    window.history.replaceState({}, '', url)
+  }
+
+  useEffect(() => {
+    loadAllProgress().then(setProgressMap)
+  }, [])
+
+  const handleProgressUpdate = useCallback((contentId: string, lastPosition: number, completed: boolean) => {
+    setProgressMap((prev) => ({
+      ...prev,
+      [contentId]: { lastPosition, completed },
+    }))
+  }, [])
 
   const tabs: { id: Tab; label: string; locked?: boolean }[] = [
     { id: 'animals', label: 'TAT for Animals' },
@@ -235,7 +336,7 @@ export default function LibraryClient({
           {tabs.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => handleTabChange(tab.id)}
               className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-sm font-medium transition-all min-h-[44px] ${
                 activeTab === tab.id
                   ? 'bg-white text-charcoal shadow-sm'
@@ -258,9 +359,9 @@ export default function LibraryClient({
         </div>
 
         {/* 탭 컨텐츠 */}
-        {activeTab === 'animals' && <VideoTab videos={animalsVideos} />}
+        {activeTab === 'animals' && <VideoTab videos={animalsVideos} progressMap={progressMap} onProgressUpdate={handleProgressUpdate} />}
 
-        {activeTab === 'aces' && <VideoTab videos={acesVideos} />}
+        {activeTab === 'aces' && <VideoTab videos={acesVideos} progressMap={progressMap} onProgressUpdate={handleProgressUpdate} />}
 
         {activeTab === 'live' && (
           role === 'pro_subscriber' ? (
