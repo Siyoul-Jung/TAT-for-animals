@@ -35,7 +35,6 @@ function VideoRow({ video, progress, onProgressUpdate }: {
   const saveTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const currentPositionRef = useRef(0)
   const vimeoId = getVimeoId(video.videoUrl)
-  const vimeoUrl = vimeoId ? `https://vimeo.com/${vimeoId}` : null
   const duration = formatDuration(video.duration)
 
   const cleanup = useCallback(() => {
@@ -47,12 +46,12 @@ function VideoRow({ video, progress, onProgressUpdate }: {
   }, [])
 
   useEffect(() => {
-    if (!open || !vimeoUrl || !containerRef.current) return
+    if (!open || !vimeoId || !containerRef.current) return
 
     setPlayerError(false)
 
     const player = new Player(containerRef.current, {
-      url: vimeoUrl!,
+      id: parseInt(vimeoId),
       autoplay: true,
       responsive: true,
     })
