@@ -163,20 +163,18 @@ export default function DashboardClient({
                 Request account deletion →
               </a>
             </div>
+            <div className="py-3.5">
+              <form action="/api/auth/logout" method="POST">
+                <button
+                  type="submit"
+                  className="text-sm text-charcoal/40 hover:text-charcoal/70 transition-colors min-h-[44px]"
+                >
+                  Sign out
+                </button>
+              </form>
+            </div>
           </div>
         </section>
-
-        {/* 로그아웃 */}
-        <div>
-          <form action="/api/auth/logout" method="POST">
-            <button
-              type="submit"
-              className="text-sm text-charcoal/40 hover:text-charcoal/70 transition-colors min-h-[44px]"
-            >
-              Sign out
-            </button>
-          </form>
-        </div>
 
       </div>
     </main>
