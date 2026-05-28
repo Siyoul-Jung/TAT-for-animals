@@ -10,7 +10,7 @@ export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
 
   // Coming soon — 프로덕션에서만 활성화
-  if (COMING_SOON && !pathname.startsWith('/coming-soon') && !pathname.startsWith('/api')) {
+  if (COMING_SOON && !pathname.startsWith('/coming-soon') && !pathname.startsWith('/api') && !pathname.startsWith('/studio')) {
     return NextResponse.redirect(new URL('/coming-soon', request.url))
   }
 
