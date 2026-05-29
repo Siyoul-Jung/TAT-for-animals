@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import Button from '@/components/ui/Button'
 
@@ -68,11 +69,18 @@ export default function UpdatePasswordClient() {
     <div className="min-h-screen bg-cream flex items-center justify-center px-4">
       <div className="w-full max-w-md">
 
-        <div className="text-center mb-10">
-          <p className="text-xs tracking-[0.2em] text-muted uppercase mb-2">
-            Tapas Acupressure Technique
-          </p>
-          <h1 className="font-serif text-3xl text-charcoal">TAT® Calm</h1>
+        <div className="flex flex-col items-center mb-10">
+          <Image
+            src="/images/logo2.png"
+            alt="TAT for Animals"
+            width={48}
+            height={48}
+            className="h-12 w-auto object-contain mb-3"
+            style={{ width: 'auto' }}
+          />
+          <span className="font-serif text-xl text-charcoal/70">
+            TAT for Animals<span className="text-brand text-[10px] align-super">®</span>
+          </span>
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm border border-surface px-8 py-10">

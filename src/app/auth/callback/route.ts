@@ -10,10 +10,18 @@ export async function GET(request: NextRequest) {
 
   if (code) {
     const supabase = await createClient()
-    const { error } = await supabase.auth.exchangeCodeForSession(code)
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code)
 
     if (!error) {
-      return NextResponse.redirect(`${origin}${next}`)
+      // recovery 세션 감지: next 파라미터 or recovery_sent_at이 최근 30분 이내
+      const sentAt = data?.session?.user?.recovery_sent_at
+      const recentRecovery = sentAt
+        ? Date.now() - new Date(sentAt).getTime() < 30 * 60 * 1000
+        : false
+      const destination = (next === '/update-password' || recentRecovery)
+        ? '/update-password'
+        : next
+      return NextResponse.redirect(`${origin}${destination}`)
     }
   }
 

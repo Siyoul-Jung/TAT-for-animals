@@ -48,9 +48,9 @@ export const videoType = defineType({
     }),
     defineField({
       name: 'duration',
-      title: 'Duration (minutes)',
+      title: 'Duration (seconds)',
       type: 'number',
-      description: 'Approximate length in minutes',
+      description: 'Total length in seconds (e.g. 90 = 1:30)',
     }),
     defineField({
       name: 'dateRecorded',

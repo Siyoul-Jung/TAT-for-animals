@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+/* Vimeo 플레이어 border 제거 */
+.vimeo-player iframe,
+.vimeo-player * {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 :root {
   /* Warm cream base */
   --background: #FBF5F3;

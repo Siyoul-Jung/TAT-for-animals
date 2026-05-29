@@ -50,12 +50,12 @@ export default async function LibraryPage() {
 
   const [animalsVideos, acesVideos, recordings, upcoming] = await Promise.all([
     sanityClient.fetch<Video[]>(
-      `*[_type == "video" && status == "published" && library == "TAT for Animals"] | order(category asc, title asc) {
+      `*[_type == "video" && status == "published" && library == "TAT for Animals"] | order(category asc, dateRecorded asc) {
         _id, title, category, duration, summary, videoUrl
       }`
     ),
     sanityClient.fetch<Video[]>(
-      `*[_type == "video" && status == "published" && library == "Healing ACEs Plus"] | order(category asc, title asc) {
+      `*[_type == "video" && status == "published" && library == "Healing ACEs Plus"] | order(category asc, dateRecorded asc) {
         _id, title, category, duration, summary, videoUrl
       }`
     ),

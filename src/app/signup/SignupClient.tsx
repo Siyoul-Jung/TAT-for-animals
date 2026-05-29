@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import Button from '@/components/ui/Button'
 
@@ -75,7 +76,7 @@ export default function SignupClient() {
             <p className="text-base font-medium text-charcoal mb-6">{email}</p>
             <ol className="text-sm text-muted text-left space-y-2 bg-surface rounded-xl px-6 py-4 mb-8">
               <li className="flex gap-3"><span className="text-brand font-semibold">1.</span> Open your email app</li>
-              <li className="flex gap-3"><span className="text-brand font-semibold">2.</span> Find the email from TAT® Calm</li>
+              <li className="flex gap-3"><span className="text-brand font-semibold">2.</span> Find the email from TAT for Animals</li>
               <li className="flex gap-3"><span className="text-brand font-semibold">3.</span> Click "Confirm your account"</li>
             </ol>
             <p className="text-xs text-muted">
@@ -95,11 +96,18 @@ export default function SignupClient() {
       <div className="w-full max-w-md">
 
         {/* 로고 */}
-        <div className="text-center mb-10">
-          <p className="text-xs tracking-[0.2em] text-muted uppercase mb-2">
-            Tapas Acupressure Technique
-          </p>
-          <h1 className="font-serif text-3xl text-charcoal">TAT® Calm</h1>
+        <div className="flex flex-col items-center mb-10">
+          <Image
+            src="/images/logo2.png"
+            alt="TAT for Animals"
+            width={48}
+            height={48}
+            className="h-12 w-auto object-contain mb-3"
+            style={{ width: 'auto' }}
+          />
+          <span className="font-serif text-xl text-charcoal/70">
+            TAT for Animals<span className="text-brand text-[10px] align-super">®</span>
+          </span>
         </div>
 
         {/* 카드 */}

@@ -14,12 +14,13 @@ function getVimeoId(url: string): string | null {
   return match?.[1] ?? null
 }
 
-function formatDuration(minutes: number | null): string | null {
-  if (!minutes) return null
-  const h = Math.floor(minutes / 60)
-  const m = minutes % 60
-  if (h === 0) return `${m} min`
-  return `${h}h${m > 0 ? ` ${m}m` : ''}`
+function formatDuration(seconds: number | null): string | null {
+  if (!seconds) return null
+  const h = Math.floor(seconds / 3600)
+  const m = Math.floor((seconds % 3600) / 60)
+  const s = Math.floor(seconds % 60)
+  if (h > 0) return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+  return `${m}:${String(s).padStart(2, '0')}`
 }
 
 function VideoRow({ video, progress, onProgressUpdate }: {
@@ -54,6 +55,9 @@ function VideoRow({ video, progress, onProgressUpdate }: {
       id: parseInt(vimeoId),
       autoplay: true,
       responsive: true,
+      title: false,
+      byline: false,
+      portrait: false,
     })
     playerRef.current = player
 
@@ -90,8 +94,10 @@ function VideoRow({ video, progress, onProgressUpdate }: {
 
   const handleToggle = () => {
     if (open) {
-      if (currentPositionRef.current > 0) {
-        saveProgress(video._id, currentPositionRef.current, completed)
+      const pos = currentPositionRef.current
+      if (pos > 0) {
+        saveProgress(video._id, pos, completed)
+        onProgressUpdate(video._id, pos, completed)
       }
       cleanup()
     }
@@ -128,10 +134,24 @@ function VideoRow({ video, progress, onProgressUpdate }: {
           <p className="text-sm text-charcoal/40 mt-0.5">
             {completed
               ? <span style={{ color: '#5E9635' }}>Watched</span>
-              : progress?.lastPosition && progress.lastPosition > 30
-              ? `Paused at ${Math.floor(progress.lastPosition / 60)}:${String(Math.floor(progress.lastPosition % 60)).padStart(2, '0')}`
+              : progress?.lastPosition && progress.lastPosition > 5 && video.duration
+              ? formatDuration(Math.max(video.duration - progress.lastPosition, 0))
               : duration}
           </p>
+          {/* 진행도 바 */}
+          {(completed || (progress?.lastPosition && progress.lastPosition > 5 && video.duration)) && (
+            <div className="mt-2 h-1 rounded-full bg-charcoal/10 overflow-hidden">
+              <div
+                className="h-full rounded-full transition-all"
+                style={{
+                  width: completed
+                    ? '100%'
+                    : `${Math.min((progress!.lastPosition / (video.duration! * 60)) * 100, 100)}%`,
+                  backgroundColor: completed ? '#5E9635' : '#D4703A',
+                }}
+              />
+            </div>
+          )}
         </div>
         <svg
           width="16" height="16" viewBox="0 0 16 16" fill="none"
@@ -145,7 +165,9 @@ function VideoRow({ video, progress, onProgressUpdate }: {
       {open && (
         <div className="pb-5">
           {vimeoId && !playerError ? (
-            <div ref={containerRef} className="rounded-xl overflow-hidden bg-charcoal aspect-video" />
+            <div className="rounded-xl overflow-hidden" style={{ background: '#000', position: 'relative', paddingBottom: '56.25%', height: 0 }}>
+              <div ref={containerRef} style={{ position: 'absolute', inset: 0 }} />
+            </div>
           ) : (
             <div className="rounded-xl bg-charcoal/6 aspect-video flex items-center justify-center">
               <p className="text-sm text-charcoal/40">Video not available.</p>
