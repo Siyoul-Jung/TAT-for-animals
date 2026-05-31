@@ -49,7 +49,7 @@ const openSans = Open_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "TAT® Calm for Animals (and You) | The Relationship-Driven Way to Heal",
+  title: "TAT for Animals® | Help Your Animal Feel Calm and at Ease",
   description: "Experience the calming power of TAT for your animals and yourself. Experience first, simplicity always.",
 };
 

@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import SignupClient from './SignupClient'
 
 export const metadata: Metadata = {
-  title: 'Create Account | TAT® Calm',
+  title: 'Create Account | TAT for Animals®',
 }
 
 export default function SignupPage() {

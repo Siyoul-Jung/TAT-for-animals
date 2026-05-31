@@ -47,6 +47,9 @@ docs/technical_review.md
 AGENTS.md
 CLAUDE.md
 
+# pending actions & internal tracking
+docs/pending.md
+
 # private business documents
 docs/invoice*.html
 docs/estimate.md

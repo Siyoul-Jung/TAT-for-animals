@@ -2,9 +2,10 @@
 
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import Link from 'next/link'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import Button from '@/components/ui/Button'
-import Image from 'next/image'
 
 type Mode = 'password' | 'magic'
 
@@ -87,12 +88,7 @@ export default function LoginClient() {
             <p className="text-base text-muted leading-relaxed mb-2">
               We sent a sign-in link to
             </p>
-            <p className="text-base font-medium text-charcoal mb-6">{email}</p>
-            <ol className="text-sm text-muted text-left space-y-2 bg-surface rounded-xl px-6 py-4 mb-8">
-              <li className="flex gap-3"><span className="text-brand font-semibold">1.</span> Open your email app</li>
-              <li className="flex gap-3"><span className="text-brand font-semibold">2.</span> Find the email from TAT for Animals</li>
-              <li className="flex gap-3"><span className="text-brand font-semibold">3.</span> Click the "Sign in" link inside</li>
-            </ol>
+            <p className="text-base font-medium text-charcoal mb-8">{email}</p>
             <p className="text-xs text-muted">
               Didn't receive it?{' '}
               <button onClick={() => setMagicSent(false)} className="text-brand hover:underline">
@@ -111,23 +107,23 @@ export default function LoginClient() {
 
   // ── 메인 로그인 폼 ─────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-cream flex items-center justify-center px-4">
+    <div className="min-h-screen bg-cream flex items-center justify-center px-4 pt-6 pb-16">
       <div className="w-full max-w-md">
 
         {/* 로고 */}
-        <div className="flex flex-col items-center mb-10">
+        <Link href="/" className="flex flex-col items-center mb-10 group">
           <Image
             src="/images/logo2.png"
             alt="TAT for Animals"
             width={48}
             height={48}
-            className="h-12 w-auto object-contain mb-3"
+            className="h-12 w-auto object-contain mb-1"
             style={{ width: 'auto' }}
           />
-          <span className="font-serif text-xl text-charcoal/70">
+          <span className="font-serif text-xl text-charcoal/70 group-hover:text-brand transition-colors">
             TAT for Animals<span className="text-brand text-[10px] align-super">®</span>
           </span>
-        </div>
+        </Link>
 
         {/* 카드 */}
         <div className="bg-white rounded-2xl shadow-sm border border-surface px-8 py-10">
@@ -158,9 +154,14 @@ export default function LoginClient() {
             {/* 비밀번호 (password 모드만) */}
             {mode === 'password' && (
               <div className="mb-2">
-                <label htmlFor="password" className="block text-sm font-medium text-charcoal mb-2">
-                  Password
-                </label>
+                <div className="flex items-center justify-between mb-2">
+                  <label htmlFor="password" className="text-sm font-medium text-charcoal">
+                    Password
+                  </label>
+                  <a href="/reset-password" className="text-xs text-muted hover:text-brand transition-colors">
+                    Forgot your password?
+                  </a>
+                </div>
                 <div className="relative">
                   <input
                     id="password"
@@ -224,31 +225,19 @@ export default function LoginClient() {
           {/* 모드 전환 */}
           <div className="mt-6 pt-6 border-t border-surface text-center">
             {mode === 'password' ? (
-              <p className="text-sm text-muted">
-                Forgot your password?{' '}
-                <button onClick={switchToMagic} className="text-brand hover:underline font-medium">
-                  Sign in without one
-                </button>
-              </p>
+              <button onClick={switchToMagic} className="text-sm text-muted hover:text-brand transition-colors">
+                Sign in without a password →
+              </button>
             ) : (
-              <p className="text-sm text-muted">
-                Remember your password?{' '}
-                <button onClick={switchToPassword} className="text-brand hover:underline font-medium">
-                  Sign in with password
-                </button>
-              </p>
+              <button onClick={switchToPassword} className="text-sm text-muted hover:text-brand transition-colors">
+                Sign in with password →
+              </button>
             )}
           </div>
         </div>
 
         {/* 하단 */}
-        <div className="text-center mt-6 space-y-2">
-          <p className="text-sm text-muted">
-            Need to set a new password?{' '}
-            <a href="/reset-password" className="text-brand hover:underline font-medium">
-              Reset it here
-            </a>
-          </p>
+        <div className="text-center mt-6">
           <p className="text-sm text-muted">
             Not a member yet?{' '}
             <a href="/signup" className="text-brand hover:underline font-medium">

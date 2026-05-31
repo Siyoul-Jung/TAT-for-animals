@@ -35,7 +35,7 @@ export default function ResetPasswordClient() {
 
   if (sent) {
     return (
-      <div className="min-h-screen bg-cream flex items-center justify-center px-4">
+      <div className="min-h-screen bg-cream flex items-center justify-center px-4 pt-6 pb-16">
         <div className="w-full max-w-md text-center">
           <div className="bg-white rounded-2xl shadow-sm border border-surface p-10">
             <div className="w-16 h-16 bg-brand/10 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -47,18 +47,16 @@ export default function ResetPasswordClient() {
             <p className="text-base text-muted leading-relaxed mb-2">
               We sent a password reset link to
             </p>
-            <p className="text-base font-medium text-charcoal mb-6">{email}</p>
-            <ol className="text-sm text-muted text-left space-y-2 bg-surface rounded-xl px-6 py-4 mb-8">
-              <li className="flex gap-3"><span className="text-brand font-semibold">1.</span> Open your email app</li>
-              <li className="flex gap-3"><span className="text-brand font-semibold">2.</span> Find the email from TAT for Animals</li>
-              <li className="flex gap-3"><span className="text-brand font-semibold">3.</span> Click "Reset my password"</li>
-            </ol>
-            <p className="text-xs text-muted">
+            <p className="text-base font-medium text-charcoal mb-8">{email}</p>
+            <p className="text-xs text-muted mb-4">
               Didn't receive it?{' '}
               <button onClick={() => setSent(false)} className="text-brand hover:underline">
                 Try again
               </button>
             </p>
+            <Link href="/login" className="text-sm text-muted hover:text-brand transition-colors">
+              ← Back to sign in
+            </Link>
           </div>
         </div>
       </div>
@@ -66,22 +64,22 @@ export default function ResetPasswordClient() {
   }
 
   return (
-    <div className="min-h-screen bg-cream flex items-center justify-center px-4">
+    <div className="min-h-screen bg-cream flex items-center justify-center px-4 pt-6 pb-16">
       <div className="w-full max-w-md">
 
-        <div className="flex flex-col items-center mb-10">
+        <Link href="/" className="flex flex-col items-center mb-10 group">
           <Image
             src="/images/logo2.png"
             alt="TAT for Animals"
             width={48}
             height={48}
-            className="h-12 w-auto object-contain mb-3"
+            className="h-12 w-auto object-contain mb-1"
             style={{ width: 'auto' }}
           />
-          <span className="font-serif text-xl text-charcoal/70">
+          <span className="font-serif text-xl text-charcoal/70 group-hover:text-brand transition-colors">
             TAT for Animals<span className="text-brand text-[10px] align-super">®</span>
           </span>
-        </div>
+        </Link>
 
         <div className="bg-white rounded-2xl shadow-sm border border-surface px-8 py-10">
           <h2 className="font-serif text-xl text-charcoal mb-2">Forgot your password?</h2>

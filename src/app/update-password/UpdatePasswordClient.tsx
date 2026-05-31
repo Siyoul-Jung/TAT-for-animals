@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import Button from '@/components/ui/Button'
@@ -66,22 +67,22 @@ export default function UpdatePasswordClient() {
   )
 
   return (
-    <div className="min-h-screen bg-cream flex items-center justify-center px-4">
+    <div className="min-h-screen bg-cream flex items-center justify-center px-4 pt-6 pb-16">
       <div className="w-full max-w-md">
 
-        <div className="flex flex-col items-center mb-10">
+        <Link href="/" className="flex flex-col items-center mb-10 group">
           <Image
             src="/images/logo2.png"
             alt="TAT for Animals"
             width={48}
             height={48}
-            className="h-12 w-auto object-contain mb-3"
+            className="h-12 w-auto object-contain mb-1"
             style={{ width: 'auto' }}
           />
-          <span className="font-serif text-xl text-charcoal/70">
+          <span className="font-serif text-xl text-charcoal/70 group-hover:text-brand transition-colors">
             TAT for Animals<span className="text-brand text-[10px] align-super">®</span>
           </span>
-        </div>
+        </Link>
 
         <div className="bg-white rounded-2xl shadow-sm border border-surface px-8 py-10">
           <h2 className="font-serif text-xl text-charcoal mb-2">Create a new password</h2>

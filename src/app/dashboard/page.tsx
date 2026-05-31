@@ -4,7 +4,7 @@ import type { Metadata } from 'next'
 import DashboardClient from './DashboardClient'
 
 export const metadata: Metadata = {
-  title: 'My Account | TAT® Calm',
+  title: 'My Account | TAT for Animals®',
 }
 
 export default async function DashboardPage() {
