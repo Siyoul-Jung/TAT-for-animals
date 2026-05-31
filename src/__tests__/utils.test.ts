@@ -18,6 +18,9 @@ describe('formatDuration', () => {
   it('returns null for null input', () => {
     expect(formatDuration(null)).toBeNull()
   })
+  it('returns null for 0 seconds', () => {
+    expect(formatDuration(0)).toBeNull()
+  })
   it('formats seconds correctly', () => {
     expect(formatDuration(90)).toBe('1:30')
   })

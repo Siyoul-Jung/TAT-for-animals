@@ -65,6 +65,23 @@ describe('SignupClient — client-side validation', () => {
     expect(mockSignUp).not.toHaveBeenCalled()
   })
 
+  it('accepts password of exactly 8 characters', async () => {
+    mockSignUp.mockResolvedValueOnce({ error: null })
+    render(<SignupClient />)
+    await fillForm('user@test.com', 'exactly8', 'exactly8')
+
+    expect(screen.queryByText(/at least 8 characters/)).not.toBeInTheDocument()
+    expect(mockSignUp).toHaveBeenCalled()
+  })
+
+  it('rejects password of 7 characters', async () => {
+    render(<SignupClient />)
+    await fillForm('user@test.com', 'seven77', 'seven77')
+
+    expect(screen.getByText(/at least 8 characters/)).toBeInTheDocument()
+    expect(mockSignUp).not.toHaveBeenCalled()
+  })
+
   it('clears previous error on new submission attempt', async () => {
     render(<SignupClient />)
     await fillForm('user@test.com', 'short', 'short')
