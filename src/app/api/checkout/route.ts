@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
   // Look up existing Stripe customer ID or create a new one
   const { data: profile } = await supabase
     .from('profiles')
-    .select('stripe_customer_id, stripe_subscription_id, full_name')
+    .select('stripe_customer_id, stripe_subscription_id, paypal_subscription_id, full_name')
     .eq('id', user.id)
     .single()
 

@@ -37,6 +37,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# sensitive business docs (client info)
+docs/srs_tat_for_animals.md
+docs/design_spec.md
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
