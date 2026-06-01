@@ -1,6 +1,6 @@
 @AGENTS.md
-@docs/srs_tat_for_animals.md
-@docs/design_spec.md
+@docs/private/srs_tat_for_animals.md
+@docs/private/design_spec.md
 
 # TAT® Calm — 프로젝트 가이드라인
 
