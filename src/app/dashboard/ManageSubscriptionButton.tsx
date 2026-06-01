@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-export default function ManageSubscriptionButton() {
+export default function ManageSubscriptionButton({ label = 'Manage Subscription' }: { label?: string }) {
   const [isLoading, setIsLoading] = useState(false)
 
   async function handleClick() {
@@ -28,7 +28,7 @@ export default function ManageSubscriptionButton() {
       disabled={isLoading}
       className="min-h-[44px] px-6 py-3 rounded-full border border-charcoal/20 text-charcoal/70 text-base font-medium hover:border-brand hover:text-brand transition-all disabled:opacity-50 disabled:cursor-not-allowed"
     >
-      {isLoading ? 'Connecting...' : 'Manage Subscription'}
+      {isLoading ? 'Connecting...' : label}
     </button>
   )
 }

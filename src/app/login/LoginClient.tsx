@@ -7,18 +7,16 @@ import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import Button from '@/components/ui/Button'
 
-type Mode = 'password' | 'magic'
-
 export default function LoginClient() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const next = searchParams.get('next') ?? '/dashboard'
 
-  const [mode, setMode] = useState<Mode>('password')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [magicLoading, setMagicLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [magicSent, setMagicSent] = useState(false)
 
@@ -32,7 +30,11 @@ export default function LoginClient() {
     const { error } = await supabase.auth.signInWithPassword({ email, password })
 
     if (error) {
-      setError("That email and password combination doesn't match our records. Please try again, or use a sign-in link below.")
+      if (error.code === 'email_not_confirmed') {
+        setError("Please confirm your email first.\nCheck your inbox for the verification link we sent.")
+      } else {
+        setError("Incorrect email or password.\nTry again, or use a sign-in link below.")
+      }
       setLoading(false)
       return
     }
@@ -41,9 +43,12 @@ export default function LoginClient() {
     router.refresh()
   }
 
-  async function handleMagicLink(e: React.FormEvent) {
-    e.preventDefault()
-    setLoading(true)
+  async function handleMagicLink() {
+    if (!email) {
+      setError('Enter your email address first, then we\'ll send you a sign-in link.')
+      return
+    }
+    setMagicLoading(true)
     setError(null)
 
     const { error } = await supabase.auth.signInWithOtp({
@@ -53,28 +58,16 @@ export default function LoginClient() {
 
     if (error) {
       setError('Something went wrong. Please check your email address and try again.')
-      setLoading(false)
+      setMagicLoading(false)
       return
     }
 
     setMagicSent(true)
-    setLoading(false)
-  }
-
-  function switchToMagic() {
-    setMode('magic')
-    setError(null)
-    setPassword('')
-  }
-
-  function switchToPassword() {
-    setMode('password')
-    setError(null)
-    setMagicSent(false)
+    setMagicLoading(false)
   }
 
   // ── Magic link sent screen ──────────────────────────────
-  if (mode === 'magic' && magicSent) {
+  if (magicSent) {
     return (
       <div className="min-h-screen bg-cream flex items-center justify-center px-4">
         <div className="w-full max-w-md text-center">
@@ -93,10 +86,6 @@ export default function LoginClient() {
               Didn't receive it?{' '}
               <button onClick={() => setMagicSent(false)} className="text-brand hover:underline">
                 Try again
-              </button>
-              {' '}or{' '}
-              <button onClick={switchToPassword} className="text-brand hover:underline">
-                use a password instead
               </button>
             </p>
           </div>
@@ -129,10 +118,10 @@ export default function LoginClient() {
         <div className="bg-white rounded-2xl shadow-sm border border-surface px-8 py-10">
 
           <h2 className="font-serif text-xl text-charcoal mb-8">
-            {mode === 'magic' ? 'Sign in without a password' : 'Sign in to your account'}
+            Sign in to your account
           </h2>
 
-          <form onSubmit={mode === 'password' ? handlePasswordLogin : handleMagicLink}>
+          <form onSubmit={handlePasswordLogin}>
 
             {/* Email */}
             <div className="mb-5">
@@ -151,60 +140,51 @@ export default function LoginClient() {
               />
             </div>
 
-            {/* Password (password mode only) */}
-            {mode === 'password' && (
-              <div className="mb-2">
-                <div className="flex items-center justify-between mb-2">
-                  <label htmlFor="password" className="text-sm font-medium text-charcoal">
-                    Password
-                  </label>
-                  <a href="/reset-password" className="text-xs text-muted hover:text-brand transition-colors">
-                    Forgot your password?
-                  </a>
-                </div>
-                <div className="relative">
-                  <input
-                    id="password"
-                    type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    autoComplete="current-password"
-                    placeholder="••••••••"
-                    className="w-full px-4 py-4 rounded-xl border border-surface bg-cream text-charcoal text-base placeholder:text-muted/40 focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand/50 transition-all pr-12"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted hover:text-charcoal transition-colors"
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  >
-                    {showPassword ? (
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
-                      </svg>
-                    ) : (
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                    )}
-                  </button>
-                </div>
+            {/* Password */}
+            <div className="mb-2">
+              <div className="flex items-center justify-between mb-2">
+                <label htmlFor="password" className="text-sm font-medium text-charcoal">
+                  Password
+                </label>
+                <a href="/reset-password" className="text-xs text-muted hover:text-brand transition-colors">
+                  Forgot your password?
+                </a>
               </div>
-            )}
-
-            {/* Magic link instructions */}
-            {mode === 'magic' && (
-              <p className="text-sm text-muted mb-6 leading-relaxed">
-                We'll email you a secure link. Click it to sign in instantly — no password needed.
-              </p>
-            )}
+              <div className="relative">
+                <input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  autoComplete="current-password"
+                  placeholder="••••••••"
+                  className="w-full px-4 py-4 rounded-xl border border-surface bg-cream text-charcoal text-base placeholder:text-muted/40 focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand/50 transition-all pr-12"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-muted hover:text-charcoal transition-colors"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? (
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+                    </svg>
+                  ) : (
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  )}
+                </button>
+              </div>
+            </div>
 
             {/* Error */}
             {error && (
-              <div className="bg-red-50 border border-red-100 rounded-xl px-4 py-3 mb-5">
-                <p className="text-sm text-red-600 leading-relaxed">{error}</p>
+              <div className="bg-red-50 border border-red-100 rounded-xl px-4 py-3 mt-5">
+                <p className="text-sm text-red-600 leading-relaxed whitespace-pre-line">{error}</p>
               </div>
             )}
 
@@ -214,25 +194,27 @@ export default function LoginClient() {
               disabled={loading}
               className="w-full mt-6"
             >
-              {loading
-                ? 'Please wait…'
-                : mode === 'password'
-                ? 'Sign in'
-                : 'Send me a sign-in link'}
+              {loading ? 'Please wait…' : 'Sign in'}
             </Button>
           </form>
 
-          {/* Mode toggle */}
-          <div className="mt-6 pt-6 border-t border-surface text-center">
-            {mode === 'password' ? (
-              <button onClick={switchToMagic} className="text-sm text-muted hover:text-brand transition-colors">
-                Sign in without a password →
-              </button>
-            ) : (
-              <button onClick={switchToPassword} className="text-sm text-muted hover:text-brand transition-colors">
-                Sign in with password →
-              </button>
-            )}
+          {/* Magic link alternative */}
+          <div className="mt-6">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="flex-1 h-px bg-surface" />
+              <span className="text-xs text-muted">or</span>
+              <div className="flex-1 h-px bg-surface" />
+            </div>
+            <button
+              onClick={handleMagicLink}
+              disabled={magicLoading}
+              className="w-full min-h-[44px] rounded-full border border-charcoal/15 text-sm font-medium text-charcoal/60 hover:text-charcoal hover:border-charcoal/30 transition-all disabled:opacity-50"
+            >
+              {magicLoading ? 'Sending…' : 'Email me a sign-in link instead'}
+            </button>
+            <p className="text-xs text-muted text-center mt-3 leading-relaxed">
+              We'll send a link to your email — no password needed.
+            </p>
           </div>
         </div>
 

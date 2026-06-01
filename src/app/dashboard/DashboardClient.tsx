@@ -110,6 +110,20 @@ export default function DashboardClient({
           <p className="text-charcoal/50 mt-1 text-base">{email}</p>
         </div>
 
+        {/* Payment failed alert */}
+        {subscriptionStatus === 'past_due' && (
+          <section className="bg-red-50 border border-red-200 rounded-2xl p-6 space-y-3">
+            <h2 className="font-serif text-lg text-red-800">
+              We couldn&apos;t process your last payment.
+            </h2>
+            <p className="text-sm text-red-700 leading-relaxed">
+              Your access is paused until your payment goes through. Please update your
+              card to keep watching — it only takes a moment.
+            </p>
+            <ManageSubscriptionButton label="Update payment method" />
+          </section>
+        )}
+
         {/* Membership card */}
         <section className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm space-y-5">
           <h2 className="text-xs font-semibold uppercase tracking-widest text-charcoal/40">

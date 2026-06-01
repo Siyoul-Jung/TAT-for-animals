@@ -44,7 +44,7 @@ export default function Hero({ images }: { images: HeroImage[] }) {
     <section className="relative overflow-hidden bg-cream">
 
       {/* ── Mobile: stacked layout (< 1024px) ── */}
-      <div className="lg:hidden flex flex-col" style={{ height: '100dvh' }}>
+      <div className="lg:hidden flex flex-col" style={{ minHeight: '100dvh' }}>
         <div className="relative shrink-0 overflow-hidden" style={{ height: '61.8dvh' }}>
           {slides('100vw')}
           <div className="absolute inset-0 z-10" style={{ background: 'linear-gradient(to bottom, transparent 55%, rgba(251,245,243,0.5) 80%, rgba(251,245,243,1) 100%)' }} />

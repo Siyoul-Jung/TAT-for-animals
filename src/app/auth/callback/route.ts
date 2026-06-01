@@ -10,18 +10,12 @@ export async function GET(request: NextRequest) {
 
   if (code) {
     const supabase = await createClient()
-    const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+    const { error } = await supabase.auth.exchangeCodeForSession(code)
 
     if (!error) {
-      // Detect recovery session: next param or recovery_sent_at within last 30 minutes
-      const sentAt = data?.session?.user?.recovery_sent_at
-      const recentRecovery = sentAt
-        ? Date.now() - new Date(sentAt).getTime() < 30 * 60 * 1000
-        : false
-      const destination = (next === '/update-password' || recentRecovery)
-        ? '/update-password'
-        : next
-      return NextResponse.redirect(`${origin}${destination}`)
+      // Password recovery flow passes next=/update-password explicitly.
+      // Everything else (magic link, email confirmation) uses next as-is.
+      return NextResponse.redirect(`${origin}${next}`)
     }
   }
 
