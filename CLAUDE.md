@@ -57,40 +57,47 @@ src/
 │   ├── layout.tsx                        — 폰트 설정 (Playfair Display + DM Sans)
 │   ├── globals.css                       — CSS 변수 및 Tailwind @theme 토큰
 │   ├── page.tsx                          — 홈페이지
-│   ├── membership/                       — 가격 카드 + Stripe 체크아웃
+│   ├── membership/                       — 가격 카드 + 가입 플로우
 │   ├── dashboard/                        — 내 계정 (구독 정보, 콘텐츠 링크)
-│   ├── library/
-│   │   ├── animals/                      — 영상 라이브러리 (subscriber 이상)
-│   │   └── webinars/                     — 라이브 세션 아카이브 (pro_subscriber 전용)
+│   ├── library/                          — 통합 라이브러리 (탭: Animals / ACEs / Live)
 │   ├── login/ · signup/                  — 인증 페이지
 │   ├── reset-password/ · update-password/
 │   ├── faq/                              — FAQ 페이지
 │   ├── thank-you/                        — 결제 완료 페이지
 │   ├── coming-soon/                      — 론칭 전 대기 페이지
 │   ├── studio/[[...tool]]/               — Sanity Studio
-│   ├── auth/callback/                    — Supabase OAuth 콜백
+│   ├── auth/callback/                    — Supabase OAuth 콜백 (기본 리다이렉트: /membership)
 │   └── api/
-│       ├── checkout/                     — Stripe 세션 생성
+│       ├── checkout/                     — Stripe 체크아웃 세션 생성
+│       ├── upgrade/                      — Stripe Portal 업그레이드 플로우
 │       ├── portal/                       — Stripe 구독 관리 포털
+│       ├── request-account-deletion/     — 계정 삭제 요청 (이메일 확인 링크 발송)
+│       ├── confirm-account-deletion/     — 계정 삭제 확인 처리
+│       ├── paypal/checkout · success/    — PayPal 구독
+│       ├── send/webinar-invite · recording-notification/
 │       ├── auth/logout/
-│       └── webhooks/stripe/              — 구독 상태 동기화
+│       └── webhooks/ stripe/ · paypal/   — 구독 상태 동기화 (idempotency 처리)
 │
 ├── components/
 │   ├── Navbar.tsx                        — 고정 내비게이션 (스크롤 감지)
 │   ├── Hero.tsx                          — 슬라이드쇼 Hero (섹션 1)
-│   ├── ForAnimals.tsx                    — TAT for Animals + YouTube 영상 (섹션 2)
+│   ├── TrySession.tsx                    — TAT for Animals 소개 + YouTube 영상 (섹션 2)
 │   ├── Testimonials.tsx                  — 실제 후기 (섹션 3)
 │   ├── Pricing.tsx                       — 멤버십 카드 2단계 (섹션 4)
 │   ├── AboutTapas.tsx                    — Tapas 프로필 (섹션 5)
 │   ├── Footer.tsx                        — 푸터
 │   ├── LogoMark.tsx                      — SVG 로고마크
-│   ├── DashboardUpgradeBanner.tsx        — 업그레이드 배너 (대시보드 내)
+│   ├── CookieBanner.tsx                  — 쿠키 동의 배너
 │   └── ui/Button.tsx                     — 재사용 버튼
 │
 ├── lib/
 │   ├── sanity.ts                         — Sanity 클라이언트
 │   ├── stripe.ts                         — Stripe 클라이언트
+│   ├── paypal.ts                         — PayPal 유틸
+│   ├── resend.ts                         — Resend 클라이언트
 │   ├── utils.ts                          — cn() 헬퍼
+│   ├── videoProgress.ts                  — 영상 진행률 추적
+│   ├── emails/                           — 이메일 템플릿 (welcome, cancellation, webinar-invite, recording-notification, account-deletion)
 │   └── supabase/ client.ts · server.ts
 │
 └── sanity/schemaTypes/
@@ -103,7 +110,7 @@ src/
 | # | 컴포넌트 | 목적 |
 |---|----------|------|
 | 1 | `Hero` | 감정적 훅 — 슬라이드쇼 |
-| 2 | `ForAnimals` | TAT for Animals 소개 + 영상 |
+| 2 | `TrySession` | TAT for Animals 소개 + YouTube 영상 |
 | 3 | `Testimonials` | 실제 후기 (사회적 증명) |
 | 4 | `Pricing` | 멤버십 카드 + CTA |
 | 5 | `AboutTapas` | 신뢰 — Tapas 프로필 |
@@ -177,16 +184,17 @@ TAT®의 핵심 사용자층은 **시니어 및 기술에 익숙하지 않은 �
 
 ## 미결 항목 (코드 작업 전 확인 필요)
 
-**✅ 확정 완료 (SRS v0.2 기준)**
-- 멤버십 이름: The Calm Library / The Calm Circle
-- 멤버십 가격: $27/mo / $47/mo (코드 반영 완료)
-- 각 티어 혜택 범위
-- Vimeo 접근 권한 (개발자 멤버 추가 완료)
-- Tapas 사진 수신 완료
-- 홈페이지 소개 영상: Tapas 직접 녹화 예정 (확인됨)
-- Post-surgery 영상: Tapas 녹화 예정 (확인됨)
+**✅ 확정 완료**
+- 멤버십 이름: The Calm Library ($27/mo) / The Calm Circle ($47/mo)
+- Stripe + PayPal 결제 통합 완료
+- 이메일 자동화 (Resend) 완료
+- 계정 삭제 플로우 구현 완료
+- 보안 감사 완료 (webhook idempotency, 중복 구독 방지 등)
 
-**⚠️ 아직 미확정**
+**⚠️ 아직 미완료**
 - 실제 후기 콘텐츠 — Kai/Bowie/Misty 이야기 (Jez/Tapas 제공 예정)
-- PayPal Business 계정 — 기존 계정 사용 가능 여부 (Jez 확인 중)
+- PayPal Business 계정 확인 (Jez 확인 중)
 - /about 페이지 — Phase D 미착수
+- 도메인 연결 (tatforanimals.com — 현재 paused)
+- Termageddon embed (Privacy / Terms 페이지)
+- Stripe Restricted API Key 발급 (프로덕션 전)
