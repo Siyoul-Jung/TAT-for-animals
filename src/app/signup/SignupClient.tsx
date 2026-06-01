@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
@@ -9,6 +9,8 @@ import Button from '@/components/ui/Button'
 
 export default function SignupClient() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const next = searchParams.get('next') ?? '/membership'
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -40,7 +42,7 @@ export default function SignupClient() {
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: `${window.location.origin}/auth/callback?next=${next}`,
       },
     })
 
@@ -76,7 +78,7 @@ export default function SignupClient() {
             <p className="text-base font-medium text-charcoal mb-8">{email}</p>
             <p className="text-xs text-muted">
               Already confirmed?{' '}
-              <Link href="/login?next=/membership" className="text-brand hover:underline">
+              <Link href={`/login?next=${encodeURIComponent(next)}`} className="text-brand hover:underline">
                 Sign in to continue
               </Link>
             </p>
@@ -110,7 +112,7 @@ export default function SignupClient() {
           <h2 className="font-serif text-xl text-charcoal mb-2">Create your account</h2>
           <p className="text-sm text-muted mb-8">
             Already have an account?{' '}
-            <Link href="/login" className="text-brand hover:underline font-medium">
+            <Link href={`/login?next=${encodeURIComponent(next)}`} className="text-brand hover:underline font-medium">
               Sign in
             </Link>
           </p>

@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Check } from 'lucide-react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { createClient } from '@/lib/supabase/client';
 
 const tiers = [
   {
@@ -42,9 +43,17 @@ export default function Pricing() {
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<string>('calm_circle');
 
-  function handleCheckout(plan: string) {
+  async function handleCheckout(plan: string) {
     setLoadingPlan(plan);
-    router.push(`/checkout?plan=${plan}`);
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    // Logged in → straight to payment. New visitor → sign up first, then checkout.
+    if (user) {
+      router.push(`/checkout?plan=${plan}`);
+    } else {
+      router.push(`/signup?next=${encodeURIComponent(`/checkout?plan=${plan}`)}`);
+    }
   }
 
   return (

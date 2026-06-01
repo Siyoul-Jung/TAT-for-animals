@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -21,6 +21,13 @@ export default function LoginClient() {
   const [magicSent, setMagicSent] = useState(false)
 
   const supabase = createClient()
+
+  // Already signed in → skip the form, go where they were headed
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) router.replace(next)
+    })
+  }, [supabase, router, next])
 
   async function handlePasswordLogin(e: React.FormEvent) {
     e.preventDefault()

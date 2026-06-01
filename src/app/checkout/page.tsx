@@ -27,7 +27,7 @@ function CheckoutContent() {
       });
 
       if (res.status === 401) {
-        router.push(`/login?next=/checkout?plan=${plan}`);
+        router.push(`/login?next=${encodeURIComponent(`/checkout?plan=${plan}`)}`);
         return;
       }
 
