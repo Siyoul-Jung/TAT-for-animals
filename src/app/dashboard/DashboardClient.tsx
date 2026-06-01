@@ -1,7 +1,16 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import ManageSubscriptionButton from './ManageSubscriptionButton'
+
+type WebinarSession = {
+  _id: string
+  title: string
+  date: string
+  description: string | null
+  meetingUrl: string | null
+}
 
 type Props = {
   email: string
@@ -10,6 +19,7 @@ type Props = {
   subscriptionStatus: string
   hasSubscription: boolean
   currentPeriodEnd: string | null
+  upcoming: WebinarSession[]
 }
 
 const PLAN_INFO: Record<string, { name: string; price: string }> = {
@@ -30,6 +40,13 @@ function formatPeriodEnd(iso: string | null): string | null {
   })
 }
 
+function formatDateTime(iso: string): string {
+  return new Date(iso).toLocaleString('en-US', {
+    month: 'long', day: 'numeric', year: 'numeric',
+    hour: 'numeric', minute: '2-digit', timeZoneName: 'short',
+  })
+}
+
 export default function DashboardClient({
   email,
   fullName,
@@ -37,17 +54,52 @@ export default function DashboardClient({
   subscriptionStatus,
   hasSubscription,
   currentPeriodEnd,
+  upcoming,
 }: Props) {
+  const [upgrading, setUpgrading] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const [deleteRequested, setDeleteRequested] = useState(false)
+
   const nextChargeDate = formatPeriodEnd(currentPeriodEnd)
   const displayName = fullName || null
   const plan = PLAN_INFO[role]
   const badge = STATUS_BADGE[subscriptionStatus] ?? STATUS_BADGE.inactive
 
+  const handleUpgrade = async () => {
+    setUpgrading(true)
+    try {
+      const res = await fetch('/api/upgrade', { method: 'POST' })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Upgrade failed')
+      window.location.href = data.url
+    } catch (err) {
+      console.error('Upgrade error:', err)
+      alert('Something went wrong. Please try again.')
+      setUpgrading(false)
+    }
+  }
+
+  const handleDeleteRequest = async () => {
+    setDeleting(true)
+    try {
+      const res = await fetch('/api/request-account-deletion', { method: 'POST' })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to submit deletion request')
+      setDeleteRequested(true)
+    } catch (err) {
+      console.error('Delete request error:', err)
+      alert('Something went wrong. Please try again.')
+    } finally {
+      setDeleting(false)
+    }
+  }
+
   return (
+    <>
     <main className="min-h-screen bg-cream pt-24 pb-16 px-6">
       <div className="max-w-2xl mx-auto space-y-8">
 
-        {/* 헤더 */}
+        {/* Header */}
         <div>
           <p className="text-sm font-medium text-charcoal/40 uppercase tracking-widest mb-1">
             Dashboard
@@ -58,7 +110,7 @@ export default function DashboardClient({
           <p className="text-charcoal/50 mt-1 text-base">{email}</p>
         </div>
 
-        {/* 멤버십 카드 */}
+        {/* Membership card */}
         <section className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm space-y-5">
           <h2 className="text-xs font-semibold uppercase tracking-widest text-charcoal/40">
             Your Membership
@@ -105,31 +157,32 @@ export default function DashboardClient({
           )}
         </section>
 
-        {/* 콘텐츠 (구독자만) */}
+        {/* Content (subscribers only) */}
         {plan && (
           <section className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm space-y-5">
             <h2 className="text-xs font-semibold uppercase tracking-widest text-charcoal/40">
               Your Content
             </h2>
-            <div className="grid sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <ContentCard
                 title="Library"
                 description="TAT for Animals · Healing ACEs Plus"
                 href="/library"
               />
-              {role === 'pro_subscriber' && (
-                <ContentCard
-                  title="Live Sessions"
-                  description="Monthly sessions with Tapas · Past recordings included"
-                  href="/library?tab=live"
-                  badge="The Calm Circle"
-                />
-              )}
+              <ContentCard
+                title="Live Sessions"
+                description={role === 'pro_subscriber' ? 'Monthly sessions with Tapas · Past recordings included' : 'Connect live with Tapas every month for your animal—and for you'}
+                href={role === 'pro_subscriber' ? '/library?tab=live' : ''}
+                badge={role === 'pro_subscriber' ? 'The Calm Circle' : 'Pro members only'}
+                locked={role !== 'pro_subscriber'}
+                onClick={role !== 'pro_subscriber' ? handleUpgrade : undefined}
+                isLoading={upgrading}
+              />
             </div>
           </section>
         )}
 
-        {/* 계정 */}
+        {/* Account */}
         <section className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm space-y-1">
           <h2 className="text-xs font-semibold uppercase tracking-widest text-charcoal/40 mb-4">
             Account
@@ -153,15 +206,23 @@ export default function DashboardClient({
             </div>
             <div className="py-3.5">
               <p className="text-sm text-charcoal/50">Delete account</p>
-              <p className="text-sm text-charcoal/40 mt-0.5 leading-relaxed">
-                To delete your account, send us an email and we&apos;ll take care of it within 5 business days.
-              </p>
-              <a
-                href={`mailto:hello@tatforanimals.com?subject=Account%20Deletion%20Request&body=Hi%2C%0A%0APlease%20delete%20my%20account%20associated%20with%20this%20email%20address%3A%20${encodeURIComponent(email)}%0A%0AThank%20you.`}
-                className="inline-flex items-center text-sm text-charcoal/40 hover:text-red-500 transition-colors mt-2 min-h-[44px]"
-              >
-                Request account deletion →
-              </a>
+              {hasSubscription ? (
+                <p className="mt-3 text-sm text-charcoal/60 leading-relaxed">
+                  Please cancel your subscription before deleting your account. You can do this above under <span className="font-medium text-charcoal">Your Membership</span>.
+                </p>
+              ) : deleteRequested ? (
+                <p className="mt-3 text-sm text-charcoal/60 leading-relaxed">
+                  Check your email — we sent a confirmation link to delete your account.
+                </p>
+              ) : (
+                <button
+                  onClick={handleDeleteRequest}
+                  disabled={deleting}
+                  className="mt-3 text-sm text-charcoal/40 hover:text-red-500 transition-colors font-medium min-h-[44px] disabled:opacity-50"
+                >
+                  {deleting ? 'Sending...' : 'Request account deletion →'}
+                </button>
+              )}
             </div>
             <div className="py-3.5">
               <form action="/api/auth/logout" method="POST">
@@ -178,6 +239,8 @@ export default function DashboardClient({
 
       </div>
     </main>
+
+</>
   )
 }
 
@@ -186,29 +249,65 @@ function ContentCard({
   description,
   href,
   badge,
+  locked,
+  onClick,
+  isLoading,
 }: {
   title: string
   description: string
   href: string
   badge?: string
+  locked?: boolean
+  onClick?: () => void
+  isLoading?: boolean
 }) {
-  return (
-    <Link
-      href={href}
-      className="group block p-5 rounded-xl border border-charcoal/10 hover:border-brand/30 hover:shadow-md transition-all"
-    >
-      <div className="flex items-start justify-between gap-2 mb-1.5">
-        <p className="font-semibold text-charcoal group-hover:text-brand transition-colors">
-          {title}
-        </p>
+  const cardClasses = `block p-5 rounded-xl border border-charcoal/10 transition-all`
+
+  const titleClasses = `font-semibold transition-colors whitespace-nowrap ${
+    locked ? 'text-charcoal/50' : 'text-charcoal'
+  }`
+
+  if (locked && onClick) {
+    return (
+      <div className={`${cardClasses} cursor-default`}>
         {badge && (
-          <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-brand/10 text-brand shrink-0">
+          <span className={`inline-block text-xs font-semibold px-2 py-0.5 rounded-full mb-2 ${
+            locked
+              ? 'bg-charcoal/10 text-charcoal/40'
+              : 'bg-brand/10 text-brand'
+          }`}>
             {badge}
           </span>
         )}
+        <p className={titleClasses}>
+          {title}
+        </p>
+        <p className="text-sm text-charcoal/55 leading-relaxed">{description}</p>
+        <button
+          onClick={onClick}
+          disabled={isLoading}
+          className="mt-3 text-sm font-medium text-brand hover:text-brand-dark transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          {isLoading ? 'Upgrading...' : 'Upgrade →'}
+        </button>
       </div>
+    )
+  }
+
+  return (
+    <Link href={href} className={`group ${cardClasses} hover:border-brand/30 hover:shadow-md cursor-pointer`}>
+      {badge && (
+        <span className={`inline-block text-xs font-semibold px-2 py-0.5 rounded-full mb-2 bg-brand/10 text-brand`}>
+          {badge}
+        </span>
+      )}
+      <p className={titleClasses}>
+        {title}
+      </p>
       <p className="text-sm text-charcoal/55 leading-relaxed">{description}</p>
-      <p className="mt-3 text-sm text-brand font-medium">Watch →</p>
+      <p className="mt-3 text-sm font-medium text-brand group-hover:text-brand-dark transition-colors">
+        Watch →
+      </p>
     </Link>
   )
 }

@@ -6,14 +6,14 @@ import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 
-// Webhook은 RLS를 우회해야 하므로 service_role_key 사용
+// Webhook must bypass RLS, so service_role_key is used
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
-// 구독 플랜 → role 매핑
-// 가격 확정 후 Price ID와 role을 여기서 관리
+// Subscription plan → role mapping
+// Manage Price IDs and roles here after pricing is confirmed
 const PRICE_ROLE_MAP: Record<string, string> = {
   [process.env.STRIPE_PRICE_CALM_LIBRARY!]: 'subscriber',
   [process.env.STRIPE_PRICE_CALM_CIRCLE!]:  'pro_subscriber',
@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
 
   let event: Stripe.Event
 
-  // Webhook 서명 검증 — 위변조 방지
+  // Verify webhook signature — prevents tampering
   try {
     event = stripe.webhooks.constructEvent(
       body,
@@ -36,10 +36,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
   }
 
+  // Idempotency — INSERT first; conflict means already processed
+  const { error: idempotencyError } = await supabaseAdmin
+    .from('processed_webhook_events')
+    .insert({ id: event.id })
+  if (idempotencyError?.code === '23505') return NextResponse.json({ received: true })
+
   try {
     switch (event.type) {
 
-      // 결제 완료 → 구독 활성화
+      // Payment completed → activate subscription
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session
         if (session.mode !== 'subscription') break
@@ -49,10 +55,13 @@ export async function POST(request: NextRequest) {
         const priceId = subscription.items.data[0]?.price.id
         const role = PRICE_ROLE_MAP[priceId] ?? 'subscriber'
 
-        // 세션 metadata → 구독 metadata 순서로 fallback
+        // Fallback: session metadata → subscription metadata
         const userId = session.metadata?.supabase_user_id
           ?? subscription.metadata?.supabase_user_id
-        if (!userId) break
+        if (!userId) {
+          console.error('Webhook checkout.session.completed: userId missing', { subscriptionId })
+          break
+        }
 
         const updatePayload: Record<string, unknown> = {
           role,
@@ -74,7 +83,7 @@ export async function POST(request: NextRequest) {
           .update(updatePayload)
           .eq('id', userId)
 
-        // 웰컴 이메일 발송 — 실패해도 webhook 응답에 영향 없음
+        // Send welcome email — failure does not affect webhook response
         const toEmail = session.customer_details?.email
         if (toEmail) {
           try {
@@ -91,7 +100,7 @@ export async function POST(request: NextRequest) {
         break
       }
 
-      // 구독 갱신 성공
+      // Subscription renewal succeeded
       case 'invoice.payment_succeeded': {
         const invoice = event.data.object as Stripe.Invoice
         const subscriptionId = (invoice as any).subscription as string
@@ -113,7 +122,7 @@ export async function POST(request: NextRequest) {
         break
       }
 
-      // 결제 실패
+      // Payment failed
       case 'invoice.payment_failed': {
         const invoice = event.data.object as Stripe.Invoice
         const subscriptionId = (invoice as any).subscription as string
@@ -127,7 +136,32 @@ export async function POST(request: NextRequest) {
         break
       }
 
-      // 구독 취소 → 역할 초기화
+      // Subscription upgraded/downgraded via Stripe Portal → sync role
+      case 'customer.subscription.updated': {
+        const subscription = event.data.object as Stripe.Subscription
+        const userId = subscription.metadata?.supabase_user_id
+        if (!userId) {
+          console.error('Webhook customer.subscription.updated: userId missing', { subscriptionId: subscription.id })
+          break
+        }
+
+        const priceId = subscription.items.data[0]?.price.id
+        const role = PRICE_ROLE_MAP[priceId] ?? 'subscriber'
+
+        const periodEnd = (subscription as any).current_period_end
+        await supabaseAdmin
+          .from('profiles')
+          .update({
+            role,
+            subscription_status: subscription.status === 'active' ? 'active' : subscription.status,
+            ...(periodEnd ? { current_period_end: new Date(periodEnd * 1000).toISOString() } : {}),
+          })
+          .eq('id', userId)
+
+        break
+      }
+
+      // Subscription cancelled → reset role
       case 'customer.subscription.deleted': {
         const subscription = event.data.object as Stripe.Subscription
         const userId = subscription.metadata?.supabase_user_id
@@ -143,7 +177,7 @@ export async function POST(request: NextRequest) {
           })
           .eq('id', userId)
 
-        // 취소 확인 이메일
+        // Send cancellation confirmation email
         try {
           const customerId = subscription.customer as string
           const customer = await stripe.customers.retrieve(customerId)

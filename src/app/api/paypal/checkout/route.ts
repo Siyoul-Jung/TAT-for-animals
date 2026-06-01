@@ -10,6 +10,19 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('stripe_subscription_id, paypal_subscription_id')
+    .eq('id', user.id)
+    .single()
+
+  if (profile?.stripe_subscription_id || profile?.paypal_subscription_id) {
+    return NextResponse.json(
+      { error: 'You already have an active subscription.' },
+      { status: 400 }
+    )
+  }
+
   const { plan } = await request.json()
   const planId = PLAN_IDS[plan]
 

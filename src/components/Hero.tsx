@@ -43,8 +43,8 @@ export default function Hero({ images }: { images: HeroImage[] }) {
   return (
     <section className="relative overflow-hidden bg-cream">
 
-      {/* ── Mobile: 스택형 ── */}
-      <div className="lg:hidden flex flex-col" style={{ height: '100dvh' }}>
+      {/* ── Mobile: stacked layout (< 768px) ── */}
+      <div className="md:hidden flex flex-col" style={{ height: '100dvh' }}>
         <div className="relative shrink-0 overflow-hidden" style={{ height: '61.8dvh' }}>
           {slides('100vw')}
           <div className="absolute inset-0 z-10" style={{ background: 'linear-gradient(to bottom, transparent 55%, rgba(251,245,243,0.5) 80%, rgba(251,245,243,1) 100%)' }} />
@@ -54,7 +54,7 @@ export default function Hero({ images }: { images: HeroImage[] }) {
             <p className="text-[10px] tracking-[0.2em] uppercase font-semibold mb-2" style={{ color: '#5E9635' }}>
               TAT for Animals
             </p>
-            <h1 className="font-serif text-3xl sm:text-4xl leading-[1.2] text-charcoal mb-2 font-semibold">
+            <h1 className="font-serif text-3xl leading-[1.2] text-charcoal mb-2 font-semibold">
               Your animal feels<br />everything you carry.
             </h1>
             <p className="font-sans text-sm mb-5 font-normal" style={{ color: '#5E9635' }}>
@@ -80,8 +80,8 @@ export default function Hero({ images }: { images: HeroImage[] }) {
         </div>
       </div>
 
-      {/* ── Desktop: 2컬럼 (텍스트 45% / 이미지 55%) ── */}
-      <div className="hidden lg:grid lg:grid-cols-[5fr_6fr] lg:min-h-screen relative">
+      {/* ── Tablet + Desktop: 2-column (text 45% / image 55%) ── */}
+      <div className="hidden md:grid md:grid-cols-[5fr_6fr] md:min-h-screen relative">
 
         <div
           className="absolute inset-0 pointer-events-none"
@@ -92,32 +92,32 @@ export default function Hero({ images }: { images: HeroImage[] }) {
           initial={{ opacity: 0, y: 32 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
-          className="flex flex-col justify-center px-14 xl:px-20 2xl:px-28 pt-24 pb-20"
+          className="flex flex-col justify-center px-8 md:px-10 lg:px-14 xl:px-20 2xl:px-28 pt-24 pb-20"
         >
-          <p className="text-xs tracking-[0.2em] uppercase font-semibold mb-5" style={{ color: '#5E9635' }}>
+          <p className="text-xs tracking-[0.2em] uppercase font-semibold mb-4" style={{ color: '#5E9635' }}>
             TAT for Animals
           </p>
-          <h1 className="font-serif text-4xl xl:text-5xl 2xl:text-6xl leading-[1.2] text-charcoal mb-5 font-semibold">
+          <h1 className="font-serif text-3xl md:text-4xl xl:text-5xl 2xl:text-6xl leading-[1.2] text-charcoal mb-4 font-semibold">
             Your animal feels<br />everything you carry.
           </h1>
-          <p className="font-sans text-xl mb-8 font-normal" style={{ color: '#5E9635' }}>
+          <p className="font-sans text-base md:text-lg xl:text-xl mb-6 font-normal" style={{ color: '#5E9635' }}>
             A few quiet minutes together — and something releases in you both.
           </p>
-          <p className="text-lg leading-relaxed mb-12" style={{ color: 'rgba(28,16,7,0.55)' }}>
+          <p className="text-sm md:text-base lg:text-lg leading-relaxed mb-8 md:mb-10" style={{ color: 'rgba(28,16,7,0.55)' }}>
             No special training. No reliving anything painful.
             Just you, your animal, and a gentle process that works.
           </p>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 md:gap-6">
             <Link
               href="#experience"
-              className="px-8 py-4 rounded-full text-cream font-semibold text-base transition-all hover:scale-105 hover:shadow-lg active:scale-95"
+              className="px-6 md:px-8 py-3 md:py-4 rounded-full text-cream font-semibold text-sm md:text-base transition-all hover:scale-105 hover:shadow-lg active:scale-95"
               style={{ backgroundColor: '#D4703A', boxShadow: '0 8px 32px rgba(212,112,58,0.25)' }}
             >
               Try a session
             </Link>
             <Link
               href="/membership"
-              className="text-base font-medium transition-colors hover:text-brand"
+              className="text-sm md:text-base font-medium transition-colors hover:text-brand"
               style={{ color: 'rgba(28,16,7,0.50)' }}
             >
               Join the members
@@ -131,7 +131,7 @@ export default function Hero({ images }: { images: HeroImage[] }) {
           transition={{ duration: 1.2, delay: 0.15 }}
           className="relative overflow-hidden"
         >
-          {slides('55vw')}
+          {slides('(min-width: 768px) 55vw, 100vw')}
           <div className="absolute inset-0 z-10" style={{ background: 'linear-gradient(to right, rgba(251,245,243,1) 0%, rgba(251,245,243,0.85) 12%, rgba(251,245,243,0.2) 35%, transparent 55%)' }} />
           <div className="absolute inset-0 z-10" style={{ background: 'linear-gradient(to top, rgba(251,245,243,0.9) 0%, rgba(251,245,243,0.3) 20%, transparent 45%)' }} />
           <div className="absolute inset-0 z-10" style={{ background: 'linear-gradient(to bottom, rgba(251,245,243,0.9) 0%, rgba(251,245,243,0.3) 15%, transparent 35%)' }} />

@@ -26,14 +26,21 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(`${process.env.NEXT_PUBLIC_SITE_URL}/membership`)
   }
 
-  await supabaseAdmin
-    .from('profiles')
-    .update({
-      role,
-      paypal_subscription_id: subscriptionId,
-      subscription_status: 'active',
-    })
-    .eq('id', userId)
+  // Idempotency — prevent duplicate processing on page refresh
+  const { error: idempotencyError } = await supabaseAdmin
+    .from('processed_webhook_events')
+    .insert({ id: `paypal-success-${subscriptionId}` })
+
+  if (!idempotencyError || idempotencyError.code !== '23505') {
+    await supabaseAdmin
+      .from('profiles')
+      .update({
+        role,
+        paypal_subscription_id: subscriptionId,
+        subscription_status: 'active',
+      })
+      .eq('id', userId)
+  }
 
   return NextResponse.redirect(`${process.env.NEXT_PUBLIC_SITE_URL}/thank-you`)
 }

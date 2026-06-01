@@ -41,12 +41,13 @@ export default async function LibraryPage() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('role')
+    .select('role, subscription_status')
     .eq('id', user.id)
     .single()
 
   const role = profile?.role ?? 'none'
   if (role !== 'subscriber' && role !== 'pro_subscriber') redirect('/membership')
+  if (profile?.subscription_status === 'past_due') redirect('/dashboard?error=payment_failed')
 
   const [animalsVideos, acesVideos, recordings, upcoming] = await Promise.all([
     sanityClient.fetch<Video[]>(

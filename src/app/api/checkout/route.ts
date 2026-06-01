@@ -2,16 +2,19 @@ import { stripe } from '@/lib/stripe'
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 
-// 플랜별 Stripe Price ID — 가격 확정 후 .env에서 관리
+if (!process.env.STRIPE_PRICE_CALM_LIBRARY || !process.env.STRIPE_PRICE_CALM_CIRCLE) {
+  throw new Error('Missing required env vars: STRIPE_PRICE_CALM_LIBRARY, STRIPE_PRICE_CALM_CIRCLE')
+}
+
 const PRICE_IDS: Record<string, string> = {
-  calm_library: process.env.STRIPE_PRICE_CALM_LIBRARY!,
-  calm_circle:  process.env.STRIPE_PRICE_CALM_CIRCLE!,
+  calm_library: process.env.STRIPE_PRICE_CALM_LIBRARY,
+  calm_circle:  process.env.STRIPE_PRICE_CALM_CIRCLE,
 }
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient()
 
-  // 로그인 확인
+  // Check authentication
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -24,24 +27,38 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid plan' }, { status: 400 })
   }
 
-  // 기존 Stripe 고객 ID 조회 또는 신규 생성
+  // Look up existing Stripe customer ID or create a new one
   const { data: profile } = await supabase
     .from('profiles')
-    .select('stripe_customer_id, full_name')
+    .select('stripe_customer_id, stripe_subscription_id, full_name')
     .eq('id', user.id)
     .single()
+
+  // Block duplicate subscriptions — existing subscribers should use /api/upgrade
+  if (profile?.stripe_subscription_id || profile?.paypal_subscription_id) {
+    return NextResponse.json(
+      { error: 'You already have an active subscription. To change your plan, use the upgrade option in your dashboard.' },
+      { status: 400 }
+    )
+  }
 
   let customerId = profile?.stripe_customer_id
 
   if (!customerId) {
-    const customer = await stripe.customers.create({
-      email: user.email,
-      name: profile?.full_name ?? undefined,
-      metadata: { supabase_user_id: user.id },
-    })
-    customerId = customer.id
+    // Check if a Stripe customer already exists for this email before creating a new one
+    const existing = await stripe.customers.list({ email: user.email!, limit: 1 })
+    if (existing.data.length > 0) {
+      customerId = existing.data[0].id
+    } else {
+      const customer = await stripe.customers.create({
+        email: user.email,
+        name: profile?.full_name ?? undefined,
+        metadata: { supabase_user_id: user.id },
+      })
+      customerId = customer.id
+    }
 
-    // profiles에 저장
+    // Save to profiles
     await supabase
       .from('profiles')
       .update({ stripe_customer_id: customerId })
@@ -57,10 +74,10 @@ export async function POST(request: NextRequest) {
     line_items: [{ price: priceId, quantity: 1 }],
     success_url: `${siteUrl}/thank-you?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${siteUrl}/membership`,
-    // 세션 레벨 metadata — checkout.session.completed 이벤트에서 직접 읽힘
+    // Session-level metadata — read directly in checkout.session.completed event
     metadata: { supabase_user_id: user.id },
     subscription_data: {
-      // 구독 레벨 metadata — invoice 이벤트에서 읽힘
+      // Subscription-level metadata — read in invoice events
       metadata: { supabase_user_id: user.id },
     },
     allow_promotion_codes: true,

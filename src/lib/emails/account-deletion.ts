@@ -1,6 +1,5 @@
-export function cancellationEmail(name: string | null): { subject: string; html: string } {
-  const firstName = name?.split(' ')[0] ?? 'there';
-  const subject = `Your TAT for Animals membership has been cancelled`;
+export function accountDeletionEmail(confirmUrl: string): { subject: string; html: string } {
+  const subject = 'Confirm your account deletion — TAT for Animals'
 
   const html = `
 <!DOCTYPE html>
@@ -28,32 +27,32 @@ export function cancellationEmail(name: string | null): { subject: string; html:
           <!-- Message -->
           <tr>
             <td style="padding-bottom:32px;border-bottom:1px solid rgba(28,16,7,0.08);">
-              <h1 style="margin:0 0 16px;font-size:32px;font-weight:500;color:#1C1007;line-height:1.3;">
-                We're sorry to see you go, ${firstName}.
+              <h1 style="margin:0 0 16px;font-size:28px;font-weight:500;color:#1C1007;line-height:1.3;">
+                Confirm account deletion
               </h1>
               <p style="margin:0;font-family:'Helvetica Neue',sans-serif;font-size:17px;color:rgba(28,16,7,0.6);line-height:1.7;font-weight:300;">
-                Your membership has been cancelled. You'll continue to have access
-                until the end of your current billing period.
+                We received a request to delete your TAT for Animals account.
+                If this was you, click the button below to confirm.
               </p>
             </td>
           </tr>
 
-          <!-- Rejoin -->
+          <!-- CTA -->
           <tr>
             <td style="padding:32px 0;border-bottom:1px solid rgba(28,16,7,0.08);">
               <p style="margin:0 0 20px;font-family:'Helvetica Neue',sans-serif;font-size:15px;color:rgba(28,16,7,0.6);line-height:1.7;font-weight:300;">
-                Whenever you feel ready to return, your animal will be waiting.
+                This link expires in 24 hours. If you didn't request this, you can safely ignore this email.
               </p>
-              <a href="https://tatforanimals.com/membership"
-                style="display:inline-block;padding:14px 32px;background:#D4703A;color:#FBF5F3;font-family:'Helvetica Neue',sans-serif;font-size:15px;font-weight:600;text-decoration:none;border-radius:100px;">
-                Rejoin anytime →
+              <a href="${confirmUrl}"
+                style="display:inline-block;padding:14px 32px;background:#1C1007;color:#FBF5F3;font-family:'Helvetica Neue',sans-serif;font-size:15px;font-weight:600;text-decoration:none;border-radius:100px;">
+                Yes, delete my account →
               </a>
             </td>
           </tr>
 
           <!-- Footer -->
           <tr>
-            <td style="padding-top:32px;border-top:1px solid rgba(28,16,7,0.08);">
+            <td style="padding-top:32px;">
               <p style="margin:0;font-family:'Helvetica Neue',sans-serif;font-size:12px;color:rgba(28,16,7,0.25);">
                 © 2026 TATLife®, Inc. · tatforanimals.com
               </p>
@@ -66,7 +65,7 @@ export function cancellationEmail(name: string | null): { subject: string; html:
   </table>
 </body>
 </html>
-  `.trim();
+  `.trim()
 
-  return { subject, html };
+  return { subject, html }
 }

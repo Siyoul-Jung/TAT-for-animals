@@ -73,7 +73,7 @@ export default function LoginClient() {
     setMagicSent(false)
   }
 
-  // ── Magic Link 발송 완료 화면 ──────────────────────────────
+  // ── Magic link sent screen ──────────────────────────────
   if (mode === 'magic' && magicSent) {
     return (
       <div className="min-h-screen bg-cream flex items-center justify-center px-4">
@@ -105,12 +105,12 @@ export default function LoginClient() {
     )
   }
 
-  // ── 메인 로그인 폼 ─────────────────────────────────────────
+  // ── Main login form ─────────────────────────────────────────
   return (
     <div className="min-h-screen bg-cream flex items-center justify-center px-4 pt-6 pb-16">
       <div className="w-full max-w-md">
 
-        {/* 로고 */}
+        {/* Logo */}
         <Link href="/" className="flex flex-col items-center mb-10 group">
           <Image
             src="/images/logo2.png"
@@ -125,16 +125,16 @@ export default function LoginClient() {
           </span>
         </Link>
 
-        {/* 카드 */}
+        {/* Card */}
         <div className="bg-white rounded-2xl shadow-sm border border-surface px-8 py-10">
 
           <h2 className="font-serif text-xl text-charcoal mb-8">
-            {mode === 'password' ? 'Welcome back' : 'Sign in without a password'}
+            {mode === 'magic' ? 'Sign in without a password' : 'Sign in to your account'}
           </h2>
 
           <form onSubmit={mode === 'password' ? handlePasswordLogin : handleMagicLink}>
 
-            {/* 이메일 */}
+            {/* Email */}
             <div className="mb-5">
               <label htmlFor="email" className="block text-sm font-medium text-charcoal mb-2">
                 Email address
@@ -151,7 +151,7 @@ export default function LoginClient() {
               />
             </div>
 
-            {/* 비밀번호 (password 모드만) */}
+            {/* Password (password mode only) */}
             {mode === 'password' && (
               <div className="mb-2">
                 <div className="flex items-center justify-between mb-2">
@@ -194,14 +194,14 @@ export default function LoginClient() {
               </div>
             )}
 
-            {/* Magic Link 안내문 */}
+            {/* Magic link instructions */}
             {mode === 'magic' && (
               <p className="text-sm text-muted mb-6 leading-relaxed">
                 We'll email you a secure link. Click it to sign in instantly — no password needed.
               </p>
             )}
 
-            {/* 에러 */}
+            {/* Error */}
             {error && (
               <div className="bg-red-50 border border-red-100 rounded-xl px-4 py-3 mb-5">
                 <p className="text-sm text-red-600 leading-relaxed">{error}</p>
@@ -222,7 +222,7 @@ export default function LoginClient() {
             </Button>
           </form>
 
-          {/* 모드 전환 */}
+          {/* Mode toggle */}
           <div className="mt-6 pt-6 border-t border-surface text-center">
             {mode === 'password' ? (
               <button onClick={switchToMagic} className="text-sm text-muted hover:text-brand transition-colors">
@@ -236,7 +236,7 @@ export default function LoginClient() {
           </div>
         </div>
 
-        {/* 하단 */}
+        {/* Footer links */}
         <div className="text-center mt-6">
           <p className="text-sm text-muted">
             Not a member yet?{' '}

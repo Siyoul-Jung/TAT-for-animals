@@ -58,7 +58,7 @@ export default function SignupClient() {
     setLoading(false)
   }
 
-  // 가입 완료 화면
+  // Success screen
   if (success) {
     return (
       <div className="min-h-screen bg-cream flex items-center justify-center px-4 pt-6 pb-16">
@@ -76,8 +76,8 @@ export default function SignupClient() {
             <p className="text-base font-medium text-charcoal mb-8">{email}</p>
             <p className="text-xs text-muted">
               Already confirmed?{' '}
-              <Link href="/login" className="text-brand hover:underline">
-                Sign in here
+              <Link href="/login?next=/membership" className="text-brand hover:underline">
+                Sign in to continue
               </Link>
             </p>
           </div>
@@ -90,7 +90,7 @@ export default function SignupClient() {
     <div className="min-h-screen bg-cream flex items-center justify-center px-4 pt-6 pb-16">
       <div className="w-full max-w-md">
 
-        {/* 로고 */}
+        {/* Logo */}
         <Link href="/" className="flex flex-col items-center mb-10 group">
           <Image
             src="/images/logo2.png"
@@ -105,7 +105,7 @@ export default function SignupClient() {
           </span>
         </Link>
 
-        {/* 카드 */}
+        {/* Card */}
         <div className="bg-white rounded-2xl shadow-sm border border-surface px-8 py-10">
           <h2 className="font-serif text-xl text-charcoal mb-2">Create your account</h2>
           <p className="text-sm text-muted mb-8">
@@ -117,7 +117,7 @@ export default function SignupClient() {
 
           <form onSubmit={handleSignup}>
 
-            {/* 이메일 */}
+            {/* Email */}
             <div className="mb-5">
               <label htmlFor="email" className="block text-sm font-medium text-charcoal mb-2">
                 Email address
@@ -134,7 +134,7 @@ export default function SignupClient() {
               />
             </div>
 
-            {/* 비밀번호 */}
+            {/* Password */}
             <div className="mb-5">
               <label htmlFor="password" className="block text-sm font-medium text-charcoal mb-2">
                 Password
@@ -170,7 +170,7 @@ export default function SignupClient() {
               </div>
             </div>
 
-            {/* 비밀번호 확인 */}
+            {/* Confirm password */}
             <div className="mb-6">
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-charcoal mb-2">
                 Confirm password
@@ -187,7 +187,7 @@ export default function SignupClient() {
               />
             </div>
 
-            {/* 에러 */}
+            {/* Error */}
             {error && (
               <div className="bg-red-50 border border-red-100 rounded-xl px-4 py-3 mb-5">
                 <p className="text-sm text-red-600 leading-relaxed">{error}</p>

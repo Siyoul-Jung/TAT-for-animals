@@ -9,7 +9,10 @@ const supabaseAdmin = createClient(
 
 async function verifyWebhook(request: NextRequest, body: string): Promise<boolean> {
   const webhookId = process.env.PAYPAL_WEBHOOK_ID
-  if (!webhookId) return true // 개발 환경 — 검증 스킵
+  if (!webhookId) {
+    console.error('PAYPAL_WEBHOOK_ID not set — rejecting webhook')
+    return false
+  }
 
   const res = await paypalRequest('/v1/notifications/verify-webhook-signature', {
     method: 'POST',
@@ -39,10 +42,16 @@ export async function POST(request: NextRequest) {
   const event = JSON.parse(body)
   const resource = event.resource
 
+  // Idempotency — INSERT first; conflict means already processed
+  const { error: idempotencyError } = await supabaseAdmin
+    .from('processed_webhook_events')
+    .insert({ id: event.id })
+  if (idempotencyError?.code === '23505') return NextResponse.json({ received: true })
+
   try {
     switch (event.event_type) {
 
-      // 구독 활성화 (PayPal 승인 완료)
+      // Subscription activated (PayPal approval complete)
       case 'BILLING.SUBSCRIPTION.ACTIVATED': {
         const userId = resource.custom_id
         const role = PLAN_ROLE_MAP[resource.plan_id] ?? 'subscriber'
@@ -59,7 +68,7 @@ export async function POST(request: NextRequest) {
         break
       }
 
-      // 결제 완료 → 갱신 기간 업데이트
+      // Payment completed → update renewal period
       case 'PAYMENT.SALE.COMPLETED': {
         const subscriptionId = resource.billing_agreement_id
         if (!subscriptionId) break
@@ -71,7 +80,7 @@ export async function POST(request: NextRequest) {
         break
       }
 
-      // 결제 실패
+      // Payment failed
       case 'BILLING.SUBSCRIPTION.PAYMENT.FAILED': {
         const userId = resource.custom_id
         if (!userId) break
@@ -83,7 +92,9 @@ export async function POST(request: NextRequest) {
         break
       }
 
-      // 구독 취소 / 만료
+      // User revoked PayPal authorization
+      case 'BILLING.SUBSCRIPTION.CONSENT.REVOKED':
+      // Subscription cancelled or expired
       case 'BILLING.SUBSCRIPTION.CANCELLED':
       case 'BILLING.SUBSCRIPTION.EXPIRED': {
         const userId = resource.custom_id
