@@ -6,6 +6,15 @@ const nextConfig: NextConfig = {
   experimental: {
     instantNavigationDevToolsToggle: true,
   },
+  async redirects() {
+    // 직관적으로 입력할 수 있는 별칭 경로 → 실제 경로로 연결 (404 방지)
+    return [
+      { source: "/join", destination: "/membership", permanent: true },
+      { source: "/sign-in", destination: "/login", permanent: true },
+      { source: "/signin", destination: "/login", permanent: true },
+      { source: "/register", destination: "/signup", permanent: true },
+    ];
+  },
   turbopack: {
     // Explicitly pin the filesystem root so Turbopack's PostCSS worker pool
     // resolves modules from this project, not the parent c:\dev directory.
