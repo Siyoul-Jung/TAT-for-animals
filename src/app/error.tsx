@@ -2,9 +2,9 @@
 
 export default function Error({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
   return (
-    <div className="min-h-screen bg-cream flex items-center justify-center px-6 pt-24 pb-16">
+    <div className="min-h-[70vh] bg-cream flex items-center justify-center px-6 pt-32 pb-20">
       <div className="w-full max-w-md text-center space-y-6">
-        <p className="text-[10px] tracking-[0.2em] uppercase font-semibold" style={{ color: '#5E9635' }}>
+        <p className="text-xs tracking-[0.2em] uppercase font-semibold" style={{ color: '#5E9635' }}>
           TAT for Animals
         </p>
         <h1 className="font-serif text-3xl sm:text-4xl text-charcoal leading-[1.2]">

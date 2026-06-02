@@ -51,7 +51,7 @@ export default function Hero({ images }: { images: HeroImage[] }) {
         </div>
         <div className="flex-1 flex flex-col justify-center px-6">
           <div style={{ paddingBottom: 'calc(var(--cookie-banner-offset, 0px) + env(safe-area-inset-bottom))' }}>
-            <p className="text-[10px] tracking-[0.2em] uppercase font-semibold mb-2" style={{ color: '#5E9635' }}>
+            <p className="text-xs tracking-[0.2em] uppercase font-semibold mb-2" style={{ color: '#5E9635' }}>
               TAT for Animals
             </p>
             <h1 className="font-serif text-3xl leading-[1.2] text-charcoal mb-2 font-semibold">

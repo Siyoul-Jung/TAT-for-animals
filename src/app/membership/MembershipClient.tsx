@@ -51,7 +51,7 @@ export default function MembershipClient() {
             />
           </div>
           <div className="flex-1 flex flex-col justify-center px-6">
-            <p className="text-[10px] tracking-[0.2em] uppercase font-semibold mb-2" style={{ color: '#5E9635' }}>
+            <p className="text-xs tracking-[0.2em] uppercase font-semibold mb-2" style={{ color: '#5E9635' }}>
               Membership
             </p>
             <h1 className="font-serif text-3xl sm:text-4xl leading-[1.2] text-charcoal mb-2 font-semibold">

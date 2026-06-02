@@ -114,7 +114,7 @@ export default function Pricing() {
               {tier.popular && (
                 <div className="mb-3">
                   <span
-                    className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full text-[11px] font-semibold tracking-widest uppercase text-cream"
+                    className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full text-xs font-semibold tracking-widest uppercase text-cream"
                     style={{ backgroundColor: '#5E9635' }}
                   >
                     ★ Most Popular

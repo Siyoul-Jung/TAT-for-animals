@@ -6,7 +6,7 @@ import { Suspense } from 'react';
 
 function ThankYouContent() {
   return (
-    <div className="min-h-screen bg-cream flex items-center justify-center px-6 pt-24 pb-16">
+    <div className="min-h-[70vh] bg-cream flex items-center justify-center px-6 pt-32 pb-20">
       <div className="w-full max-w-sm sm:max-w-md lg:max-w-lg">
 
         <motion.div
@@ -17,7 +17,7 @@ function ThankYouContent() {
         >
 
           <div className="space-y-4">
-            <p className="text-[10px] tracking-[0.2em] uppercase font-semibold" style={{ color: '#5E9635' }}>
+            <p className="text-xs tracking-[0.2em] uppercase font-semibold" style={{ color: '#5E9635' }}>
               Welcome to TAT for Animals
             </p>
             <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-charcoal leading-[1.2]">

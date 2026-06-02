@@ -130,7 +130,7 @@ TAT®의 핵심 사용자층은 **시니어 및 기술에 익숙하지 않은 �
 - **움직임**: `prefers-reduced-motion` 미디어 쿼리 항상 고려
 
 ### 시니어 UX 가이드라인
-- **폰트 크기**: 본문 최소 16px / 보조 텍스트 최소 14px (12px 이하 금지)
+- **폰트 크기**: 본문 최소 16px / 보조 텍스트 최소 14px / 장식용 대문자 트래킹 라벨(eyebrow)은 12px 허용 — **12px 미만은 어디에도 금지**
 - **줄 간격**: 본문 `leading-relaxed` 이상 (1.625+)
 - **한 번에 하나**: 한 화면에 하나의 주요 행동만. 선택지 최소화.
 - **기술 용어 금지**: "Magic Link", "Dashboard" 같은 용어는 평문으로 대체
@@ -148,7 +148,7 @@ TAT®의 핵심 사용자층은 **시니어 및 기술에 익숙하지 않은 �
 - 섹션 배경은 항상 `bg-cream` 또는 `bg-white` — 그린은 배경으로 쓰지 않음
 - 그린 액센트: 섹션 라벨, 아이콘, 체크마크, 보더, 이탤릭 서브헤딩
 - 오렌지 액센트: 버튼(CTA), 링크, 강조
-- Footer만 예외: `style={{ backgroundColor: '#1C1007' }}` (charcoal 다크)
+- Footer만 예외: `style={{ backgroundColor: '#2E1A0C' }}` (다크 브라운 — charcoal보다 살짝 더 따뜻하고 어두움)
 - rgba 그린 값: `rgba(94,150,53,...)` (#5E9635의 rgba 표현)
 - 골드 강조색: `rgba(212,168,67,...)` (#D4A843의 rgba 표현)
 
@@ -160,9 +160,9 @@ TAT®의 핵심 사용자층은 **시니어 및 기술에 익숙하지 않은 �
 ### 다크 섹션 vs 라이트 섹션
 | 섹션 | 배경 | 텍스트 |
 |------|------|--------|
-| 모든 섹션 (Hero, Pricing, ForAnimals 등) | `bg-cream` 또는 `bg-white` | `text-charcoal` |
-| Membership Hero | `#1C1007` (이미지 위 다크 오버레이) | `text-cream` |
-| Footer | `#1C1007` (charcoal 다크) | `text-cream` |
+| 모든 섹션 (Hero, Pricing, TrySession 등) | `bg-cream` 또는 `bg-white` | `text-charcoal` |
+| Membership Hero | `bg-cream` + 배경 이미지 + 하단 그라디언트 (홈 Hero와 동일 패턴, 다크 아님) | `text-charcoal` |
+| Footer | `#2E1A0C` (다크 브라운) | `text-cream` |
 | 그린/오렌지 사용처 | 배경 아님 — 라벨, 아이콘, 보더, 버튼 액센트 | — |
 
 ### 애니메이션 패턴
