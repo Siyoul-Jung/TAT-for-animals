@@ -108,7 +108,7 @@ export default function FAQ() {
           <h1 className="font-sans text-3xl sm:text-4xl lg:text-5xl text-charcoal font-semibold leading-tight mb-4">
             Questions & Answers
           </h1>
-          <p className="text-base sm:text-lg leading-relaxed text-charcoal/55">
+          <p className="text-base sm:text-lg leading-relaxed text-charcoal/65">
             Everything you're wondering about TAT for Animals — answered simply.
           </p>
         </div>
@@ -120,7 +120,7 @@ export default function FAQ() {
         </div>
 
         <div className="mt-14">
-          <p className="text-base sm:text-lg leading-relaxed text-charcoal/55">
+          <p className="text-base sm:text-lg leading-relaxed text-charcoal/65">
             Still have questions?{' '}
             <a
               href="mailto:customerservice@tatlife.com"

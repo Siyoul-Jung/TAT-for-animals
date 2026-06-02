@@ -96,7 +96,7 @@ export default function Navbar() {
   const isMember = userRole !== 'guest';
   const navLinkClasses = cn(
     'text-xs sm:text-sm font-medium transition-colors whitespace-nowrap',
-    isScrolled || !isDarkHero ? 'text-charcoal/70 hover:text-brand' : 'text-cream/70 hover:text-cream'
+    isScrolled || !isDarkHero ? 'text-charcoal/65 hover:text-brand' : 'text-cream/70 hover:text-cream'
   );
 
   return (
@@ -133,7 +133,7 @@ export default function Navbar() {
             />
             <span className={cn(
               'inline text-base sm:text-2xl font-semibold tracking-normal transition-colors duration-300 whitespace-nowrap font-serif',
-              isScrolled || !isDarkHero ? 'text-charcoal/70' : 'text-cream'
+              isScrolled || !isDarkHero ? 'text-charcoal/65' : 'text-cream'
             )}>
               TAT for Animals<span className="text-brand text-[10px] sm:text-sm align-super">®</span>
             </span>
@@ -153,7 +153,7 @@ export default function Navbar() {
                 className={cn(
                   'flex items-center gap-1.5 text-xs sm:text-sm font-medium transition-all',
                   isScrolled || !isDarkHero
-                    ? 'text-charcoal/70 hover:text-brand'
+                    ? 'text-charcoal/65 hover:text-brand'
                     : 'text-cream/70 hover:text-cream'
                 )}
               >
@@ -186,7 +186,7 @@ export default function Navbar() {
                       <button
                         type="submit"
                         className="block w-full text-left px-5 py-3 text-sm transition-colors hover:bg-black/5"
-                        style={{ color: 'rgba(28,16,7,0.40)' }}
+                        style={{ color: 'rgba(28,16,7,0.65)' }}
                       >
                         Sign out
                       </button>

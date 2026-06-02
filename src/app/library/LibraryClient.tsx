@@ -120,7 +120,7 @@ function VideoRow({ video, progress, onProgressUpdate }: {
             </svg>
           ) : (
             <svg width="13" height="13" viewBox="0 0 13 13" fill="currentColor"
-              className={`ml-0.5 transition-colors ${open ? 'text-cream' : 'text-charcoal/50'}`}>
+              className={`ml-0.5 transition-colors ${open ? 'text-cream' : 'text-charcoal/65'}`}>
               <path d="M2 1.5l9 5-9 5V1.5z" />
             </svg>
           )}
@@ -131,7 +131,7 @@ function VideoRow({ video, progress, onProgressUpdate }: {
           }`}>
             {video.title}
           </p>
-          <p className="text-sm text-charcoal/40 mt-0.5">
+          <p className="text-sm text-charcoal/65 mt-0.5">
             {completed
               ? <span style={{ color: '#5E9635' }}>Watched</span>
               : progress?.lastPosition && progress.lastPosition > 5 && video.duration
@@ -170,11 +170,11 @@ function VideoRow({ video, progress, onProgressUpdate }: {
             </div>
           ) : (
             <div className="rounded-xl bg-charcoal/6 aspect-video flex items-center justify-center">
-              <p className="text-sm text-charcoal/40">Video not available.</p>
+              <p className="text-sm text-charcoal/65">Video not available.</p>
             </div>
           )}
           {video.summary && (
-            <p className="text-sm text-charcoal/60 leading-relaxed mt-3">{video.summary}</p>
+            <p className="text-sm text-charcoal/65 leading-relaxed mt-3">{video.summary}</p>
           )}
         </div>
       )}
@@ -193,7 +193,7 @@ function VideoTab({ videos, progressMap, onProgressUpdate }: {
   if (videos.length === 0) {
     return (
       <div className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm">
-        <p className="text-charcoal/50 text-base">Videos are being prepared. Check back soon.</p>
+        <p className="text-charcoal/65 text-base">Videos are being prepared. Check back soon.</p>
       </div>
     )
   }
@@ -203,7 +203,7 @@ function VideoTab({ videos, progressMap, onProgressUpdate }: {
       {categorized.map((cat) => (
         <div key={cat} className="bg-white rounded-2xl border border-charcoal/10 shadow-sm overflow-hidden">
           <div className="px-6 pt-5 pb-3 border-b border-charcoal/6">
-            <p className="text-xs font-semibold uppercase tracking-widest text-charcoal/35">{cat}</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-charcoal/65">{cat}</p>
           </div>
           <div className="px-6">
             {videos.filter((v) => v.category === cat).map((video) => (
@@ -215,7 +215,7 @@ function VideoTab({ videos, progressMap, onProgressUpdate }: {
       {uncategorized.length > 0 && (
         <div className="bg-white rounded-2xl border border-charcoal/10 shadow-sm overflow-hidden">
           <div className="px-6 pt-5 pb-3 border-b border-charcoal/6">
-            <p className="text-xs font-semibold uppercase tracking-widest text-charcoal/35">Videos</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-charcoal/65">Videos</p>
           </div>
           <div className="px-6">
             {uncategorized.map((video) => (
@@ -271,10 +271,10 @@ function RecordingCard({ recording }: { recording: WebinarRecording }) {
         )}
       </div>
       <div className="p-5">
-        <p className="text-sm text-charcoal/40 mb-1">{formatDate(recording.date)}</p>
+        <p className="text-sm text-charcoal/65 mb-1">{formatDate(recording.date)}</p>
         <p className="font-semibold text-charcoal text-base leading-snug mb-2">{recording.title}</p>
         {recording.summary && (
-          <p className="text-sm text-charcoal/60 leading-relaxed">{recording.summary}</p>
+          <p className="text-sm text-charcoal/65 leading-relaxed">{recording.summary}</p>
         )}
       </div>
     </div>
@@ -357,7 +357,7 @@ export default function LibraryClient({
         {/* 뒤로가기 */}
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-2 text-sm text-charcoal/40 hover:text-charcoal/70 transition-colors min-h-[44px] mb-2"
+          className="inline-flex items-center gap-2 text-sm text-charcoal/65 hover:text-charcoal transition-colors min-h-[44px] mb-2"
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M10 12L6 8l4-4" />
@@ -376,7 +376,7 @@ export default function LibraryClient({
               className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-sm font-medium transition-all min-h-[44px] ${
                 activeTab === tab.id
                   ? 'bg-white text-charcoal shadow-sm'
-                  : 'text-charcoal/50 hover:text-charcoal/70'
+                  : 'text-charcoal/65 hover:text-charcoal'
               }`}
             >
               <span className="hidden sm:inline">{tab.label}</span>
@@ -404,16 +404,16 @@ export default function LibraryClient({
             <div className="space-y-6">
               {upcoming.length > 0 && (
                 <div className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm space-y-4">
-                  <h2 className="text-xs font-semibold uppercase tracking-widest text-charcoal/40">
+                  <h2 className="text-xs font-semibold uppercase tracking-widest text-charcoal/65">
                     Upcoming
                   </h2>
                   <div className="divide-y divide-charcoal/8">
                     {upcoming.map((session) => (
                       <div key={session._id} className="py-4 first:pt-0 last:pb-0">
-                        <p className="text-sm text-charcoal/40 mb-0.5">{formatDateTime(session.date)}</p>
+                        <p className="text-sm text-charcoal/65 mb-0.5">{formatDateTime(session.date)}</p>
                         <p className="font-semibold text-charcoal text-base">{session.title}</p>
                         {session.description && (
-                          <p className="text-sm text-charcoal/60 mt-1 leading-relaxed">{session.description}</p>
+                          <p className="text-sm text-charcoal/65 mt-1 leading-relaxed">{session.description}</p>
                         )}
                         {session.meetingUrl && (
                           <a
@@ -432,12 +432,12 @@ export default function LibraryClient({
               )}
 
               <div className="space-y-4">
-                <h2 className="text-xs font-semibold uppercase tracking-widest text-charcoal/40">
+                <h2 className="text-xs font-semibold uppercase tracking-widest text-charcoal/65">
                   Past Recordings
                 </h2>
                 {recordings.length === 0 ? (
                   <div className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm">
-                    <p className="text-charcoal/60 text-base">
+                    <p className="text-charcoal/65 text-base">
                       Recordings will appear here after each live session.
                     </p>
                   </div>
@@ -460,13 +460,13 @@ export default function LibraryClient({
                       Next live session
                     </p>
                     <p className="text-base text-charcoal font-medium">{upcoming[0].title}</p>
-                    <p className="text-sm text-charcoal/55 mt-0.5">{formatDateTime(upcoming[0].date)}</p>
+                    <p className="text-sm text-charcoal/65 mt-0.5">{formatDateTime(upcoming[0].date)}</p>
                   </div>
                 </div>
               )}
               <div>
                 <p className="font-serif text-xl text-charcoal mb-1.5">Join Tapas live every month.</p>
-                <p className="text-charcoal/55 text-base leading-relaxed">
+                <p className="text-charcoal/65 text-base leading-relaxed">
                   The Calm Circle includes monthly live webinars with Tapas — for your animal and for you — plus the full archive of past recordings.
                 </p>
               </div>
@@ -478,7 +478,7 @@ export default function LibraryClient({
                 >
                   {upgrading ? 'Connecting…' : 'Upgrade to The Calm Circle →'}
                 </button>
-                <p className="text-sm text-charcoal/50">Cancel anytime</p>
+                <p className="text-sm text-charcoal/65">Cancel anytime</p>
               </div>
             </div>
           )

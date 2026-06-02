@@ -114,7 +114,7 @@ export default function Pricing() {
               {tier.popular && (
                 <div className="mb-3">
                   <span
-                    className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full text-xs font-semibold tracking-widest uppercase text-cream"
+                    className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full text-xs font-semibold tracking-widest uppercase text-charcoal"
                     style={{ backgroundColor: '#5E9635' }}
                   >
                     ★ Most Popular
@@ -128,16 +128,16 @@ export default function Pricing() {
                   {tier.name}
                 </h3>
                 <div className="flex items-baseline gap-1.5">
-                  <span className="font-sans text-2xl font-medium text-charcoal/50">$</span>
+                  <span className="font-sans text-2xl font-medium text-charcoal/65">$</span>
                   <span className="font-serif text-4xl sm:text-5xl font-semibold text-charcoal">
                     {tier.price}
                   </span>
-                  <span className="text-sm font-light ml-0.5 text-charcoal/40">/ mo</span>
+                  <span className="text-sm font-light ml-0.5 text-charcoal/65">/ mo</span>
                 </div>
               </div>
 
               {/* Description */}
-              <p className="hidden sm:block text-sm leading-relaxed mb-4 text-charcoal/55">
+              <p className="hidden sm:block text-sm leading-relaxed mb-4 text-charcoal/65">
                 {tier.description}
               </p>
 
@@ -173,7 +173,7 @@ export default function Pricing() {
               </button>
 
               {/* Cancel note */}
-              <p className="text-center text-sm mt-4 flex items-center justify-center gap-1.5 text-charcoal/35">
+              <p className="text-center text-sm mt-4 flex items-center justify-center gap-1.5 text-charcoal/65">
                 <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>

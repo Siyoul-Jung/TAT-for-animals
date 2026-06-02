@@ -20,7 +20,7 @@ export default function Terms() {
           Terms of Service
         </h1>
 
-        <p className="text-sm mb-12" style={{ color: 'rgba(28,16,7,0.40)' }}>
+        <p className="text-sm mb-12" style={{ color: 'rgba(28,16,7,0.65)' }}>
           Last updated: May 2026
         </p>
 

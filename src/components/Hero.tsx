@@ -57,7 +57,7 @@ export default function Hero({ images }: { images: HeroImage[] }) {
             <h1 className="font-serif text-3xl leading-[1.2] text-charcoal mb-2 font-semibold">
               Your animal feels<br />everything you carry.
             </h1>
-            <p className="font-sans text-sm mb-5 font-normal" style={{ color: '#5E9635' }}>
+            <p className="font-sans text-sm mb-5 font-normal text-charcoal/65">
               A few quiet minutes together — and something releases in you both.
             </p>
             <div className="flex items-center gap-5">
@@ -71,7 +71,7 @@ export default function Hero({ images }: { images: HeroImage[] }) {
               <Link
                 href="/membership"
                 className="inline-flex min-h-[44px] items-center text-sm font-medium transition-colors hover:text-brand"
-                style={{ color: 'rgba(28,16,7,0.50)' }}
+                style={{ color: 'rgba(28,16,7,0.65)' }}
               >
                 Join the members
               </Link>
@@ -100,10 +100,10 @@ export default function Hero({ images }: { images: HeroImage[] }) {
           <h1 className="font-serif text-4xl xl:text-5xl 2xl:text-6xl leading-[1.2] text-charcoal mb-5 font-semibold">
             Your animal feels<br />everything you carry.
           </h1>
-          <p className="font-sans text-xl mb-8 font-normal" style={{ color: '#5E9635' }}>
+          <p className="font-sans text-xl mb-8 font-normal text-charcoal/65">
             A few quiet minutes together — and something releases in you both.
           </p>
-          <p className="text-lg leading-relaxed mb-12" style={{ color: 'rgba(28,16,7,0.55)' }}>
+          <p className="text-lg leading-relaxed mb-12" style={{ color: 'rgba(28,16,7,0.65)' }}>
             No special training. No reliving anything painful.
             Just you, your animal, and a gentle process that works.
           </p>
@@ -118,7 +118,7 @@ export default function Hero({ images }: { images: HeroImage[] }) {
             <Link
               href="/membership"
               className="text-base font-medium transition-colors hover:text-brand"
-              style={{ color: 'rgba(28,16,7,0.50)' }}
+              style={{ color: 'rgba(28,16,7,0.65)' }}
             >
               Join the members
             </Link>

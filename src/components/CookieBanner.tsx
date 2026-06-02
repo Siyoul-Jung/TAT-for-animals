@@ -36,12 +36,12 @@ export default function CookieBanner() {
       style={{ backgroundColor: '#FAF6F1', borderTop: '1px solid rgba(28,16,7,0.08)' }}
     >
       <div className="max-w-6xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
-        <p className="text-xs leading-relaxed" style={{ color: 'rgba(28,16,7,0.55)' }}>
+        <p className="text-xs leading-relaxed" style={{ color: 'rgba(28,16,7,0.65)' }}>
           We use essential cookies to keep your session secure.{' '}
           <Link
             href="/privacy"
             className="underline underline-offset-2 transition-opacity hover:opacity-70"
-            style={{ color: 'rgba(28,16,7,0.55)' }}
+            style={{ color: 'rgba(28,16,7,0.65)' }}
           >
             Learn more
           </Link>

@@ -47,7 +47,7 @@ export default function AboutTapas() {
               style={{ boxShadow: '0 8px 32px rgba(31,46,20,0.10), 0 0 0 1px rgba(31,46,20,0.07)' }}
             >
               <span className="font-serif text-2xl font-semibold text-charcoal">1993</span>
-              <span className="text-xs text-charcoal/45 font-light tracking-wide">TATLife® Founded</span>
+              <span className="text-xs text-charcoal/65 font-light tracking-wide">TATLife® Founded</span>
             </motion.div>
           </div>
 
@@ -55,7 +55,7 @@ export default function AboutTapas() {
           <Link
             href="/about"
             className="inline-flex items-center min-h-[44px] text-sm font-medium transition-opacity hover:opacity-70"
-            style={{ color: 'rgba(28,16,7,0.45)' }}
+            style={{ color: 'rgba(28,16,7,0.65)' }}
           >
             Learn more about Tapas →
           </Link>
@@ -114,7 +114,7 @@ export default function AboutTapas() {
             <Link
               href="/about"
               className="inline-flex items-center min-h-[44px] text-sm font-medium transition-opacity hover:opacity-70"
-              style={{ color: 'rgba(28,16,7,0.45)' }}
+              style={{ color: 'rgba(28,16,7,0.65)' }}
             >
               Learn more about Tapas →
             </Link>

@@ -10,7 +10,7 @@ export default function Error({ reset }: { error: Error & { digest?: string }; r
         <h1 className="font-serif text-3xl sm:text-4xl text-charcoal leading-[1.2]">
           Something went wrong.
         </h1>
-        <p className="text-charcoal/50 text-base leading-relaxed">
+        <p className="text-charcoal/65 text-base leading-relaxed">
           We hit an unexpected problem. Please try again — if it keeps happening,
           email us at{' '}
           <a href="mailto:hello@tatforanimals.com" className="text-brand hover:underline">

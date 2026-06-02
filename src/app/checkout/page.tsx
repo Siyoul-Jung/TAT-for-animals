@@ -58,7 +58,7 @@ function CheckoutContent() {
           <h1 className="font-serif text-3xl text-charcoal font-medium mb-2">
             {tier.name}
           </h1>
-          <p className="text-charcoal/50">
+          <p className="text-charcoal/65">
             <span className="text-2xl font-semibold text-charcoal">${tier.price}</span> / month
           </p>
         </div>

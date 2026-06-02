@@ -57,7 +57,7 @@ function SlideLayout({ t }: { t: Testimonial }) {
       <div className="flex flex-col justify-center">
         <p
           className="text-xs tracking-[0.15em] uppercase font-medium mb-3 lg:mb-5"
-          style={{ color: 'rgba(212,112,58,0.6)' }}
+          style={{ color: '#D4703A' }}
         >
           {t.animal}
         </p>
@@ -73,7 +73,7 @@ function SlideLayout({ t }: { t: Testimonial }) {
         <div>
           <p className="font-medium text-charcoal">{t.name}</p>
           {t.location && (
-            <p className="text-sm mt-0.5" style={{ color: 'rgba(28,16,7,0.4)' }}>
+            <p className="text-sm mt-0.5" style={{ color: 'rgba(28,16,7,0.65)' }}>
               {t.location}
             </p>
           )}
@@ -126,7 +126,7 @@ export default function Testimonials() {
         >
           <p
             className="text-xs tracking-[0.2em] uppercase font-medium mb-5"
-            style={{ color: 'rgba(212,112,58,0.7)' }}
+            style={{ color: '#D4703A' }}
           >
             Real Stories
           </p>

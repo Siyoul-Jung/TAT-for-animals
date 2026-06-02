@@ -23,7 +23,7 @@ function ThankYouContent() {
             <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-charcoal leading-[1.2]">
               Your animal and your healing journey starts here.
             </h1>
-            <p className="text-charcoal/50 text-base leading-relaxed">
+            <p className="text-charcoal/65 text-base leading-relaxed">
               Your library is ready whenever you are.
             </p>
           </div>
@@ -39,7 +39,7 @@ function ThankYouContent() {
             <Link
               href="/dashboard"
               className="inline-flex items-center justify-center min-h-[52px] px-8 rounded-full font-medium text-sm transition-all hover:bg-charcoal/5 active:scale-95"
-              style={{ border: '1.5px solid rgba(28,16,7,0.12)', color: 'rgba(28,16,7,0.50)' }}
+              style={{ border: '1.5px solid rgba(28,16,7,0.12)', color: 'rgba(28,16,7,0.65)' }}
             >
               My Dashboard
             </Link>

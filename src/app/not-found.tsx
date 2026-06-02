@@ -10,7 +10,7 @@ export default function NotFound() {
         <h1 className="font-serif text-3xl sm:text-4xl text-charcoal leading-[1.2]">
           We couldn&apos;t find that page.
         </h1>
-        <p className="text-charcoal/50 text-base leading-relaxed">
+        <p className="text-charcoal/65 text-base leading-relaxed">
           The page you&apos;re looking for may have moved, or the link might be broken.
         </p>
         <Link

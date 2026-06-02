@@ -27,7 +27,7 @@ export default function ComingSoon() {
         <div className="absolute bottom-0 left-0 right-0 pb-10 text-center flex flex-col items-center gap-3">
           <p
             className="text-xs tracking-[0.2em] uppercase font-light"
-            style={{ color: 'rgba(28,16,7,0.45)' }}
+            style={{ color: 'rgba(28,16,7,0.65)' }}
           >
             Tapas Fleming · TATLife®
           </p>

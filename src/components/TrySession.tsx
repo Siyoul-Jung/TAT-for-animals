@@ -43,13 +43,13 @@ export default function TrySession() {
           className="text-center mb-14"
         >
           <p className="text-xs tracking-[0.2em] uppercase font-medium mb-5"
-            style={{ color: 'rgba(212,112,58,0.7)' }}>
+            style={{ color: '#D4703A' }}>
             TAT for Animals
           </p>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-charcoal font-medium leading-tight mb-6">
             Help your animal feel more<br className="hidden sm:block" /> joyful, relaxed, and at peace.
           </h2>
-          <p className="text-base sm:text-lg text-charcoal/60 font-light leading-relaxed max-w-xl mx-auto">
+          <p className="text-base sm:text-lg text-charcoal/65 font-light leading-relaxed max-w-xl mx-auto">
             TAT helped Luna reconnect with the world around her
             in a way that felt safe and joyful.
             You can do the same for your cat, your dog, or any animal.

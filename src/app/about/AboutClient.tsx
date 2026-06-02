@@ -74,7 +74,7 @@ export default function AboutClient() {
               style={{ boxShadow: '0 8px 32px rgba(28,16,7,0.10), 0 0 0 1px rgba(28,16,7,0.07)' }}
             >
               <span className="font-serif text-2xl font-semibold text-charcoal">1993</span>
-              <span className="text-xs text-charcoal/45 font-light tracking-wide">TATLife® Founded</span>
+              <span className="text-xs text-charcoal/65 font-light tracking-wide">TATLife® Founded</span>
             </motion.div>
           </motion.div>
 
@@ -162,7 +162,7 @@ export default function AboutClient() {
           <div className="h-px bg-charcoal/8 mb-14" />
 
           <motion.div {...fadeUp}>
-            <p className="font-sans text-lg text-charcoal/55 font-light leading-relaxed mb-6">
+            <p className="font-sans text-lg text-charcoal/65 font-light leading-relaxed mb-6">
               Whenever you feel ready, Tapas is here.
             </p>
             <Link

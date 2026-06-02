@@ -27,7 +27,7 @@
   --surface:  #F2EAE0;  /* warm tinted section bg */
   --dark:     #1C1007;  /* warm charcoal — footer only */
   --charcoal: #1C1007;  /* warm near-black */
-  --muted:    #8B6F5E;  /* warm taupe */
+  --muted:    #7A5F4F;  /* warm taupe — darkened to meet WCAG AA (5.4:1 on cream) */
 }
 
 @theme inline {

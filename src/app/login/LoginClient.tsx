@@ -116,7 +116,7 @@ export default function LoginClient() {
             className="h-12 w-auto object-contain mb-1"
             style={{ width: 'auto' }}
           />
-          <span className="font-serif text-xl text-charcoal/70 group-hover:text-brand transition-colors">
+          <span className="font-serif text-xl text-charcoal/65 group-hover:text-brand transition-colors">
             TAT for Animals<span className="text-brand text-[10px] align-super">®</span>
           </span>
         </Link>
@@ -215,7 +215,7 @@ export default function LoginClient() {
             <button
               onClick={handleMagicLink}
               disabled={magicLoading}
-              className="w-full min-h-[44px] rounded-full border border-charcoal/15 text-sm font-medium text-charcoal/60 hover:text-charcoal hover:border-charcoal/30 transition-all disabled:opacity-50"
+              className="w-full min-h-[44px] rounded-full border border-charcoal/15 text-sm font-medium text-charcoal/65 hover:text-charcoal hover:border-charcoal/30 transition-all disabled:opacity-50"
             >
               {magicLoading ? 'Sending…' : 'Email me a sign-in link instead'}
             </button>

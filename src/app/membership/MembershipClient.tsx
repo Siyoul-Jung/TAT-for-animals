@@ -57,7 +57,7 @@ export default function MembershipClient() {
             <h1 className="font-serif text-3xl sm:text-4xl leading-[1.2] text-charcoal mb-2 font-semibold">
               Heal together.
             </h1>
-            <p className="font-sans text-sm mb-5 font-normal" style={{ color: '#5E9635' }}>
+            <p className="font-sans text-sm mb-5 font-normal text-charcoal/65">
               For your animal and you. At your own pace.
             </p>
             <a
@@ -91,7 +91,7 @@ export default function MembershipClient() {
             <h1 className="font-serif text-4xl xl:text-5xl 2xl:text-6xl leading-[1.2] text-charcoal font-semibold mb-5">
               Heal together.
             </h1>
-            <p className="font-sans text-xl mb-10 font-normal" style={{ color: '#5E9635' }}>
+            <p className="font-sans text-xl mb-10 font-normal text-charcoal/65">
               For your animal and you.<br />At your own pace.
             </p>
             <a
@@ -160,24 +160,24 @@ export default function MembershipClient() {
               </p>
               <div className="grid lg:grid-cols-2 gap-7 lg:gap-14">
                 <div>
-                  <p className="text-xs tracking-[0.15em] uppercase font-medium mb-2" style={{ color: 'rgba(212,112,58,0.6)' }}>
+                  <p className="text-xs tracking-[0.15em] uppercase font-medium mb-2" style={{ color: '#D4703A' }}>
                     TAT for Animals
                   </p>
                   <h3 className="font-serif text-xl text-charcoal font-medium mb-2 leading-snug">
                     Help your animal feel calm and safe.
                   </h3>
-                  <p className="text-base text-charcoal/55 font-light leading-relaxed">
+                  <p className="text-base text-charcoal/65 font-light leading-relaxed">
                     Video library of TAT® sessions for animals — fear, anxiety, past trauma gently released. As your animal settles, something in you shifts too.
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs tracking-[0.15em] uppercase font-medium mb-2" style={{ color: 'rgba(212,112,58,0.6)' }}>
+                  <p className="text-xs tracking-[0.15em] uppercase font-medium mb-2" style={{ color: '#D4703A' }}>
                     Healing ACEs Plus
                   </p>
                   <h3 className="font-serif text-xl text-charcoal font-medium mb-2 leading-snug">
                     Release what you've been carrying.
                   </h3>
-                  <p className="text-base text-charcoal/55 font-light leading-relaxed">
+                  <p className="text-base text-charcoal/65 font-light leading-relaxed">
                     Video library for your own healing. Gently dissolving beliefs from past experience — without reliving them. At your own pace.
                   </p>
                 </div>
@@ -194,7 +194,7 @@ export default function MembershipClient() {
                   <h3 className="font-serif text-xl text-charcoal font-medium mb-2 leading-snug">
                     Everything in The Calm Library, plus live sessions with Tapas every month.
                   </h3>
-                  <p className="text-base text-charcoal/55 font-light leading-relaxed">
+                  <p className="text-base text-charcoal/65 font-light leading-relaxed">
                     Monthly live webinars for TAT for Animals and Healing ACEs Plus. Real-time guidance, your questions answered, and the full archive of past recordings.
                   </p>
                 </div>
@@ -232,7 +232,7 @@ export default function MembershipClient() {
             <blockquote className="font-serif italic text-2xl sm:text-3xl text-charcoal/80 leading-[1.6] mb-5 text-balance">
               &ldquo;Help people find peace. One person — and one animal — at a time.&rdquo;
             </blockquote>
-            <p className="text-xs tracking-[0.25em] uppercase text-charcoal/35">
+            <p className="text-xs tracking-[0.25em] uppercase text-charcoal/65">
               — Tapas Fleming, Founder of TAT®
             </p>
           </motion.div>
@@ -246,13 +246,13 @@ export default function MembershipClient() {
             transition={{ duration: 0.7 }}
             className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6"
           >
-            <p className="text-base sm:text-lg text-charcoal/55 font-light leading-relaxed">
+            <p className="text-base sm:text-lg text-charcoal/65 font-light leading-relaxed">
               Still wondering if this is right for you?
             </p>
             <Link
               href="/faq"
               className="inline-flex items-center min-h-[44px] text-base font-medium transition-opacity hover:opacity-70 whitespace-nowrap"
-              style={{ color: 'rgba(212,112,58,0.9)' }}
+              style={{ color: '#A14E22' }}
             >
               Read the FAQ →
             </Link>

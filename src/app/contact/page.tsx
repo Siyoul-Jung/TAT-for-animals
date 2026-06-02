@@ -22,7 +22,7 @@ export default function Contact() {
 
         <p
           className="text-base leading-relaxed mb-10"
-          style={{ color: 'rgba(28,16,7,0.60)' }}
+          style={{ color: 'rgba(28,16,7,0.65)' }}
         >
           Whether you have a question about membership, need help with your account,
           or just want to share how TAT has helped your animal — we'd love to hear from you.
@@ -38,7 +38,7 @@ export default function Contact() {
 
         <p
           className="text-sm mt-4"
-          style={{ color: 'rgba(28,16,7,0.40)' }}
+          style={{ color: 'rgba(28,16,7,0.65)' }}
         >
           We typically respond within 1–2 business days.
         </p>

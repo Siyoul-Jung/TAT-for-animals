@@ -30,7 +30,7 @@ const PLAN_INFO: Record<string, { name: string; price: string }> = {
 const STATUS_BADGE: Record<string, { label: string; classes: string }> = {
   active:   { label: 'Active',    classes: 'bg-green-100 text-green-800' },
   past_due: { label: 'Past Due',  classes: 'bg-red-100 text-red-800' },
-  inactive: { label: 'Inactive',  classes: 'bg-charcoal/10 text-charcoal/50' },
+  inactive: { label: 'Inactive',  classes: 'bg-charcoal/10 text-charcoal/65' },
 }
 
 function formatPeriodEnd(iso: string | null): string | null {
@@ -101,13 +101,13 @@ export default function DashboardClient({
 
         {/* Header */}
         <div>
-          <p className="text-sm font-medium text-charcoal/40 uppercase tracking-widest mb-1">
+          <p className="text-sm font-medium text-charcoal/65 uppercase tracking-widest mb-1">
             Dashboard
           </p>
           <h1 className="font-serif text-3xl text-charcoal">
             {displayName ? `Welcome back, ${displayName}.` : 'Welcome back.'}
           </h1>
-          <p className="text-charcoal/50 mt-1 text-base">{email}</p>
+          <p className="text-charcoal/65 mt-1 text-base">{email}</p>
         </div>
 
         {/* Payment failed alert */}
@@ -126,7 +126,7 @@ export default function DashboardClient({
 
         {/* Membership card */}
         <section className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm space-y-5">
-          <h2 className="text-xs font-semibold uppercase tracking-widest text-charcoal/40">
+          <h2 className="text-xs font-semibold uppercase tracking-widest text-charcoal/65">
             Your Membership
           </h2>
 
@@ -135,7 +135,7 @@ export default function DashboardClient({
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <p className="font-serif text-xl text-charcoal">{plan.name}</p>
-                  <p className="text-charcoal/50 mt-0.5 text-base">{plan.price}</p>
+                  <p className="text-charcoal/65 mt-0.5 text-base">{plan.price}</p>
                 </div>
                 <span className={`text-xs font-semibold px-3 py-1 rounded-full ${badge.classes}`}>
                   {badge.label}
@@ -146,12 +146,12 @@ export default function DashboardClient({
               {hasSubscription && subscriptionStatus !== 'past_due' && (
                 <div className="pt-4 border-t border-charcoal/8 space-y-3">
                   {nextChargeDate && (
-                    <p className="text-base text-charcoal/60">
+                    <p className="text-base text-charcoal/65">
                       Next charge: <span className="text-charcoal font-medium">{nextChargeDate}</span>
                     </p>
                   )}
                   <ManageSubscriptionButton />
-                  <p className="text-sm text-charcoal/50">
+                  <p className="text-sm text-charcoal/65">
                     Cancel anytime
                   </p>
                 </div>
@@ -159,7 +159,7 @@ export default function DashboardClient({
             </>
           ) : (
             <div className="space-y-4">
-              <p className="text-charcoal/60 text-base leading-relaxed">
+              <p className="text-charcoal/65 text-base leading-relaxed">
                 You don&apos;t have an active membership yet.
               </p>
               <Link
@@ -175,7 +175,7 @@ export default function DashboardClient({
         {/* Content (subscribers only) */}
         {plan && (
           <section className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm space-y-5">
-            <h2 className="text-xs font-semibold uppercase tracking-widest text-charcoal/40">
+            <h2 className="text-xs font-semibold uppercase tracking-widest text-charcoal/65">
               Your Content
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -199,17 +199,17 @@ export default function DashboardClient({
 
         {/* Account */}
         <section className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm space-y-1">
-          <h2 className="text-xs font-semibold uppercase tracking-widest text-charcoal/40 mb-4">
+          <h2 className="text-xs font-semibold uppercase tracking-widest text-charcoal/65 mb-4">
             Account
           </h2>
           <div className="divide-y divide-charcoal/8">
             <div className="py-3.5">
-              <p className="text-sm text-charcoal/50">Email address</p>
+              <p className="text-sm text-charcoal/65">Email address</p>
               <p className="text-base text-charcoal mt-0.5">{email}</p>
             </div>
             <div className="flex items-center justify-between py-3.5">
               <div>
-                <p className="text-sm text-charcoal/50">Password</p>
+                <p className="text-sm text-charcoal/65">Password</p>
                 <p className="text-base text-charcoal mt-0.5">••••••••</p>
               </div>
               <Link
@@ -220,20 +220,20 @@ export default function DashboardClient({
               </Link>
             </div>
             <div className="py-3.5">
-              <p className="text-sm text-charcoal/50">Delete account</p>
+              <p className="text-sm text-charcoal/65">Delete account</p>
               {hasSubscription ? (
-                <p className="mt-3 text-sm text-charcoal/60 leading-relaxed">
+                <p className="mt-3 text-sm text-charcoal/65 leading-relaxed">
                   Please cancel your subscription before deleting your account. You can do this above under <span className="font-medium text-charcoal">Your Membership</span>.
                 </p>
               ) : deleteRequested ? (
-                <p className="mt-3 text-sm text-charcoal/60 leading-relaxed">
+                <p className="mt-3 text-sm text-charcoal/65 leading-relaxed">
                   Check your email — we sent a confirmation link to delete your account.
                 </p>
               ) : (
                 <button
                   onClick={handleDeleteRequest}
                   disabled={deleting}
-                  className="mt-3 text-sm text-charcoal/40 hover:text-red-500 transition-colors font-medium min-h-[44px] disabled:opacity-50"
+                  className="mt-3 text-sm text-charcoal/65 hover:text-red-500 transition-colors font-medium min-h-[44px] disabled:opacity-50"
                 >
                   {deleting ? 'Sending...' : 'Request account deletion →'}
                 </button>
@@ -243,7 +243,7 @@ export default function DashboardClient({
               <form action="/api/auth/logout" method="POST">
                 <button
                   type="submit"
-                  className="text-sm text-charcoal/40 hover:text-charcoal/70 transition-colors min-h-[44px]"
+                  className="text-sm text-charcoal/65 hover:text-charcoal transition-colors min-h-[44px]"
                 >
                   Sign out
                 </button>
@@ -279,7 +279,7 @@ function ContentCard({
   const cardClasses = `block p-5 rounded-xl border border-charcoal/10 transition-all`
 
   const titleClasses = `font-semibold transition-colors whitespace-nowrap ${
-    locked ? 'text-charcoal/50' : 'text-charcoal'
+    locked ? 'text-charcoal/65' : 'text-charcoal'
   }`
 
   if (locked && onClick) {
@@ -288,7 +288,7 @@ function ContentCard({
         {badge && (
           <span className={`inline-block text-xs font-semibold px-2 py-0.5 rounded-full mb-2 ${
             locked
-              ? 'bg-charcoal/10 text-charcoal/40'
+              ? 'bg-charcoal/10 text-charcoal/65'
               : 'bg-brand/10 text-brand'
           }`}>
             {badge}
@@ -297,7 +297,7 @@ function ContentCard({
         <p className={titleClasses}>
           {title}
         </p>
-        <p className="text-sm text-charcoal/55 leading-relaxed">{description}</p>
+        <p className="text-sm text-charcoal/65 leading-relaxed">{description}</p>
         <button
           onClick={onClick}
           disabled={isLoading}
@@ -319,7 +319,7 @@ function ContentCard({
       <p className={titleClasses}>
         {title}
       </p>
-      <p className="text-sm text-charcoal/55 leading-relaxed">{description}</p>
+      <p className="text-sm text-charcoal/65 leading-relaxed">{description}</p>
       <p className="mt-3 text-sm font-medium text-brand group-hover:text-brand-dark transition-colors">
         Watch →
       </p>

@@ -85,7 +85,7 @@ export default function Footer() {
                 aria-label={s.label}
                 className="w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-110"
                 style={{
-                  color: 'rgba(250,246,241,0.40)',
+                  color: 'rgba(250,246,241,0.55)',
                   border: '1px solid rgba(250,246,241,0.10)',
                 }}
                 onMouseEnter={(e) => {
@@ -93,7 +93,7 @@ export default function Footer() {
                   (e.currentTarget as HTMLElement).style.borderColor = 'rgba(212,168,67,0.40)';
                 }}
                 onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.color = 'rgba(250,246,241,0.40)';
+                  (e.currentTarget as HTMLElement).style.color = 'rgba(250,246,241,0.55)';
                   (e.currentTarget as HTMLElement).style.borderColor = 'rgba(250,246,241,0.10)';
                 }}
               >
@@ -112,12 +112,12 @@ export default function Footer() {
               key={link.name}
               href={link.href}
               className="text-xs font-light transition-colors"
-              style={{ color: 'rgba(250,246,241,0.45)' }}
+              style={{ color: 'rgba(250,246,241,0.60)' }}
               onMouseEnter={(e) => {
                 (e.currentTarget as HTMLElement).style.color = '#D4A843';
               }}
               onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.color = 'rgba(250,246,241,0.45)';
+                (e.currentTarget as HTMLElement).style.color = 'rgba(250,246,241,0.60)';
               }}
             >
               {link.name}
@@ -128,12 +128,12 @@ export default function Footer() {
             target="_blank"
             rel="noopener noreferrer"
             className="text-xs font-light transition-colors"
-            style={{ color: 'rgba(250,246,241,0.45)' }}
+            style={{ color: 'rgba(250,246,241,0.60)' }}
             onMouseEnter={(e) => {
               (e.currentTarget as HTMLElement).style.color = '#D4A843';
             }}
             onMouseLeave={(e) => {
-              (e.currentTarget as HTMLElement).style.color = 'rgba(250,246,241,0.45)';
+              (e.currentTarget as HTMLElement).style.color = 'rgba(250,246,241,0.60)';
             }}
           >
             TATLife.com ↗
@@ -144,7 +144,7 @@ export default function Footer() {
         <div className="flex items-center justify-between gap-4 pt-2">
           <p
             className="text-xs font-light"
-            style={{ color: 'rgba(250,246,241,0.25)' }}
+            style={{ color: 'rgba(250,246,241,0.60)' }}
           >
             <span className="sm:hidden">© 2026 TATLife®, Inc.</span>
             <span className="hidden sm:inline">© 2026 TATLife®, Inc. All rights reserved.</span>
@@ -156,12 +156,12 @@ export default function Footer() {
                 key={link.name}
                 href={link.href}
                 className="text-xs font-light transition-colors"
-                style={{ color: 'rgba(250,246,241,0.25)' }}
+                style={{ color: 'rgba(250,246,241,0.60)' }}
                 onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.color = 'rgba(250,246,241,0.55)';
+                  (e.currentTarget as HTMLElement).style.color = 'rgba(250,246,241,0.9)';
                 }}
                 onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.color = 'rgba(250,246,241,0.25)';
+                  (e.currentTarget as HTMLElement).style.color = 'rgba(250,246,241,0.60)';
                 }}
               >
                 <span className="sm:hidden">{link.short}</span>
