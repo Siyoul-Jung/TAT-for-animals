@@ -17,6 +17,20 @@ export async function POST() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
+  // Block deletion while a subscription is still active — must cancel first
+  const { data: profile } = await supabaseAdmin
+    .from('profiles')
+    .select('stripe_subscription_id, paypal_subscription_id')
+    .eq('id', user.id)
+    .single()
+
+  if (profile?.stripe_subscription_id || profile?.paypal_subscription_id) {
+    return NextResponse.json(
+      { error: 'Please cancel your subscription before deleting your account.' },
+      { status: 400 }
+    )
+  }
+
   // Check for existing pending request
   const { data: existing } = await supabaseAdmin
     .from('account_deletion_requests')

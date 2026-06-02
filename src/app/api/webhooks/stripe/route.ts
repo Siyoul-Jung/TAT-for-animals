@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
             subscription_status: 'active',
             ...(periodEnd ? { current_period_end: new Date(periodEnd * 1000).toISOString() } : {}),
           })
-          .eq('stripe_subscription_id', subscriptionId)
+          .eq('id', userId)
 
         break
       }
@@ -128,10 +128,17 @@ export async function POST(request: NextRequest) {
         const subscriptionId = (invoice as any).subscription as string
         if (!subscriptionId) break
 
+        const subscription = await stripe.subscriptions.retrieve(subscriptionId)
+        const userId = subscription.metadata?.supabase_user_id
+        if (!userId) {
+          console.error('Webhook invoice.payment_failed: userId missing', { subscriptionId })
+          break
+        }
+
         await supabaseAdmin
           .from('profiles')
           .update({ subscription_status: 'past_due' })
-          .eq('stripe_subscription_id', subscriptionId)
+          .eq('id', userId)
 
         break
       }

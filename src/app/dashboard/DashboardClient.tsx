@@ -142,7 +142,8 @@ export default function DashboardClient({
                 </span>
               </div>
 
-              {hasSubscription && (
+              {/* past_due hides this — the alert banner above already offers "Update payment method" */}
+              {hasSubscription && subscriptionStatus !== 'past_due' && (
                 <div className="pt-4 border-t border-charcoal/8 space-y-3">
                   {nextChargeDate && (
                     <p className="text-base text-charcoal/60">

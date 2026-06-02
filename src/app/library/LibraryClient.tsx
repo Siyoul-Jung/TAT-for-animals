@@ -307,6 +307,21 @@ export default function LibraryClient({
 
   const [activeTab, setActiveTab] = useState<Tab>(() => resolveTab(tabParam))
   const [progressMap, setProgressMap] = useState<ProgressMap>({})
+  const [upgrading, setUpgrading] = useState(false)
+
+  async function handleUpgrade() {
+    setUpgrading(true)
+    try {
+      const res = await fetch('/api/upgrade', { method: 'POST' })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Upgrade failed')
+      window.location.href = data.url
+    } catch (err) {
+      console.error('Upgrade error:', err)
+      alert('Something went wrong. Please try again.')
+      setUpgrading(false)
+    }
+  }
 
   useEffect(() => {
     setActiveTab(resolveTab(tabParam))
@@ -456,12 +471,13 @@ export default function LibraryClient({
                 </p>
               </div>
               <div className="space-y-2.5">
-                <Link
-                  href="/membership"
-                  className="inline-flex items-center min-h-[44px] px-6 py-2.5 rounded-full bg-brand text-cream text-sm font-semibold hover:bg-brand-dark transition-all"
+                <button
+                  onClick={handleUpgrade}
+                  disabled={upgrading}
+                  className="inline-flex items-center min-h-[44px] px-6 py-2.5 rounded-full bg-brand text-cream text-sm font-semibold hover:bg-brand-dark transition-all disabled:opacity-60"
                 >
-                  Upgrade to The Calm Circle →
-                </Link>
+                  {upgrading ? 'Connecting…' : 'Upgrade to The Calm Circle →'}
+                </button>
                 <p className="text-sm text-charcoal/50">Cancel anytime</p>
               </div>
             </div>
