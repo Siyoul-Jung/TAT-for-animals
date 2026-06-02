@@ -15,9 +15,11 @@ function CheckoutContent() {
   const plan = searchParams.get('plan') ?? 'calm_library';
   const tier = PLANS[plan] ?? PLANS['calm_library'];
   const [loading, setLoading] = useState<'stripe' | 'paypal' | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   async function handlePayment(provider: 'stripe' | 'paypal') {
     setLoading(provider);
+    setError(null);
     const endpoint = provider === 'paypal' ? '/api/paypal/checkout' : '/api/checkout';
     try {
       const res = await fetch(endpoint, {
@@ -35,11 +37,11 @@ function CheckoutContent() {
       if (data.url) {
         window.location.href = data.url;
       } else {
-        alert('Something went wrong. Please try again.');
+        setError(data.error || "We couldn't start your checkout. Please try again in a moment.");
         setLoading(null);
       }
     } catch {
-      alert('Something went wrong. Please try again.');
+      setError("We couldn't reach our payment system. Please check your connection and try again.");
       setLoading(null);
     }
   }
@@ -60,6 +62,13 @@ function CheckoutContent() {
             <span className="text-2xl font-semibold text-charcoal">${tier.price}</span> / month
           </p>
         </div>
+
+        {/* Error */}
+        {error && (
+          <div className="bg-red-50 border border-red-100 rounded-xl px-4 py-3 mb-4">
+            <p className="text-sm text-red-600 leading-relaxed">{error}</p>
+          </div>
+        )}
 
         {/* Payment options */}
         <div className="flex flex-col gap-3">
@@ -86,7 +95,7 @@ function CheckoutContent() {
           </button>
         </div>
 
-        <p className="text-center text-xs mt-6" style={{ color: 'rgba(28,16,7,0.35)' }}>
+        <p className="text-center text-sm mt-6" style={{ color: '#8B6F5E' }}>
           Cancel anytime · Secure payment
         </p>
 

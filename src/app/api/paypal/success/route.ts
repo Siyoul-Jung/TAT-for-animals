@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
   const subscriptionId = searchParams.get('subscription_id')
 
   if (!subscriptionId) {
-    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_SITE_URL}/membership`)
+    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_SITE_URL}/membership?error=paypal_failed`)
   }
 
   const res = await paypalRequest(`/v1/billing/subscriptions/${subscriptionId}`)
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
   const role = PLAN_ROLE_MAP[planId] ?? 'subscriber'
 
   if (!userId || subscription.status !== 'ACTIVE') {
-    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_SITE_URL}/membership`)
+    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_SITE_URL}/membership?error=paypal_failed`)
   }
 
   // Idempotency — prevent duplicate processing on page refresh

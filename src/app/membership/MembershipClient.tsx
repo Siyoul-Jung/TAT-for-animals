@@ -3,11 +3,32 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
+import { Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Pricing from '@/components/Pricing';
+
+function PayPalErrorBanner() {
+  const searchParams = useSearchParams();
+  if (searchParams.get('error') !== 'paypal_failed') return null;
+  return (
+    <div className="bg-red-50 border-b border-red-200 px-6 py-4">
+      <div className="max-w-2xl mx-auto">
+        <p className="text-sm text-red-700 leading-relaxed">
+          Your PayPal payment didn&apos;t go through, so your membership wasn&apos;t started.
+          Nothing was charged — you can try again below.
+        </p>
+      </div>
+    </div>
+  );
+}
 
 export default function MembershipClient() {
   return (
     <div className="min-h-screen">
+
+      <Suspense fallback={null}>
+        <PayPalErrorBanner />
+      </Suspense>
 
       {/* ── Hero ── */}
       <section className="relative overflow-hidden bg-cream">
