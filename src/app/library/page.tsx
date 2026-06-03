@@ -68,7 +68,7 @@ export default async function LibraryPage() {
         )
       : Promise.resolve([]),
     sanityClient.fetch<WebinarSession[]>(
-      `*[_type == "webinarSchedule" && date > now()] | order(date asc) [0..0] {
+      `*[_type == "webinarSchedule" && date > now()] | order(date asc) [0..1] {
         _id, title, date, description, meetingUrl
       }`
     ),
