@@ -196,6 +196,16 @@ export async function POST(request: NextRequest) {
         const userId = subscription.metadata?.supabase_user_id
         if (!userId) break
 
+        // Only reset if the cancelled subscription is the one the profile tracks.
+        // Cancelling a stale/duplicate subscription must not revoke access that
+        // a still-active subscription continues to grant.
+        const { data: currentProfile } = await supabaseAdmin
+          .from('profiles')
+          .select('stripe_subscription_id')
+          .eq('id', userId)
+          .single()
+        if (currentProfile?.stripe_subscription_id && currentProfile.stripe_subscription_id !== subscription.id) break
+
         await supabaseAdmin
           .from('profiles')
           .update({

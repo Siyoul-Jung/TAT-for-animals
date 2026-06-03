@@ -18,14 +18,18 @@ jest.mock('@supabase/supabase-js', () => {
   const mockInsert = jest.fn().mockResolvedValue({ error: null })
   const mockDeleteEq = jest.fn().mockResolvedValue({ error: null })
   const mockDelete = jest.fn().mockReturnValue({ eq: mockDeleteEq })
+  const mockSingle = jest.fn().mockResolvedValue({ data: null, error: null })
+  const mockSelectEq = jest.fn().mockReturnValue({ single: mockSingle })
+  const mockSelect = jest.fn().mockReturnValue({ eq: mockSelectEq })
   const mockFrom = jest.fn().mockReturnValue({
     update: mockUpdate,
     insert: mockInsert,
     delete: mockDelete,
+    select: mockSelect,
   })
   return {
     createClient: () => ({ from: mockFrom }),
-    __mocks: { mockEq, mockUpdate, mockInsert, mockDelete, mockDeleteEq, mockFrom },
+    __mocks: { mockEq, mockUpdate, mockInsert, mockDelete, mockDeleteEq, mockFrom, mockSingle },
   }
 })
 
@@ -63,6 +67,7 @@ const mockEq: jest.Mock       = __mocks.mockEq
 const mockInsert: jest.Mock   = __mocks.mockInsert
 const mockDelete: jest.Mock   = __mocks.mockDelete
 const mockDeleteEq: jest.Mock = __mocks.mockDeleteEq
+const mockSingle: jest.Mock   = __mocks.mockSingle
 
 const mockConstructEvent      = stripe.webhooks.constructEvent as jest.Mock
 const mockRetrieveSubscription = stripe.subscriptions.retrieve as jest.Mock
@@ -275,6 +280,21 @@ describe('Stripe webhook — customer.subscription.deleted', () => {
       current_period_end: null,
     })
     expect(mockEq).toHaveBeenCalledWith('id', 'user-123')
+  })
+
+  it('does NOT reset when a different (duplicate) subscription is cancelled', async () => {
+    mockConstructEvent.mockReturnValue({
+      type: 'customer.subscription.deleted',
+      data: { object: { id: 'sub_OLD', metadata: { supabase_user_id: 'user-123' }, customer: 'cus_123' } },
+    })
+    // Profile still tracks a different, active subscription.
+    mockSingle.mockResolvedValueOnce({ data: { stripe_subscription_id: 'sub_CURRENT' }, error: null })
+
+    await POST(makeRequest({}))
+
+    expect(mockUpdate).not.toHaveBeenCalledWith(
+      expect.objectContaining({ role: 'guest' })
+    )
   })
 
   it('sends cancellation email after subscription deleted', async () => {
