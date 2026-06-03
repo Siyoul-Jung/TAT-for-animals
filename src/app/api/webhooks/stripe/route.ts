@@ -34,6 +34,15 @@ function getInvoiceSubscriptionId(invoice: Stripe.Invoice): string | null {
   return null
 }
 
+// Stripe reports many subscription statuses; the app stores only three.
+// Map them so the column stays a known set (enforced by a CHECK constraint) —
+// otherwise a status like 'unpaid' would bypass the past_due access block.
+function domainStatus(status: Stripe.Subscription.Status): 'active' | 'past_due' | 'inactive' {
+  if (status === 'active' || status === 'trialing') return 'active'
+  if (status === 'past_due' || status === 'unpaid') return 'past_due'
+  return 'inactive' // canceled, incomplete, incomplete_expired, paused
+}
+
 export async function POST(request: NextRequest) {
   const body = await request.text()
   const signature = request.headers.get('stripe-signature')!
@@ -173,7 +182,7 @@ export async function POST(request: NextRequest) {
           .from('profiles')
           .update({
             role,
-            subscription_status: subscription.status === 'active' ? 'active' : subscription.status,
+            subscription_status: domainStatus(subscription.status),
             ...(periodEndISO ? { current_period_end: periodEndISO } : {}),
           })
           .eq('id', userId)
