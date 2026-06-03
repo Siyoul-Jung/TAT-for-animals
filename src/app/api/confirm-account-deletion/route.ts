@@ -32,14 +32,39 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(`${siteUrl}/?error=link-expired`)
   }
 
-  // Mark as completed before deletion to prevent race conditions
+  // Re-check subscription at confirmation time. A subscription can be created
+  // during the 24h window between request and confirmation; deleting the account
+  // anyway would leave an orphaned subscription billing the customer forever.
+  const { data: profile } = await supabaseAdmin
+    .from('profiles')
+    .select('stripe_subscription_id, paypal_subscription_id')
+    .eq('id', deletionRequest.user_id)
+    .single()
+
+  if (profile?.stripe_subscription_id || profile?.paypal_subscription_id) {
+    return NextResponse.redirect(`${siteUrl}/dashboard?error=cancel-subscription-first`)
+  }
+
+  // Mark as completed before deletion to prevent race conditions (double-click
+  // on the email link). If the delete fails, revert to pending so it can retry.
   await supabaseAdmin
     .from('account_deletion_requests')
     .update({ status: 'completed' })
     .eq('token', token)
 
   // Delete user — cascades to profiles via ON DELETE CASCADE
-  await supabaseAdmin.auth.admin.deleteUser(deletionRequest.user_id)
+  const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(
+    deletionRequest.user_id
+  )
+
+  if (deleteError) {
+    console.error('Account deletion failed:', deleteError)
+    await supabaseAdmin
+      .from('account_deletion_requests')
+      .update({ status: 'pending' })
+      .eq('token', token)
+    return NextResponse.redirect(`${siteUrl}/?error=deletion-failed`)
+  }
 
   return NextResponse.redirect(`${siteUrl}/?deleted=true`)
 }

@@ -116,6 +116,12 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('PayPal webhook error:', error)
+    // Roll back the idempotency marker so PayPal's retry can reprocess this
+    // event instead of it being permanently swallowed as "already processed".
+    await supabaseAdmin
+      .from('processed_webhook_events')
+      .delete()
+      .eq('id', event.id)
     return NextResponse.json({ error: 'Webhook handler failed' }, { status: 500 })
   }
 }
