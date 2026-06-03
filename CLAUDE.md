@@ -101,7 +101,7 @@ src/
 │   └── supabase/ client.ts · server.ts
 │
 └── sanity/schemaTypes/
-    ├── video.ts                          — 영상 스키마 (tier: basic/premium)
+    ├── video.ts                          — 영상 스키마 (library: TAT for Animals / ACEs)
     ├── webinarRecording.ts               — 웨비나 녹화
     └── webinarSchedule.ts               — 예정 세션
 ```

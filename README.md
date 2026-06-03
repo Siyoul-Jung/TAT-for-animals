@@ -30,7 +30,7 @@ Stripe is the source of truth for billing. A webhook handler keeps the Supabase 
 The Supabase service role key (which bypasses Row Level Security) is used only in the Stripe webhook handler, where the request is already verified by Stripe's signature. All other server routes use the anon key with RLS.
 
 **Sanity for content, Supabase for users**
-Sanity manages videos and webinar schedules. Supabase manages authentication and subscription state. The `tier` field on each Sanity video document (`basic` / `premium`) determines which subscribers can access it — checked server-side at render time.
+Sanity manages videos and webinar schedules. Supabase manages authentication and subscription state. Both membership tiers can access the full video library (TAT for Animals + Healing ACEs Plus); the monthly live-webinar recordings are gated to The Calm Circle (`pro_subscriber`) and checked server-side at render time.
 
 ---
 
