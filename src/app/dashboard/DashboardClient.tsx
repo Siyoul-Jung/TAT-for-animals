@@ -125,7 +125,7 @@ export default function DashboardClient({
         )}
 
         {/* Membership card */}
-        <section id="your-membership" className="scroll-mt-24 bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm space-y-5">
+        <section className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm space-y-5">
           <h2 className="text-xs font-semibold uppercase tracking-widest text-charcoal/65">
             Your Membership
           </h2>
@@ -222,9 +222,12 @@ export default function DashboardClient({
             <div className="py-3.5">
               <p className="text-sm text-charcoal/65">Delete account</p>
               {hasSubscription ? (
-                <p className="mt-3 text-sm text-charcoal/65 leading-relaxed">
-                  Please cancel your subscription before deleting your account. You can do this above under <a href="#your-membership" className="font-medium text-brand hover:underline">Your Membership</a>.
-                </p>
+                <div className="mt-3 space-y-3">
+                  <p className="text-sm text-charcoal/65 leading-relaxed">
+                    Please cancel your subscription first. You can do that here.
+                  </p>
+                  <ManageSubscriptionButton label="Manage subscription" />
+                </div>
               ) : deleteRequested ? (
                 <p className="mt-3 text-sm text-charcoal/65 leading-relaxed">
                   Check your email — we sent a confirmation link to delete your account.
