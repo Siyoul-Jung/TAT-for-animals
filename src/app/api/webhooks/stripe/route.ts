@@ -2,15 +2,9 @@ import { stripe } from '@/lib/stripe'
 import { resend, FROM_EMAIL } from '@/lib/resend'
 import { welcomeEmail } from '@/lib/emails/welcome'
 import { cancellationEmail } from '@/lib/emails/cancellation'
-import { createClient } from '@supabase/supabase-js'
+import { supabaseAdmin } from '@/lib/supabase/admin'
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
-
-// Webhook must bypass RLS, so service_role_key is used
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
 
 // Subscription plan → role mapping
 // Manage Price IDs and roles here after pricing is confirmed

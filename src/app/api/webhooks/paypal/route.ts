@@ -1,11 +1,6 @@
-import { createClient } from '@supabase/supabase-js'
+import { supabaseAdmin } from '@/lib/supabase/admin'
 import { paypalRequest, PLAN_ROLE_MAP } from '@/lib/paypal'
 import { NextRequest, NextResponse } from 'next/server'
-
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
 
 async function verifyWebhook(request: NextRequest, body: string): Promise<boolean> {
   const webhookId = process.env.PAYPAL_WEBHOOK_ID
