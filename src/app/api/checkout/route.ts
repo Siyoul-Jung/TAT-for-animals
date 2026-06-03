@@ -61,6 +61,17 @@ export async function POST(request: NextRequest) {
       .eq('id', user.id)
   }
 
+  // Defense in depth: the profile check above only sees what the webhook has
+  // recorded. Ask Stripe directly so a delayed or missed webhook can't let the
+  // same customer open a second subscription.
+  const activeSubs = await stripe.subscriptions.list({ customer: customerId, status: 'active', limit: 1 })
+  if (activeSubs.data.length > 0) {
+    return NextResponse.json(
+      { error: 'You already have an active subscription. To change your plan, use the upgrade option in your dashboard.' },
+      { status: 400 }
+    )
+  }
+
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL!
 
   const session = await stripe.checkout.sessions.create({
