@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { safeNextPath } from '@/lib/utils'
 import { NextRequest, NextResponse } from 'next/server'
 
 // Supabase redirects here after magic link click
@@ -6,7 +7,7 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
-  const next = searchParams.get('next') ?? '/membership'
+  const next = safeNextPath(searchParams.get('next'), '/membership')
 
   if (code) {
     const supabase = await createClient()

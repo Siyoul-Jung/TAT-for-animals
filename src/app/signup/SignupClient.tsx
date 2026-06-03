@@ -1,16 +1,16 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
+import { safeNextPath } from '@/lib/utils'
 import Button from '@/components/ui/Button'
 
 export default function SignupClient() {
-  const router = useRouter()
   const searchParams = useSearchParams()
-  const next = searchParams.get('next') ?? '/membership'
+  const next = safeNextPath(searchParams.get('next'), '/membership')
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -71,7 +71,7 @@ export default function SignupClient() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h2 className="font-serif text-2xl text-charcoal mb-3">You're almost in</h2>
+            <h2 className="font-serif text-2xl text-charcoal mb-3">You&apos;re almost in</h2>
             <p className="text-base text-muted leading-relaxed mb-2">
               We sent a confirmation link to
             </p>

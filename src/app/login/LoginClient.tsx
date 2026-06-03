@@ -5,12 +5,13 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
+import { safeNextPath } from '@/lib/utils'
 import Button from '@/components/ui/Button'
 
 export default function LoginClient() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const next = searchParams.get('next') ?? '/dashboard'
+  const next = safeNextPath(searchParams.get('next'))
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -90,7 +91,7 @@ export default function LoginClient() {
             </p>
             <p className="text-base font-medium text-charcoal mb-8">{email}</p>
             <p className="text-xs text-muted">
-              Didn't receive it?{' '}
+              Didn&apos;t receive it?{' '}
               <button onClick={() => setMagicSent(false)} className="text-brand hover:underline">
                 Try again
               </button>
@@ -220,7 +221,7 @@ export default function LoginClient() {
               {magicLoading ? 'Sending…' : 'Email me a sign-in link instead'}
             </button>
             <p className="text-xs text-muted text-center mt-3 leading-relaxed">
-              We'll send a link to your email — no password needed.
+              We&apos;ll send a link to your email — no password needed.
             </p>
           </div>
         </div>
