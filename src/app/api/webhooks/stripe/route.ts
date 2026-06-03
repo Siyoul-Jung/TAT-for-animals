@@ -19,6 +19,27 @@ const PRICE_ROLE_MAP: Record<string, string> = {
   [process.env.STRIPE_PRICE_CALM_CIRCLE!]:  'pro_subscriber',
 }
 
+// Stripe API 2025-03-31 (basil) and later moved `current_period_end` off the
+// Subscription object onto each Subscription Item. Read it from there.
+function getPeriodEndISO(subscription: Stripe.Subscription): string | null {
+  const periodEnd = subscription.items.data[0]?.current_period_end
+  return periodEnd ? new Date(periodEnd * 1000).toISOString() : null
+}
+
+// The same release removed `Invoice.subscription`; it now lives under
+// `invoice.parent.subscription_details.subscription`. Fall back to the legacy
+// field so older in-flight events are still handled.
+function getInvoiceSubscriptionId(invoice: Stripe.Invoice): string | null {
+  const fromParent = invoice.parent?.subscription_details?.subscription
+  if (typeof fromParent === 'string') return fromParent
+  if (fromParent && typeof fromParent === 'object') return fromParent.id
+
+  const legacy = (invoice as unknown as { subscription?: string | { id: string } }).subscription
+  if (typeof legacy === 'string') return legacy
+  if (legacy && typeof legacy === 'object') return legacy.id
+  return null
+}
+
 export async function POST(request: NextRequest) {
   const body = await request.text()
   const signature = request.headers.get('stripe-signature')!
@@ -67,9 +88,7 @@ export async function POST(request: NextRequest) {
           role,
           stripe_subscription_id: subscriptionId,
           subscription_status: 'active',
-          current_period_end: (subscription as any).current_period_end
-            ? new Date((subscription as any).current_period_end * 1000).toISOString()
-            : null,
+          current_period_end: getPeriodEndISO(subscription),
         }
 
         const customerName = session.customer_details?.name
@@ -103,19 +122,19 @@ export async function POST(request: NextRequest) {
       // Subscription renewal succeeded
       case 'invoice.payment_succeeded': {
         const invoice = event.data.object as Stripe.Invoice
-        const subscriptionId = (invoice as any).subscription as string
+        const subscriptionId = getInvoiceSubscriptionId(invoice)
         if (!subscriptionId) break
 
         const subscription = await stripe.subscriptions.retrieve(subscriptionId)
         const userId = subscription.metadata?.supabase_user_id
         if (!userId) break
 
-        const periodEnd = (subscription as any).current_period_end
+        const periodEndISO = getPeriodEndISO(subscription)
         await supabaseAdmin
           .from('profiles')
           .update({
             subscription_status: 'active',
-            ...(periodEnd ? { current_period_end: new Date(periodEnd * 1000).toISOString() } : {}),
+            ...(periodEndISO ? { current_period_end: periodEndISO } : {}),
           })
           .eq('id', userId)
 
@@ -125,7 +144,7 @@ export async function POST(request: NextRequest) {
       // Payment failed
       case 'invoice.payment_failed': {
         const invoice = event.data.object as Stripe.Invoice
-        const subscriptionId = (invoice as any).subscription as string
+        const subscriptionId = getInvoiceSubscriptionId(invoice)
         if (!subscriptionId) break
 
         const subscription = await stripe.subscriptions.retrieve(subscriptionId)
@@ -155,13 +174,13 @@ export async function POST(request: NextRequest) {
         const priceId = subscription.items.data[0]?.price.id
         const role = PRICE_ROLE_MAP[priceId] ?? 'subscriber'
 
-        const periodEnd = (subscription as any).current_period_end
+        const periodEndISO = getPeriodEndISO(subscription)
         await supabaseAdmin
           .from('profiles')
           .update({
             role,
             subscription_status: subscription.status === 'active' ? 'active' : subscription.status,
-            ...(periodEnd ? { current_period_end: new Date(periodEnd * 1000).toISOString() } : {}),
+            ...(periodEndISO ? { current_period_end: periodEndISO } : {}),
           })
           .eq('id', userId)
 
@@ -208,6 +227,13 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Webhook error:', error)
+    // Roll back the idempotency marker so Stripe's automatic retry can
+    // reprocess this event — otherwise a transient failure would be
+    // permanently swallowed as "already processed".
+    await supabaseAdmin
+      .from('processed_webhook_events')
+      .delete()
+      .eq('id', event.id)
     return NextResponse.json({ error: 'Webhook handler failed' }, { status: 500 })
   }
 }

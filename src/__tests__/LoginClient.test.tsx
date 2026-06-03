@@ -5,8 +5,9 @@ import LoginClient from '@/app/login/LoginClient'
 // Mock Next.js navigation
 const mockPush = jest.fn()
 const mockRefresh = jest.fn()
+const mockReplace = jest.fn()
 jest.mock('next/navigation', () => ({
-  useRouter: () => ({ push: mockPush, refresh: mockRefresh }),
+  useRouter: () => ({ push: mockPush, refresh: mockRefresh, replace: mockReplace }),
   useSearchParams: () => ({ get: () => null }),
 }))
 
@@ -19,11 +20,13 @@ jest.mock('next/image', () => ({
 // Mock Supabase client
 const mockSignInWithPassword = jest.fn()
 const mockSignInWithOtp = jest.fn()
+const mockGetUser = jest.fn().mockResolvedValue({ data: { user: null } })
 jest.mock('@/lib/supabase/client', () => ({
   createClient: () => ({
     auth: {
       signInWithPassword: mockSignInWithPassword,
       signInWithOtp: mockSignInWithOtp,
+      getUser: mockGetUser,
     },
   }),
 }))

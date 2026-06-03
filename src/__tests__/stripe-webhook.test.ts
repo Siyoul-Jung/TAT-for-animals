@@ -15,10 +15,17 @@ process.env.STRIPE_PRICE_CALM_CIRCLE = 'price_circle'
 jest.mock('@supabase/supabase-js', () => {
   const mockEq = jest.fn().mockResolvedValue({ error: null })
   const mockUpdate = jest.fn().mockReturnValue({ eq: mockEq })
-  const mockFrom = jest.fn().mockReturnValue({ update: mockUpdate })
+  const mockInsert = jest.fn().mockResolvedValue({ error: null })
+  const mockDeleteEq = jest.fn().mockResolvedValue({ error: null })
+  const mockDelete = jest.fn().mockReturnValue({ eq: mockDeleteEq })
+  const mockFrom = jest.fn().mockReturnValue({
+    update: mockUpdate,
+    insert: mockInsert,
+    delete: mockDelete,
+  })
   return {
     createClient: () => ({ from: mockFrom }),
-    __mocks: { mockEq, mockUpdate, mockFrom },
+    __mocks: { mockEq, mockUpdate, mockInsert, mockDelete, mockDeleteEq, mockFrom },
   }
 })
 
@@ -50,9 +57,12 @@ import { stripe } from '@/lib/stripe'
 import { resend } from '@/lib/resend'
 
 const { __mocks } = jest.requireMock('@supabase/supabase-js')
-const mockFrom: jest.Mock   = __mocks.mockFrom
-const mockUpdate: jest.Mock = __mocks.mockUpdate
-const mockEq: jest.Mock     = __mocks.mockEq
+const mockFrom: jest.Mock     = __mocks.mockFrom
+const mockUpdate: jest.Mock   = __mocks.mockUpdate
+const mockEq: jest.Mock       = __mocks.mockEq
+const mockInsert: jest.Mock   = __mocks.mockInsert
+const mockDelete: jest.Mock   = __mocks.mockDelete
+const mockDeleteEq: jest.Mock = __mocks.mockDeleteEq
 
 const mockConstructEvent      = stripe.webhooks.constructEvent as jest.Mock
 const mockRetrieveSubscription = stripe.subscriptions.retrieve as jest.Mock
@@ -71,9 +81,9 @@ function makeRequest(body: object, signature = 'valid-sig') {
 function makeSubscription(overrides = {}) {
   return {
     id: 'sub_123',
-    items: { data: [{ price: { id: 'price_library' } }] },
+    // current_period_end now lives on the subscription item (Stripe basil+)
+    items: { data: [{ id: 'si_123', price: { id: 'price_library' }, current_period_end: 1800000000 }] },
     metadata: { supabase_user_id: 'user-123' },
-    current_period_end: 1800000000,
     customer: 'cus_123',
     ...overrides,
   }
@@ -202,7 +212,23 @@ describe('Stripe webhook — checkout.session.completed', () => {
 })
 
 describe('Stripe webhook — invoice.payment_succeeded', () => {
-  it('updates subscription_status to active on renewal', async () => {
+  // Stripe basil+ delivers the subscription id under parent.subscription_details
+  it('updates subscription_status to active on renewal (new payload shape)', async () => {
+    mockConstructEvent.mockReturnValue({
+      type: 'invoice.payment_succeeded',
+      data: { object: { parent: { subscription_details: { subscription: 'sub_123' } } } },
+    })
+    mockRetrieveSubscription.mockResolvedValue(makeSubscription())
+
+    await POST(makeRequest({}))
+
+    expect(mockUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({ subscription_status: 'active' })
+    )
+  })
+
+  // Older in-flight events may still carry the legacy top-level field
+  it('still handles the legacy invoice.subscription field', async () => {
     mockConstructEvent.mockReturnValue({
       type: 'invoice.payment_succeeded',
       data: { object: { subscription: 'sub_123' } },
@@ -218,16 +244,17 @@ describe('Stripe webhook — invoice.payment_succeeded', () => {
 })
 
 describe('Stripe webhook — invoice.payment_failed', () => {
-  it('sets subscription_status to past_due on failed payment', async () => {
+  it('sets subscription_status to past_due on failed payment (new payload shape)', async () => {
     mockConstructEvent.mockReturnValue({
       type: 'invoice.payment_failed',
-      data: { object: { subscription: 'sub_123' } },
+      data: { object: { parent: { subscription_details: { subscription: 'sub_123' } } } },
     })
+    mockRetrieveSubscription.mockResolvedValue(makeSubscription())
 
     await POST(makeRequest({}))
 
     expect(mockUpdate).toHaveBeenCalledWith({ subscription_status: 'past_due' })
-    expect(mockEq).toHaveBeenCalledWith('stripe_subscription_id', 'sub_123')
+    expect(mockEq).toHaveBeenCalledWith('id', 'user-123')
   })
 })
 
@@ -274,5 +301,57 @@ describe('Stripe webhook — customer.subscription.deleted', () => {
     await POST(makeRequest({}))
 
     expect(mockSendEmail).not.toHaveBeenCalled()
+  })
+})
+
+describe('Stripe webhook — current_period_end', () => {
+  it('reads current_period_end from the subscription item, not the subscription object', async () => {
+    mockConstructEvent.mockReturnValue(makeCheckoutEvent())
+    mockRetrieveSubscription.mockResolvedValue(makeSubscription())
+
+    await POST(makeRequest({}))
+
+    expect(mockUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        current_period_end: new Date(1800000000 * 1000).toISOString(),
+      })
+    )
+  })
+
+  it('falls back to null when the item has no period end', async () => {
+    mockConstructEvent.mockReturnValue(makeCheckoutEvent())
+    mockRetrieveSubscription.mockResolvedValue(
+      makeSubscription({ items: { data: [{ price: { id: 'price_library' } }] } })
+    )
+
+    await POST(makeRequest({}))
+
+    expect(mockUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({ current_period_end: null })
+    )
+  })
+})
+
+describe('Stripe webhook — idempotency', () => {
+  it('short-circuits when the event was already processed (unique-violation 23505)', async () => {
+    mockConstructEvent.mockReturnValue(makeCheckoutEvent())
+    mockInsert.mockResolvedValueOnce({ error: { code: '23505' } })
+
+    const res = await POST(makeRequest({}))
+
+    expect((await res.json()).received).toBe(true)
+    expect(mockUpdate).not.toHaveBeenCalled()
+  })
+
+  it('rolls back the idempotency marker when the handler throws, so retries can reprocess', async () => {
+    mockConstructEvent.mockReturnValue({ id: 'evt_boom', ...makeCheckoutEvent() })
+    // Force the handler to throw after the idempotency row was inserted
+    mockRetrieveSubscription.mockRejectedValueOnce(new Error('Stripe API down'))
+
+    const res = await POST(makeRequest({}))
+
+    expect(res.status).toBe(500)
+    expect(mockDelete).toHaveBeenCalled()
+    expect(mockDeleteEq).toHaveBeenCalledWith('id', 'evt_boom')
   })
 })

@@ -4,6 +4,7 @@ import SignupClient from '@/app/signup/SignupClient'
 
 jest.mock('next/navigation', () => ({
   useRouter: () => ({ push: jest.fn(), refresh: jest.fn() }),
+  useSearchParams: () => ({ get: () => null }),
 }))
 
 jest.mock('next/image', () => ({

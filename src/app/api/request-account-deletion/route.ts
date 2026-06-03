@@ -46,7 +46,7 @@ export async function POST() {
   const token = crypto.randomUUID()
   const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
 
-  await supabaseAdmin
+  const { data: inserted, error: insertError } = await supabaseAdmin
     .from('account_deletion_requests')
     .insert({
       user_id: user.id,
@@ -55,16 +55,41 @@ export async function POST() {
       token,
       expires_at: expiresAt,
     })
+    .select('id')
+    .single()
+
+  if (insertError || !inserted) {
+    console.error('Account deletion request insert failed:', insertError)
+    return NextResponse.json(
+      { error: 'Something went wrong. Please try again.' },
+      { status: 500 }
+    )
+  }
 
   const confirmUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/api/confirm-account-deletion?token=${token}`
   const { subject, html } = accountDeletionEmail(confirmUrl)
 
-  await resend.emails.send({
-    from: FROM_EMAIL,
-    to: user.email!,
-    subject,
-    html,
-  })
+  try {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: user.email!,
+      subject,
+      html,
+    })
+  } catch (emailError) {
+    // The confirmation email is the only way to complete deletion, so a failed
+    // send must roll back the pending row — otherwise the "already pending"
+    // guard above would lock the user out for 24 hours with no way to confirm.
+    console.error('Account deletion email failed:', emailError)
+    await supabaseAdmin
+      .from('account_deletion_requests')
+      .delete()
+      .eq('id', inserted.id)
+    return NextResponse.json(
+      { error: "We couldn't send the confirmation email. Please try again." },
+      { status: 500 }
+    )
+  }
 
   return NextResponse.json({ success: true })
 }
