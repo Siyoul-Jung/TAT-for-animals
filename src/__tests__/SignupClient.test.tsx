@@ -148,7 +148,7 @@ describe('SignupClient — success screen', () => {
     await fillForm('newuser@test.com', 'password123', 'password123')
 
     await waitFor(() => {
-      expect(screen.getByRole('link', { name: 'Sign in here' })).toBeInTheDocument()
+      expect(screen.getByRole('link', { name: 'Sign in to continue' })).toBeInTheDocument()
     })
   })
 })
