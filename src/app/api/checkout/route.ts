@@ -2,11 +2,7 @@ import { stripe } from '@/lib/stripe'
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 
-if (!process.env.STRIPE_PRICE_CALM_LIBRARY || !process.env.STRIPE_PRICE_CALM_CIRCLE) {
-  throw new Error('Missing required env vars: STRIPE_PRICE_CALM_LIBRARY, STRIPE_PRICE_CALM_CIRCLE')
-}
-
-const PRICE_IDS: Record<string, string> = {
+const PRICE_IDS: Record<string, string | undefined> = {
   calm_library: process.env.STRIPE_PRICE_CALM_LIBRARY,
   calm_circle:  process.env.STRIPE_PRICE_CALM_CIRCLE,
 }

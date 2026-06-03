@@ -1,11 +1,6 @@
-import { createClient as createAdminClient } from '@supabase/supabase-js'
+import { supabaseAdmin } from '@/lib/supabase/admin'
 import { paypalRequest, PLAN_ROLE_MAP } from '@/lib/paypal'
 import { NextRequest, NextResponse } from 'next/server'
-
-const supabaseAdmin = createAdminClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)

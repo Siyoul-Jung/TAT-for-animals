@@ -1,13 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
-import { createClient as createAdminClient } from '@supabase/supabase-js'
+import { supabaseAdmin } from '@/lib/supabase/admin'
 import { resend, FROM_EMAIL } from '@/lib/resend'
 import { accountDeletionEmail } from '@/lib/emails/account-deletion'
 import { NextResponse } from 'next/server'
-
-const supabaseAdmin = createAdminClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
 
 export async function POST() {
   const supabase = await createClient()
