@@ -6,8 +6,10 @@ import { motion, useInView } from 'framer-motion';
 import { Play } from 'lucide-react';
 import Link from 'next/link';
 
-const EMBED_SRC = 'https://www.youtube.com/embed/UpbujaNsKKA?rel=0&autoplay=1';
-const THUMBNAIL = 'https://img.youtube.com/vi/UpbujaNsKKA/maxresdefault.jpg';
+// TAT for Animals homepage demo (Vimeo, unlisted — h= is the privacy hash from Jez's link).
+// dnt=1 = do-not-track; title/byline/portrait hidden for a clean frame.
+const EMBED_SRC = 'https://player.vimeo.com/video/1198312189?h=a5438c1c2f&autoplay=1&title=0&byline=0&portrait=0&dnt=1';
+const THUMBNAIL = 'https://i.vimeocdn.com/video/2164871332-82ad71535420021c251d59b77f1996fd26e6d47d3a901de5ea6000007a0570a5-d_1280?region=us';
 
 
 export default function TrySession() {
@@ -50,9 +52,10 @@ export default function TrySession() {
             Help your animal feel more<br className="hidden sm:block" /> joyful, relaxed, and at peace.
           </h2>
           <p className="text-base sm:text-lg text-charcoal/65 font-light leading-relaxed max-w-xl mx-auto">
-            TAT helped Luna reconnect with the world around her
-            in a way that felt safe and joyful.
-            You can do the same for your cat, your dog, or any animal.
+            In just a few quiet minutes, TAT can help your animal
+            feel safer, softer, and more at ease.
+            Watch a short intro with Tapas — then try it with your
+            own cat, dog, or any animal you love.
           </p>
         </motion.div>
 
@@ -96,16 +99,21 @@ export default function TrySession() {
                     />
                   </motion.div>
                 </div>
+                {/* Scrim — gentle warm radial veil so the play button stands out
+                    over any thumbnail, while the corners stay bright/airy. */}
                 <div
-                  className="absolute inset-0"
-                  style={{ backgroundColor: 'transparent' }}
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    background:
+                      'radial-gradient(ellipse 70% 60% at 50% 50%, rgba(28,15,7,0.35) 0%, rgba(28,15,7,0.10) 55%, rgba(28,15,7,0) 80%)',
+                  }}
                 />
                 <button
                   onClick={() => setIsPlaying(true)}
                   className="absolute inset-0 w-full h-full flex flex-col items-center justify-center"
                   aria-label="Play TAT for Animals video"
                 >
-                  <div className="relative mb-5">
+                  <div className="relative">
                     {/* Pulse ring */}
                     {isInView && (
                       <motion.div
@@ -127,12 +135,6 @@ export default function TrySession() {
                       <Play size={28} fill="white" className="text-white ml-1" />
                     </motion.div>
                   </div>
-                  <p
-                    className="text-sm font-light tracking-wide"
-                    style={{ color: 'rgba(250,246,241,0.7)' }}
-                  >
-                    Watch how TAT works for animals
-                  </p>
                 </button>
               </div>
             )}
