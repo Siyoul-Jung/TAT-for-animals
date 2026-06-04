@@ -61,7 +61,7 @@ export default function DashboardClient({
   const [deleteRequested, setDeleteRequested] = useState(false)
 
   const nextChargeDate = formatPeriodEnd(currentPeriodEnd)
-  const displayName = fullName || null
+  const displayName = fullName ? fullName.trim().split(/\s+/)[0] : null
   const plan = PLAN_INFO[role]
   const badge = STATUS_BADGE[subscriptionStatus] ?? STATUS_BADGE.inactive
 
@@ -104,7 +104,7 @@ export default function DashboardClient({
           <p className="text-sm font-medium text-charcoal/65 uppercase tracking-widest mb-1">
             Dashboard
           </p>
-          <h1 className="text-3xl text-charcoal font-medium tracking-tight">
+          <h1 className="text-2xl sm:text-3xl text-charcoal font-medium tracking-tight">
             {displayName ? (
               <>Good to see you, <span className="font-semibold">{displayName}</span>.</>
             ) : (
