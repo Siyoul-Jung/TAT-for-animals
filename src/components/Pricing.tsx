@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Check } from 'lucide-react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 
 const tiers = [
@@ -178,6 +179,14 @@ export default function Pricing() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 Cancel anytime
+              </p>
+
+              {/* Billing disclosure — surfaces the recurring/refund terms at point of purchase */}
+              <p className="text-center text-xs mt-2 text-charcoal/50 leading-relaxed">
+                Billed monthly · No refunds.{' '}
+                <Link href="/terms" className="underline hover:text-brand transition-colors">
+                  See Terms
+                </Link>
               </p>
             </motion.div>
           ))}
