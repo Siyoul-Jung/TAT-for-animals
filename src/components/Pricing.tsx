@@ -181,9 +181,10 @@ export default function Pricing() {
                 Cancel anytime
               </p>
 
-              {/* Billing disclosure — surfaces the recurring/refund terms at point of purchase */}
-              <p className="text-center text-xs mt-2 text-charcoal/50 leading-relaxed">
-                Billed monthly · No refunds.{' '}
+              {/* Billing disclosure — recurring terms at point of purchase.
+                  Refund policy lives in Terms (not shouted on the card — see industry norm). */}
+              <p className="text-center text-xs mt-2 text-charcoal/65 leading-relaxed">
+                Billed monthly until you cancel.{' '}
                 <Link href="/terms" className="underline hover:text-brand transition-colors">
                   See Terms
                 </Link>
