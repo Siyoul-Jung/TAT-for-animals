@@ -104,8 +104,12 @@ export default function DashboardClient({
           <p className="text-sm font-medium text-charcoal/65 uppercase tracking-widest mb-1">
             Dashboard
           </p>
-          <h1 className="font-serif text-3xl text-charcoal">
-            {displayName ? `Welcome back, ${displayName}.` : 'Welcome back.'}
+          <h1 className="text-3xl text-charcoal font-medium tracking-tight">
+            {displayName ? (
+              <>Good to see you, <span className="font-semibold">{displayName}</span>.</>
+            ) : (
+              'Good to see you.'
+            )}
           </h1>
           <p className="text-charcoal/65 mt-1 text-base">{email}</p>
         </div>
