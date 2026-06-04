@@ -99,18 +99,18 @@ export default function TrySession() {
                     />
                   </motion.div>
                 </div>
-                {/* Scrim — gentle warm radial veil so the play button stands out
-                    over any thumbnail, while the corners stay bright/airy. */}
+                {/* Dim — gentle even warm overlay so the centered play button reads as
+                    "video to play" (the familiar YouTube/Vimeo look), not a sticker on the photo. */}
                 <div
                   className="absolute inset-0 pointer-events-none"
                   style={{
                     background:
-                      'radial-gradient(ellipse 70% 60% at 50% 50%, rgba(28,15,7,0.35) 0%, rgba(28,15,7,0.10) 55%, rgba(28,15,7,0) 80%)',
+                      'radial-gradient(ellipse at center, rgba(28,15,7,0.40) 0%, rgba(28,15,7,0.28) 100%)',
                   }}
                 />
                 <button
                   onClick={() => setIsPlaying(true)}
-                  className="absolute inset-0 w-full h-full flex flex-col items-center justify-center"
+                  className="absolute inset-0 w-full h-full flex items-center justify-center"
                   aria-label="Play TAT for Animals video"
                 >
                   <div className="relative">
