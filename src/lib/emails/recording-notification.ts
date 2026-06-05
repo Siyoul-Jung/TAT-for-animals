@@ -29,7 +29,7 @@ export function recordingNotificationEmail(
           <!-- Header -->
           <tr>
             <td style="padding-bottom:40px;">
-              <p style="margin:0;font-family:'Helvetica Neue',sans-serif;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#5E9635;font-weight:600;">
+              <p style="margin:0;font-family:'Helvetica Neue',sans-serif;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#4A7A29;font-weight:600;">
                 TAT for Animals — New Recording
               </p>
             </td>
@@ -51,7 +51,7 @@ export function recordingNotificationEmail(
           <!-- Summary -->
           <tr>
             <td style="padding:32px 0;border-bottom:1px solid rgba(28,16,7,0.08);">
-              <p style="margin:0 0 6px;font-family:'Helvetica Neue',sans-serif;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(212,112,58,0.7);font-weight:500;">
+              <p style="margin:0 0 6px;font-family:'Helvetica Neue',sans-serif;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:#B05A28;font-weight:600;">
                 In this session
               </p>
               <p style="margin:0;font-family:'Helvetica Neue',sans-serif;font-size:15px;color:rgba(28,16,7,0.6);line-height:1.7;font-weight:300;">
@@ -65,7 +65,7 @@ export function recordingNotificationEmail(
           <tr>
             <td style="padding:32px 0;border-bottom:1px solid rgba(28,16,7,0.08);">
               <a href="${recording.recordingUrl}"
-                style="display:inline-block;padding:14px 32px;background:#D4703A;color:#FBF5F3;font-family:'Helvetica Neue',sans-serif;font-size:15px;font-weight:600;text-decoration:none;border-radius:100px;">
+                style="display:inline-block;padding:14px 32px;background:#D4703A;color:#1C1007;font-family:'Helvetica Neue',sans-serif;font-size:15px;font-weight:600;text-decoration:none;border-radius:100px;">
                 Watch the recording →
               </a>
             </td>
@@ -74,10 +74,10 @@ export function recordingNotificationEmail(
           <!-- Footer -->
           <tr>
             <td style="padding-top:32px;">
-              <p style="margin:0 0 8px;font-family:'Helvetica Neue',sans-serif;font-size:12px;color:rgba(28,16,7,0.35);line-height:1.6;">
+              <p style="margin:0 0 8px;font-family:'Helvetica Neue',sans-serif;font-size:12px;color:rgba(28,16,7,0.6);line-height:1.6;">
                 You're receiving this because you're a member of The Calm Circle.
               </p>
-              <p style="margin:0;font-family:'Helvetica Neue',sans-serif;font-size:12px;color:rgba(28,16,7,0.25);">
+              <p style="margin:0;font-family:'Helvetica Neue',sans-serif;font-size:12px;color:rgba(28,16,7,0.6);">
                 © 2026 TATLife®, Inc. · tatforanimals.com
               </p>
             </td>

@@ -18,7 +18,7 @@ export function accountDeletionEmail(confirmUrl: string): { subject: string; htm
           <!-- Header -->
           <tr>
             <td style="padding-bottom:40px;">
-              <p style="margin:0;font-family:'Helvetica Neue',sans-serif;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#5E9635;font-weight:600;">
+              <p style="margin:0;font-family:'Helvetica Neue',sans-serif;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#4A7A29;font-weight:600;">
                 TAT for Animals
               </p>
             </td>
@@ -53,7 +53,7 @@ export function accountDeletionEmail(confirmUrl: string): { subject: string; htm
           <!-- Footer -->
           <tr>
             <td style="padding-top:32px;">
-              <p style="margin:0;font-family:'Helvetica Neue',sans-serif;font-size:12px;color:rgba(28,16,7,0.25);">
+              <p style="margin:0;font-family:'Helvetica Neue',sans-serif;font-size:12px;color:rgba(28,16,7,0.6);">
                 © 2026 TATLife®, Inc. · tatforanimals.com
               </p>
             </td>

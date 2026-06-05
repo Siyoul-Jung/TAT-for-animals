@@ -19,7 +19,7 @@ export function cancellationEmail(name: string | null): { subject: string; html:
           <!-- Header -->
           <tr>
             <td style="padding-bottom:40px;">
-              <p style="margin:0;font-family:'Helvetica Neue',sans-serif;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#5E9635;font-weight:600;">
+              <p style="margin:0;font-family:'Helvetica Neue',sans-serif;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#4A7A29;font-weight:600;">
                 TAT for Animals
               </p>
             </td>
@@ -45,7 +45,7 @@ export function cancellationEmail(name: string | null): { subject: string; html:
                 Whenever you feel ready to return, your animal will be waiting.
               </p>
               <a href="https://tatforanimals.com/membership"
-                style="display:inline-block;padding:14px 32px;background:#D4703A;color:#FBF5F3;font-family:'Helvetica Neue',sans-serif;font-size:15px;font-weight:600;text-decoration:none;border-radius:100px;">
+                style="display:inline-block;padding:14px 32px;background:#D4703A;color:#1C1007;font-family:'Helvetica Neue',sans-serif;font-size:15px;font-weight:600;text-decoration:none;border-radius:100px;">
                 Rejoin anytime →
               </a>
             </td>
@@ -54,7 +54,7 @@ export function cancellationEmail(name: string | null): { subject: string; html:
           <!-- Footer -->
           <tr>
             <td style="padding-top:32px;border-top:1px solid rgba(28,16,7,0.08);">
-              <p style="margin:0;font-family:'Helvetica Neue',sans-serif;font-size:12px;color:rgba(28,16,7,0.25);">
+              <p style="margin:0;font-family:'Helvetica Neue',sans-serif;font-size:12px;color:rgba(28,16,7,0.6);">
                 © 2026 TATLife®, Inc. · tatforanimals.com
               </p>
             </td>
