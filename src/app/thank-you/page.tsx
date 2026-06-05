@@ -7,7 +7,7 @@ import { Suspense } from 'react';
 
 function ThankYouContent() {
   return (
-    <div className="min-h-[60vh] bg-cream flex items-center justify-center px-6 pt-28 pb-20">
+    <div className="min-h-[calc(100dvh-5rem)] bg-cream flex items-center justify-center px-6 py-24">
       <div className="w-full max-w-sm sm:max-w-md lg:max-w-lg">
 
         <motion.div
