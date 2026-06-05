@@ -1,25 +1,36 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { Check } from 'lucide-react';
 import Link from 'next/link';
 import { Suspense } from 'react';
 
 function ThankYouContent() {
   return (
-    <div className="min-h-[70vh] bg-cream flex items-center justify-center px-6 pt-32 pb-20">
+    <div className="min-h-[60vh] bg-cream flex items-center justify-center px-6 pt-28 pb-20">
       <div className="w-full max-w-sm sm:max-w-md lg:max-w-lg">
 
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="space-y-8"
+          className="space-y-7"
         >
 
-          <div className="space-y-4">
-            <p className="text-xs tracking-[0.2em] uppercase font-semibold" style={{ color: '#5E9635' }}>
-              Welcome to TAT for Animals
+          {/* Explicit payment confirmation — reassurance before the warm welcome */}
+          <div className="flex items-center gap-3">
+            <span
+              className="flex items-center justify-center w-11 h-11 rounded-full shrink-0"
+              style={{ backgroundColor: 'rgba(94,150,53,0.14)' }}
+            >
+              <Check size={22} strokeWidth={2.5} style={{ color: '#4A7A29' }} />
+            </span>
+            <p className="text-base font-semibold text-charcoal">
+              Payment confirmed — your membership is active.
             </p>
+          </div>
+
+          <div className="space-y-4">
             <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-charcoal leading-[1.2]">
               Your animal and your healing journey starts here.
             </h1>
