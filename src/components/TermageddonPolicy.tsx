@@ -18,9 +18,21 @@ export default function TermageddonPolicy({ policyId }: { policyId: string }) {
     const script = document.createElement('script');
     script.src = `https://policies.termageddon.com/api/embed/${policyId}.js`;
     script.async = true;
+
+    // Termageddon's embed script defers all of its work to the window `load`
+    // event. On a client-side navigation that event has already fired and never
+    // fires again, so the policy would never populate. Once our script is ready,
+    // re-dispatch `load` if the page is already complete to kick off its fetch.
+    const handleScriptLoad = () => {
+      if (document.readyState === 'complete') {
+        window.dispatchEvent(new Event('load'));
+      }
+    };
+    script.addEventListener('load', handleScriptLoad);
     document.body.appendChild(script);
 
     return () => {
+      script.removeEventListener('load', handleScriptLoad);
       script.remove();
     };
   }, [policyId]);
