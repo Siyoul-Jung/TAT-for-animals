@@ -14,6 +14,7 @@ const navLinks = [
 const legalLinks = [
   { name: 'Privacy Policy', short: 'Privacy', href: '/privacy' },
   { name: 'Terms of Service', short: 'Terms', href: '/terms' },
+  { name: 'Disclaimer', short: 'Disclaimer', href: '/disclaimer' },
 ];
 
 const socials = [
@@ -141,7 +142,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom row — copyright + legal */}
-        <div className="flex items-center justify-between gap-4 pt-2">
+        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 pt-2">
           <p
             className="text-xs font-light"
             style={{ color: 'rgba(250,246,241,0.60)' }}
