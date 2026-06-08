@@ -2,10 +2,10 @@ import type { Metadata } from 'next';
 import TermageddonPolicy from '@/components/TermageddonPolicy';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy — TAT for Animals',
+  title: 'Disclaimer — TAT for Animals',
 };
 
-export default function Privacy() {
+export default function Disclaimer() {
   return (
     <main
       className="min-h-screen pt-28 pb-24 px-6"
@@ -24,10 +24,10 @@ export default function Privacy() {
           className="font-serif text-3xl sm:text-4xl font-medium mb-8 leading-tight"
           style={{ color: '#1C1007' }}
         >
-          Privacy Policy
+          Disclaimer
         </h1>
 
-        <TermageddonPolicy policyId="YURZd1ZVNXdLMmhqUVU1UWMzYzlQUT09" />
+        <TermageddonPolicy policyId="WTJaSmJrcHpkV2RYTDNwQlQxRTlQUT09" />
 
       </div>
     </main>
