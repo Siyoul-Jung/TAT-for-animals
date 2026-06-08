@@ -1,18 +1,11 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-const COMING_SOON = process.env.COMING_SOON === 'true';
-
 // 로그인이 필요한 경로
 const PROTECTED_PATHS = ['/dashboard', '/library']
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
-
-  // Coming soon — 프로덕션에서만 활성화
-  if (COMING_SOON && !pathname.startsWith('/coming-soon') && !pathname.startsWith('/api') && !pathname.startsWith('/studio')) {
-    return NextResponse.redirect(new URL('/coming-soon', request.url))
-  }
 
   const isProtected = PROTECTED_PATHS.some((p) => pathname.startsWith(p))
 

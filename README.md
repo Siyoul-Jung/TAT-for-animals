@@ -129,7 +129,6 @@ Open [http://localhost:3000](http://localhost:3000).
 | `NEXT_PUBLIC_SANITY_DATASET` | Sanity dataset (production) |
 | `SANITY_API_TOKEN` | Sanity write token (for Studio) |
 | `NEXT_PUBLIC_SITE_URL` | Full site URL (for auth callbacks) |
-| `COMING_SOON` | Set to `true` to enable pre-launch holding page |
 
 ### Sanity Studio
 
@@ -140,5 +139,3 @@ Access the CMS at `/studio`. Requires a Sanity account with project access. Cont
 ## Deployment
 
 Hosted on Vercel. Connected to the `main` branch — pushing to `main` triggers a production deploy automatically.
-
-To enable the pre-launch holding page, set `COMING_SOON=true` in Vercel environment variables.
