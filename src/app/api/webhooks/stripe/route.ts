@@ -76,8 +76,8 @@ export async function POST(request: NextRequest) {
 
         const subscriptionId = session.subscription as string
         const subscription = await stripe.subscriptions.retrieve(subscriptionId)
-        const priceId = subscription.items.data[0]?.price.id
-        const role = PRICE_ROLE_MAP[priceId] ?? 'subscriber'
+        const priceId = subscription.items.data[0]?.price?.id
+        const role = priceId ? (PRICE_ROLE_MAP[priceId] ?? 'subscriber') : 'subscriber'
 
         // Fallback: session metadata → subscription metadata
         const userId = session.metadata?.supabase_user_id
@@ -87,17 +87,27 @@ export async function POST(request: NextRequest) {
           break
         }
 
+        // Name/email normally come from the Checkout Session, but the shared
+        // account's legacy (2016) event shape can omit `customer_details`. Fall
+        // back to the Customer object so full_name capture and the welcome email
+        // survive regardless of the endpoint's render version.
+        let customerName = session.customer_details?.name ?? null
+        let customerEmail = session.customer_details?.email ?? null
+        if (!customerEmail) {
+          const customer = await stripe.customers.retrieve(subscription.customer as string)
+          if (!customer.deleted) {
+            customerEmail = customer.email ?? null
+            customerName = customerName ?? customer.name ?? null
+          }
+        }
+
         const updatePayload: Record<string, unknown> = {
           role,
           stripe_subscription_id: subscriptionId,
           subscription_status: 'active',
           current_period_end: getPeriodEndISO(subscription),
         }
-
-        const customerName = session.customer_details?.name
         if (customerName) updatePayload.full_name = customerName
-
-        const customerEmail = session.customer_details?.email
         if (customerEmail) updatePayload.email = customerEmail
 
         await supabaseAdmin
@@ -106,14 +116,10 @@ export async function POST(request: NextRequest) {
           .eq('id', userId)
 
         // Send welcome email — failure does not affect webhook response
-        const toEmail = session.customer_details?.email
-        if (toEmail) {
+        if (customerEmail) {
           try {
-            const { subject, html } = welcomeEmail(
-              session.customer_details?.name ?? null,
-              role as 'subscriber' | 'pro_subscriber'
-            )
-            await resend.emails.send({ from: FROM_EMAIL, to: toEmail, subject, html })
+            const { subject, html } = welcomeEmail(customerName, role as 'subscriber' | 'pro_subscriber')
+            await resend.emails.send({ from: FROM_EMAIL, to: customerEmail, subject, html })
           } catch (emailError) {
             console.error('Welcome email failed:', emailError)
           }
