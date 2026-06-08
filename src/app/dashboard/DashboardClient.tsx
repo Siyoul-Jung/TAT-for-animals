@@ -18,7 +18,9 @@ type Props = {
   role: string
   subscriptionStatus: string
   hasSubscription: boolean
+  isPayPal: boolean
   currentPeriodEnd: string | null
+  errorParam: string | null
   upcoming: WebinarSession[]
 }
 
@@ -53,12 +55,30 @@ export default function DashboardClient({
   role,
   subscriptionStatus,
   hasSubscription,
+  isPayPal,
   currentPeriodEnd,
+  errorParam,
   upcoming,
 }: Props) {
   const [upgrading, setUpgrading] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [deleteRequested, setDeleteRequested] = useState(false)
+  const [cancelling, setCancelling] = useState(false)
+
+  const handlePayPalCancel = async () => {
+    if (!window.confirm('Cancel your membership? You won’t be billed again, and your access will end.')) return
+    setCancelling(true)
+    try {
+      const res = await fetch('/api/paypal/cancel', { method: 'POST' })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Could not cancel your membership.')
+      window.location.reload()
+    } catch (err) {
+      console.error('PayPal cancel error:', err)
+      alert(err instanceof Error && err.message ? err.message : 'Something went wrong. Please try again.')
+      setCancelling(false)
+    }
+  }
 
   const nextChargeDate = formatPeriodEnd(currentPeriodEnd)
   const displayName = fullName ? fullName.trim().split(/\s+/)[0] : null
@@ -116,17 +136,39 @@ export default function DashboardClient({
           <p className="text-charcoal/65 mt-1 text-base">{email}</p>
         </div>
 
+        {/* Couldn't delete — subscription still active (redirected here from the delete-confirm link) */}
+        {errorParam === 'cancel-subscription-first' && (
+          <section className="bg-amber-50 border border-amber-200 rounded-2xl p-6 space-y-1">
+            <h2 className="font-serif text-lg text-amber-900">
+              Please cancel your membership first
+            </h2>
+            <p className="text-sm text-amber-800 leading-relaxed">
+              Your account still has an active membership, so we couldn&apos;t delete it yet.
+              Cancel below, then you can request deletion again.
+            </p>
+          </section>
+        )}
+
         {/* Payment failed alert */}
         {subscriptionStatus === 'past_due' && (
           <section className="bg-red-50 border border-red-200 rounded-2xl p-6 space-y-3">
             <h2 className="font-serif text-lg text-red-800">
               We couldn&apos;t process your last payment.
             </h2>
-            <p className="text-sm text-red-700 leading-relaxed">
-              Your access is paused until your payment goes through. Please update your
-              card to keep watching — it only takes a moment.
-            </p>
-            <ManageSubscriptionButton label="Update payment method" />
+            {isPayPal ? (
+              <p className="text-sm text-red-700 leading-relaxed">
+                Your access is paused until your payment goes through. Please update your
+                payment method in your PayPal account. You can also cancel your membership below.
+              </p>
+            ) : (
+              <>
+                <p className="text-sm text-red-700 leading-relaxed">
+                  Your access is paused until your payment goes through. Please update your
+                  card to keep watching — it only takes a moment.
+                </p>
+                <ManageSubscriptionButton label="Update payment method" />
+              </>
+            )}
           </section>
         )}
 
@@ -148,15 +190,18 @@ export default function DashboardClient({
                 </span>
               </div>
 
-              {/* past_due hides this — the alert banner above already offers "Update payment method" */}
-              {hasSubscription && subscriptionStatus !== 'past_due' && (
+              {hasSubscription && (
                 <div className="pt-4 border-t border-charcoal/8 space-y-3">
-                  {nextChargeDate && (
+                  {nextChargeDate && subscriptionStatus === 'active' && (
                     <p className="text-base text-charcoal/65">
                       Next charge: <span className="text-charcoal font-medium">{nextChargeDate}</span>
                     </p>
                   )}
-                  <ManageSubscriptionButton />
+                  {isPayPal ? (
+                    <PayPalCancelButton onClick={handlePayPalCancel} loading={cancelling} />
+                  ) : (
+                    <ManageSubscriptionButton />
+                  )}
                   <p className="text-sm text-charcoal/65 leading-relaxed">
                     Cancel anytime. To switch to a different plan, cancel and rejoin on the one you&apos;d like.
                   </p>
@@ -230,9 +275,13 @@ export default function DashboardClient({
               {hasSubscription ? (
                 <div className="mt-3 space-y-3">
                   <p className="text-sm text-charcoal/65 leading-relaxed">
-                    Please cancel your subscription first. You can do that here.
+                    Please cancel your membership first. You can do that here.
                   </p>
-                  <ManageSubscriptionButton label="Manage subscription" />
+                  {isPayPal ? (
+                    <PayPalCancelButton onClick={handlePayPalCancel} loading={cancelling} label="Cancel membership" />
+                  ) : (
+                    <ManageSubscriptionButton label="Manage subscription" />
+                  )}
                 </div>
               ) : deleteRequested ? (
                 <p className="mt-3 text-sm text-charcoal/65 leading-relaxed">
@@ -265,6 +314,26 @@ export default function DashboardClient({
     </main>
 
 </>
+  )
+}
+
+function PayPalCancelButton({
+  onClick,
+  loading,
+  label = 'Cancel membership',
+}: {
+  onClick: () => void
+  loading: boolean
+  label?: string
+}) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={loading}
+      className="min-h-[44px] px-6 py-3 rounded-full border border-charcoal/20 text-charcoal/65 text-base font-medium hover:border-brand hover:text-brand transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      {loading ? 'Cancelling…' : label}
+    </button>
   )
 }
 
