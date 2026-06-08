@@ -214,6 +214,20 @@ describe('Stripe webhook — checkout.session.completed', () => {
     const res = await POST(makeRequest({}))
     expect(res.status).toBe(200)
   })
+
+  it('falls back to the Customer object when the event omits customer_details (legacy 2016 shape)', async () => {
+    mockConstructEvent.mockReturnValue(makeCheckoutEvent({ customer_details: undefined }))
+    mockRetrieveSubscription.mockResolvedValue(makeSubscription())
+    mockRetrieveCustomer.mockResolvedValue({ deleted: false, email: 'legacy@test.com', name: 'Legacy User' })
+
+    await POST(makeRequest({}))
+
+    expect(mockRetrieveCustomer).toHaveBeenCalledWith('cus_123')
+    expect(mockUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({ email: 'legacy@test.com', full_name: 'Legacy User' })
+    )
+    expect(mockSendEmail).toHaveBeenCalledWith(expect.objectContaining({ to: 'legacy@test.com' }))
+  })
 })
 
 describe('Stripe webhook — invoice.payment_succeeded', () => {
