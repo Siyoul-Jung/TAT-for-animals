@@ -318,7 +318,9 @@ export default function LibraryClient({
       window.location.href = data.url
     } catch (err) {
       console.error('Upgrade error:', err)
-      alert('Something went wrong. Please try again.')
+      // Surface the server's message (e.g. PayPal members are told to cancel
+      // and rejoin) instead of a generic, confusing fallback.
+      alert(err instanceof Error && err.message ? err.message : 'Something went wrong. Please try again.')
       setUpgrading(false)
     }
   }
