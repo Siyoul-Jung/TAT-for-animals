@@ -167,15 +167,24 @@ export async function POST(request: NextRequest) {
 
       // Subscription upgraded/downgraded via Stripe Portal → sync role
       case 'customer.subscription.updated': {
-        const subscription = event.data.object as Stripe.Subscription
-        const userId = subscription.metadata?.supabase_user_id
+        const eventSubscription = event.data.object as Stripe.Subscription
+        const userId = eventSubscription.metadata?.supabase_user_id
         if (!userId) {
-          console.error('Webhook customer.subscription.updated: userId missing', { subscriptionId: subscription.id })
+          // Shared Stripe account: subscription events for other products
+          // (e.g. tatlife) are delivered here too. Without our metadata they
+          // aren't ours — ignore them quietly rather than logging an error.
           break
         }
 
-        const priceId = subscription.items.data[0]?.price.id
-        const role = PRICE_ROLE_MAP[priceId] ?? 'subscriber'
+        // Re-fetch through the SDK (pinned to our API version) so we never read
+        // price / current_period_end off the raw event payload. This endpoint
+        // inherited the shared account's legacy default API version, whose
+        // payload shape omits `price` (it's under `plan`) and the item-level
+        // period end — reading those directly would throw or silently drop data.
+        const subscription = await stripe.subscriptions.retrieve(eventSubscription.id)
+
+        const priceId = subscription.items.data[0]?.price?.id
+        const role = priceId ? (PRICE_ROLE_MAP[priceId] ?? 'subscriber') : 'subscriber'
 
         const periodEndISO = getPeriodEndISO(subscription)
         await supabaseAdmin

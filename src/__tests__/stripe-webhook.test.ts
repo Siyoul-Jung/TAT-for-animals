@@ -263,6 +263,59 @@ describe('Stripe webhook — invoice.payment_failed', () => {
   })
 })
 
+describe('Stripe webhook — customer.subscription.updated', () => {
+  it('re-fetches the subscription and syncs role on upgrade', async () => {
+    // Event arrives in the endpoint's legacy API shape (price lives under
+    // `plan`, no item-level period end). The handler must re-fetch, not read it.
+    mockConstructEvent.mockReturnValue({
+      type: 'customer.subscription.updated',
+      data: {
+        object: {
+          id: 'sub_123',
+          metadata: { supabase_user_id: 'user-123' },
+          status: 'active',
+          items: { data: [{ plan: { id: 'price_circle' } }] },
+        },
+      },
+    })
+    // The canonical (re-fetched) subscription carries the modern `price` shape.
+    mockRetrieveSubscription.mockResolvedValue(
+      makeSubscription({
+        items: { data: [{ id: 'si_1', price: { id: 'price_circle' }, current_period_end: 1800000000 }] },
+        status: 'active',
+      })
+    )
+
+    const res = await POST(makeRequest({}))
+
+    expect(res.status).toBe(200)
+    expect(mockRetrieveSubscription).toHaveBeenCalledWith('sub_123')
+    expect(mockUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({ role: 'pro_subscriber', subscription_status: 'active' })
+    )
+  })
+
+  it('ignores events without our metadata (shared account — e.g. tatlife)', async () => {
+    mockConstructEvent.mockReturnValue({
+      type: 'customer.subscription.updated',
+      data: {
+        object: {
+          id: 'sub_other',
+          metadata: {},
+          status: 'active',
+          items: { data: [{ plan: { id: 'price_woo' } }] },
+        },
+      },
+    })
+
+    const res = await POST(makeRequest({}))
+
+    expect(res.status).toBe(200)
+    expect(mockRetrieveSubscription).not.toHaveBeenCalled()
+    expect(mockUpdate).not.toHaveBeenCalled()
+  })
+})
+
 describe('Stripe webhook — customer.subscription.deleted', () => {
   it('resets role to guest and clears subscription data', async () => {
     mockConstructEvent.mockReturnValue({
