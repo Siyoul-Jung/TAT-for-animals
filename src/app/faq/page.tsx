@@ -53,6 +53,10 @@ const faqs = [
     q: 'What about me — does this affect the owner too?',
     a: 'Often, yes. Your animal feels what you feel. When you clear your own stress and tension, your animal relaxes too. Many people find that doing TAT for their animal brings them a surprising sense of calm as well.',
   },
+  {
+    q: 'Can I change or cancel my membership?',
+    a: 'Yes, anytime — there\'s no long-term commitment. You can cancel whenever you like from your account, and your access continues until the end of the period you\'ve already paid for. To upgrade to The Calm Circle, use the upgrade option in your account. To move to a smaller plan — or to change plans if you joined through PayPal — simply cancel and rejoin on the plan you\'d like.',
+  },
 ];
 
 function FAQItem({ q, a }: { q: string; a: string }) {
