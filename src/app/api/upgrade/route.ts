@@ -14,11 +14,19 @@ export async function POST(request: NextRequest) {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('stripe_customer_id, stripe_subscription_id, role')
+    .select('stripe_customer_id, stripe_subscription_id, paypal_subscription_id, role')
     .eq('id', user.id)
     .single()
 
   if (!profile?.stripe_subscription_id) {
+    // PayPal subscriptions can't be changed through Stripe's portal. Give a
+    // clear, actionable message rather than a confusing "no subscription".
+    if (profile?.paypal_subscription_id) {
+      return NextResponse.json(
+        { error: 'Your membership is billed through PayPal, which can’t switch plans automatically. To move to The Calm Circle, please cancel and rejoin on that plan.' },
+        { status: 400 }
+      )
+    }
     return NextResponse.json({ error: 'No active subscription' }, { status: 400 })
   }
 

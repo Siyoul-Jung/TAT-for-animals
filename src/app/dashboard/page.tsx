@@ -16,7 +16,12 @@ export const metadata: Metadata = {
   title: 'My Account | TAT for Animals®',
 }
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>
+}) {
+  const { error: errorParam } = await searchParams
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -41,7 +46,9 @@ export default async function DashboardPage() {
       role={profile?.role ?? 'guest'}
       subscriptionStatus={profile?.subscription_status ?? 'inactive'}
       hasSubscription={!!(profile?.stripe_subscription_id || profile?.paypal_subscription_id)}
+      isPayPal={!!profile?.paypal_subscription_id}
       currentPeriodEnd={profile?.current_period_end ?? null}
+      errorParam={errorParam ?? null}
       upcoming={upcoming}
     />
   )
