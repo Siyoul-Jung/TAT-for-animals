@@ -33,6 +33,19 @@ export async function paypalRequest(
   });
 }
 
+// Retrieve a subscription's current state — used by webhooks to read the
+// *authoritative* plan_id and next_billing_time rather than trusting the event
+// payload (which can lag or omit fields after a `revise`).
+export async function getPayPalSubscription(id: string): Promise<{
+  plan_id?: string
+  status?: string
+  billing_info?: { next_billing_time?: string }
+}> {
+  const res = await paypalRequest(`/v1/billing/subscriptions/${id}`, { method: 'GET' })
+  if (!res.ok) throw new Error(`PayPal subscription fetch failed: ${res.status}`)
+  return res.json()
+}
+
 export const PLAN_IDS: Record<string, string> = {
   calm_library: process.env.PAYPAL_PLAN_CALM_LIBRARY!,
   calm_circle:  process.env.PAYPAL_PLAN_CALM_CIRCLE!,

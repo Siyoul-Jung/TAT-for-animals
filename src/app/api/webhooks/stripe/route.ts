@@ -43,6 +43,34 @@ function domainStatus(status: Stripe.Subscription.Status): 'active' | 'past_due'
   return 'inactive' // canceled, incomplete, incomplete_expired, paused
 }
 
+// If a subscription schedule has a future phase whose price maps to a different
+// role than the current one, that's a pending (period-end) plan change. Returns
+// the target tier + when it takes effect, or nulls when nothing is scheduled.
+async function getScheduledChange(
+  subscription: Stripe.Subscription,
+  currentRole: string,
+): Promise<{ tier: string | null; at: string | null }> {
+  if (!subscription.schedule) return { tier: null, at: null }
+  try {
+    const scheduleId =
+      typeof subscription.schedule === 'string' ? subscription.schedule : subscription.schedule.id
+    const schedule = await stripe.subscriptionSchedules.retrieve(scheduleId)
+    const nowSec = Math.floor(Date.now() / 1000)
+    const upcoming = schedule.phases.find((p) => p.start_date > nowSec)
+    if (!upcoming) return { tier: null, at: null }
+
+    const priceRef = upcoming.items[0]?.price
+    const upcomingPriceId = typeof priceRef === 'string' ? priceRef : priceRef?.id
+    const upcomingRole = upcomingPriceId ? PRICE_ROLE_MAP[upcomingPriceId] : undefined
+    if (!upcomingRole || upcomingRole === currentRole) return { tier: null, at: null }
+
+    return { tier: upcomingRole, at: new Date(upcoming.start_date * 1000).toISOString() }
+  } catch (e) {
+    console.error('Stripe schedule fetch failed:', e)
+    return { tier: null, at: null }
+  }
+}
+
 export async function POST(request: NextRequest) {
   const body = await request.text()
   const signature = request.headers.get('stripe-signature')!
@@ -192,12 +220,20 @@ export async function POST(request: NextRequest) {
         const priceId = subscription.items.data[0]?.price?.id
         const role = priceId ? (PRICE_ROLE_MAP[priceId] ?? 'subscriber') : 'subscriber'
 
+        // The portal schedules downgrades at period end (decreasing_item_amount):
+        // the subscription keeps its current price/role until the schedule
+        // executes. Surface that pending switch so the dashboard can tell the
+        // member they keep their current tier until <date>. No schedule → clear.
+        const pending = await getScheduledChange(subscription, role)
+
         const periodEndISO = getPeriodEndISO(subscription)
         await supabaseAdmin
           .from('profiles')
           .update({
             role,
             subscription_status: domainStatus(subscription.status),
+            pending_tier: pending.tier,
+            pending_tier_at: pending.at,
             ...(periodEndISO ? { current_period_end: periodEndISO } : {}),
           })
           .eq('id', userId)
@@ -228,6 +264,8 @@ export async function POST(request: NextRequest) {
             stripe_subscription_id: null,
             subscription_status: 'inactive',
             current_period_end: null,
+            pending_tier: null,
+            pending_tier_at: null,
           })
           .eq('id', userId)
 

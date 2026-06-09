@@ -20,6 +20,8 @@ type Props = {
   hasSubscription: boolean
   isPayPal: boolean
   currentPeriodEnd: string | null
+  pendingTier: string | null
+  pendingTierAt: string | null
   errorParam: string | null
   upcoming: WebinarSession[]
 }
@@ -57,6 +59,8 @@ export default function DashboardClient({
   hasSubscription,
   isPayPal,
   currentPeriodEnd,
+  pendingTier,
+  pendingTierAt,
   errorParam,
   upcoming,
 }: Props) {
@@ -84,6 +88,8 @@ export default function DashboardClient({
   const displayName = fullName ? fullName.trim().split(/\s+/)[0] : null
   const plan = PLAN_INFO[role]
   const badge = STATUS_BADGE[subscriptionStatus] ?? STATUS_BADGE.inactive
+  const pendingPlan = pendingTier ? PLAN_INFO[pendingTier] : null
+  const pendingDate = formatPeriodEnd(pendingTierAt)
 
   const handleChangePlan = async (targetTier: 'subscriber' | 'pro_subscriber') => {
     setChangingPlan(true)
@@ -201,20 +207,36 @@ export default function DashboardClient({
                     </p>
                   )}
 
-                  {/* Switch plans in place — prorated, no cancel/rejoin */}
-                  {subscriptionStatus === 'active' && (
-                    role === 'pro_subscriber' ? (
-                      <PlanSwitchButton
-                        label="Switch to The Calm Library"
-                        onClick={() => handleChangePlan('subscriber')}
-                        loading={changingPlan}
-                      />
-                    ) : (
-                      <PlanSwitchButton
-                        label="Upgrade to The Calm Circle"
-                        onClick={() => handleChangePlan('pro_subscriber')}
-                        loading={changingPlan}
-                      />
+                  {/* A downgrade is already scheduled for the end of the paid
+                      period — show that instead of the switch button so the
+                      member knows they keep their current plan until then. */}
+                  {subscriptionStatus === 'active' && pendingPlan && plan ? (
+                    <div className="rounded-xl border border-charcoal/10 bg-cream p-4">
+                      <p className="text-sm text-charcoal/80 leading-relaxed">
+                        You&apos;re switching to{' '}
+                        <span className="font-medium text-charcoal">{pendingPlan.name}</span>
+                        {pendingDate && (
+                          <> on <span className="font-medium text-charcoal">{pendingDate}</span></>
+                        )}
+                        . You&apos;ll keep {plan.name} until then — nothing changes before that.
+                      </p>
+                    </div>
+                  ) : (
+                    /* Switch plans in place — prorated, no cancel/rejoin */
+                    subscriptionStatus === 'active' && (
+                      role === 'pro_subscriber' ? (
+                        <PlanSwitchButton
+                          label="Switch to The Calm Library"
+                          onClick={() => handleChangePlan('subscriber')}
+                          loading={changingPlan}
+                        />
+                      ) : (
+                        <PlanSwitchButton
+                          label="Upgrade to The Calm Circle"
+                          onClick={() => handleChangePlan('pro_subscriber')}
+                          loading={changingPlan}
+                        />
+                      )
                     )
                   )}
 
