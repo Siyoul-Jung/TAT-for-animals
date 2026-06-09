@@ -70,8 +70,8 @@ export default function Hero({ images }: { images: HeroImage[] }) {
               </Link>
               <Link
                 href="/membership"
-                className="inline-flex min-h-[44px] items-center text-sm font-medium transition-colors hover:text-brand"
-                style={{ color: 'rgba(28,16,7,0.65)' }}
+                className="inline-flex min-h-[44px] items-center px-6 py-3 rounded-full border-2 text-sm font-semibold transition-all hover:bg-brand hover:text-cream active:scale-95"
+                style={{ borderColor: '#7B4A2D', color: '#7B4A2D' }}
               >
                 Join the members
               </Link>
@@ -117,8 +117,8 @@ export default function Hero({ images }: { images: HeroImage[] }) {
             </Link>
             <Link
               href="/membership"
-              className="text-base font-medium transition-colors hover:text-brand"
-              style={{ color: 'rgba(28,16,7,0.65)' }}
+              className="inline-flex min-h-[44px] items-center px-8 py-4 rounded-full border-2 text-base font-semibold transition-all hover:bg-brand hover:text-cream active:scale-95"
+              style={{ borderColor: '#7B4A2D', color: '#7B4A2D' }}
             >
               Join the members
             </Link>
