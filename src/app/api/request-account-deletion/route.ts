@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { resend, FROM_EMAIL } from '@/lib/resend'
 import { accountDeletionEmail } from '@/lib/emails/account-deletion'
+import { membershipHasLapsed } from '@/lib/access'
 import { NextResponse } from 'next/server'
 
 export async function POST() {
@@ -12,14 +13,21 @@ export async function POST() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  // Block deletion while a subscription is still active — must cancel first
+  // Block deletion while a subscription is still active — must cancel first.
+  // A cancelled membership that has passed its paid-through date counts as
+  // already gone (PayPal leaves the id set with no period-end event; mirror the
+  // dashboard's lapsed view so the UI and server agree).
   const { data: profile } = await supabaseAdmin
     .from('profiles')
-    .select('stripe_subscription_id, paypal_subscription_id')
+    .select('stripe_subscription_id, paypal_subscription_id, cancel_at')
     .eq('id', user.id)
     .single()
 
-  if (profile?.stripe_subscription_id || profile?.paypal_subscription_id) {
+  const hasLiveSubscription =
+    !membershipHasLapsed(profile?.cancel_at) &&
+    (profile?.stripe_subscription_id || profile?.paypal_subscription_id)
+
+  if (hasLiveSubscription) {
     return NextResponse.json(
       { error: 'Please cancel your subscription before deleting your account.' },
       { status: 400 }
