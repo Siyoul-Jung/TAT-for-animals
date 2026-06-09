@@ -47,11 +47,11 @@ export default function Hero({ images }: { images: HeroImage[] }) {
       <div className="lg:hidden flex flex-col" style={{ minHeight: '100dvh' }}>
         <div className="relative shrink-0 overflow-hidden" style={{ height: '61.8dvh' }}>
           {slides('100vw')}
-          <div className="absolute inset-0 z-10" style={{ background: 'linear-gradient(to bottom, transparent 55%, rgba(251,245,243,0.5) 80%, rgba(251,245,243,1) 100%)' }} />
+          <div className="absolute inset-0 z-10" style={{ background: 'linear-gradient(to bottom, transparent 50%, rgba(251,245,243,0.6) 78%, rgba(251,245,243,1) 94%)' }} />
         </div>
-        <div className="flex-1 flex flex-col justify-center px-6">
+        <div className="flex-1 flex flex-col justify-center px-6 py-8 -mt-0.5 bg-cream relative z-20">
           <div style={{ paddingBottom: 'calc(var(--cookie-banner-offset, 0px) + env(safe-area-inset-bottom))' }}>
-            <p className="text-xs tracking-[0.2em] uppercase font-semibold mb-2" style={{ color: '#3F6B22' }}>
+            <p className="text-xs tracking-[0.2em] uppercase font-semibold mb-2" style={{ color: '#467826' }}>
               TAT for Animals
             </p>
             <h1 className="font-serif text-3xl leading-[1.2] text-charcoal mb-2 font-semibold">
@@ -60,17 +60,17 @@ export default function Hero({ images }: { images: HeroImage[] }) {
             <p className="font-sans text-sm mb-5 font-normal text-charcoal/65">
               A few quiet minutes together — and something releases in you both.
             </p>
-            <div className="flex items-center gap-5">
+            <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:gap-4">
               <Link
                 href="#experience"
-                className="inline-flex min-h-[44px] items-center px-6 py-3 rounded-full text-cream font-semibold text-sm transition-all active:scale-95"
+                className="inline-flex min-h-[44px] items-center justify-center px-6 py-3 rounded-full text-cream font-semibold text-sm transition-all active:scale-95"
                 style={{ backgroundColor: '#7B4A2D', boxShadow: '0 6px 20px rgba(123,74,45,0.25)' }}
               >
                 Try a session
               </Link>
               <Link
                 href="/membership"
-                className="inline-flex min-h-[44px] items-center px-6 py-3 rounded-full border-2 text-sm font-semibold transition-all hover:bg-brand hover:text-cream active:scale-95"
+                className="inline-flex min-h-[44px] items-center justify-center px-6 py-3 rounded-full border-2 text-sm font-semibold transition-all hover:bg-brand hover:text-cream active:scale-95"
                 style={{ borderColor: '#7B4A2D', color: '#7B4A2D' }}
               >
                 Join the members
@@ -94,7 +94,7 @@ export default function Hero({ images }: { images: HeroImage[] }) {
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
           className="flex flex-col justify-center px-14 xl:px-20 2xl:px-28 pt-24 pb-20"
         >
-          <p className="text-xs tracking-[0.2em] uppercase font-semibold mb-5" style={{ color: '#3F6B22' }}>
+          <p className="text-xs tracking-[0.2em] uppercase font-semibold mb-5" style={{ color: '#467826' }}>
             TAT for Animals
           </p>
           <h1 className="font-serif text-4xl xl:text-5xl 2xl:text-6xl leading-[1.2] text-charcoal mb-5 font-semibold">

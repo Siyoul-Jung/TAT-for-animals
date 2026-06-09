@@ -55,7 +55,7 @@ export default function AboutTapas() {
           <Link
             href="/about"
             className="inline-flex items-center min-h-[44px] text-sm font-medium transition-opacity hover:opacity-70"
-            style={{ color: 'rgba(28,16,7,0.65)' }}
+            style={{ color: '#467826' }}
           >
             Learn more about Tapas →
           </Link>
@@ -69,7 +69,7 @@ export default function AboutTapas() {
           transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           className="flex flex-col"
         >
-          <p className="text-xs tracking-[0.2em] uppercase font-medium text-brand mb-6">
+          <p className="text-xs tracking-[0.2em] uppercase font-medium text-green mb-6">
             The founder
           </p>
 
@@ -114,7 +114,7 @@ export default function AboutTapas() {
             <Link
               href="/about"
               className="inline-flex items-center min-h-[44px] text-sm font-medium transition-opacity hover:opacity-70"
-              style={{ color: 'rgba(28,16,7,0.65)' }}
+              style={{ color: '#467826' }}
             >
               Learn more about Tapas →
             </Link>

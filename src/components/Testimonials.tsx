@@ -57,7 +57,7 @@ function SlideLayout({ t }: { t: Testimonial }) {
       <div className="flex flex-col justify-center">
         <p
           className="text-xs tracking-[0.15em] uppercase font-medium mb-3 lg:mb-5"
-          style={{ color: '#7B4A2D' }}
+          style={{ color: '#467826' }}
         >
           {t.animal}
         </p>
@@ -126,7 +126,7 @@ export default function Testimonials() {
         >
           <p
             className="text-xs tracking-[0.2em] uppercase font-medium mb-5"
-            style={{ color: '#7B4A2D' }}
+            style={{ color: '#467826' }}
           >
             Real Stories
           </p>
@@ -179,7 +179,7 @@ export default function Testimonials() {
                 key={i}
                 onClick={() => setCurrent(i)}
                 aria-label={`Go to story ${i + 1}`}
-                className="flex items-center justify-center p-1"
+                className="flex items-center justify-center min-h-[24px] min-w-[24px]"
                 style={{ background: 'none', border: 'none', cursor: 'pointer' }}
               >
                 <span

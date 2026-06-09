@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { Play } from 'lucide-react';
 import Link from 'next/link';
 
@@ -18,6 +18,7 @@ export default function TrySession() {
   const pathname = usePathname();
   const [isPlaying, setIsPlaying] = useState(false);
   const isInView = useInView(videoRef, { once: true, margin: '-15% 0px' });
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     if (pathname !== '/' && iframeRef.current) {
@@ -45,7 +46,7 @@ export default function TrySession() {
           className="text-center mb-14"
         >
           <p className="text-xs tracking-[0.2em] uppercase font-medium mb-5"
-            style={{ color: '#7B4A2D' }}>
+            style={{ color: '#467826' }}>
             TAT for Animals
           </p>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-charcoal font-medium leading-tight mb-6">
@@ -114,8 +115,8 @@ export default function TrySession() {
                   aria-label="Play TAT for Animals video"
                 >
                   <div className="relative">
-                    {/* Pulse ring */}
-                    {isInView && (
+                    {/* Pulse ring — skip the infinite animation under reduced-motion */}
+                    {isInView && !prefersReducedMotion && (
                       <motion.div
                         className="absolute inset-0 rounded-full"
                         style={{ backgroundColor: 'rgba(123,74,45,0.3)' }}
@@ -163,7 +164,7 @@ export default function TrySession() {
           <Link
             href="/membership#membership"
             className="inline-flex items-center min-h-[44px] gap-1 text-base font-medium transition-opacity hover:opacity-70"
-            style={{ color: '#7B4A2D' }}
+            style={{ color: '#467826' }}
           >
             Start helping your animal →
           </Link>
