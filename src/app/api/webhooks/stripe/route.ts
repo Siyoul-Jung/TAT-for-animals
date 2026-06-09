@@ -134,6 +134,7 @@ export async function POST(request: NextRequest) {
           stripe_subscription_id: subscriptionId,
           subscription_status: 'active',
           current_period_end: getPeriodEndISO(subscription),
+          cancel_at: null,
         }
         if (customerName) updatePayload.full_name = customerName
         if (customerEmail) updatePayload.email = customerEmail
@@ -226,6 +227,13 @@ export async function POST(request: NextRequest) {
         // member they keep their current tier until <date>. No schedule → clear.
         const pending = await getScheduledChange(subscription, role)
 
+        // Surface a pending cancellation ("active until <date>, then ends").
+        // Stripe sets `cancel_at` when the member schedules cancellation; it
+        // clears when they resume. null → not cancelling.
+        const cancelAt = subscription.cancel_at
+          ? new Date(subscription.cancel_at * 1000).toISOString()
+          : null
+
         const periodEndISO = getPeriodEndISO(subscription)
         await supabaseAdmin
           .from('profiles')
@@ -234,6 +242,7 @@ export async function POST(request: NextRequest) {
             subscription_status: domainStatus(subscription.status),
             pending_tier: pending.tier,
             pending_tier_at: pending.at,
+            cancel_at: cancelAt,
             ...(periodEndISO ? { current_period_end: periodEndISO } : {}),
           })
           .eq('id', userId)
@@ -266,6 +275,7 @@ export async function POST(request: NextRequest) {
             current_period_end: null,
             pending_tier: null,
             pending_tier_at: null,
+            cancel_at: null,
           })
           .eq('id', userId)
 

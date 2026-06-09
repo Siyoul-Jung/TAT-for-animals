@@ -22,14 +22,17 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'No subscription found' }, { status: 404 })
   }
 
+  // "Manage Subscription" is for cancel + payment method only — use the
+  // manage-only config (no plan switching; plan changes go through the dedicated
+  // dashboard buttons → /api/change-plan). Both configs are isolated from the
+  // shared account default that tatlife.com relies on. Falls back gracefully.
+  const manageConfig =
+    process.env.STRIPE_PORTAL_MANAGE_CONFIG_ID || process.env.STRIPE_PORTAL_CONFIG_ID
+
   const portalSession = await stripe.billingPortal.sessions.create({
     customer: profile.stripe_customer_id,
     return_url: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard`,
-    // Isolated TAT portal config (separate from the shared account default that
-    // tatlife.com uses). Falls back to the account default if unset.
-    ...(process.env.STRIPE_PORTAL_CONFIG_ID
-      ? { configuration: process.env.STRIPE_PORTAL_CONFIG_ID }
-      : {}),
+    ...(manageConfig ? { configuration: manageConfig } : {}),
   })
 
   return NextResponse.json({ url: portalSession.url })

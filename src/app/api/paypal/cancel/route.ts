@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
-import { paypalRequest } from '@/lib/paypal'
+import { paypalRequest, getPayPalSubscription } from '@/lib/paypal'
 import { NextResponse } from 'next/server'
 
 // Self-service cancellation for PayPal members. Stripe members cancel through
@@ -18,12 +18,22 @@ export async function POST() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('paypal_subscription_id')
+    .select('paypal_subscription_id, current_period_end')
     .eq('id', user.id)
     .single()
 
   if (!profile?.paypal_subscription_id) {
     return NextResponse.json({ error: 'No PayPal subscription found.' }, { status: 400 })
+  }
+
+  // Read the paid-through date BEFORE cancelling (PayPal nulls next_billing_time
+  // once a subscription is cancelled). The member keeps access until then.
+  let paidThrough: string | null = profile.current_period_end ?? null
+  try {
+    const sub = await getPayPalSubscription(profile.paypal_subscription_id)
+    paidThrough = sub.billing_info?.next_billing_time ?? paidThrough
+  } catch (e) {
+    console.error('PayPal getSubscription (cancel) failed:', e)
   }
 
   const res = await paypalRequest(
@@ -45,10 +55,16 @@ export async function POST() {
     )
   }
 
-  // Reflect immediately (the webhook will also sync this — the update is idempotent)
+  // Keep access until the paid period ends (parity with Stripe), then it lapses
+  // via the lazy cutoff in lib/access. If we don't know the paid-through date,
+  // fall back to ending access now rather than granting it indefinitely.
   await supabaseAdmin
     .from('profiles')
-    .update({ role: 'guest', paypal_subscription_id: null, subscription_status: 'inactive' })
+    .update(
+      paidThrough
+        ? { cancel_at: paidThrough }
+        : { role: 'guest', paypal_subscription_id: null, subscription_status: 'inactive' }
+    )
     .eq('id', user.id)
 
   return NextResponse.json({ success: true })
