@@ -121,7 +121,7 @@ export default function AboutTapas() {
             <Link
               href="/membership#membership"
               className="inline-flex w-fit min-h-[44px] items-center px-5 py-2 rounded-full text-cream font-semibold text-sm transition-all hover:scale-105 active:scale-95"
-              style={{ backgroundColor: '#D4703A', boxShadow: '0 4px 16px rgba(212,112,58,0.22)' }}
+              style={{ backgroundColor: '#7B4A2D', boxShadow: '0 4px 16px rgba(123,74,45,0.22)' }}
             >
               Begin with Tapas
             </Link>
@@ -131,7 +131,7 @@ export default function AboutTapas() {
           <Link
             href="/membership#membership"
             className="hidden lg:inline-flex w-fit min-h-[44px] items-center px-5 py-2 rounded-full text-cream font-semibold text-sm transition-all hover:scale-105 active:scale-95"
-            style={{ backgroundColor: '#D4703A', boxShadow: '0 4px 16px rgba(212,112,58,0.22)' }}
+            style={{ backgroundColor: '#7B4A2D', boxShadow: '0 4px 16px rgba(123,74,45,0.22)' }}
           >
             Begin with Tapas
           </Link>

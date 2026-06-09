@@ -13,13 +13,13 @@
   --background: #FBF5F3;
   --foreground: #1C1007;
 
-  /* Primary — terracotta orange */
-  --brand-primary:   #D4703A;  /* warm terracotta — bright but grounded */
-  --brand-light:     #ECC4A0;  /* soft peach tint */
-  --brand-dark:      #B05A28;  /* deep terracotta */
+  /* Primary — chestnut (matured from bright orange; text-safe on cream, 6.8:1) */
+  --brand-primary:   #7B4A2D;  /* warm chestnut — buttons, emphasis, links */
+  --brand-light:     #E8D8CA;  /* light tan tint — subtle bg / hover */
+  --brand-dark:      #5C3A21;  /* deep chestnut — hover/active */
 
-  /* Green — brand accent (NOT used as section background) */
-  --green:       #5E9635;  /* bright forest green — labels, icons, borders */
+  /* Green — accent: labels, icons, checks, text-safe links (5.8:1) */
+  --green:       #3F6B22;  /* deep forest green — labels, links, icons, checks */
   --green-light: #EBF5E1;  /* very light green tint — subtle bg accent */
 
   /* Neutrals */

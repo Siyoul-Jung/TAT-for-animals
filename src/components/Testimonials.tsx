@@ -57,7 +57,7 @@ function SlideLayout({ t }: { t: Testimonial }) {
       <div className="flex flex-col justify-center">
         <p
           className="text-xs tracking-[0.15em] uppercase font-medium mb-3 lg:mb-5"
-          style={{ color: '#D4703A' }}
+          style={{ color: '#7B4A2D' }}
         >
           {t.animal}
         </p>
@@ -126,7 +126,7 @@ export default function Testimonials() {
         >
           <p
             className="text-xs tracking-[0.2em] uppercase font-medium mb-5"
-            style={{ color: '#D4703A' }}
+            style={{ color: '#7B4A2D' }}
           >
             Real Stories
           </p>
@@ -188,7 +188,7 @@ export default function Testimonials() {
                     width: i === current ? 12 : 8,
                     height: i === current ? 12 : 8,
                     borderRadius: '50%',
-                    backgroundColor: i === current ? '#D4703A' : 'transparent',
+                    backgroundColor: i === current ? '#7B4A2D' : 'transparent',
                     boxShadow: i === current ? 'none' : 'inset 0 0 0 1.5px rgba(28,16,7,0.3)',
                     transition: 'all 0.4s ease',
                     flexShrink: 0,

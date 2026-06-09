@@ -74,7 +74,7 @@ export default function Pricing() {
         >
           <p
             className="text-xs tracking-[0.2em] uppercase font-semibold mb-5"
-            style={{ color: '#5E9635' }}
+            style={{ color: '#3F6B22' }}
           >
             Membership
           </p>
@@ -102,8 +102,8 @@ export default function Pricing() {
               style={
                 selectedPlan === tier.plan
                   ? {
-                      border: '2px solid #5E9635',
-                      boxShadow: '0 16px 48px rgba(94,150,53,0.12)',
+                      border: '2px solid #3F6B22',
+                      boxShadow: '0 16px 48px rgba(63,107,34,0.12)',
                     }
                   : {
                       border: '1px solid rgba(28,16,7,0.08)',
@@ -116,7 +116,7 @@ export default function Pricing() {
                 <div className="mb-3">
                   <span
                     className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full text-xs font-semibold tracking-widest uppercase text-charcoal"
-                    style={{ backgroundColor: '#5E9635' }}
+                    style={{ backgroundColor: '#3F6B22' }}
                   >
                     ★ Most Popular
                   </span>
@@ -148,9 +148,9 @@ export default function Pricing() {
                   <li key={f} className="flex items-start gap-3">
                     <span
                       className="mt-0.5 w-4 h-4 rounded-full flex items-center justify-center shrink-0"
-                      style={{ backgroundColor: 'rgba(94,150,53,0.12)' }}
+                      style={{ backgroundColor: 'rgba(63,107,34,0.12)' }}
                     >
-                      <Check size={10} style={{ color: '#5E9635' }} />
+                      <Check size={10} style={{ color: '#3F6B22' }} />
                     </span>
                     <span className="text-sm sm:text-base leading-snug text-charcoal/80">
                       {f}
@@ -165,9 +165,9 @@ export default function Pricing() {
                 disabled={loadingPlan !== null}
                 className="block w-full text-center py-3.5 rounded-xl text-sm sm:text-base font-semibold transition-all hover:opacity-90 active:scale-95 disabled:opacity-50"
                 style={{
-                  backgroundColor: '#D4703A',
+                  backgroundColor: '#7B4A2D',
                   color: '#FAF6F1',
-                  boxShadow: '0 8px 24px rgba(212,112,58,0.20)',
+                  boxShadow: '0 8px 24px rgba(123,74,45,0.20)',
                 }}
               >
                 {loadingPlan === tier.plan ? 'Loading...' : tier.cta}

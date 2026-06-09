@@ -51,7 +51,7 @@ export default function TermageddonPolicy({ policyId }: { policyId: string }) {
         aria-label="click here to view the policy"
         href={`https://policies.termageddon.com/api/policy/${policyId}`}
         target="_blank"
-        style={{ color: '#D4703A', textDecoration: 'underline' }}
+        style={{ color: '#7B4A2D', textDecoration: 'underline' }}
       >
         click here to view the policy
       </a>

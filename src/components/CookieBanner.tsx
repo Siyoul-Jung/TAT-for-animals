@@ -49,7 +49,7 @@ export default function CookieBanner() {
         <button
           onClick={accept}
           className="shrink-0 self-start sm:self-auto px-4 py-1.5 rounded-full text-xs font-medium transition-all hover:opacity-90 active:scale-95"
-          style={{ backgroundColor: '#D4703A', color: '#FAF6F1' }}
+          style={{ backgroundColor: '#7B4A2D', color: '#FAF6F1' }}
         >
           Got it
         </button>
