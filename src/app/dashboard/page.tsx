@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { membershipHasLapsed } from '@/lib/access'
 import { redirect } from 'next/navigation'
 import type { Metadata } from 'next'
 import { sanityClient } from '@/lib/sanity'
@@ -29,7 +30,7 @@ export default async function DashboardPage({
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('full_name, role, subscription_status, stripe_subscription_id, paypal_subscription_id, current_period_end, pending_tier, pending_tier_at')
+    .select('full_name, role, subscription_status, stripe_subscription_id, paypal_subscription_id, current_period_end, pending_tier, pending_tier_at, cancel_at')
     .eq('id', user.id)
     .single()
 
@@ -39,17 +40,23 @@ export default async function DashboardPage({
     }`
   )
 
+  // Once a cancelled membership's paid period ends, present it as lapsed
+  // (guest) even if no webhook has flipped the role yet — see lib/access.
+  const lapsed = membershipHasLapsed(profile?.cancel_at)
+  const effectiveRole = lapsed ? 'guest' : (profile?.role ?? 'guest')
+
   return (
     <DashboardClient
       email={user.email ?? ''}
       fullName={profile?.full_name ?? ''}
-      role={profile?.role ?? 'guest'}
+      role={effectiveRole}
       subscriptionStatus={profile?.subscription_status ?? 'inactive'}
-      hasSubscription={!!(profile?.stripe_subscription_id || profile?.paypal_subscription_id)}
+      hasSubscription={!lapsed && !!(profile?.stripe_subscription_id || profile?.paypal_subscription_id)}
       isPayPal={!!profile?.paypal_subscription_id}
       currentPeriodEnd={profile?.current_period_end ?? null}
-      pendingTier={profile?.pending_tier ?? null}
-      pendingTierAt={profile?.pending_tier_at ?? null}
+      pendingTier={lapsed ? null : (profile?.pending_tier ?? null)}
+      pendingTierAt={lapsed ? null : (profile?.pending_tier_at ?? null)}
+      cancelAt={lapsed ? null : (profile?.cancel_at ?? null)}
       errorParam={errorParam ?? null}
       upcoming={upcoming}
     />

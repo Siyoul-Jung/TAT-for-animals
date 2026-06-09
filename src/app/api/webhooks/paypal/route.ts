@@ -165,10 +165,44 @@ export async function POST(request: NextRequest) {
         break
       }
 
-      // User revoked PayPal authorization
+      // Member cancelled → keep access until the paid period ends (parity with
+      // Stripe). The role lapses via the lazy cutoff in lib/access, since PayPal
+      // sends no period-end event for a cancelled subscription.
+      case 'BILLING.SUBSCRIPTION.CANCELLED': {
+        const userId = resource.custom_id
+        if (!userId) break
+
+        const { data: profile } = await supabaseAdmin
+          .from('profiles')
+          .select('current_period_end, cancel_at')
+          .eq('id', userId)
+          .single()
+
+        // Prefer a date already set by /api/paypal/cancel; else the renewal date.
+        const paidThrough = profile?.cancel_at ?? profile?.current_period_end ?? null
+        if (paidThrough) {
+          await supabaseAdmin
+            .from('profiles')
+            .update({ cancel_at: paidThrough, pending_tier: null, pending_tier_at: null })
+            .eq('id', userId)
+        } else {
+          // Unknown paid-through date — end now rather than grant indefinitely.
+          await supabaseAdmin
+            .from('profiles')
+            .update({
+              role: 'guest',
+              paypal_subscription_id: null,
+              subscription_status: 'inactive',
+              pending_tier: null,
+              pending_tier_at: null,
+            })
+            .eq('id', userId)
+        }
+        break
+      }
+
+      // Authorization revoked, or the term ended naturally → access ends now.
       case 'BILLING.SUBSCRIPTION.CONSENT.REVOKED':
-      // Subscription cancelled or expired
-      case 'BILLING.SUBSCRIPTION.CANCELLED':
       case 'BILLING.SUBSCRIPTION.EXPIRED': {
         const userId = resource.custom_id
         if (!userId) break
@@ -181,6 +215,7 @@ export async function POST(request: NextRequest) {
             subscription_status: 'inactive',
             pending_tier: null,
             pending_tier_at: null,
+            cancel_at: null,
           })
           .eq('id', userId)
         break

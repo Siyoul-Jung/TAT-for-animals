@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { membershipHasLapsed } from '@/lib/access'
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import { sanityClient } from '@/lib/sanity'
@@ -41,11 +42,13 @@ export default async function LibraryPage() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('role, subscription_status')
+    .select('role, subscription_status, cancel_at')
     .eq('id', user.id)
     .single()
 
-  const role = profile?.role ?? 'none'
+  // A cancelled membership lapses once the paid period ends (PayPal has no
+  // period-end event, so enforce it here).
+  const role = membershipHasLapsed(profile?.cancel_at) ? 'guest' : (profile?.role ?? 'none')
   if (role !== 'subscriber' && role !== 'pro_subscriber') redirect('/membership')
   if (profile?.subscription_status === 'past_due') redirect('/dashboard?error=payment_failed')
 

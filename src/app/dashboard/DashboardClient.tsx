@@ -22,6 +22,7 @@ type Props = {
   currentPeriodEnd: string | null
   pendingTier: string | null
   pendingTierAt: string | null
+  cancelAt: string | null
   errorParam: string | null
   upcoming: WebinarSession[]
 }
@@ -61,16 +62,18 @@ export default function DashboardClient({
   currentPeriodEnd,
   pendingTier,
   pendingTierAt,
+  cancelAt,
   errorParam,
   upcoming,
 }: Props) {
   const [changingPlan, setChangingPlan] = useState(false)
+  const [confirmingDowngrade, setConfirmingDowngrade] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [deleteRequested, setDeleteRequested] = useState(false)
   const [cancelling, setCancelling] = useState(false)
 
   const handlePayPalCancel = async () => {
-    if (!window.confirm('Cancel your membership? You won’t be billed again, and your access will end.')) return
+    if (!window.confirm('Cancel your membership? You won’t be billed again, and you’ll keep access until your current period ends.')) return
     setCancelling(true)
     try {
       const res = await fetch('/api/paypal/cancel', { method: 'POST' })
@@ -90,6 +93,8 @@ export default function DashboardClient({
   const badge = STATUS_BADGE[subscriptionStatus] ?? STATUS_BADGE.inactive
   const pendingPlan = pendingTier ? PLAN_INFO[pendingTier] : null
   const pendingDate = formatPeriodEnd(pendingTierAt)
+  const isCancelling = !!cancelAt
+  const cancelDate = formatPeriodEnd(cancelAt)
 
   const handleChangePlan = async (targetTier: 'subscriber' | 'pro_subscriber') => {
     setChangingPlan(true)
@@ -207,47 +212,125 @@ export default function DashboardClient({
                     </p>
                   )}
 
-                  {/* A downgrade is already scheduled for the end of the paid
-                      period — show that instead of the switch button so the
-                      member knows they keep their current plan until then. */}
-                  {subscriptionStatus === 'active' && pendingPlan && plan ? (
+                  {/* Cancellation scheduled — reassure the member their access
+                      continues until the paid period ends, then stops. Plan
+                      switches are hidden (contradictory while cancelling); Manage
+                      Subscription stays so they can turn auto-renew back on. */}
+                  {isCancelling && plan && (
                     <div className="rounded-xl border border-charcoal/10 bg-cream p-4">
                       <p className="text-sm text-charcoal/80 leading-relaxed">
-                        You&apos;re switching to{' '}
-                        <span className="font-medium text-charcoal">{pendingPlan.name}</span>
-                        {pendingDate && (
-                          <> on <span className="font-medium text-charcoal">{pendingDate}</span></>
-                        )}
-                        . You&apos;ll keep {plan.name} until then — nothing changes before that.
+                        Your membership stays active until{' '}
+                        <span className="whitespace-nowrap font-medium text-charcoal">{cancelDate}</span>
+                        {' '}— then it ends.
+                        {isPayPal
+                          ? ' You’re welcome to rejoin anytime.'
+                          : ' You can turn it back on anytime in Manage Subscription before then.'}
                       </p>
                     </div>
-                  ) : (
-                    /* Switch plans in place — prorated, no cancel/rejoin */
-                    subscriptionStatus === 'active' && (
-                      role === 'pro_subscriber' ? (
-                        <PlanSwitchButton
-                          label="Switch to The Calm Library"
-                          onClick={() => handleChangePlan('subscriber')}
-                          loading={changingPlan}
-                        />
-                      ) : (
-                        <PlanSwitchButton
-                          label="Upgrade to The Calm Circle"
-                          onClick={() => handleChangePlan('pro_subscriber')}
-                          loading={changingPlan}
-                        />
-                      )
-                    )
+                  )}
+
+                  {/* A downgrade is already scheduled for the end of the paid
+                      period — reassure the member they keep their current plan
+                      until then (lead with what they KEEP, not the change). */}
+                  {subscriptionStatus === 'active' && !isCancelling && pendingPlan && plan && (
+                    <div className="rounded-xl border border-charcoal/10 bg-cream p-4">
+                      <p className="text-sm text-charcoal/80 leading-relaxed">
+                        You&apos;ll keep <span className="font-medium text-charcoal">{plan.name}</span> until{' '}
+                        <span className="whitespace-nowrap font-medium text-charcoal">{pendingDate}</span>
+                        {' '}— then it switches to{' '}
+                        <span className="font-medium text-charcoal">{pendingPlan.name}</span>.
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Upgrade is a prominent, plain-language CTA (Library → Circle). */}
+                  {subscriptionStatus === 'active' && !isCancelling && !pendingPlan && role !== 'pro_subscriber' && (
+                    <PlanSwitchButton
+                      label="Upgrade to The Calm Circle"
+                      onClick={() => handleChangePlan('pro_subscriber')}
+                      loading={changingPlan}
+                    />
                   )}
 
                   {isPayPal ? (
-                    <PayPalCancelButton onClick={handlePayPalCancel} loading={cancelling} />
+                    /* No resume path for PayPal — hide the cancel button once a
+                       cancellation is already pending (the note explains it). */
+                    !isCancelling && (
+                      <PayPalCancelButton onClick={handlePayPalCancel} loading={cancelling} />
+                    )
                   ) : (
+                    /* Stripe: Manage stays so the member can resume before period end. */
                     <ManageSubscriptionButton />
                   )}
-                  <p className="text-sm text-charcoal/65 leading-relaxed">
-                    Cancel anytime.
-                  </p>
+
+                  {/* PayPal holds the card in the member's PayPal account, not
+                      here — point them there so they don't cancel just to change
+                      a card. (Stripe members update it inside Manage Subscription.) */}
+                  {isPayPal && subscriptionStatus === 'active' && !isCancelling && (
+                    <p className="text-sm text-charcoal/65 leading-relaxed">
+                      To change your payment method, manage it in your{' '}
+                      <a
+                        href="https://www.paypal.com/myaccount/autopay/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-brand hover:text-brand-dark underline"
+                      >
+                        PayPal account
+                      </a>
+                      .
+                    </p>
+                  )}
+
+                  {/* Downgrade stays available but quiet — we don't advertise a
+                      revenue-reducing action, but hiding it would push members to
+                      cancel instead. Muted link near Manage, not a peer CTA.
+                      Clicking it first shows a plain-language explanation in OUR
+                      UI, because Stripe's hosted confirm screen for a scheduled
+                      downgrade prominently shows the *current* ($47) price and is
+                      easy to misread as a charge. */}
+                  {subscriptionStatus === 'active' && !isCancelling && !pendingPlan && role === 'pro_subscriber' && (
+                    confirmingDowngrade ? (
+                      <div className="rounded-xl border border-charcoal/10 bg-cream p-4 space-y-3">
+                        <p className="text-sm text-charcoal/80 leading-relaxed">
+                          You&apos;ll keep <span className="font-medium text-charcoal">The Calm Circle</span>
+                          {nextChargeDate && (
+                            <> until <span className="whitespace-nowrap font-medium text-charcoal">{nextChargeDate}</span></>
+                          )}
+                          , then move to <span className="font-medium text-charcoal">The Calm Library</span> ($27 / month).
+                          You won&apos;t be charged today.
+                        </p>
+                        <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+                          <button
+                            onClick={() => handleChangePlan('subscriber')}
+                            disabled={changingPlan}
+                            className="min-h-[44px] flex items-center text-base font-medium text-brand hover:text-brand-dark transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                          >
+                            {changingPlan ? 'Loading…' : 'Continue →'}
+                          </button>
+                          <button
+                            onClick={() => setConfirmingDowngrade(false)}
+                            disabled={changingPlan}
+                            className="min-h-[44px] flex items-center text-sm text-charcoal/50 hover:text-charcoal/75 transition-colors disabled:opacity-50"
+                          >
+                            Keep The Calm Circle
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => setConfirmingDowngrade(true)}
+                        className="block min-h-[44px] text-sm text-charcoal/50 hover:text-charcoal/75 transition-colors"
+                      >
+                        Switch to The Calm Library
+                      </button>
+                    )
+                  )}
+
+                  {!isCancelling && (
+                    <p className="text-sm text-charcoal/65 leading-relaxed">
+                      Cancel anytime.
+                    </p>
+                  )}
                 </div>
               )}
             </>
