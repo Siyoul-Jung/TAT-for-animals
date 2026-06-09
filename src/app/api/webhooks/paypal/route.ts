@@ -63,6 +63,21 @@ export async function POST(request: NextRequest) {
         break
       }
 
+      // Plan changed in place via `revise` (upgrade/downgrade) → re-sync role
+      // from the subscription's (possibly new) plan. Idempotent: if the plan is
+      // unchanged the role just stays the same.
+      case 'BILLING.SUBSCRIPTION.UPDATED': {
+        const userId = resource.custom_id
+        if (!userId) break
+
+        const role = PLAN_ROLE_MAP[resource.plan_id] ?? 'subscriber'
+        await supabaseAdmin
+          .from('profiles')
+          .update({ role })
+          .eq('id', userId)
+        break
+      }
+
       // Payment completed → update renewal period
       case 'PAYMENT.SALE.COMPLETED': {
         const subscriptionId = resource.billing_agreement_id

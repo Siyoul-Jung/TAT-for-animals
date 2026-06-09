@@ -60,7 +60,7 @@ export default function DashboardClient({
   errorParam,
   upcoming,
 }: Props) {
-  const [upgrading, setUpgrading] = useState(false)
+  const [changingPlan, setChangingPlan] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [deleteRequested, setDeleteRequested] = useState(false)
   const [cancelling, setCancelling] = useState(false)
@@ -85,19 +85,22 @@ export default function DashboardClient({
   const plan = PLAN_INFO[role]
   const badge = STATUS_BADGE[subscriptionStatus] ?? STATUS_BADGE.inactive
 
-  const handleUpgrade = async () => {
-    setUpgrading(true)
+  const handleChangePlan = async (targetTier: 'subscriber' | 'pro_subscriber') => {
+    setChangingPlan(true)
     try {
-      const res = await fetch('/api/upgrade', { method: 'POST' })
+      const res = await fetch('/api/change-plan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ targetTier }),
+      })
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Upgrade failed')
+      if (!res.ok) throw new Error(data.error || 'Could not change your plan')
+      // Stripe → portal confirm screen; PayPal → approval screen
       window.location.href = data.url
     } catch (err) {
-      console.error('Upgrade error:', err)
-      // Surface the server's message (e.g. PayPal members are told to cancel
-      // and rejoin) instead of a generic, confusing fallback.
+      console.error('Change plan error:', err)
       alert(err instanceof Error && err.message ? err.message : 'Something went wrong. Please try again.')
-      setUpgrading(false)
+      setChangingPlan(false)
     }
   }
 
@@ -197,13 +200,31 @@ export default function DashboardClient({
                       Next charge: <span className="text-charcoal font-medium">{nextChargeDate}</span>
                     </p>
                   )}
+
+                  {/* Switch plans in place — prorated, no cancel/rejoin */}
+                  {subscriptionStatus === 'active' && (
+                    role === 'pro_subscriber' ? (
+                      <PlanSwitchButton
+                        label="Switch to The Calm Library"
+                        onClick={() => handleChangePlan('subscriber')}
+                        loading={changingPlan}
+                      />
+                    ) : (
+                      <PlanSwitchButton
+                        label="Upgrade to The Calm Circle"
+                        onClick={() => handleChangePlan('pro_subscriber')}
+                        loading={changingPlan}
+                      />
+                    )
+                  )}
+
                   {isPayPal ? (
                     <PayPalCancelButton onClick={handlePayPalCancel} loading={cancelling} />
                   ) : (
                     <ManageSubscriptionButton />
                   )}
                   <p className="text-sm text-charcoal/65 leading-relaxed">
-                    Cancel anytime. To switch to a different plan, cancel and rejoin on the one you&apos;d like.
+                    Cancel anytime.
                   </p>
                 </div>
               )}
@@ -241,8 +262,8 @@ export default function DashboardClient({
                 href={role === 'pro_subscriber' ? '/library?tab=live' : ''}
                 badge={role === 'pro_subscriber' ? 'The Calm Circle' : 'Pro members only'}
                 locked={role !== 'pro_subscriber'}
-                onClick={role !== 'pro_subscriber' ? handleUpgrade : undefined}
-                isLoading={upgrading}
+                onClick={role !== 'pro_subscriber' ? () => handleChangePlan('pro_subscriber') : undefined}
+                isLoading={changingPlan}
               />
             </div>
           </section>
@@ -314,6 +335,26 @@ export default function DashboardClient({
     </main>
 
 </>
+  )
+}
+
+function PlanSwitchButton({
+  label,
+  onClick,
+  loading,
+}: {
+  label: string
+  onClick: () => void
+  loading: boolean
+}) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={loading}
+      className="min-h-[44px] flex items-center text-base font-medium text-brand hover:text-brand-dark transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+    >
+      {loading ? 'Loading…' : `${label} →`}
+    </button>
   )
 }
 

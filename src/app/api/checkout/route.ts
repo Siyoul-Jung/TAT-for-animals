@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     .eq('id', user.id)
     .single()
 
-  // Block duplicate subscriptions — existing subscribers should use /api/upgrade
+  // Block duplicate subscriptions — existing subscribers change tiers via /api/change-plan
   if (profile?.stripe_subscription_id || profile?.paypal_subscription_id) {
     return NextResponse.json(
       { error: 'You already have an active subscription. To change your plan, use the upgrade option in your dashboard.' },
