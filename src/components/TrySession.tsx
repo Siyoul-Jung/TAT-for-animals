@@ -45,7 +45,7 @@ export default function TrySession() {
           className="text-center mb-14"
         >
           <p className="text-xs tracking-[0.2em] uppercase font-medium mb-5"
-            style={{ color: '#D4703A' }}>
+            style={{ color: '#7B4A2D' }}>
             TAT for Animals
           </p>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-charcoal font-medium leading-tight mb-6">
@@ -72,7 +72,7 @@ export default function TrySession() {
           <div
             className="absolute -inset-4 rounded-[2.5rem] blur-2xl opacity-30 pointer-events-none"
             style={{
-              background: 'radial-gradient(ellipse at center, rgba(212,112,58,0.4) 0%, transparent 70%)',
+              background: 'radial-gradient(ellipse at center, rgba(123,74,45,0.4) 0%, transparent 70%)',
             }}
           />
 
@@ -80,7 +80,7 @@ export default function TrySession() {
           <div
             className="relative aspect-video rounded-2xl overflow-hidden"
             style={{
-              boxShadow: '0 0 0 1.5px rgba(212,112,58,0.35), 0 24px 64px rgba(28,15,7,0.18)',
+              boxShadow: '0 0 0 1.5px rgba(123,74,45,0.35), 0 24px 64px rgba(28,15,7,0.18)',
             }}
           >
             {!isPlaying && (
@@ -118,7 +118,7 @@ export default function TrySession() {
                     {isInView && (
                       <motion.div
                         className="absolute inset-0 rounded-full"
-                        style={{ backgroundColor: 'rgba(212,112,58,0.3)' }}
+                        style={{ backgroundColor: 'rgba(123,74,45,0.3)' }}
                         animate={{ scale: [1, 1.7], opacity: [0.6, 0] }}
                         transition={{ duration: 1.8, repeat: Infinity, ease: 'easeOut' }}
                       />
@@ -128,8 +128,8 @@ export default function TrySession() {
                       whileTap={{ scale: 0.95 }}
                       className="relative w-20 h-20 rounded-full flex items-center justify-center"
                       style={{
-                        backgroundColor: '#D4703A',
-                        boxShadow: '0 0 0 14px rgba(212,112,58,0.15)',
+                        backgroundColor: '#7B4A2D',
+                        boxShadow: '0 0 0 14px rgba(123,74,45,0.15)',
                       }}
                     >
                       <Play size={28} fill="white" className="text-white ml-1" />
@@ -163,7 +163,7 @@ export default function TrySession() {
           <Link
             href="/membership#membership"
             className="inline-flex items-center min-h-[44px] gap-1 text-base font-medium transition-opacity hover:opacity-70"
-            style={{ color: '#D4703A' }}
+            style={{ color: '#7B4A2D' }}
           >
             Start helping your animal →
           </Link>

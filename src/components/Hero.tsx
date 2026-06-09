@@ -51,7 +51,7 @@ export default function Hero({ images }: { images: HeroImage[] }) {
         </div>
         <div className="flex-1 flex flex-col justify-center px-6">
           <div style={{ paddingBottom: 'calc(var(--cookie-banner-offset, 0px) + env(safe-area-inset-bottom))' }}>
-            <p className="text-xs tracking-[0.2em] uppercase font-semibold mb-2" style={{ color: '#5E9635' }}>
+            <p className="text-xs tracking-[0.2em] uppercase font-semibold mb-2" style={{ color: '#3F6B22' }}>
               TAT for Animals
             </p>
             <h1 className="font-serif text-3xl leading-[1.2] text-charcoal mb-2 font-semibold">
@@ -64,7 +64,7 @@ export default function Hero({ images }: { images: HeroImage[] }) {
               <Link
                 href="#experience"
                 className="inline-flex min-h-[44px] items-center px-6 py-3 rounded-full text-cream font-semibold text-sm transition-all active:scale-95"
-                style={{ backgroundColor: '#D4703A', boxShadow: '0 6px 20px rgba(212,112,58,0.25)' }}
+                style={{ backgroundColor: '#7B4A2D', boxShadow: '0 6px 20px rgba(123,74,45,0.25)' }}
               >
                 Try a session
               </Link>
@@ -85,7 +85,7 @@ export default function Hero({ images }: { images: HeroImage[] }) {
 
         <div
           className="absolute inset-0 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse 60% 50% at 30% 60%, rgba(212,112,58,0.07) 0%, transparent 65%)' }}
+          style={{ background: 'radial-gradient(ellipse 60% 50% at 30% 60%, rgba(123,74,45,0.07) 0%, transparent 65%)' }}
         />
 
         <motion.div
@@ -94,7 +94,7 @@ export default function Hero({ images }: { images: HeroImage[] }) {
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
           className="flex flex-col justify-center px-14 xl:px-20 2xl:px-28 pt-24 pb-20"
         >
-          <p className="text-xs tracking-[0.2em] uppercase font-semibold mb-5" style={{ color: '#5E9635' }}>
+          <p className="text-xs tracking-[0.2em] uppercase font-semibold mb-5" style={{ color: '#3F6B22' }}>
             TAT for Animals
           </p>
           <h1 className="font-serif text-4xl xl:text-5xl 2xl:text-6xl leading-[1.2] text-charcoal mb-5 font-semibold">
@@ -111,7 +111,7 @@ export default function Hero({ images }: { images: HeroImage[] }) {
             <Link
               href="#experience"
               className="px-8 py-4 rounded-full text-cream font-semibold text-base transition-all hover:scale-105 hover:shadow-lg active:scale-95"
-              style={{ backgroundColor: '#D4703A', boxShadow: '0 8px 32px rgba(212,112,58,0.25)' }}
+              style={{ backgroundColor: '#7B4A2D', boxShadow: '0 8px 32px rgba(123,74,45,0.25)' }}
             >
               Try a session
             </Link>
