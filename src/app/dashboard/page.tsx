@@ -29,7 +29,7 @@ export default async function DashboardPage({
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('full_name, role, subscription_status, stripe_subscription_id, paypal_subscription_id, current_period_end')
+    .select('full_name, role, subscription_status, stripe_subscription_id, paypal_subscription_id, current_period_end, pending_tier, pending_tier_at')
     .eq('id', user.id)
     .single()
 
@@ -48,6 +48,8 @@ export default async function DashboardPage({
       hasSubscription={!!(profile?.stripe_subscription_id || profile?.paypal_subscription_id)}
       isPayPal={!!profile?.paypal_subscription_id}
       currentPeriodEnd={profile?.current_period_end ?? null}
+      pendingTier={profile?.pending_tier ?? null}
+      pendingTierAt={profile?.pending_tier_at ?? null}
       errorParam={errorParam ?? null}
       upcoming={upcoming}
     />

@@ -1,6 +1,16 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
-import { paypalRequest, PLAN_ROLE_MAP } from '@/lib/paypal'
+import { paypalRequest, PLAN_ROLE_MAP, getPayPalSubscription } from '@/lib/paypal'
 import { NextRequest, NextResponse } from 'next/server'
+
+// Rank roles so we can tell an upgrade from a downgrade. A plan change that
+// *raises* access applies immediately; one that *lowers* it is deferred to the
+// end of the period the member already paid for (they keep the higher tier
+// until then). Downgrade role-sync happens on the next PAYMENT.SALE.COMPLETED.
+const ROLE_RANK: Record<string, number> = {
+  guest: 0,
+  subscriber: 1,
+  pro_subscriber: 2,
+}
 
 async function verifyWebhook(request: NextRequest, body: string): Promise<boolean> {
   const webhookId = process.env.PAYPAL_WEBHOOK_ID
@@ -58,34 +68,87 @@ export async function POST(request: NextRequest) {
             role,
             paypal_subscription_id: resource.id,
             subscription_status: 'active',
+            pending_tier: null,
+            pending_tier_at: null,
           })
           .eq('id', userId)
         break
       }
 
-      // Plan changed in place via `revise` (upgrade/downgrade) → re-sync role
-      // from the subscription's (possibly new) plan. Idempotent: if the plan is
-      // unchanged the role just stays the same.
+      // Plan changed in place via `revise` (upgrade OR downgrade).
+      //   Upgrade  → apply the higher role immediately (member paid the prorated
+      //              difference and wants the extra access now).
+      //   Downgrade→ keep the current (higher) role; record the pending change so
+      //              the dashboard can show "switches on <date>". The role itself
+      //              drops at the next renewal (PAYMENT.SALE.COMPLETED), i.e. when
+      //              the already-paid period actually ends.
       case 'BILLING.SUBSCRIPTION.UPDATED': {
         const userId = resource.custom_id
         if (!userId) break
 
-        const role = PLAN_ROLE_MAP[resource.plan_id] ?? 'subscriber'
-        await supabaseAdmin
+        const newRole = PLAN_ROLE_MAP[resource.plan_id] ?? 'subscriber'
+
+        const { data: profile } = await supabaseAdmin
           .from('profiles')
-          .update({ role })
+          .select('role')
           .eq('id', userId)
+          .single()
+        const currentRole = profile?.role ?? 'guest'
+
+        if ((ROLE_RANK[newRole] ?? 0) < (ROLE_RANK[currentRole] ?? 0)) {
+          // Downgrade — defer. Read the authoritative next billing date.
+          let nextBilling: string | null = null
+          try {
+            const sub = await getPayPalSubscription(resource.id)
+            nextBilling = sub.billing_info?.next_billing_time ?? null
+          } catch (e) {
+            console.error('PayPal getSubscription (downgrade) failed:', e)
+          }
+          await supabaseAdmin
+            .from('profiles')
+            .update({ pending_tier: newRole, pending_tier_at: nextBilling })
+            .eq('id', userId)
+        } else {
+          // Upgrade (or revert to same tier) — apply now, clear any pending change.
+          await supabaseAdmin
+            .from('profiles')
+            .update({ role: newRole, pending_tier: null, pending_tier_at: null })
+            .eq('id', userId)
+        }
         break
       }
 
-      // Payment completed → update renewal period
+      // Payment completed (initial or renewal) → re-sync role from the
+      // subscription's *current* plan. This is where a deferred downgrade lands:
+      // at renewal the plan is the lower one, so the role drops now — exactly
+      // when the previously-paid period ends. Also refreshes the next billing date.
       case 'PAYMENT.SALE.COMPLETED': {
         const subscriptionId = resource.billing_agreement_id
         if (!subscriptionId) break
 
+        const update: Record<string, unknown> = { subscription_status: 'active' }
+        try {
+          const sub = await getPayPalSubscription(subscriptionId)
+          if (sub.plan_id && PLAN_ROLE_MAP[sub.plan_id]) {
+            update.role = PLAN_ROLE_MAP[sub.plan_id]
+          }
+          if (sub.billing_info?.next_billing_time) {
+            update.current_period_end = sub.billing_info.next_billing_time
+          }
+          // Only clear the pending marker once we've actually applied the
+          // current plan — otherwise a transient fetch failure would hide a
+          // still-pending downgrade from the dashboard.
+          update.pending_tier = null
+          update.pending_tier_at = null
+        } catch (e) {
+          // Couldn't read the plan — still mark active, but don't guess the role
+          // or clear a pending change we can't confirm has landed.
+          console.error('PayPal getSubscription (sale) failed:', e)
+        }
+
         await supabaseAdmin
           .from('profiles')
-          .update({ subscription_status: 'active' })
+          .update(update)
           .eq('paypal_subscription_id', subscriptionId)
         break
       }
@@ -116,6 +179,8 @@ export async function POST(request: NextRequest) {
             role: 'guest',
             paypal_subscription_id: null,
             subscription_status: 'inactive',
+            pending_tier: null,
+            pending_tier_at: null,
           })
           .eq('id', userId)
         break
