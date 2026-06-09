@@ -312,7 +312,11 @@ export default function LibraryClient({
   async function handleUpgrade() {
     setUpgrading(true)
     try {
-      const res = await fetch('/api/upgrade', { method: 'POST' })
+      const res = await fetch('/api/change-plan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ targetTier: 'pro_subscriber' }),
+      })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Upgrade failed')
       window.location.href = data.url
