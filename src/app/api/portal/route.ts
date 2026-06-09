@@ -25,6 +25,11 @@ export async function POST(request: NextRequest) {
   const portalSession = await stripe.billingPortal.sessions.create({
     customer: profile.stripe_customer_id,
     return_url: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard`,
+    // Isolated TAT portal config (separate from the shared account default that
+    // tatlife.com uses). Falls back to the account default if unset.
+    ...(process.env.STRIPE_PORTAL_CONFIG_ID
+      ? { configuration: process.env.STRIPE_PORTAL_CONFIG_ID }
+      : {}),
   })
 
   return NextResponse.json({ url: portalSession.url })

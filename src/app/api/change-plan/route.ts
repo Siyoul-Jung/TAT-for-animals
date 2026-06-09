@@ -61,6 +61,13 @@ export async function POST(request: NextRequest) {
       const portalSession = await stripe.billingPortal.sessions.create({
         customer: profile.stripe_customer_id!,
         return_url: `${siteUrl}/dashboard`,
+        // Use our isolated portal configuration (subscription_update enabled,
+        // upgrades prorated, downgrades scheduled at period end) — NOT the shared
+        // account's default config, which tatlife.com relies on. Falls back to the
+        // account default if the env var isn't set (local/test).
+        ...(process.env.STRIPE_PORTAL_CONFIG_ID
+          ? { configuration: process.env.STRIPE_PORTAL_CONFIG_ID }
+          : {}),
         flow_data: {
           type: 'subscription_update_confirm',
           subscription_update_confirm: {
