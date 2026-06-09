@@ -84,7 +84,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={s.label}
-                className="w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-110"
+                className="w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110"
                 style={{
                   color: 'rgba(250,246,241,0.55)',
                   border: '1px solid rgba(250,246,241,0.10)',

@@ -74,7 +74,7 @@ export default function Pricing() {
         >
           <p
             className="text-xs tracking-[0.2em] uppercase font-semibold mb-5"
-            style={{ color: '#3F6B22' }}
+            style={{ color: '#467826' }}
           >
             Membership
           </p>
@@ -102,8 +102,8 @@ export default function Pricing() {
               style={
                 selectedPlan === tier.plan
                   ? {
-                      border: '2px solid #3F6B22',
-                      boxShadow: '0 16px 48px rgba(63,107,34,0.12)',
+                      border: '2px solid #467826',
+                      boxShadow: '0 16px 48px rgba(70,120,38,0.12)',
                     }
                   : {
                       border: '1px solid rgba(28,16,7,0.08)',
@@ -115,8 +115,8 @@ export default function Pricing() {
               {tier.popular && (
                 <div className="mb-3">
                   <span
-                    className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full text-xs font-semibold tracking-widest uppercase text-charcoal"
-                    style={{ backgroundColor: '#3F6B22' }}
+                    className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full text-xs font-semibold tracking-widest uppercase text-cream"
+                    style={{ backgroundColor: '#467826' }}
                   >
                     ★ Most Popular
                   </span>
@@ -148,9 +148,9 @@ export default function Pricing() {
                   <li key={f} className="flex items-start gap-3">
                     <span
                       className="mt-0.5 w-4 h-4 rounded-full flex items-center justify-center shrink-0"
-                      style={{ backgroundColor: 'rgba(63,107,34,0.12)' }}
+                      style={{ backgroundColor: 'rgba(70,120,38,0.12)' }}
                     >
-                      <Check size={10} style={{ color: '#3F6B22' }} />
+                      <Check size={10} style={{ color: '#467826' }} />
                     </span>
                     <span className="text-sm sm:text-base leading-snug text-charcoal/80">
                       {f}

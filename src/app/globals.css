@@ -8,6 +8,15 @@
   box-shadow: none !important;
 }
 
+/* Keyboard focus — always visible (WCAG 2.4.7). Only on keyboard nav
+   (:focus-visible), so mouse clicks stay clean. Components that set their own
+   focus:ring (higher specificity focus:outline-none) keep that instead. */
+:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
 :root {
   /* Warm cream base */
   --background: #FBF5F3;
@@ -18,8 +27,8 @@
   --brand-light:     #E8D8CA;  /* light tan tint — subtle bg / hover */
   --brand-dark:      #5C3A21;  /* deep chestnut — hover/active */
 
-  /* Green — accent: labels, icons, checks, text-safe links (5.8:1) */
-  --green:       #3F6B22;  /* deep forest green — labels, links, icons, checks */
+  /* Green — accent: labels, icons, checks, text-safe links (4.9:1 on cream) */
+  --green:       #467826;  /* forest green — labels, links, icons, checks */
   --green-light: #EBF5E1;  /* very light green tint — subtle bg accent */
 
   /* Neutrals */
