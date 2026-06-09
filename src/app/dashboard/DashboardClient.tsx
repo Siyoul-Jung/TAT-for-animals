@@ -172,7 +172,7 @@ export default function DashboardClient({
             {isPayPal ? (
               <p className="text-sm text-red-700 leading-relaxed">
                 Your access is paused until your payment goes through. Please update your
-                payment method in your PayPal account. You can also cancel your membership below.
+                payment method in your PayPal account.{!isCancelling && ' You can also cancel your membership below.'}
               </p>
             ) : (
               <>
@@ -222,9 +222,17 @@ export default function DashboardClient({
                         Your membership stays active until{' '}
                         <span className="whitespace-nowrap font-medium text-charcoal">{cancelDate}</span>
                         {' '}— then it ends.
-                        {isPayPal
-                          ? ' You’re welcome to rejoin anytime.'
-                          : ' You can turn it back on anytime in Manage Subscription before then.'}
+                        {isPayPal ? (
+                          <>
+                            {' '}You&apos;re welcome to{' '}
+                            <Link href="/membership#membership" className="text-brand-dark underline hover:text-brand">
+                              rejoin
+                            </Link>
+                            {' '}anytime.
+                          </>
+                        ) : (
+                          ' You can turn it back on anytime in Manage Subscription before then.'
+                        )}
                       </p>
                     </div>
                   )}
@@ -310,7 +318,7 @@ export default function DashboardClient({
                           <button
                             onClick={() => setConfirmingDowngrade(false)}
                             disabled={changingPlan}
-                            className="min-h-[44px] flex items-center text-sm text-charcoal/50 hover:text-charcoal/75 transition-colors disabled:opacity-50"
+                            className="min-h-[44px] flex items-center text-sm text-charcoal/70 hover:text-charcoal/90 transition-colors disabled:opacity-50"
                           >
                             Keep The Calm Circle
                           </button>
@@ -319,7 +327,7 @@ export default function DashboardClient({
                     ) : (
                       <button
                         onClick={() => setConfirmingDowngrade(true)}
-                        className="block min-h-[44px] text-sm text-charcoal/50 hover:text-charcoal/75 transition-colors"
+                        className="block min-h-[44px] text-sm text-charcoal/70 hover:text-charcoal/90 transition-colors"
                       >
                         Switch to The Calm Library
                       </button>
