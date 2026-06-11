@@ -45,7 +45,7 @@ export default function TrySession() {
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           className="text-center mb-14"
         >
-          <p className="text-xs tracking-[0.2em] uppercase font-medium mb-5"
+          <p className="text-[13px] tracking-[0.2em] uppercase font-medium mb-5"
             style={{ color: '#467826' }}>
             TAT for Animals
           </p>
@@ -73,7 +73,7 @@ export default function TrySession() {
           <div
             className="absolute -inset-4 rounded-[2.5rem] blur-2xl opacity-30 pointer-events-none"
             style={{
-              background: 'radial-gradient(ellipse at center, rgba(123,74,45,0.4) 0%, transparent 70%)',
+              background: 'radial-gradient(ellipse at center, rgba(212,112,58,0.4) 0%, transparent 70%)',
             }}
           />
 
@@ -81,7 +81,7 @@ export default function TrySession() {
           <div
             className="relative aspect-video rounded-2xl overflow-hidden"
             style={{
-              boxShadow: '0 0 0 1.5px rgba(123,74,45,0.35), 0 24px 64px rgba(28,15,7,0.18)',
+              boxShadow: '0 0 0 1.5px rgba(212,112,58,0.35), 0 24px 64px rgba(28,15,7,0.18)',
             }}
           >
             {!isPlaying && (
@@ -119,7 +119,7 @@ export default function TrySession() {
                     {isInView && !prefersReducedMotion && (
                       <motion.div
                         className="absolute inset-0 rounded-full"
-                        style={{ backgroundColor: 'rgba(123,74,45,0.3)' }}
+                        style={{ backgroundColor: 'rgba(212,112,58,0.3)' }}
                         animate={{ scale: [1, 1.7], opacity: [0.6, 0] }}
                         transition={{ duration: 1.8, repeat: Infinity, ease: 'easeOut' }}
                       />
@@ -129,8 +129,8 @@ export default function TrySession() {
                       whileTap={{ scale: 0.95 }}
                       className="relative w-20 h-20 rounded-full flex items-center justify-center"
                       style={{
-                        backgroundColor: '#7B4A2D',
-                        boxShadow: '0 0 0 14px rgba(123,74,45,0.15)',
+                        backgroundColor: '#D4703A',
+                        boxShadow: '0 0 0 14px rgba(212,112,58,0.15)',
                       }}
                     >
                       <Play size={28} fill="white" className="text-white ml-1" />

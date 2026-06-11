@@ -69,7 +69,7 @@ export default function AboutTapas() {
           transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           className="flex flex-col"
         >
-          <p className="text-xs tracking-[0.2em] uppercase font-medium text-green mb-6">
+          <p className="text-[13px] tracking-[0.2em] uppercase font-medium text-green mb-6">
             The founder
           </p>
 
@@ -120,8 +120,8 @@ export default function AboutTapas() {
             </Link>
             <Link
               href="/membership#membership"
-              className="inline-flex w-fit min-h-[44px] items-center px-5 py-2 rounded-full text-cream font-semibold text-sm transition-all hover:scale-105 active:scale-95"
-              style={{ backgroundColor: '#7B4A2D', boxShadow: '0 4px 16px rgba(123,74,45,0.22)' }}
+              className="inline-flex w-fit min-h-[44px] items-center px-7 py-3 rounded-full text-cream font-bold text-[19px] transition-all hover:scale-105 active:scale-95"
+              style={{ backgroundColor: '#D4703A', boxShadow: '0 4px 16px rgba(212,112,58,0.22)' }}
             >
               Begin with Tapas
             </Link>
@@ -130,8 +130,8 @@ export default function AboutTapas() {
           {/* Desktop CTA only */}
           <Link
             href="/membership#membership"
-            className="hidden lg:inline-flex w-fit min-h-[44px] items-center px-5 py-2 rounded-full text-cream font-semibold text-sm transition-all hover:scale-105 active:scale-95"
-            style={{ backgroundColor: '#7B4A2D', boxShadow: '0 4px 16px rgba(123,74,45,0.22)' }}
+            className="hidden lg:inline-flex w-fit min-h-[44px] items-center px-7 py-3 rounded-full text-cream font-bold text-[19px] transition-all hover:scale-105 active:scale-95"
+            style={{ backgroundColor: '#D4703A', boxShadow: '0 4px 16px rgba(212,112,58,0.22)' }}
           >
             Begin with Tapas
           </Link>

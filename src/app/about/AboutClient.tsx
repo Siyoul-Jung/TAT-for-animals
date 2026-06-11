@@ -19,8 +19,8 @@ export default function AboutClient() {
       <section className="pt-32 pb-4 px-6">
         <div className="max-w-4xl mx-auto">
           <motion.div {...fadeUp}>
-            <p className="text-xs tracking-[0.2em] uppercase font-semibold mb-5"
-              style={{ color: '#5E9635' }}>
+            <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-5"
+              style={{ color: '#467826' }}>
               The Founder
             </p>
             <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl text-charcoal font-medium leading-tight mb-4">
@@ -116,9 +116,9 @@ export default function AboutClient() {
         <div className="max-w-3xl mx-auto">
 
           <motion.div {...fadeUp} className="mb-12">
-            <div className="w-12 h-0.5 mb-8" style={{ backgroundColor: '#5E9635' }} />
-            <p className="text-xs tracking-[0.2em] uppercase font-semibold mb-5"
-              style={{ color: '#5E9635' }}>
+            <div className="w-12 h-0.5 mb-8" style={{ backgroundColor: '#467826' }} />
+            <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-5"
+              style={{ color: '#467826' }}>
               TAT for Animals
             </p>
             <h2 className="font-serif text-3xl sm:text-4xl text-charcoal font-medium leading-tight">

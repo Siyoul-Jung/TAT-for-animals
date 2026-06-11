@@ -8,7 +8,7 @@ interface LogoMarkProps {
 
 export default function LogoMark({
   size = 40,
-  orange = '#7B4A2D',
+  orange = '#D4703A',
   green = '#6B7A52',
 }: LogoMarkProps) {
   return (

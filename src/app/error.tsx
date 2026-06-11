@@ -4,7 +4,7 @@ export default function Error({ reset }: { error: Error & { digest?: string }; r
   return (
     <div className="min-h-[70vh] bg-cream flex items-center justify-center px-6 pt-32 pb-20">
       <div className="w-full max-w-md text-center space-y-6">
-        <p className="text-xs tracking-[0.2em] uppercase font-semibold" style={{ color: '#5E9635' }}>
+        <p className="text-[13px] tracking-[0.2em] uppercase font-semibold" style={{ color: '#467826' }}>
           TAT for Animals
         </p>
         <h1 className="font-serif text-3xl sm:text-4xl text-charcoal leading-[1.2]">
@@ -13,7 +13,7 @@ export default function Error({ reset }: { error: Error & { digest?: string }; r
         <p className="text-charcoal/65 text-base leading-relaxed">
           We hit an unexpected problem. Please try again — if it keeps happening,
           email us at{' '}
-          <a href="mailto:hello@tatforanimals.com" className="text-brand hover:underline">
+          <a href="mailto:hello@tatforanimals.com" className="text-green hover:underline">
             hello@tatforanimals.com
           </a>
           .

@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
+import { BOOKING_URL } from '@/lib/links';
 
 const tiers = [
   {
@@ -73,7 +74,7 @@ export default function Pricing() {
           className="text-center mb-10 lg:mb-16"
         >
           <p
-            className="text-xs tracking-[0.2em] uppercase font-semibold mb-5"
+            className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-5"
             style={{ color: '#467826' }}
           >
             Membership
@@ -163,11 +164,11 @@ export default function Pricing() {
               <button
                 onClick={() => handleCheckout(tier.plan)}
                 disabled={loadingPlan !== null}
-                className="block w-full text-center py-3.5 rounded-xl text-sm sm:text-base font-semibold transition-all hover:opacity-90 active:scale-95 disabled:opacity-50"
+                className="block w-full text-center py-4 rounded-xl text-[19px] font-bold transition-all hover:opacity-90 active:scale-95 disabled:opacity-50"
                 style={{
-                  backgroundColor: '#7B4A2D',
+                  backgroundColor: '#D4703A',
                   color: '#FAF6F1',
-                  boxShadow: '0 8px 24px rgba(123,74,45,0.20)',
+                  boxShadow: '0 8px 24px rgba(212,112,58,0.20)',
                 }}
               >
                 {loadingPlan === tier.plan ? 'Loading...' : tier.cta}
@@ -185,12 +186,31 @@ export default function Pricing() {
                   Refund policy lives in Terms (not shouted on the card — see industry norm). */}
               <p className="text-center text-xs mt-2 text-charcoal/65 leading-relaxed">
                 Billed monthly until you cancel.{' '}
-                <Link href="/terms" className="underline hover:text-brand transition-colors">
+                <Link href="/terms" className="underline hover:text-green transition-colors">
                   See Terms
                 </Link>
               </p>
             </motion.div>
           ))}
+        </div>
+
+        {/* Quiet third path — a 1:1 private session with Tapas (booked via TATLife/Amelia).
+            A low-key link set off by a hairline divider so it reads as "another way" rather than
+            competing with the subscription CTAs. Tapas is named in the lead-in so the link itself
+            stays short and on one line (no awkward wrap). Distinct from the Hero's "Try a session". */}
+        <div className="mt-10 pt-8 border-t border-charcoal/10 max-w-sm mx-auto text-center">
+          <p className="text-sm sm:text-base text-charcoal/65 leading-relaxed">
+            Prefer to work one-on-one with Tapas?
+          </p>
+          <a
+            href={BOOKING_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 mt-2 text-base font-semibold underline underline-offset-4 hover:opacity-70 transition-opacity whitespace-nowrap"
+            style={{ color: '#467826' }}
+          >
+            Book a private session →
+          </a>
         </div>
 
       </div>

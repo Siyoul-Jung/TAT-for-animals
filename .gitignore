@@ -80,3 +80,6 @@ debug.log
 /public/images/landing_1.jfif
 
 .vercel
+
+# local screenshot/preview artifacts
+.screenshots/

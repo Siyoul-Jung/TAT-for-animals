@@ -52,7 +52,7 @@ function CheckoutContent() {
 
         {/* Plan summary */}
         <div className="text-center mb-8">
-          <p className="text-xs tracking-[0.2em] uppercase font-medium mb-3" style={{ color: '#5E9635' }}>
+          <p className="text-[13px] tracking-[0.2em] uppercase font-medium mb-3" style={{ color: '#467826' }}>
             You're joining
           </p>
           <h1 className="font-serif text-3xl text-charcoal font-medium mb-2">

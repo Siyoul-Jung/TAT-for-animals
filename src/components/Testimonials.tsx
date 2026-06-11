@@ -14,7 +14,7 @@ type Testimonial = {
 
 const testimonials: Testimonial[] = [
   {
-    name: 'Kai\'s family',
+    name: 'Rosalind and Philip',
     location: '',
     animal: 'Kai — From Crying to Comfort',
     quote: 'Before TAT®, Kai used to cry, moan, and whine very frequently. A few moments after TAT®, the crying stopped — and he became so much more relaxed. He\'s a much happier whippet now.',
@@ -56,7 +56,7 @@ function SlideLayout({ t }: { t: Testimonial }) {
       {/* 텍스트 */}
       <div className="flex flex-col justify-center">
         <p
-          className="text-xs tracking-[0.15em] uppercase font-medium mb-3 lg:mb-5"
+          className="text-[13px] tracking-[0.15em] uppercase font-medium mb-3 lg:mb-5"
           style={{ color: '#467826' }}
         >
           {t.animal}
@@ -125,7 +125,7 @@ export default function Testimonials() {
           className="mb-7 lg:mb-10"
         >
           <p
-            className="text-xs tracking-[0.2em] uppercase font-medium mb-5"
+            className="text-[13px] tracking-[0.2em] uppercase font-medium mb-5"
             style={{ color: '#467826' }}
           >
             Real Stories
@@ -188,7 +188,7 @@ export default function Testimonials() {
                     width: i === current ? 12 : 8,
                     height: i === current ? 12 : 8,
                     borderRadius: '50%',
-                    backgroundColor: i === current ? '#7B4A2D' : 'transparent',
+                    backgroundColor: i === current ? '#D4703A' : 'transparent',
                     boxShadow: i === current ? 'none' : 'inset 0 0 0 1.5px rgba(28,16,7,0.3)',
                     transition: 'all 0.4s ease',
                     flexShrink: 0,

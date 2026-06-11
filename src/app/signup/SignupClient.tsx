@@ -67,7 +67,7 @@ export default function SignupClient() {
         <div className="w-full max-w-md text-center">
           <div className="bg-white rounded-2xl shadow-sm border border-surface p-10">
             <div className="w-16 h-16 bg-brand/10 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg className="w-8 h-8 text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <svg className="w-8 h-8 text-green" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
@@ -78,7 +78,7 @@ export default function SignupClient() {
             <p className="text-base font-medium text-charcoal mb-8">{email}</p>
             <p className="text-xs text-muted">
               Already confirmed?{' '}
-              <Link href={`/login?next=${encodeURIComponent(next)}`} className="text-brand hover:underline">
+              <Link href={`/login?next=${encodeURIComponent(next)}`} className="text-green hover:underline">
                 Sign in to continue
               </Link>
             </p>
@@ -102,8 +102,8 @@ export default function SignupClient() {
             className="h-12 w-auto object-contain mb-1"
             style={{ width: 'auto' }}
           />
-          <span className="font-serif text-xl text-charcoal/65 group-hover:text-brand transition-colors">
-            TAT for Animals<span className="text-brand text-[10px] align-super">®</span>
+          <span className="font-serif text-xl text-charcoal/65 group-hover:text-green transition-colors">
+            TAT for Animals<span className="text-green text-[10px] align-super">®</span>
           </span>
         </Link>
 
@@ -112,7 +112,7 @@ export default function SignupClient() {
           <h2 className="font-serif text-xl text-charcoal mb-2">Create your account</h2>
           <p className="text-sm text-muted mb-8">
             Already have an account?{' '}
-            <Link href={`/login?next=${encodeURIComponent(next)}`} className="text-brand hover:underline font-medium">
+            <Link href={`/login?next=${encodeURIComponent(next)}`} className="text-green hover:underline font-medium">
               Sign in
             </Link>
           </p>
@@ -202,9 +202,9 @@ export default function SignupClient() {
 
             <p className="text-xs text-muted text-center mt-4 leading-relaxed">
               By creating an account, you agree to our{' '}
-              <Link href="/terms" className="text-brand hover:underline">Terms</Link>
+              <Link href="/terms" className="text-green hover:underline">Terms</Link>
               {' '}and{' '}
-              <Link href="/privacy" className="text-brand hover:underline">Privacy Policy</Link>.
+              <Link href="/privacy" className="text-green hover:underline">Privacy Policy</Link>.
             </p>
           </form>
         </div>

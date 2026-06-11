@@ -39,7 +39,7 @@ export default function ResetPasswordClient() {
         <div className="w-full max-w-md text-center">
           <div className="bg-white rounded-2xl shadow-sm border border-surface p-10">
             <div className="w-16 h-16 bg-brand/10 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg className="w-8 h-8 text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <svg className="w-8 h-8 text-green" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
               </svg>
             </div>
@@ -50,11 +50,11 @@ export default function ResetPasswordClient() {
             <p className="text-base font-medium text-charcoal mb-8">{email}</p>
             <p className="text-xs text-muted mb-4">
               Didn't receive it?{' '}
-              <button onClick={() => setSent(false)} className="text-brand hover:underline">
+              <button onClick={() => setSent(false)} className="text-green hover:underline">
                 Try again
               </button>
             </p>
-            <Link href="/login" className="text-sm text-muted hover:text-brand transition-colors">
+            <Link href="/login" className="text-sm text-muted hover:text-green transition-colors">
               ← Back to sign in
             </Link>
           </div>
@@ -76,8 +76,8 @@ export default function ResetPasswordClient() {
             className="h-12 w-auto object-contain mb-1"
             style={{ width: 'auto' }}
           />
-          <span className="font-serif text-xl text-charcoal/65 group-hover:text-brand transition-colors">
-            TAT for Animals<span className="text-brand text-[10px] align-super">®</span>
+          <span className="font-serif text-xl text-charcoal/65 group-hover:text-green transition-colors">
+            TAT for Animals<span className="text-green text-[10px] align-super">®</span>
           </span>
         </Link>
 
@@ -116,7 +116,7 @@ export default function ResetPasswordClient() {
           </form>
 
           <div className="mt-6 pt-6 border-t border-surface text-center">
-            <Link href="/login" className="text-sm text-muted hover:text-brand transition-colors">
+            <Link href="/login" className="text-sm text-muted hover:text-green transition-colors">
               ← Back to sign in
             </Link>
           </div>

@@ -14,8 +14,8 @@ export default function Disclaimer() {
       <div className="max-w-2xl mx-auto">
 
         <p
-          className="text-xs tracking-[0.2em] uppercase font-semibold mb-5"
-          style={{ color: '#5E9635' }}
+          className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-5"
+          style={{ color: '#467826' }}
         >
           Legal
         </p>
