@@ -7,8 +7,8 @@ export default function Contact() {
       <div className="max-w-2xl mx-auto">
 
         <p
-          className="text-xs tracking-[0.2em] uppercase font-semibold mb-5"
-          style={{ color: '#5E9635' }}
+          className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-5"
+          style={{ color: '#467826' }}
         >
           Contact
         </p>
@@ -29,11 +29,11 @@ export default function Contact() {
         </p>
 
         <a
-          href="mailto:customerservice@tatlife.com"
+          href="mailto:hello@tatforanimals.com"
           className="inline-flex items-center gap-2 text-base font-medium transition-opacity hover:opacity-70"
           style={{ color: '#D4703A' }}
         >
-          customerservice@tatlife.com
+          hello@tatforanimals.com
         </a>
 
         <p

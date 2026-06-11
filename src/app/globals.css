@@ -22,10 +22,12 @@
   --background: #FBF5F3;
   --foreground: #1C1007;
 
-  /* Primary — chestnut (matured from bright orange; text-safe on cream, 6.8:1) */
-  --brand-primary:   #7B4A2D;  /* warm chestnut — buttons, emphasis, links */
-  --brand-light:     #E8D8CA;  /* light tan tint — subtle bg / hover */
-  --brand-dark:      #5C3A21;  /* deep chestnut — hover/active */
+  /* Primary — signature orange. Bright by design: 3.15:1 on cream / 3.40:1 on white.
+     → use ONLY for filled buttons (white BOLD large text, ≥18.66px) + decorative/UI accents.
+     Small orange TEXT/links fail AA — use green (--green) for those instead. */
+  --brand-primary:   #D4703A;  /* signature orange — filled buttons, large-text CTAs */
+  --brand-light:     #ECC4A0;  /* light orange tint — subtle bg / hover */
+  --brand-dark:      #B05A28;  /* deep orange — hover/active (4.8:1 on white, text-safe) */
 
   /* Green — accent: labels, icons, checks, text-safe links (4.9:1 on cream) */
   --green:       #467826;  /* forest green — labels, links, icons, checks */

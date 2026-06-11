@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { Check, PawPrint, HeartHandshake, Video } from 'lucide-react';
 import Pricing from '@/components/Pricing';
 
 function PayPalErrorBanner() {
@@ -50,8 +51,8 @@ export default function MembershipClient() {
               style={{ background: 'linear-gradient(to bottom, transparent 55%, rgba(251,245,243,0.5) 80%, rgba(251,245,243,1) 100%)' }}
             />
           </div>
-          <div className="flex-1 flex flex-col justify-center px-6">
-            <p className="text-xs tracking-[0.2em] uppercase font-semibold mb-2" style={{ color: '#5E9635' }}>
+          <div className="flex-1 flex flex-col justify-center px-6 -mt-0.5 bg-cream relative z-20">
+            <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-2" style={{ color: '#467826' }}>
               Membership
             </p>
             <h1 className="font-serif text-3xl sm:text-4xl leading-[1.2] text-charcoal mb-2 font-semibold">
@@ -62,7 +63,7 @@ export default function MembershipClient() {
             </p>
             <a
               href="#membership"
-              className="inline-flex min-h-[44px] w-fit items-center px-6 py-3 rounded-full text-cream font-semibold text-sm transition-all active:scale-95"
+              className="inline-flex min-h-[48px] w-fit items-center px-7 py-3.5 rounded-full text-cream font-bold text-[19px] transition-all active:scale-95"
               style={{ backgroundColor: '#D4703A', boxShadow: '0 6px 20px rgba(212,112,58,0.25)' }}
             >
               See plans
@@ -85,7 +86,7 @@ export default function MembershipClient() {
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
             className="relative z-10 flex flex-col justify-center px-14 xl:px-20 2xl:px-28 pt-24 pb-20"
           >
-            <p className="text-xs tracking-[0.2em] uppercase font-semibold mb-5" style={{ color: '#5E9635' }}>
+            <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-5" style={{ color: '#467826' }}>
               Membership
             </p>
             <h1 className="font-serif text-4xl xl:text-5xl 2xl:text-6xl leading-[1.2] text-charcoal font-semibold mb-5">
@@ -96,7 +97,7 @@ export default function MembershipClient() {
             </p>
             <a
               href="#membership"
-              className="inline-flex w-fit px-8 py-4 rounded-full text-cream font-semibold text-base transition-all hover:scale-105 hover:shadow-lg active:scale-95"
+              className="inline-flex w-fit px-9 py-4 rounded-full text-cream font-bold text-[19px] transition-all hover:scale-105 hover:shadow-lg active:scale-95"
               style={{ backgroundColor: '#D4703A', boxShadow: '0 8px 32px rgba(212,112,58,0.25)' }}
             >
               See plans
@@ -139,7 +140,7 @@ export default function MembershipClient() {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="mb-10"
           >
-            <p className="text-xs tracking-[0.2em] uppercase font-semibold mb-4" style={{ color: '#5E9635' }}>
+            <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-4" style={{ color: '#467826' }}>
               What's included
             </p>
             <h2 className="font-serif text-2xl sm:text-3xl text-charcoal font-medium leading-tight">
@@ -154,50 +155,92 @@ export default function MembershipClient() {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
             {/* The Calm Library */}
-            <div className="mb-8 pb-8 border-b border-charcoal/8">
-              <p className="text-xs tracking-[0.2em] uppercase font-semibold mb-5" style={{ color: '#5E9635' }}>
+            <div className="mb-10 pb-10 border-b border-charcoal/8">
+              <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-6" style={{ color: '#467826' }}>
                 The Calm Library — $27 / mo
               </p>
-              <div className="grid lg:grid-cols-2 gap-7 lg:gap-14">
+              <div className="grid lg:grid-cols-2 gap-9 lg:gap-14">
+                {/* TAT for Animals */}
                 <div>
-                  <p className="text-xs tracking-[0.15em] uppercase font-medium mb-2" style={{ color: '#D4703A' }}>
+                  <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style={{ backgroundColor: 'rgba(212,112,58,0.12)' }}>
+                    <PawPrint size={22} strokeWidth={1.75} style={{ color: '#D4703A' }} />
+                  </div>
+                  <p className="text-[13px] tracking-[0.15em] uppercase font-medium mb-1.5" style={{ color: '#467826' }}>
                     TAT for Animals
                   </p>
-                  <h3 className="font-serif text-xl text-charcoal font-medium mb-2 leading-snug">
+                  <h3 className="font-serif text-xl text-charcoal font-medium mb-4 leading-snug">
                     Help your animal feel calm and safe.
                   </h3>
-                  <p className="text-base text-charcoal/65 font-light leading-relaxed">
-                    Video library of TAT® sessions for animals — fear, anxiety, past trauma gently released. As your animal settles, something in you shifts too.
-                  </p>
+                  <ul className="flex flex-col gap-2.5">
+                    {[
+                      'Full video library of TAT® sessions for animals',
+                      'Fear, anxiety, and past trauma, gently released',
+                      'As your animal settles, something in you shifts too',
+                    ].map((item) => (
+                      <li key={item} className="flex items-start gap-2.5">
+                        <span className="mt-1 w-4 h-4 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(70,120,38,0.12)' }}>
+                          <Check size={10} strokeWidth={3} style={{ color: '#467826' }} />
+                        </span>
+                        <span className="text-base text-charcoal/80 leading-snug">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
+                {/* Healing ACEs Plus */}
                 <div>
-                  <p className="text-xs tracking-[0.15em] uppercase font-medium mb-2" style={{ color: '#D4703A' }}>
+                  <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style={{ backgroundColor: 'rgba(212,112,58,0.12)' }}>
+                    <HeartHandshake size={22} strokeWidth={1.75} style={{ color: '#D4703A' }} />
+                  </div>
+                  <p className="text-[13px] tracking-[0.15em] uppercase font-medium mb-1.5" style={{ color: '#467826' }}>
                     Healing ACEs Plus
                   </p>
-                  <h3 className="font-serif text-xl text-charcoal font-medium mb-2 leading-snug">
+                  <h3 className="font-serif text-xl text-charcoal font-medium mb-4 leading-snug">
                     Release what you've been carrying.
                   </h3>
-                  <p className="text-base text-charcoal/65 font-light leading-relaxed">
-                    Video library for your own healing. Gently dissolving beliefs from past experience — without reliving them. At your own pace.
-                  </p>
+                  <ul className="flex flex-col gap-2.5">
+                    {[
+                      'A video library for your own healing',
+                      'Old beliefs gently dissolved — without reliving them',
+                      'Entirely at your own pace',
+                    ].map((item) => (
+                      <li key={item} className="flex items-start gap-2.5">
+                        <span className="mt-1 w-4 h-4 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(70,120,38,0.12)' }}>
+                          <Check size={10} strokeWidth={3} style={{ color: '#467826' }} />
+                        </span>
+                        <span className="text-base text-charcoal/80 leading-snug">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </div>
             </div>
 
             {/* The Calm Circle */}
             <div>
-              <p className="text-xs tracking-[0.2em] uppercase font-semibold mb-5" style={{ color: '#5E9635' }}>
+              <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-6" style={{ color: '#467826' }}>
                 The Calm Circle — $47 / mo
               </p>
-              <div className="grid lg:grid-cols-2 gap-7 lg:gap-14">
-                <div>
-                  <h3 className="font-serif text-xl text-charcoal font-medium mb-2 leading-snug">
-                    Everything in The Calm Library, plus live sessions with Tapas every month.
-                  </h3>
-                  <p className="text-base text-charcoal/65 font-light leading-relaxed">
-                    Monthly live webinars for TAT for Animals and Healing ACEs Plus. Real-time guidance, your questions answered, and the full archive of past recordings.
-                  </p>
+              <div className="max-w-xl">
+                <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style={{ backgroundColor: 'rgba(212,112,58,0.12)' }}>
+                  <Video size={22} strokeWidth={1.75} style={{ color: '#D4703A' }} />
                 </div>
+                <h3 className="font-serif text-xl text-charcoal font-medium mb-4 leading-snug">
+                  Everything in The Calm Library, plus live time with Tapas.
+                </h3>
+                <ul className="flex flex-col gap-2.5">
+                  {[
+                    'Monthly live webinars — TAT for Animals & Healing ACEs Plus',
+                    'Real-time guidance — your questions answered',
+                    'Full archive of all past recordings',
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-2.5">
+                      <span className="mt-1 w-4 h-4 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(70,120,38,0.12)' }}>
+                        <Check size={10} strokeWidth={3} style={{ color: '#467826' }} />
+                      </span>
+                      <span className="text-base text-charcoal/80 leading-snug">{item}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
 
@@ -252,7 +295,7 @@ export default function MembershipClient() {
             <Link
               href="/faq"
               className="inline-flex items-center min-h-[44px] text-base font-medium transition-opacity hover:opacity-70 whitespace-nowrap"
-              style={{ color: '#A14E22' }}
+              style={{ color: '#467826' }}
             >
               Read the FAQ →
             </Link>

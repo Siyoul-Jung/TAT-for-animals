@@ -96,7 +96,7 @@ export default function Navbar() {
   const isMember = userRole !== 'guest';
   const navLinkClasses = cn(
     'text-xs sm:text-sm font-medium transition-colors whitespace-nowrap',
-    isScrolled || !isDarkHero ? 'text-charcoal/65 hover:text-brand' : 'text-cream/70 hover:text-cream'
+    isScrolled || !isDarkHero ? 'text-charcoal/65 hover:text-green' : 'text-cream/70 hover:text-cream'
   );
 
   return (
@@ -135,7 +135,7 @@ export default function Navbar() {
               'inline text-base sm:text-2xl font-semibold tracking-normal transition-colors duration-300 whitespace-nowrap font-serif',
               isScrolled || !isDarkHero ? 'text-charcoal/65' : 'text-cream'
             )}>
-              TAT for Animals<span className="text-brand text-[10px] sm:text-sm align-super">®</span>
+              TAT for Animals<span className="text-green text-[10px] sm:text-sm align-super">®</span>
             </span>
           </Link>
         </div>
@@ -153,7 +153,7 @@ export default function Navbar() {
                 className={cn(
                   'flex items-center gap-1.5 text-xs sm:text-sm font-medium transition-all',
                   isScrolled || !isDarkHero
-                    ? 'text-charcoal/65 hover:text-brand'
+                    ? 'text-charcoal/65 hover:text-green'
                     : 'text-cream/70 hover:text-cream'
                 )}
               >

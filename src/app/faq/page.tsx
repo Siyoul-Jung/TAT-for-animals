@@ -70,13 +70,13 @@ function FAQItem({ q, a }: { q: string; a: string }) {
         className="w-full flex items-center justify-between gap-4 py-5 text-left min-h-[64px] group"
       >
         <span className={`text-base sm:text-lg font-medium leading-snug transition-colors ${
-          open ? 'text-brand' : 'text-charcoal group-hover:text-brand'
+          open ? 'text-green' : 'text-charcoal group-hover:text-green'
         }`}>
           {q}
         </span>
         <ChevronDown
           size={18}
-          className="text-brand shrink-0 transition-transform duration-300"
+          className="text-green shrink-0 transition-transform duration-300"
           style={{ transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}
         />
       </button>
@@ -106,7 +106,7 @@ export default function FAQ() {
       <div className="max-w-2xl mx-auto">
 
         <div className="mb-12 lg:mb-16">
-          <p className="text-xs tracking-[0.2em] uppercase font-semibold mb-5" style={{ color: '#5E9635' }}>
+          <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-5" style={{ color: '#467826' }}>
             FAQ
           </p>
           <h1 className="font-sans text-3xl sm:text-4xl lg:text-5xl text-charcoal font-semibold leading-tight mb-4">
@@ -127,8 +127,8 @@ export default function FAQ() {
           <p className="text-base sm:text-lg leading-relaxed text-charcoal/65">
             Still have questions?{' '}
             <a
-              href="mailto:customerservice@tatlife.com"
-              className="text-brand hover:text-brand-dark transition-colors"
+              href="mailto:hello@tatforanimals.com"
+              className="text-green hover:text-green transition-colors"
             >
               Email us
             </a>

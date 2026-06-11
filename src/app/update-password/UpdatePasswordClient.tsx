@@ -79,8 +79,8 @@ export default function UpdatePasswordClient() {
             className="h-12 w-auto object-contain mb-1"
             style={{ width: 'auto' }}
           />
-          <span className="font-serif text-xl text-charcoal/65 group-hover:text-brand transition-colors">
-            TAT for Animals<span className="text-brand text-[10px] align-super">®</span>
+          <span className="font-serif text-xl text-charcoal/65 group-hover:text-green transition-colors">
+            TAT for Animals<span className="text-green text-[10px] align-super">®</span>
           </span>
         </Link>
 
@@ -135,7 +135,7 @@ export default function UpdatePasswordClient() {
               <div className="bg-red-50 border border-red-100 rounded-xl px-4 py-3 mb-5">
                 <p className="text-sm text-red-600 leading-relaxed">{error}</p>
                 {error.includes('expired') && (
-                  <a href="/reset-password" className="text-sm text-brand hover:underline mt-1 block">
+                  <a href="/reset-password" className="text-sm text-green hover:underline mt-1 block">
                     Request a new reset link →
                   </a>
                 )}

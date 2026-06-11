@@ -3,6 +3,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { BOOKING_URL } from '@/lib/links';
 
 const navLinks = [
   { name: 'About', href: '/about' },
@@ -71,7 +72,7 @@ export default function Footer() {
               style={{ width: 'auto' }}
             />
             <span className="text-base font-semibold font-serif text-cream/80">
-              TAT for Animals<span className="text-brand text-[10px] align-super">®</span>
+              TAT for Animals<span className="text-green text-[10px] align-super">®</span>
             </span>
           </div>
 
@@ -124,6 +125,23 @@ export default function Footer() {
               {link.name}
             </Link>
           ))}
+          {/* Quiet booking entry — opens the TATLife (Amelia) session page. Placeholder copy
+              pending Tapas's wording. Cream (not green) so it stays AA-legible on the dark footer. */}
+          <a
+            href={BOOKING_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs font-light transition-colors"
+            style={{ color: 'rgba(250,246,241,0.60)' }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLElement).style.color = '#D4A843';
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.color = 'rgba(250,246,241,0.60)';
+            }}
+          >
+            Book a Session ↗
+          </a>
           <a
             href="https://tatlife.com"
             target="_blank"

@@ -26,7 +26,7 @@ export default function ManageSubscriptionButton({ label = 'Manage Subscription'
     <button
       onClick={handleClick}
       disabled={isLoading}
-      className="min-h-[44px] px-6 py-3 rounded-full border border-charcoal/20 text-charcoal/65 text-base font-medium hover:border-brand hover:text-brand transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+      className="min-h-[44px] px-6 py-3 rounded-full border border-charcoal/20 text-charcoal/65 text-base font-medium hover:border-brand hover:text-green transition-all disabled:opacity-50 disabled:cursor-not-allowed"
     >
       {isLoading ? 'Connecting...' : label}
     </button>

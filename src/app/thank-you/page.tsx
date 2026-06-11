@@ -63,7 +63,7 @@ function ThankYouContent() {
           <div className="flex items-center justify-center gap-2.5">
             <span
               className="flex items-center justify-center w-9 h-9 rounded-full shrink-0"
-              style={{ backgroundColor: 'rgba(94,150,53,0.14)' }}
+              style={{ backgroundColor: 'rgba(70,120,38,0.14)' }}
             >
               <Check size={18} strokeWidth={2.5} style={{ color: '#4A7A29' }} />
             </span>

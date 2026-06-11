@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import ManageSubscriptionButton from './ManageSubscriptionButton'
+import { BOOKING_URL } from '@/lib/links'
 
 type WebinarSession = {
   _id: string
@@ -225,7 +226,7 @@ export default function DashboardClient({
                         {isPayPal ? (
                           <>
                             {' '}You&apos;re welcome to{' '}
-                            <Link href="/membership#membership" className="text-brand-dark underline hover:text-brand">
+                            <Link href="/membership#membership" className="text-green underline hover:text-green">
                               rejoin
                             </Link>
                             {' '}anytime.
@@ -281,7 +282,7 @@ export default function DashboardClient({
                         href="https://www.paypal.com/myaccount/autopay/"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-brand hover:text-brand-dark underline"
+                        className="text-green hover:text-green underline"
                       >
                         PayPal account
                       </a>
@@ -311,7 +312,7 @@ export default function DashboardClient({
                           <button
                             onClick={() => handleChangePlan('subscriber')}
                             disabled={changingPlan}
-                            className="min-h-[44px] flex items-center text-base font-medium text-brand hover:text-brand-dark transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                            className="min-h-[44px] flex items-center text-base font-medium text-green hover:text-green transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                           >
                             {changingPlan ? 'Loading…' : 'Continue →'}
                           </button>
@@ -349,7 +350,7 @@ export default function DashboardClient({
               </p>
               <Link
                 href="/membership#membership"
-                className="inline-flex items-center min-h-[44px] px-7 py-3 rounded-full bg-brand text-cream text-base font-semibold hover:bg-brand-dark transition-all"
+                className="inline-flex items-center min-h-[44px] px-7 py-3 rounded-full bg-brand-dark text-white text-base font-semibold hover:opacity-90 transition-all"
               >
                 See Membership Options
               </Link>
@@ -379,6 +380,21 @@ export default function DashboardClient({
                 isLoading={changingPlan}
               />
             </div>
+            {/* Quiet 1:1 booking entry for members — the warmest audience for a private session,
+                placed gently (no payment pressure). Green is AA-legible on this light card.
+                Placeholder copy pending Tapas's wording; URL shared via lib/links. */}
+            <p className="text-sm text-charcoal/65 leading-relaxed">
+              Want personal, hands-on guidance?{' '}
+              <a
+                href={BOOKING_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium underline underline-offset-2 hover:opacity-70 transition-opacity"
+                style={{ color: '#467826' }}
+              >
+                Book a private session with Tapas →
+              </a>
+            </p>
           </section>
         )}
 
@@ -399,7 +415,7 @@ export default function DashboardClient({
               </div>
               <Link
                 href="/reset-password"
-                className="text-sm text-brand hover:text-brand-dark font-medium min-h-[44px] flex items-center px-2"
+                className="text-sm text-green hover:text-green font-medium min-h-[44px] flex items-center px-2"
               >
                 Change
               </Link>
@@ -464,7 +480,7 @@ function PlanSwitchButton({
     <button
       onClick={onClick}
       disabled={loading}
-      className="min-h-[44px] flex items-center text-base font-medium text-brand hover:text-brand-dark transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+      className="min-h-[44px] flex items-center text-base font-medium text-green hover:text-green transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
     >
       {loading ? 'Loading…' : `${label} →`}
     </button>
@@ -484,7 +500,7 @@ function PayPalCancelButton({
     <button
       onClick={onClick}
       disabled={loading}
-      className="min-h-[44px] px-6 py-3 rounded-full border border-charcoal/20 text-charcoal/65 text-base font-medium hover:border-brand hover:text-brand transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+      className="min-h-[44px] px-6 py-3 rounded-full border border-charcoal/20 text-charcoal/65 text-base font-medium hover:border-brand hover:text-green transition-all disabled:opacity-50 disabled:cursor-not-allowed"
     >
       {loading ? 'Cancelling…' : label}
     </button>
@@ -521,7 +537,7 @@ function ContentCard({
           <span className={`inline-block text-xs font-semibold px-2 py-0.5 rounded-full mb-2 ${
             locked
               ? 'bg-charcoal/10 text-charcoal/65'
-              : 'bg-brand/10 text-brand'
+              : 'bg-brand/10 text-green'
           }`}>
             {badge}
           </span>
@@ -533,7 +549,7 @@ function ContentCard({
         <button
           onClick={onClick}
           disabled={isLoading}
-          className="mt-3 text-sm font-medium text-brand hover:text-brand-dark transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+          className="mt-3 text-sm font-medium text-green hover:text-green transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {isLoading ? 'Upgrading...' : 'Upgrade →'}
         </button>
@@ -544,7 +560,7 @@ function ContentCard({
   return (
     <Link href={href} className={`group ${cardClasses} hover:border-brand/30 hover:shadow-md cursor-pointer`}>
       {badge && (
-        <span className={`inline-block text-xs font-semibold px-2 py-0.5 rounded-full mb-2 bg-brand/10 text-brand`}>
+        <span className={`inline-block text-xs font-semibold px-2 py-0.5 rounded-full mb-2 bg-brand/10 text-green`}>
           {badge}
         </span>
       )}
@@ -552,7 +568,7 @@ function ContentCard({
         {title}
       </p>
       <p className="text-sm text-charcoal/65 leading-relaxed">{description}</p>
-      <p className="mt-3 text-sm font-medium text-brand group-hover:text-brand-dark transition-colors">
+      <p className="mt-3 text-sm font-medium text-green group-hover:text-green transition-colors">
         Watch →
       </p>
     </Link>

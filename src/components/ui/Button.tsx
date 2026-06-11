@@ -16,14 +16,15 @@ export default function Button({
   const variants = {
     primary: 'bg-brand text-cream hover:bg-brand/90 shadow-md hover:shadow-lg active:scale-95',
     secondary: 'bg-charcoal text-cream hover:bg-charcoal/90 shadow-md',
-    outline: 'border-2 border-brand text-brand hover:bg-brand hover:text-cream',
-    ghost: 'text-brand hover:bg-brand/10',
+    outline: 'border-2 border-brand text-green hover:bg-brand hover:text-cream',
+    ghost: 'text-green hover:bg-brand/10',
   };
 
   const sizes = {
     sm: 'px-4 py-2 text-xs',
     md: 'px-6 py-3 text-sm',
-    lg: 'px-10 py-4 text-base font-semibold',
+    // lg is the CTA size: cream-on-orange needs "large text" (≥18.66px bold) to clear AA 3:1.
+    lg: 'px-10 py-4 text-[19px] font-bold',
   };
 
   return (

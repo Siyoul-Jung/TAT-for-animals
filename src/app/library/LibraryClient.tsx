@@ -115,7 +115,7 @@ function VideoRow({ video, progress, onProgressUpdate }: {
         }`}>
           {completed ? (
             <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth={2}
-              className={open ? 'text-cream' : 'text-brand'}>
+              className={open ? 'text-cream' : 'text-green'}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M2 7l3.5 3.5L11 3" />
             </svg>
           ) : (
@@ -127,13 +127,13 @@ function VideoRow({ video, progress, onProgressUpdate }: {
         </span>
         <div className="flex-1 min-w-0">
           <p className={`font-medium text-base leading-snug transition-colors ${
-            open ? 'text-brand' : 'text-charcoal group-hover:text-brand'
+            open ? 'text-green' : 'text-charcoal group-hover:text-green'
           }`}>
             {video.title}
           </p>
           <p className="text-sm text-charcoal/65 mt-0.5">
             {completed
-              ? <span style={{ color: '#5E9635' }}>Watched</span>
+              ? <span style={{ color: '#467826' }}>Watched</span>
               : progress?.lastPosition && progress.lastPosition > 5 && video.duration
               ? formatDuration(Math.max(video.duration - progress.lastPosition, 0))
               : duration}
@@ -147,7 +147,7 @@ function VideoRow({ video, progress, onProgressUpdate }: {
                   width: completed
                     ? '100%'
                     : `${Math.min((progress!.lastPosition / (video.duration! * 60)) * 100, 100)}%`,
-                  backgroundColor: completed ? '#5E9635' : '#D4703A',
+                  backgroundColor: completed ? '#467826' : '#D4703A',
                 }}
               />
             </div>
@@ -426,7 +426,7 @@ export default function LibraryClient({
                             href={session.meetingUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 mt-3 min-h-[44px] px-5 py-2.5 rounded-full bg-brand text-cream text-sm font-semibold hover:bg-brand-dark transition-all"
+                            className="inline-flex items-center gap-1.5 mt-3 min-h-[44px] px-5 py-2.5 rounded-full bg-brand-dark text-white text-sm font-semibold hover:opacity-90 transition-all"
                           >
                             Join on Zoom →
                           </a>
@@ -459,10 +459,10 @@ export default function LibraryClient({
           ) : (
             <div className="p-7 bg-white rounded-2xl border border-charcoal/10 shadow-sm space-y-5">
               {upcoming[0] && (
-                <div className="flex items-start gap-3 p-4 rounded-xl" style={{ backgroundColor: 'rgba(94,150,53,0.06)', border: '1px solid rgba(94,150,53,0.15)' }}>
-                  <div className="w-1.5 h-1.5 rounded-full mt-2 shrink-0" style={{ backgroundColor: '#5E9635' }} />
+                <div className="flex items-start gap-3 p-4 rounded-xl" style={{ backgroundColor: 'rgba(70,120,38,0.06)', border: '1px solid rgba(70,120,38,0.15)' }}>
+                  <div className="w-1.5 h-1.5 rounded-full mt-2 shrink-0" style={{ backgroundColor: '#467826' }} />
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-widest mb-0.5" style={{ color: '#5E9635' }}>
+                    <p className="text-xs font-semibold uppercase tracking-widest mb-0.5" style={{ color: '#467826' }}>
                       Next live session
                     </p>
                     <p className="text-base text-charcoal font-medium">{upcoming[0].title}</p>
@@ -480,7 +480,7 @@ export default function LibraryClient({
                 <button
                   onClick={handleUpgrade}
                   disabled={upgrading}
-                  className="inline-flex items-center min-h-[44px] px-6 py-2.5 rounded-full bg-brand text-cream text-sm font-semibold hover:bg-brand-dark transition-all disabled:opacity-60"
+                  className="inline-flex items-center min-h-[44px] px-6 py-2.5 rounded-full bg-brand-dark text-white text-sm font-semibold hover:opacity-90 transition-all disabled:opacity-60"
                 >
                   {upgrading ? 'Connecting…' : 'Upgrade to The Calm Circle →'}
                 </button>
