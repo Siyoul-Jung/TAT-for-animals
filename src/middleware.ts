@@ -50,7 +50,10 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
-  ],
+  // Only run on the protected paths the middleware actually guards. The previous
+  // catch-all matcher forced *every* request (home, membership, login…) through the
+  // Edge function just to early-return next(), adding latency and blocking pure
+  // static CDN serving. Public pages now skip middleware entirely — same behaviour
+  // (it never did auth work for them), lower TTFB.
+  matcher: ['/dashboard', '/dashboard/:path*', '/library', '/library/:path*'],
 }
