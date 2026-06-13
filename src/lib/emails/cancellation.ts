@@ -1,72 +1,27 @@
+import { emailShell } from './layout';
+
 export function cancellationEmail(name: string | null): { subject: string; html: string } {
   const firstName = name?.split(' ')[0] ?? 'there';
   const subject = `Your TAT for Animals membership has been cancelled`;
 
-  const html = `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>${subject}</title>
-</head>
-<body style="margin:0;padding:0;background:#FBF5F3;font-family:'Georgia',serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#FBF5F3;padding:48px 16px;">
-    <tr>
-      <td align="center">
-        <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;">
-
-          <!-- Header -->
-          <tr>
-            <td style="padding-bottom:40px;">
-              <p style="margin:0;font-family:'Helvetica Neue',sans-serif;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#4A7A29;font-weight:600;">
-                TAT for Animals
-              </p>
-            </td>
-          </tr>
-
-          <!-- Message -->
-          <tr>
-            <td style="padding-bottom:32px;border-bottom:1px solid rgba(28,16,7,0.08);">
-              <h1 style="margin:0 0 16px;font-size:32px;font-weight:500;color:#1C1007;line-height:1.3;">
+  // No CTA by design: someone who just cancelled shouldn't be sold to.
+  // The job here is reassurance — confirm it's done, and leave the door open warmly.
+  const content = `
+              <h1 class="email-h1" style="margin:0 0 16px;font-family:'Georgia',serif;font-size:30px;font-weight:500;color:#1C1007;line-height:1.3;">
                 We're sorry to see you go, ${firstName}.
               </h1>
-              <p style="margin:0;font-family:'Helvetica Neue',sans-serif;font-size:17px;color:rgba(28,16,7,0.6);line-height:1.7;font-weight:300;">
-                Your membership has been cancelled. You'll continue to have access
-                until the end of your current billing period.
+              <p style="margin:0 0 8px;font-size:17px;color:#1C1007;line-height:1.7;">
+                Your membership has been cancelled.
               </p>
-            </td>
-          </tr>
+              <p style="margin:0;font-size:17px;color:rgba(28,16,7,0.65);line-height:1.7;">
+                You'll keep full access until the end of your current billing period. Whenever you feel ready to return, your animal will be waiting.
+              </p>`;
 
-          <!-- Rejoin -->
-          <tr>
-            <td style="padding:32px 0;border-bottom:1px solid rgba(28,16,7,0.08);">
-              <p style="margin:0 0 20px;font-family:'Helvetica Neue',sans-serif;font-size:15px;color:rgba(28,16,7,0.6);line-height:1.7;font-weight:300;">
-                Whenever you feel ready to return, your animal will be waiting.
-              </p>
-              <a href="https://tatforanimals.com/membership"
-                style="display:inline-block;padding:14px 32px;background:#D4703A;color:#1C1007;font-family:'Helvetica Neue',sans-serif;font-size:15px;font-weight:600;text-decoration:none;border-radius:100px;">
-                Rejoin anytime →
-              </a>
-            </td>
-          </tr>
-
-          <!-- Footer -->
-          <tr>
-            <td style="padding-top:32px;border-top:1px solid rgba(28,16,7,0.08);">
-              <p style="margin:0;font-family:'Helvetica Neue',sans-serif;font-size:12px;color:rgba(28,16,7,0.6);">
-                © 2026 TATLife®, Inc. · tatforanimals.com
-              </p>
-            </td>
-          </tr>
-
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>
-  `.trim();
+  const html = emailShell({
+    title: subject,
+    eyebrow: 'TAT for Animals',
+    content,
+  });
 
   return { subject, html };
 }
