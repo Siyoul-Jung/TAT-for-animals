@@ -17,7 +17,12 @@ export default function Hero({ images }: { images: HeroImage[] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    const id = window.setTimeout(() => setShuffled(shuffle(images)), 0);
+    // Keep the first slide fixed — it's the priority-preloaded LCP image, painted
+    // at SSR. Shuffling it after hydration would swap in an un-preloaded image and
+    // wreck LCP. So we only shuffle the *rest* for per-visit variety.
+    const [first, ...rest] = images;
+    if (rest.length === 0) return;
+    const id = window.setTimeout(() => setShuffled([first, ...shuffle(rest)]), 0);
     return () => window.clearTimeout(id);
   }, [images]);
 
@@ -125,17 +130,15 @@ export default function Hero({ images }: { images: HeroImage[] }) {
           </div>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.2, delay: 0.15 }}
-          className="relative overflow-hidden"
-        >
+        {/* No entrance fade on the image column: an initial opacity:0 wrapper would
+            hold back the LCP paint until hydration. The per-slide crossfade below
+            already supplies the motion. */}
+        <div className="relative overflow-hidden">
           {slides('55vw')}
           <div className="absolute inset-0 z-10" style={{ background: 'linear-gradient(to right, rgba(251,245,243,1) 0%, rgba(251,245,243,0.6) 8%, rgba(251,245,243,0.1) 25%, transparent 45%)' }} />
           <div className="absolute inset-0 z-10" style={{ background: 'linear-gradient(to top, rgba(251,245,243,0.7) 0%, rgba(251,245,243,0.2) 15%, transparent 35%)' }} />
           <div className="absolute inset-0 z-10" style={{ background: 'linear-gradient(to bottom, rgba(251,245,243,0.7) 0%, rgba(251,245,243,0.2) 10%, transparent 25%)' }} />
-        </motion.div>
+        </div>
 
       </div>
     </section>
