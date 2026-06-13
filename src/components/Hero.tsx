@@ -14,6 +14,22 @@ function shuffle<T>(arr: T[]): T[] {
 export default function Hero({ images }: { images: HeroImage[] }) {
   const [shuffled, setShuffled] = useState(images);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [mountRest, setMountRest] = useState(false);
+
+  useEffect(() => {
+    // Only slide 0 (the LCP image) is in the initial paint. The remaining slides
+    // mount after first paint so they don't share bandwidth with the LCP download.
+    const w = window as Window & {
+      requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number;
+      cancelIdleCallback?: (id: number) => void;
+    };
+    if (w.requestIdleCallback) {
+      const id = w.requestIdleCallback(() => setMountRest(true), { timeout: 1500 });
+      return () => w.cancelIdleCallback?.(id);
+    }
+    const id = window.setTimeout(() => setMountRest(true), 1200);
+    return () => window.clearTimeout(id);
+  }, []);
 
   useEffect(() => {
     // Keep the first slide fixed — it's the priority-preloaded LCP image, painted
@@ -49,7 +65,7 @@ export default function Hero({ images }: { images: HeroImage[] }) {
 
         {/* ── Image — mobile: top band; desktop: right column ── */}
         <div className="relative shrink-0 overflow-hidden h-[61.8dvh] lg:h-auto lg:col-start-2 lg:row-start-1">
-          {shuffled.map((img, i) => {
+          {(mountRest ? shuffled : shuffled.slice(0, 1)).map((img, i) => {
             const first = i === 0;
             return (
               <div
