@@ -130,7 +130,7 @@ export default function MembershipClient() {
       <Pricing />
 
       {/* ── What's included ── */}
-      <section id="membership" className="bg-cream py-14 lg:py-20 px-6">
+      <section id="whats-included" className="bg-cream py-14 lg:py-20 px-6">
         <div className="max-w-5xl mx-auto">
 
           <motion.div

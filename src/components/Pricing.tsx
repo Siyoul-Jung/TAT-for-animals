@@ -43,7 +43,6 @@ const tiers = [
 export default function Pricing() {
   const router = useRouter();
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
-  const [selectedPlan, setSelectedPlan] = useState<string>('calm_circle');
 
   async function handleCheckout(plan: string) {
     setLoadingPlan(plan);
@@ -98,10 +97,9 @@ export default function Pricing() {
                 ease: [0.16, 1, 0.3, 1],
               }}
               whileHover={{ y: -6, transition: { duration: 0.3 } }}
-              onClick={() => setSelectedPlan(tier.plan)}
-              className="relative flex flex-col rounded-2xl p-5 sm:p-7 lg:p-8 bg-white cursor-pointer"
+              className="relative flex flex-col rounded-2xl p-5 sm:p-7 lg:p-8 bg-white"
               style={
-                selectedPlan === tier.plan
+                tier.popular
                   ? {
                       border: '2px solid #467826',
                       boxShadow: '0 16px 48px rgba(70,120,38,0.12)',

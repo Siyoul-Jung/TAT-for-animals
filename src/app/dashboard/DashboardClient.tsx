@@ -72,10 +72,13 @@ export default function DashboardClient({
   const [deleting, setDeleting] = useState(false)
   const [deleteRequested, setDeleteRequested] = useState(false)
   const [cancelling, setCancelling] = useState(false)
+  // Action failures (cancel / change plan / delete) surface as a calm inline box, not a native alert().
+  const [actionError, setActionError] = useState<string | null>(null)
 
   const handlePayPalCancel = async () => {
     if (!window.confirm('Cancel your membership? You won’t be billed again, and you’ll keep access until your current period ends.')) return
     setCancelling(true)
+    setActionError(null)
     try {
       const res = await fetch('/api/paypal/cancel', { method: 'POST' })
       const data = await res.json()
@@ -83,7 +86,7 @@ export default function DashboardClient({
       window.location.reload()
     } catch (err) {
       console.error('PayPal cancel error:', err)
-      alert(err instanceof Error && err.message ? err.message : 'Something went wrong. Please try again.')
+      setActionError(err instanceof Error && err.message ? err.message : 'Something went wrong on our end. Please try again in a moment.')
       setCancelling(false)
     }
   }
@@ -99,6 +102,7 @@ export default function DashboardClient({
 
   const handleChangePlan = async (targetTier: 'subscriber' | 'pro_subscriber') => {
     setChangingPlan(true)
+    setActionError(null)
     try {
       const res = await fetch('/api/change-plan', {
         method: 'POST',
@@ -111,13 +115,14 @@ export default function DashboardClient({
       window.location.href = data.url
     } catch (err) {
       console.error('Change plan error:', err)
-      alert(err instanceof Error && err.message ? err.message : 'Something went wrong. Please try again.')
+      setActionError(err instanceof Error && err.message ? err.message : 'Something went wrong on our end. Please try again in a moment.')
       setChangingPlan(false)
     }
   }
 
   const handleDeleteRequest = async () => {
     setDeleting(true)
+    setActionError(null)
     try {
       const res = await fetch('/api/request-account-deletion', { method: 'POST' })
       const data = await res.json()
@@ -125,7 +130,7 @@ export default function DashboardClient({
       setDeleteRequested(true)
     } catch (err) {
       console.error('Delete request error:', err)
-      alert('Something went wrong. Please try again.')
+      setActionError('Something went wrong on our end. Please try again in a moment.')
     } finally {
       setDeleting(false)
     }
@@ -150,6 +155,13 @@ export default function DashboardClient({
           </h1>
           <p className="text-charcoal/65 mt-1 text-base">{email}</p>
         </div>
+
+        {/* Action error (cancel / change plan / delete) — calm inline box instead of a native alert() */}
+        {actionError && (
+          <section role="alert" className="bg-red-50 border border-red-200 rounded-2xl px-6 py-4">
+            <p className="text-sm text-red-700 leading-relaxed">{actionError}</p>
+          </section>
+        )}
 
         {/* Couldn't delete — subscription still active (redirected here from the delete-confirm link) */}
         {errorParam === 'cancel-subscription-first' && (
