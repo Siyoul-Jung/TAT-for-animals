@@ -2,6 +2,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import Link from 'next/link';
 
 
@@ -26,10 +27,12 @@ export default function AboutTapas() {
                 boxShadow: '0 24px 64px rgba(31,46,20,0.12), 0 0 0 1px rgba(31,46,20,0.06)',
               }}
             >
-              <img
+              <Image
                 src="/images/Tapas-Thanks.jpg"
                 alt="Tapas Fleming — Creator of TAT®"
-                className="w-full h-full object-cover object-center"
+                fill
+                sizes="(min-width: 1024px) 600px, 100vw"
+                className="object-cover object-center"
               />
               <div
                 className="absolute inset-0"
@@ -104,10 +107,12 @@ export default function AboutTapas() {
               className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden"
               style={{ boxShadow: '0 24px 64px rgba(31,46,20,0.12), 0 0 0 1px rgba(31,46,20,0.06)' }}
             >
-              <img
+              <Image
                 src="/images/Tapas-Thanks.jpg"
                 alt="Tapas Fleming — Creator of TAT®"
-                className="w-full h-full object-cover object-center"
+                fill
+                sizes="100vw"
+                className="object-cover object-center"
               />
               <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(31,46,20,0.25) 0%, transparent 50%)' }} />
             </div>

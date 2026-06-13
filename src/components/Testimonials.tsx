@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
 
 type Testimonial = {
@@ -44,12 +45,15 @@ const INTERVAL = 7000;
 function SlideLayout({ t }: { t: Testimonial }) {
   return (
     <div className="grid lg:grid-cols-[1fr_1fr] gap-5 lg:gap-12 items-center">
-      {/* 사진 */}
+      {/* 사진 — next/image: WebP/AVIF 변환 + 리사이즈 + 기본 lazy 로딩.
+          후기는 스크롤 아래라 priority 없음(Hero LCP에 대역폭 양보). */}
       <div className="relative aspect-square">
-        <img
+        <Image
           src={t.image}
           alt={t.name}
-          className="absolute inset-0 w-full h-full object-contain object-center"
+          fill
+          sizes="(min-width: 1024px) 512px, 100vw"
+          className="object-contain object-center"
         />
       </div>
 
