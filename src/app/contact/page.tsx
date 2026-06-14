@@ -31,7 +31,7 @@ export default function Contact() {
         <a
           href="mailto:hello@tatforanimals.com"
           className="inline-flex items-center gap-2 text-base font-medium transition-opacity hover:opacity-70"
-          style={{ color: '#D4703A' }}
+          style={{ color: '#467826' }}
         >
           hello@tatforanimals.com
         </a>

@@ -1,5 +1,7 @@
 import fs from 'fs';
 import path from 'path';
+import { Suspense } from 'react';
+import AccountNotice from "@/components/AccountNotice";
 import Hero from "@/components/Hero";
 import TrySession from "@/components/TrySession";
 import Testimonials from "@/components/Testimonials";
@@ -21,6 +23,7 @@ export default function Home() {
   const heroImages = getHeroImages();
   return (
     <div className="flex flex-col">
+      <Suspense fallback={null}><AccountNotice /></Suspense>
       <Hero images={heroImages} />        {/* 1. 약속 */}
       <TrySession />                      {/* 2. 즉각 증명 */}
       <Testimonials />                    {/* 4. 사회적 증명 */}
