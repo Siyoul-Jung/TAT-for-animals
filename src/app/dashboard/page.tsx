@@ -20,9 +20,9 @@ export const metadata: Metadata = {
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>
+  searchParams: Promise<{ error?: string; plan?: string }>
 }) {
-  const { error: errorParam } = await searchParams
+  const { error: errorParam, plan: planParam } = await searchParams
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -58,6 +58,7 @@ export default async function DashboardPage({
       pendingTierAt={lapsed ? null : (profile?.pending_tier_at ?? null)}
       cancelAt={lapsed ? null : (profile?.cancel_at ?? null)}
       errorParam={errorParam ?? null}
+      planChanged={planParam === 'changed'}
       upcoming={upcoming}
     />
   )

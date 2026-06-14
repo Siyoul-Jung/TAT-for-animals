@@ -95,7 +95,7 @@ export default function Navbar() {
   const isDarkHero = darkHeroPages.includes(pathname);
   const isMember = userRole !== 'guest';
   const navLinkClasses = cn(
-    'text-xs sm:text-sm font-medium transition-colors whitespace-nowrap',
+    'text-sm font-medium transition-colors whitespace-nowrap',
     isScrolled || !isDarkHero ? 'text-charcoal/65 hover:text-green' : 'text-cream/70 hover:text-cream'
   );
 

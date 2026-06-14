@@ -25,6 +25,7 @@ type Props = {
   pendingTierAt: string | null
   cancelAt: string | null
   errorParam: string | null
+  planChanged: boolean
   upcoming: WebinarSession[]
 }
 
@@ -65,6 +66,7 @@ export default function DashboardClient({
   pendingTierAt,
   cancelAt,
   errorParam,
+  planChanged,
   upcoming,
 }: Props) {
   const [changingPlan, setChangingPlan] = useState(false)
@@ -193,6 +195,15 @@ export default function DashboardClient({
                 Keep my membership
               </button>
             </div>
+          </section>
+        )}
+
+        {/* Plan change confirmed (redirected here from a PayPal plan switch) */}
+        {planChanged && (
+          <section className="bg-green-50 border border-green-200 rounded-2xl px-6 py-4">
+            <p className="text-sm text-green-800 leading-relaxed">
+              Your plan change is confirmed. It may take a moment to update on this page.
+            </p>
           </section>
         )}
 
