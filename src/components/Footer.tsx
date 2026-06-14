@@ -53,7 +53,7 @@ export default function Footer() {
   return (
     <footer
       className="px-6 pt-6 pb-4"
-      style={{ backgroundColor: '#2E1A0C' }}
+      style={{ backgroundColor: '#1E3310' }}
     >
       <div className="max-w-6xl mx-auto">
 
@@ -72,7 +72,7 @@ export default function Footer() {
               style={{ width: 'auto' }}
             />
             <span className="text-base font-semibold font-serif text-cream/80">
-              TAT for Animals<span className="text-green text-[10px] align-super">®</span>
+              TAT for Animals<span className="text-cream/70 text-[10px] align-super">®</span>
             </span>
           </div>
 

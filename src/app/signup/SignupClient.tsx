@@ -38,7 +38,7 @@ export default function SignupClient() {
 
     setLoading(true)
 
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -52,6 +52,16 @@ export default function SignupClient() {
       } else {
         setError('Something went wrong. Please try again.')
       }
+      setLoading(false)
+      return
+    }
+
+    // With email-enumeration protection on, signing up with an email that already
+    // exists returns success with NO error and NO email sent — Supabase only signals
+    // it via an empty `identities` array. Detect that so we don't show a "check your
+    // inbox" screen for a confirmation email that will never arrive.
+    if (data.user && (data.user.identities?.length ?? 0) === 0) {
+      setError('An account with this email already exists. Try signing in, or reset your password if you’ve forgotten it.')
       setLoading(false)
       return
     }

@@ -11,6 +11,15 @@ import { cancellationEmail } from '@/lib/emails/cancellation'
 import { webinarInviteEmail } from '@/lib/emails/webinar-invite'
 import { recordingNotificationEmail } from '@/lib/emails/recording-notification'
 import { accountDeletionEmail } from '@/lib/emails/account-deletion'
+import { readFileSync } from 'fs'
+import { join } from 'path'
+
+// The two Supabase auth emails ship as static HTML (they need the {{ .ConfirmationURL }}
+// placeholder), so render the real files here — the preview never drifts from what ships.
+function readAuthTemplate(name: string): string {
+  const file = join(process.cwd(), 'docs', 'email-templates', `${name}.html`)
+  return readFileSync(file, 'utf-8').replace(/\{\{\s*\.ConfirmationURL\s*\}\}/g, '#')
+}
 
 type Preview = { label: string; subject: string; html: string }
 
@@ -32,7 +41,12 @@ function buildPreviews(): Record<string, Preview> {
   })
   const deletion = accountDeletionEmail('https://tatforanimals.com/api/confirm-account-deletion?token=preview')
 
+  const resetHtml = readAuthTemplate('reset-password')
+  const confirmHtml = readAuthTemplate('confirm-signup')
+
   return {
+    'reset-password': { label: 'Reset password (Supabase auth)', subject: 'Reset your password', html: resetHtml },
+    'confirm-signup': { label: 'Confirm signup (Supabase auth)', subject: 'Confirm your email', html: confirmHtml },
     'welcome-library': { label: 'Welcome — The Calm Library', subject: wLibrary.subject, html: wLibrary.html },
     'welcome-circle': { label: 'Welcome — The Calm Circle', subject: wCircle.subject, html: wCircle.html },
     'cancellation': { label: 'Cancellation', subject: cancel.subject, html: cancel.html },

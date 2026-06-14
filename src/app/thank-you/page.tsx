@@ -65,7 +65,7 @@ function ThankYouContent() {
               className="flex items-center justify-center w-9 h-9 rounded-full shrink-0"
               style={{ backgroundColor: 'rgba(70,120,38,0.14)' }}
             >
-              <Check size={18} strokeWidth={2.5} style={{ color: '#4A7A29' }} />
+              <Check size={18} strokeWidth={2.5} style={{ color: '#467826' }} />
             </span>
             <p className="text-base font-semibold text-charcoal">
               Payment confirmed
@@ -81,7 +81,7 @@ function ThankYouContent() {
               <>
                 <Link
                   href="/library"
-                  className="inline-flex items-center justify-center min-h-[52px] px-8 rounded-full font-semibold text-base text-charcoal transition-all hover:opacity-90 active:scale-95"
+                  className="inline-flex items-center justify-center min-h-[52px] px-8 rounded-full font-bold text-[19px] text-cream transition-all hover:opacity-90 active:scale-95"
                   style={{ backgroundColor: '#D4703A', boxShadow: '0 6px 20px rgba(212,112,58,0.20)' }}
                 >
                   Go to your library →
@@ -104,7 +104,7 @@ function ThankYouContent() {
                 <p className="mt-4">
                   <Link
                     href="/dashboard"
-                    className="inline-flex items-center justify-center min-h-[52px] px-8 rounded-full font-semibold text-base text-charcoal transition-all hover:opacity-90 active:scale-95"
+                    className="inline-flex items-center justify-center min-h-[52px] px-8 rounded-full font-bold text-[19px] text-cream transition-all hover:opacity-90 active:scale-95"
                     style={{ backgroundColor: '#D4703A', boxShadow: '0 6px 20px rgba(212,112,58,0.20)' }}
                   >
                     Visit your dashboard →
@@ -113,7 +113,7 @@ function ThankYouContent() {
               </>
             ) : (
               <p className="flex items-center justify-center gap-2.5 text-base text-charcoal/65">
-                <Loader2 size={18} className="animate-spin" style={{ color: '#4A7A29' }} />
+                <Loader2 size={18} className="animate-spin" style={{ color: '#467826' }} />
                 Setting up your access…
               </p>
             )}

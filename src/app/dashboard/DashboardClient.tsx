@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import ManageSubscriptionButton from './ManageSubscriptionButton'
 import { BOOKING_URL } from '@/lib/links'
+import { createClient } from '@/lib/supabase/client'
 
 type WebinarSession = {
   _id: string
@@ -78,6 +79,10 @@ export default function DashboardClient({
   const [actionError, setActionError] = useState<string | null>(null)
   // PayPal cancel uses an inline confirm step (no native window.confirm()).
   const [confirmingCancel, setConfirmingCancel] = useState(false)
+  // Password change: a logged-in user's email is already verified, so we skip the
+  // re-entry form and send the reset link straight to it (mirrors the delete flow).
+  const [sendingReset, setSendingReset] = useState(false)
+  const [passwordResetSent, setPasswordResetSent] = useState(false)
 
   // First click opens the inline confirm; confirmPayPalCancel does the actual work.
   const handlePayPalCancel = () => {
@@ -127,6 +132,24 @@ export default function DashboardClient({
       console.error('Change plan error:', err)
       setActionError(err instanceof Error && err.message ? err.message : 'Something went wrong on our end. Please try again in a moment.')
       setChangingPlan(false)
+    }
+  }
+
+  const handleChangePassword = async () => {
+    setSendingReset(true)
+    setActionError(null)
+    try {
+      const supabase = createClient()
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth/callback?next=/update-password`,
+      })
+      if (error) throw error
+      setPasswordResetSent(true)
+    } catch (err) {
+      console.error('Password reset error:', err)
+      setActionError('Something went wrong on our end. Please try again in a moment.')
+    } finally {
+      setSendingReset(false)
     }
   }
 
@@ -406,9 +429,9 @@ export default function DashboardClient({
               </p>
               <Link
                 href="/membership#membership"
-                className="inline-flex items-center min-h-[44px] px-7 py-3 rounded-full bg-brand-dark text-white text-base font-semibold hover:opacity-90 transition-all"
+                className="inline-flex items-center min-h-[44px] px-7 py-3 rounded-full bg-brand text-white text-[19px] font-bold hover:opacity-90 transition-all whitespace-nowrap"
               >
-                See Membership Options
+                See plans
               </Link>
             </div>
           )}
@@ -464,17 +487,41 @@ export default function DashboardClient({
               <p className="text-sm text-charcoal/65">Email address</p>
               <p className="text-base text-charcoal mt-0.5">{email}</p>
             </div>
-            <div className="flex items-center justify-between py-3.5">
-              <div>
-                <p className="text-sm text-charcoal/65">Password</p>
-                <p className="text-base text-charcoal mt-0.5">••••••••</p>
+            <div className="py-3.5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-charcoal/65">Password</p>
+                  <p className="text-base text-charcoal mt-0.5">••••••••</p>
+                </div>
+                {!passwordResetSent && (
+                  <button
+                    onClick={handleChangePassword}
+                    disabled={sendingReset}
+                    className="text-sm text-green hover:text-green font-medium min-h-[44px] flex items-center px-2 disabled:opacity-50"
+                  >
+                    {sendingReset ? 'Sending…' : 'Change'}
+                  </button>
+                )}
               </div>
-              <Link
-                href="/reset-password"
-                className="text-sm text-green hover:text-green font-medium min-h-[44px] flex items-center px-2"
-              >
-                Change
-              </Link>
+              {passwordResetSent && (
+                <div className="mt-3 flex items-start gap-2.5 rounded-xl border border-green-200 bg-green-50 px-4 py-3">
+                  <svg className="w-5 h-5 shrink-0 mt-0.5 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                  </svg>
+                  <div>
+                    <p className="text-sm text-green-800 leading-relaxed">
+                      We&apos;ve emailed you a link to set a new password. Check your inbox.
+                    </p>
+                    <button
+                      onClick={handleChangePassword}
+                      disabled={sendingReset}
+                      className="inline-flex items-center min-h-[44px] text-sm font-medium text-green-800 underline underline-offset-2 hover:no-underline disabled:opacity-50"
+                    >
+                      {sendingReset ? 'Sending…' : "Didn't receive it? Send again"}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
             <div className="py-3.5">
               <p className="text-sm text-charcoal/65">Delete account</p>
@@ -490,9 +537,14 @@ export default function DashboardClient({
                   )}
                 </div>
               ) : deleteRequested ? (
-                <p className="mt-3 text-sm text-charcoal/65 leading-relaxed">
-                  Check your email — we sent a confirmation link to delete your account.
-                </p>
+                <div className="mt-3 flex items-start gap-2.5 rounded-xl border border-green-200 bg-green-50 px-4 py-3">
+                  <svg className="w-5 h-5 shrink-0 mt-0.5 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                  </svg>
+                  <p className="text-sm text-green-800 leading-relaxed">
+                    Check your email — we sent a link to confirm deleting your account.
+                  </p>
+                </div>
               ) : (
                 <button
                   onClick={handleDeleteRequest}

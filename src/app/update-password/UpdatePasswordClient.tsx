@@ -34,10 +34,30 @@ export default function UpdatePasswordClient() {
 
     setLoading(true)
 
+    // A valid reset link signs the user in first. If there's no session, the link
+    // itself is the problem (expired or already used) — that's the only case where
+    // "request a new one" is the right fix. (The error box shows that link when the
+    // message contains "expired".)
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) {
+      setError('Your reset link has expired or was already used. Please request a new one.')
+      setLoading(false)
+      return
+    }
+
     const { error } = await supabase.auth.updateUser({ password })
 
     if (error) {
-      setError('Something went wrong. The link may have expired — please request a new one.')
+      // The session is valid, so the link is fine — surface the real reason instead
+      // of blaming the link.
+      const m = error.message.toLowerCase()
+      setError(
+        m.includes('different from the old') || m.includes('should be different')
+          ? 'Your new password must be different from your current one.'
+          : m.includes('weak') || m.includes('easy to guess') || m.includes('pwned') || m.includes('leaked')
+          ? 'Please choose a stronger password — that one is too easy to guess.'
+          : "We couldn't update your password. Please try again."
+      )
       setLoading(false)
       return
     }
