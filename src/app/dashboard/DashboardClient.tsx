@@ -25,6 +25,7 @@ type Props = {
   pendingTierAt: string | null
   cancelAt: string | null
   errorParam: string | null
+  planChanged: boolean
   upcoming: WebinarSession[]
 }
 
@@ -65,6 +66,7 @@ export default function DashboardClient({
   pendingTierAt,
   cancelAt,
   errorParam,
+  planChanged,
   upcoming,
 }: Props) {
   const [changingPlan, setChangingPlan] = useState(false)
@@ -74,9 +76,16 @@ export default function DashboardClient({
   const [cancelling, setCancelling] = useState(false)
   // Action failures (cancel / change plan / delete) surface as a calm inline box, not a native alert().
   const [actionError, setActionError] = useState<string | null>(null)
+  // PayPal cancel uses an inline confirm step (no native window.confirm()).
+  const [confirmingCancel, setConfirmingCancel] = useState(false)
 
-  const handlePayPalCancel = async () => {
-    if (!window.confirm('Cancel your membership? You won’t be billed again, and you’ll keep access until your current period ends.')) return
+  // First click opens the inline confirm; confirmPayPalCancel does the actual work.
+  const handlePayPalCancel = () => {
+    setActionError(null)
+    setConfirmingCancel(true)
+  }
+
+  const confirmPayPalCancel = async () => {
     setCancelling(true)
     setActionError(null)
     try {
@@ -87,6 +96,7 @@ export default function DashboardClient({
     } catch (err) {
       console.error('PayPal cancel error:', err)
       setActionError(err instanceof Error && err.message ? err.message : 'Something went wrong on our end. Please try again in a moment.')
+      setConfirmingCancel(false)
       setCancelling(false)
     }
   }
@@ -160,6 +170,40 @@ export default function DashboardClient({
         {actionError && (
           <section role="alert" className="bg-red-50 border border-red-200 rounded-2xl px-6 py-4">
             <p className="text-sm text-red-700 leading-relaxed">{actionError}</p>
+          </section>
+        )}
+
+        {/* PayPal cancel — inline confirm step (replaces native window.confirm) */}
+        {confirmingCancel && (
+          <section className="rounded-2xl border border-charcoal/10 bg-cream px-6 py-4 space-y-3">
+            <p className="text-sm text-charcoal/80 leading-relaxed">
+              Cancel your membership? You won&apos;t be billed again, and you&apos;ll keep access until your current period ends.
+            </p>
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+              <button
+                onClick={confirmPayPalCancel}
+                disabled={cancelling}
+                className="min-h-[44px] flex items-center text-base font-medium text-green hover:text-green transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {cancelling ? 'Cancelling…' : 'Yes, cancel'}
+              </button>
+              <button
+                onClick={() => setConfirmingCancel(false)}
+                disabled={cancelling}
+                className="min-h-[44px] flex items-center text-sm text-charcoal/70 hover:text-charcoal/90 transition-colors disabled:opacity-50"
+              >
+                Keep my membership
+              </button>
+            </div>
+          </section>
+        )}
+
+        {/* Plan change confirmed (redirected here from a PayPal plan switch) */}
+        {planChanged && (
+          <section className="bg-green-50 border border-green-200 rounded-2xl px-6 py-4">
+            <p className="text-sm text-green-800 leading-relaxed">
+              Your plan change is confirmed. It may take a moment to update on this page.
+            </p>
           </section>
         )}
 

@@ -308,9 +308,11 @@ export default function LibraryClient({
   const [activeTab, setActiveTab] = useState<Tab>(() => resolveTab(tabParam))
   const [progressMap, setProgressMap] = useState<ProgressMap>({})
   const [upgrading, setUpgrading] = useState(false)
+  const [upgradeError, setUpgradeError] = useState<string | null>(null)
 
   async function handleUpgrade() {
     setUpgrading(true)
+    setUpgradeError(null)
     try {
       const res = await fetch('/api/change-plan', {
         method: 'POST',
@@ -323,8 +325,10 @@ export default function LibraryClient({
     } catch (err) {
       console.error('Upgrade error:', err)
       // Surface the server's message (e.g. PayPal members are told to cancel
-      // and rejoin) instead of a generic, confusing fallback.
-      alert(err instanceof Error && err.message ? err.message : 'Something went wrong. Please try again.')
+      // and rejoin) in a calm inline box — not a native alert.
+      setUpgradeError(
+        err instanceof Error && err.message ? err.message : 'Something went wrong. Please try again.'
+      )
       setUpgrading(false)
     }
   }
@@ -484,6 +488,11 @@ export default function LibraryClient({
                 >
                   {upgrading ? 'Connecting…' : 'Upgrade to The Calm Circle →'}
                 </button>
+                {upgradeError && (
+                  <div role="alert" className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 max-w-md">
+                    <p className="text-sm text-red-700 leading-relaxed">{upgradeError}</p>
+                  </div>
+                )}
                 <p className="text-sm text-charcoal/65">Cancel anytime</p>
               </div>
             </div>

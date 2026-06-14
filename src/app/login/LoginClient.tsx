@@ -12,13 +12,20 @@ export default function LoginClient() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const next = safeNextPath(searchParams.get('next'))
+  // A failed/expired magic-link or email-confirmation exchange sends the user here
+  // with ?error=auth — surface it instead of showing a silent, blank form.
+  const authError = searchParams.get('error') === 'auth'
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [magicLoading, setMagicLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(
+    authError
+      ? 'That sign-in link didn’t work — it may have expired.\nEnter your email below and we’ll send you a new one.'
+      : null
+  )
   const [magicSent, setMagicSent] = useState(false)
 
   const supabase = createClient()

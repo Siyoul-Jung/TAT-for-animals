@@ -113,7 +113,7 @@ export default function Footer() {
             <Link
               key={link.name}
               href={link.href}
-              className="text-xs font-light transition-colors"
+              className="text-sm font-light transition-colors"
               style={{ color: 'rgba(250,246,241,0.60)' }}
               onMouseEnter={(e) => {
                 (e.currentTarget as HTMLElement).style.color = '#D4A843';
@@ -131,7 +131,7 @@ export default function Footer() {
             href={BOOKING_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs font-light transition-colors"
+            className="text-sm font-light transition-colors"
             style={{ color: 'rgba(250,246,241,0.60)' }}
             onMouseEnter={(e) => {
               (e.currentTarget as HTMLElement).style.color = '#D4A843';
@@ -146,7 +146,7 @@ export default function Footer() {
             href="https://tatlife.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs font-light transition-colors"
+            className="text-sm font-light transition-colors"
             style={{ color: 'rgba(250,246,241,0.60)' }}
             onMouseEnter={(e) => {
               (e.currentTarget as HTMLElement).style.color = '#D4A843';
@@ -174,7 +174,7 @@ export default function Footer() {
               <Link
                 key={link.name}
                 href={link.href}
-                className="text-xs font-light transition-colors"
+                className="text-sm font-light transition-colors"
                 style={{ color: 'rgba(250,246,241,0.60)' }}
                 onMouseEnter={(e) => {
                   (e.currentTarget as HTMLElement).style.color = 'rgba(250,246,241,0.9)';

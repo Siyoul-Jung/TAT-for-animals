@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
 
@@ -50,7 +50,7 @@ function SlideLayout({ t }: { t: Testimonial }) {
       <div className="relative aspect-square">
         <Image
           src={t.image}
-          alt={t.name}
+          alt={t.animal.split('—')[0].trim()}
           fill
           sizes="(min-width: 1024px) 512px, 100vw"
           className="object-contain object-center"
@@ -90,6 +90,7 @@ function SlideLayout({ t }: { t: Testimonial }) {
 export default function Testimonials() {
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
+  const prefersReduced = useReducedMotion();
   const touchStartX = useRef<number>(0);
 
   function handleTouchStart(e: React.TouchEvent) {
@@ -108,13 +109,14 @@ export default function Testimonials() {
   }
 
   useEffect(() => {
-    if (paused || testimonials.length <= 1) return;
+    // Don't auto-advance if the visitor prefers reduced motion.
+    if (paused || prefersReduced || testimonials.length <= 1) return;
     const t = setInterval(
       () => setCurrent((p) => (p + 1) % testimonials.length),
       INTERVAL
     );
     return () => clearInterval(t);
-  }, [paused]);
+  }, [paused, prefersReduced]);
 
   return (
     <section className="bg-cream py-20 lg:py-28 px-6 overflow-hidden">
@@ -183,7 +185,7 @@ export default function Testimonials() {
                 key={i}
                 onClick={() => setCurrent(i)}
                 aria-label={`Go to story ${i + 1}`}
-                className="flex items-center justify-center min-h-[24px] min-w-[24px]"
+                className="flex items-center justify-center min-h-[44px] min-w-[44px]"
                 style={{ background: 'none', border: 'none', cursor: 'pointer' }}
               >
                 <span

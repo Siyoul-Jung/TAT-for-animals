@@ -75,7 +75,7 @@ function CheckoutContent() {
           <button
             onClick={() => handlePayment('stripe')}
             disabled={loading !== null}
-            className="w-full py-4 rounded-xl font-semibold text-base transition-all hover:opacity-90 active:scale-95 disabled:opacity-50"
+            className="w-full py-4 rounded-xl font-bold text-[19px] transition-all hover:opacity-90 active:scale-95 disabled:opacity-50"
             style={{
               backgroundColor: '#D4703A',
               color: '#FAF6F1',
@@ -88,14 +88,14 @@ function CheckoutContent() {
           <button
             onClick={() => handlePayment('paypal')}
             disabled={loading !== null}
-            className="w-full py-4 rounded-xl font-semibold text-base transition-all hover:opacity-90 active:scale-95 disabled:opacity-50"
+            className="w-full py-4 rounded-xl font-bold text-[19px] transition-all hover:opacity-90 active:scale-95 disabled:opacity-50"
             style={{ backgroundColor: '#FFC439', color: '#003087' }}
           >
             {loading === 'paypal' ? 'Connecting...' : 'Pay with PayPal'}
           </button>
         </div>
 
-        <p className="text-center text-sm mt-6" style={{ color: '#8B6F5E' }}>
+        <p className="text-center text-sm mt-6" style={{ color: '#7A5F4F' }}>
           Cancel anytime · Secure payment
         </p>
 

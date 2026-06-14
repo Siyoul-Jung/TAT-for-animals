@@ -35,7 +35,7 @@ export default function MembershipClient() {
       <section className="relative overflow-hidden bg-cream">
 
         {/* Mobile: 스택형 (홈페이지 Hero 동일 패턴) */}
-        <div className="lg:hidden flex flex-col" style={{ height: '100dvh' }}>
+        <div className="lg:hidden flex flex-col" style={{ minHeight: '100dvh' }}>
           <div className="relative shrink-0 overflow-hidden" style={{ height: '61.8dvh' }}>
             <Image
               src="/images/membership_img.jpg"
