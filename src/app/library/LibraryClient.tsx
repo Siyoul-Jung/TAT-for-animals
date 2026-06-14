@@ -430,7 +430,7 @@ export default function LibraryClient({
                             href={session.meetingUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 mt-3 min-h-[44px] px-5 py-2.5 rounded-full bg-brand-dark text-white text-sm font-semibold hover:opacity-90 transition-all"
+                            className="inline-flex items-center gap-1.5 mt-3 min-h-[44px] px-5 py-2.5 rounded-full bg-brand text-white text-[19px] font-bold hover:opacity-90 transition-all whitespace-nowrap"
                           >
                             Join on Zoom →
                           </a>
@@ -484,7 +484,7 @@ export default function LibraryClient({
                 <button
                   onClick={handleUpgrade}
                   disabled={upgrading}
-                  className="inline-flex items-center min-h-[44px] px-6 py-2.5 rounded-full bg-brand-dark text-white text-sm font-semibold hover:opacity-90 transition-all disabled:opacity-60"
+                  className="flex w-full justify-center items-center text-center min-h-[44px] px-6 py-3 rounded-2xl bg-brand text-white text-[19px] font-bold hover:opacity-90 transition-all disabled:opacity-60"
                 >
                   {upgrading ? 'Connecting…' : 'Upgrade to The Calm Circle →'}
                 </button>

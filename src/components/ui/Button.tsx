@@ -14,27 +14,27 @@ export default function Button({
   ...props
 }: ButtonProps) {
   const variants = {
-    // Bright orange clears AA only as "large text", so its background is applied
-    // per-size below (primaryBg) rather than hard-coded here.
+    // Bright signature orange. Cream-on-bright-orange is ~3.4:1, which only clears
+    // AA as "large text" — so primary forces ≥19px bold below (primaryBg), and the
+    // size token controls padding only.
     primary: 'text-cream hover:opacity-90 shadow-md hover:shadow-lg active:scale-95',
     secondary: 'bg-charcoal text-cream hover:bg-charcoal/90 shadow-md',
-    // Hover fills with brand-dark (AA-legible at any size) instead of bright brand.
-    outline: 'border-2 border-brand text-green hover:bg-brand-dark hover:text-cream',
+    outline: 'border-2 border-brand text-green hover:bg-brand hover:text-cream',
     ghost: 'text-green hover:bg-brand/10',
   };
 
   const sizes = {
     sm: 'px-4 py-2 text-sm font-semibold',
     md: 'px-6 py-3 text-base font-semibold',
-    // lg is the CTA size: cream-on-orange needs "large text" (≥18.66px bold) to clear AA 3:1.
     lg: 'px-10 py-4 text-[19px] font-bold',
   };
 
-  // Filled primary uses bright orange only at lg (large-text AA). Smaller sizes
-  // fall back to brand-dark, which keeps cream text AA-legible at any size — so the
-  // component can't accidentally ship a low-contrast button.
+  // Filled primary is ALWAYS the bright signature orange (#D4703A). Bright orange
+  // needs large text to clear AA contrast, so primary also forces 19px bold here —
+  // this class sits after `sizes`, so it overrides the per-size font and the button
+  // stays on-brand and legible at any size. Size only changes padding.
   const primaryBg =
-    variant === 'primary' ? (size === 'lg' ? 'bg-brand' : 'bg-brand-dark') : '';
+    variant === 'primary' ? 'bg-brand text-[19px] font-bold' : '';
 
   return (
     <button

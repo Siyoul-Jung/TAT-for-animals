@@ -99,6 +99,19 @@ export default function Navbar() {
     isScrolled || !isDarkHero ? 'text-charcoal/65 hover:text-green' : 'text-cream/70 hover:text-cream'
   );
 
+  // Current-page nav items are shown dimmed and non-interactive ("you are here"),
+  // so a click that would go nowhere never reads as a broken button.
+  const mutedNavClasses = cn(
+    'text-sm font-medium whitespace-nowrap cursor-default select-none',
+    isScrolled || !isDarkHero ? 'text-charcoal/35' : 'text-cream/40'
+  );
+  const renderNavLink = (href: string, label: string) =>
+    pathname === href ? (
+      <span aria-current="page" className={mutedNavClasses}>{label}</span>
+    ) : (
+      <Link href={href} className={navLinkClasses}>{label}</Link>
+    );
+
   return (
     <nav
       className={cn(
@@ -144,9 +157,7 @@ export default function Navbar() {
         <div className="flex items-center justify-end gap-4">
           {isLoggedIn ? (
             <>
-              <Link href={isMember ? '/library' : '/membership'} className={navLinkClasses}>
-                {isMember ? 'Library' : 'Membership'}
-              </Link>
+              {renderNavLink(isMember ? '/library' : '/membership', isMember ? 'Library' : 'Membership')}
               <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setDropdownOpen((o) => !o)}
@@ -173,14 +184,24 @@ export default function Navbar() {
                     boxShadow: '0 8px 32px rgba(28,16,7,0.10)',
                   }}
                 >
-                  <Link
-                    href="/dashboard"
-                    onClick={() => setDropdownOpen(false)}
-                    className="block px-5 py-3 text-sm font-medium transition-colors hover:bg-black/5"
-                    style={{ color: 'rgba(28,16,7,0.75)' }}
-                  >
-                    Dashboard
-                  </Link>
+                  {pathname === '/dashboard' ? (
+                    <span
+                      aria-current="page"
+                      className="block px-5 py-3 text-sm font-medium cursor-default select-none"
+                      style={{ color: 'rgba(28,16,7,0.4)' }}
+                    >
+                      Dashboard
+                    </span>
+                  ) : (
+                    <Link
+                      href="/dashboard"
+                      onClick={() => setDropdownOpen(false)}
+                      className="block px-5 py-3 text-sm font-medium transition-colors hover:bg-black/5"
+                      style={{ color: 'rgba(28,16,7,0.75)' }}
+                    >
+                      Dashboard
+                    </Link>
+                  )}
                   <div style={{ borderTop: '1px solid rgba(28,16,7,0.06)' }}>
                     <form action="/api/auth/logout" method="POST">
                       <button
@@ -201,9 +222,7 @@ export default function Navbar() {
               <Link href="/login" className={navLinkClasses}>
                 Sign in
               </Link>
-              <Link href="/membership" className={navLinkClasses}>
-                Join
-              </Link>
+              {renderNavLink('/membership', 'Join')}
             </>
           )}
         </div>

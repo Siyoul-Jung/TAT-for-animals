@@ -155,19 +155,21 @@ export default function MembershipClient() {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
             {/* The Calm Library */}
-            <div className="mb-10 pb-10 border-b border-charcoal/8">
+            <div className="rounded-3xl bg-white border border-charcoal/8 p-6 sm:p-9 lg:p-10 mb-6">
               <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-6" style={{ color: '#467826' }}>
                 The Calm Library — $27 / mo
               </p>
-              <div className="grid lg:grid-cols-2 gap-9 lg:gap-14">
+              <div className="grid lg:grid-cols-2 gap-8 lg:gap-14">
                 {/* TAT for Animals */}
                 <div>
-                  <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style={{ backgroundColor: 'rgba(212,112,58,0.12)' }}>
-                    <PawPrint size={22} strokeWidth={1.75} style={{ color: '#D4703A' }} />
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(212,112,58,0.12)' }}>
+                      <PawPrint size={20} strokeWidth={1.75} style={{ color: '#D4703A' }} />
+                    </div>
+                    <p className="text-[13px] tracking-[0.15em] uppercase font-medium" style={{ color: '#467826' }}>
+                      TAT for Animals
+                    </p>
                   </div>
-                  <p className="text-[13px] tracking-[0.15em] uppercase font-medium mb-1.5" style={{ color: '#467826' }}>
-                    TAT for Animals
-                  </p>
                   <h3 className="font-serif text-xl text-charcoal font-medium mb-4 leading-snug">
                     Help your animal feel calm and safe.
                   </h3>
@@ -186,14 +188,16 @@ export default function MembershipClient() {
                     ))}
                   </ul>
                 </div>
-                {/* Healing ACEs Plus */}
-                <div>
-                  <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style={{ backgroundColor: 'rgba(212,112,58,0.12)' }}>
-                    <HeartHandshake size={22} strokeWidth={1.75} style={{ color: '#D4703A' }} />
+                {/* Healing ACEs Plus — 모바일에서는 위 항목과 연한 선으로 구분 */}
+                <div className="pt-8 border-t border-charcoal/8 lg:pt-0 lg:border-t-0">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(212,112,58,0.12)' }}>
+                      <HeartHandshake size={20} strokeWidth={1.75} style={{ color: '#D4703A' }} />
+                    </div>
+                    <p className="text-[13px] tracking-[0.15em] uppercase font-medium" style={{ color: '#467826' }}>
+                      Healing ACEs Plus
+                    </p>
                   </div>
-                  <p className="text-[13px] tracking-[0.15em] uppercase font-medium mb-1.5" style={{ color: '#467826' }}>
-                    Healing ACEs Plus
-                  </p>
                   <h3 className="font-serif text-xl text-charcoal font-medium mb-4 leading-snug">
                     Release what you've been carrying.
                   </h3>
@@ -216,13 +220,18 @@ export default function MembershipClient() {
             </div>
 
             {/* The Calm Circle */}
-            <div>
+            <div className="rounded-3xl bg-white border border-charcoal/8 p-6 sm:p-9 lg:p-10">
               <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-6" style={{ color: '#467826' }}>
                 The Calm Circle — $47 / mo
               </p>
               <div className="max-w-xl">
-                <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style={{ backgroundColor: 'rgba(212,112,58,0.12)' }}>
-                  <Video size={22} strokeWidth={1.75} style={{ color: '#D4703A' }} />
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(212,112,58,0.12)' }}>
+                    <Video size={20} strokeWidth={1.75} style={{ color: '#D4703A' }} />
+                  </div>
+                  <p className="text-[13px] tracking-[0.15em] uppercase font-medium" style={{ color: '#467826' }}>
+                    Live with Tapas
+                  </p>
                 </div>
                 <h3 className="font-serif text-xl text-charcoal font-medium mb-4 leading-snug">
                   Everything in The Calm Library, plus live time with Tapas.
