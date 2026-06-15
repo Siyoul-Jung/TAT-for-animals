@@ -3,7 +3,7 @@
 
 import { motion } from 'framer-motion';
 import { Check } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
@@ -44,16 +44,32 @@ export default function Pricing() {
   const router = useRouter();
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
 
+  // Returning via the back button restores this page from the bfcache with its old
+  // state — which would leave the button stuck on "Loading…" forever. Reset it.
+  useEffect(() => {
+    const onShow = (e: PageTransitionEvent) => {
+      if (e.persisted) setLoadingPlan(null);
+    };
+    window.addEventListener('pageshow', onShow);
+    return () => window.removeEventListener('pageshow', onShow);
+  }, []);
+
   async function handleCheckout(plan: string) {
     setLoadingPlan(plan);
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
-    // Logged in → straight to payment. New visitor → sign up first, then checkout.
-    if (user) {
-      router.push(`/checkout?plan=${plan}`);
-    } else {
+    try {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      // Logged in → straight to payment. New visitor → sign up first, then checkout.
+      router.push(
+        user
+          ? `/checkout?plan=${plan}`
+          : `/signup?next=${encodeURIComponent(`/checkout?plan=${plan}`)}`
+      );
+    } catch {
+      // Don't strand the button if the auth check fails — proceed; the checkout
+      // and signup pages re-verify auth on their own.
       router.push(`/signup?next=${encodeURIComponent(`/checkout?plan=${plan}`)}`);
+      setLoadingPlan(null);
     }
   }
 
