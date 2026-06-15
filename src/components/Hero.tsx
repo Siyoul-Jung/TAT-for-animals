@@ -113,17 +113,17 @@ export default function Hero({ images }: { images: HeroImage[] }) {
               No special training. No reliving anything painful.
               Just you, your animal, and a gentle process that works.
             </p>
-            <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:gap-4 lg:gap-6">
+            <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4 lg:gap-6">
               <Link
                 href="#experience"
-                className="inline-flex min-h-[48px] items-center justify-center px-7 lg:px-9 py-3.5 lg:py-4 rounded-full text-cream font-bold text-[19px] transition-all hover:scale-105 hover:shadow-lg active:scale-95"
+                className="inline-flex shrink-0 whitespace-nowrap min-h-[48px] items-center justify-center px-7 lg:px-9 py-3.5 lg:py-4 rounded-full text-cream font-bold text-[19px] transition-all hover:scale-105 hover:shadow-lg active:scale-95"
                 style={{ backgroundColor: '#D4703A', boxShadow: '0 6px 20px rgba(212,112,58,0.25)' }}
               >
                 Try a session
               </Link>
               <Link
                 href="/membership"
-                className="inline-flex min-h-[48px] items-center justify-center px-7 lg:px-9 py-3.5 lg:py-4 rounded-full border-2 text-[19px] font-bold transition-all hover:bg-brand hover:text-cream active:scale-95"
+                className="inline-flex shrink-0 whitespace-nowrap min-h-[48px] items-center justify-center px-7 lg:px-9 py-3.5 lg:py-4 rounded-full border-2 text-[19px] font-bold transition-all hover:bg-brand hover:text-cream active:scale-95"
                 style={{ borderColor: '#D4703A', color: '#D4703A' }}
               >
                 Join the members
