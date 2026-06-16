@@ -9,7 +9,7 @@ import { NextRequest, NextResponse } from 'next/server'
 // speed-bump against stray bots, not real auth (the token is visible in the page
 // source). Acceptable for a temporary, unlisted review tool.
 const REVIEW_TOKEN = 'tat-content-review-2026'
-const TO_EMAIL = 'hello@tatforanimals.com'
+const TO_EMAIL = 'philoleben@gmail.com'
 
 export async function POST(request: NextRequest) {
   let payload: { reviewer?: string; date?: string; body?: string; token?: string }
