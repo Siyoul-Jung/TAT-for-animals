@@ -25,20 +25,20 @@ You read code, not pixels. You **cannot** tell if a button is visually clipped, 
 
 **Color tokens** (accents only — never section backgrounds except where noted):
 - `brand` `#D4703A` (CTA/links/emphasis), `brand-light` `#ECC4A0`, `brand-dark` `#B05A28`
-- `green` `#5E9635` (labels, icons, checkmarks, borders, italic subheads — NOT backgrounds)
+- `green` `#467826` (labels, icons, checkmarks, borders, italic subheads — NOT backgrounds, except the footer)
 - `green-light` `#EBF5E1` (subtle tint only)
-- `cream` `#FBF5F3` + `white` = the only section backgrounds
-- `charcoal` `#1C1007` (body text), `muted` `#8B6F5E` (captions), `surface` `#F2EAE0` (borders/dividers)
-- Footer is the ONLY dark section: `#1C1007` bg + `cream` text. Footer social hover gold `#D4A843`.
+- `cream` `#FBF5F3` + `white` = the only section backgrounds (footer excepted)
+- `charcoal` `#1C1007` (body text), `muted` `#7A5F4F` (captions), `surface` `#F2EAE0` (borders/dividers)
+- Footer is the ONLY dark section: `#1E3310` (deep forest green) bg + `cream` text. Footer social hover gold `#D4A843`.
 
 **Token rules to enforce:**
-- Section backgrounds must be `bg-cream` or `bg-white`. Green as a *background* (beyond `green-light` tint) is a violation. Flag `bg-green` on a section.
+- Section backgrounds must be `bg-cream` or `bg-white`. Green as a *background* (beyond `green-light` tint) is a violation — EXCEPT the footer, which intentionally uses deep forest green `#1E3310`. Flag `bg-green` on any non-footer section.
 - Green is for labels/icons/checkmarks/borders/italic subheads only; brand(orange) is for buttons/links/emphasis. Flag swapped usage (e.g. a green CTA button, an orange section label).
 - Fonts: headings `font-serif` (Playfair Display), body `font-sans` (DM Sans, default), italic emphasis `font-serif italic`. Flag headings in sans or body in serif.
 
 ## WCAG AA — what you can compute from code
 
-- **Contrast** (text vs its background): normal text ≥ 4.5:1, large text (≥24px, or ≥18.66px bold) ≥ 3:1. Compute it. The usual offenders are low-opacity charcoal on cream: `text-charcoal/35`, `/40`, `/30`, or inline `rgba(28,16,7,0.35)`. On cream (`#FBF5F3`), charcoal at 0.35 ≈ ~2:1 → fails. `muted` `#8B6F5E` on cream ≈ ~3.4:1 (OK for large, borderline for small body — note it). When you flag contrast, state the approx ratio and the threshold it misses.
+- **Contrast** (text vs its background): normal text ≥ 4.5:1, large text (≥24px, or ≥18.66px bold) ≥ 3:1. Compute it. The usual offenders are low-opacity charcoal on cream: `text-charcoal/35`, `/40`, `/30`, or inline `rgba(28,16,7,0.35)`. On cream (`#FBF5F3`), charcoal at 0.35 ≈ ~2:1 → fails. `muted` `#7A5F4F` on cream ≈ ~5.4:1 (passes small body). Watch borderline mid-browns like `#8B7D72` (≈3.9:1 — fails small normal text). When you flag contrast, state the approx ratio and the threshold it misses.
 - **Touch targets** ≥ 44×44px for buttons/links/inputs. Flag interactive elements with small padding and no `min-h-[44px]`/`py` that reaches 44px. Senior-friendly project → this matters.
 - **Focus visibility**: interactive elements must keep a visible focus ring. Flag `focus:outline-none` with no `focus-visible:ring`/`focus:ring` replacement.
 - **Body font size** ≥ 16px; secondary ≥ 14px; nothing below 12px. Flag `text-xs` (12px) on body copy, and any `text-[10px]/[11px]` used for readable content (a tracking-wide uppercase label is acceptable; a sentence is not).
