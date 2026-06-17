@@ -12,7 +12,7 @@ const REVIEW_TOKEN = 'tat-content-review-2026'
 const TO_EMAIL = 'philoleben@gmail.com'
 
 export async function POST(request: NextRequest) {
-  let payload: { reviewer?: string; date?: string; body?: string; token?: string }
+  let payload: { reviewer?: string; date?: string; body?: string; token?: string; subjectTag?: string }
   try {
     payload = await request.json()
   } catch {
@@ -26,6 +26,9 @@ export async function POST(request: NextRequest) {
   const reviewer = (payload.reviewer || '').toString().slice(0, 100) || 'a reviewer'
   const date = (payload.date || '').toString().slice(0, 100)
   const body = (payload.body || '').toString().slice(0, 50000)
+  // Lets each review round label its emails (e.g. "Content review" vs
+  // "Function & design") so a multi-round review doesn't land under one subject.
+  const tag = (payload.subjectTag || 'Content review').toString().slice(0, 60)
 
   if (!body.trim()) {
     return NextResponse.json({ error: 'Nothing to send' }, { status: 400 })
@@ -36,8 +39,8 @@ export async function POST(request: NextRequest) {
       from: FROM_EMAIL,
       to: TO_EMAIL,
       replyTo: TO_EMAIL,
-      subject: `Content review — ${reviewer}${date ? ` (${date})` : ''}`,
-      text: `Content review feedback\nReviewer: ${reviewer}\nDate: ${date || '—'}\n\n${body}`,
+      subject: `${tag} — ${reviewer}${date ? ` (${date})` : ''}`,
+      text: `${tag} feedback\nReviewer: ${reviewer}\nDate: ${date || '—'}\n\n${body}`,
     })
     return NextResponse.json({ ok: true })
   } catch {
