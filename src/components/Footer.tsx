@@ -72,7 +72,7 @@ export default function Footer() {
               style={{ width: 'auto' }}
             />
             <span className="text-base font-semibold font-serif text-cream/80">
-              TAT for Animals<span className="text-cream/70 text-[10px] align-super">®</span>
+              TAT for Animals<span className="text-cream/70 text-[11px] align-super">®</span>
             </span>
           </div>
 

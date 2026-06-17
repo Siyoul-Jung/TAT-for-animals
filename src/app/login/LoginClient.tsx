@@ -128,7 +128,7 @@ export default function LoginClient() {
             style={{ width: 'auto' }}
           />
           <span className="font-serif text-xl text-charcoal/65 group-hover:text-green transition-colors">
-            TAT for Animals<span className="text-green text-[10px] align-super">®</span>
+            TAT for Animals<span className="text-green text-[11px] align-super">®</span>
           </span>
         </Link>
 

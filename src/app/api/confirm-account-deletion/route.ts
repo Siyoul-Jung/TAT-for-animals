@@ -37,7 +37,10 @@ export async function GET(request: NextRequest) {
     .single()
 
   if (profile?.stripe_subscription_id || profile?.paypal_subscription_id) {
-    return NextResponse.redirect(`${siteUrl}/dashboard?error=cancel-subscription-first`)
+    // Redirect to the homepage notice (not /dashboard): the email link may be
+    // opened in a logged-out browser, where /dashboard bounces to a bare login
+    // form and the reason for the blocked deletion is lost.
+    return NextResponse.redirect(`${siteUrl}/?error=cancel-subscription-first`)
   }
 
   // Mark as completed before deletion to prevent race conditions (double-click

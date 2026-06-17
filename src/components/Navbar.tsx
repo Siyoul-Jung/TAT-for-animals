@@ -101,10 +101,11 @@ export default function Navbar() {
 
   // Current-page nav items are shown dimmed and non-interactive ("you are here"),
   // so a click that would go nowhere never reads as a broken button. The dim must
-  // still clear AA: #8B7D72 on cream ≈ 4.6:1 (charcoal/35 was ~2.3:1 — unreadable).
+  // still clear AA: #7A5F4F on cream ≈ 5.4:1 (charcoal/35 was ~2.3:1 — unreadable;
+  // #8B7D72 was ~3.9:1 — borderline for 14px normal, so use the muted token value).
   const mutedNavClasses = cn(
     'text-sm font-medium whitespace-nowrap cursor-default select-none',
-    isScrolled || !isDarkHero ? 'text-[#8B7D72]' : 'text-cream/60'
+    isScrolled || !isDarkHero ? 'text-[#7A5F4F]' : 'text-cream/60'
   );
   const renderNavLink = (href: string, label: string) =>
     pathname === href ? (
@@ -149,7 +150,7 @@ export default function Navbar() {
               'inline text-base sm:text-2xl font-semibold tracking-normal transition-colors duration-300 whitespace-nowrap font-serif',
               isScrolled || !isDarkHero ? 'text-charcoal/65' : 'text-cream'
             )}>
-              TAT for Animals<span className="text-green text-[10px] sm:text-sm align-super">®</span>
+              TAT for Animals<span className="text-green text-[11px] sm:text-sm align-super">®</span>
             </span>
           </Link>
         </div>
@@ -163,7 +164,7 @@ export default function Navbar() {
               <button
                 onClick={() => setDropdownOpen((o) => !o)}
                 className={cn(
-                  'flex items-center gap-1.5 text-xs sm:text-sm font-medium transition-all',
+                  'flex items-center gap-1.5 text-sm font-medium transition-all',
                   isScrolled || !isDarkHero
                     ? 'text-charcoal/65 hover:text-green'
                     : 'text-cream/70 hover:text-cream'
@@ -189,7 +190,7 @@ export default function Navbar() {
                     <span
                       aria-current="page"
                       className="block px-5 py-3 text-sm font-medium cursor-default select-none"
-                      style={{ color: '#8B7D72' }}
+                      style={{ color: '#7A5F4F' }}
                     >
                       Dashboard
                     </span>
