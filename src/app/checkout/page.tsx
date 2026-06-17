@@ -29,7 +29,12 @@ function CheckoutContent() {
       });
 
       if (res.status === 401) {
-        router.push(`/login?next=${encodeURIComponent(`/checkout?plan=${plan}`)}`);
+        // Session lapsed mid-checkout. Flag it so the login screen explains the
+        // sudden redirect ("sign in again to finish your payment") instead of
+        // dropping the user on a silent form mid-purchase.
+        router.push(
+          `/login?notice=resume_checkout&next=${encodeURIComponent(`/checkout?plan=${plan}`)}`
+        );
         return;
       }
 
@@ -82,7 +87,7 @@ function CheckoutContent() {
               boxShadow: '0 8px 24px rgba(212,112,58,0.20)',
             }}
           >
-            {loading === 'stripe' ? 'Connecting...' : 'Pay with card'}
+            {loading === 'stripe' ? 'Taking you to payment…' : 'Pay with card'}
           </button>
 
           <button
@@ -91,7 +96,7 @@ function CheckoutContent() {
             className="w-full py-4 rounded-xl font-bold text-[19px] transition-all hover:opacity-90 active:scale-95 disabled:opacity-50"
             style={{ backgroundColor: '#FFC439', color: '#003087' }}
           >
-            {loading === 'paypal' ? 'Connecting...' : 'Pay with PayPal'}
+            {loading === 'paypal' ? 'Taking you to payment…' : 'Pay with PayPal'}
           </button>
         </div>
 

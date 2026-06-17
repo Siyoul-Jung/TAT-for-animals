@@ -15,6 +15,9 @@ export default function LoginClient() {
   // A failed/expired magic-link or email-confirmation exchange sends the user here
   // with ?error=auth — surface it instead of showing a silent, blank form.
   const authError = searchParams.get('error') === 'auth'
+  // Checkout bounced them here because their session lapsed mid-purchase. Reassure
+  // them the redirect is expected and their payment will continue after sign-in.
+  const resumeCheckout = searchParams.get('notice') === 'resume_checkout'
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -135,6 +138,17 @@ export default function LoginClient() {
           <h2 className="font-serif text-xl text-charcoal mb-8">
             Sign in to your account
           </h2>
+
+          {resumeCheckout && (
+            <div
+              className="rounded-xl px-4 py-3 mb-6"
+              style={{ backgroundColor: 'rgba(70,120,38,0.10)', border: '1px solid rgba(70,120,38,0.25)' }}
+            >
+              <p className="text-sm leading-relaxed" style={{ color: '#3A6420' }}>
+                Please sign in again to finish your payment. Nothing has been charged yet — you&apos;ll go straight back to checkout.
+              </p>
+            </div>
+          )}
 
           <form onSubmit={handlePasswordLogin}>
 

@@ -185,7 +185,7 @@ export default function Pricing() {
                   boxShadow: '0 8px 24px rgba(212,112,58,0.20)',
                 }}
               >
-                {loadingPlan === tier.plan ? 'Loading...' : tier.cta}
+                {loadingPlan === tier.plan ? 'Taking you to checkout…' : tier.cta}
               </button>
 
               {/* Cancel note */}

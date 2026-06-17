@@ -19,8 +19,25 @@ export default function SignupClient() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+  const [resending, setResending] = useState(false)
+  const [resent, setResent] = useState(false)
 
   const supabase = createClient()
+
+  // Re-send the confirmation email from the success screen, so a missing first
+  // email is never a dead end (mirrors the login magic-link "Try again" flow).
+  async function handleResend() {
+    setResending(true)
+    await supabase.auth.resend({
+      type: 'signup',
+      email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
+      },
+    })
+    setResent(true)
+    setResending(false)
+  }
 
   async function handleSignup(e: React.FormEvent) {
     e.preventDefault()
@@ -85,8 +102,30 @@ export default function SignupClient() {
             <p className="text-base text-muted leading-relaxed mb-2">
               We sent a confirmation link to
             </p>
-            <p className="text-base font-medium text-charcoal mb-8">{email}</p>
-            <p className="text-xs text-muted">
+            <p className="text-base font-medium text-charcoal mb-6">{email}</p>
+            <p className="text-sm text-muted leading-relaxed mb-6">
+              Open that email and click the link to finish.
+              Can&apos;t find it? Please check your spam or junk folder.
+            </p>
+
+            {resent ? (
+              <p className="text-sm text-green leading-relaxed mb-6">
+                Done — we&apos;ve sent it again. Give it a minute to arrive.
+              </p>
+            ) : (
+              <p className="text-sm text-muted mb-6">
+                Still nothing?{' '}
+                <button
+                  onClick={handleResend}
+                  disabled={resending}
+                  className="text-green hover:underline font-medium disabled:opacity-50"
+                >
+                  {resending ? 'Sending…' : 'Send the email again'}
+                </button>
+              </p>
+            )}
+
+            <p className="text-sm text-muted border-t border-surface pt-6">
               Already confirmed?{' '}
               <Link href={`/login?next=${encodeURIComponent(next)}`} className="text-green hover:underline">
                 Sign in to continue
