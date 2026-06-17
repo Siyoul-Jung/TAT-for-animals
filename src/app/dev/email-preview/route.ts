@@ -43,10 +43,12 @@ function buildPreviews(): Record<string, Preview> {
 
   const resetHtml = readAuthTemplate('reset-password')
   const confirmHtml = readAuthTemplate('confirm-signup')
+  const magicHtml = readAuthTemplate('magic-link')
 
   return {
     'reset-password': { label: 'Reset password (Supabase auth)', subject: 'Reset your password', html: resetHtml },
     'confirm-signup': { label: 'Confirm signup (Supabase auth)', subject: 'Confirm your email', html: confirmHtml },
+    'magic-link': { label: 'Sign-in link (Supabase auth)', subject: 'Your sign-in link', html: magicHtml },
     'welcome-library': { label: 'Welcome — The Calm Library', subject: wLibrary.subject, html: wLibrary.html },
     'welcome-circle': { label: 'Welcome — The Calm Circle', subject: wCircle.subject, html: wCircle.html },
     'cancellation': { label: 'Cancellation', subject: cancel.subject, html: cancel.html },
