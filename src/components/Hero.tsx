@@ -43,6 +43,9 @@ export default function Hero({ images }: { images: HeroImage[] }) {
 
   useEffect(() => {
     if (shuffled.length <= 1) return;
+    // Honour reduced-motion: hold a single still image rather than auto-advancing,
+    // matching Testimonials and TrySession (which already gate on this).
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
     const timer = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % shuffled.length);
     }, 5000);
