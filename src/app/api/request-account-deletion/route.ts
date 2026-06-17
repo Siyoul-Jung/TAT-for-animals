@@ -42,8 +42,15 @@ export async function POST() {
     .eq('status', 'pending')
     .single()
 
+  // If a pending request already exists, replace it rather than erroring. This
+  // makes a repeat click idempotent AND useful: "Send again" (when the first
+  // email didn't arrive) issues a fresh token and a fresh email, and an old
+  // expired request can never lock the user out.
   if (existing) {
-    return NextResponse.json({ error: 'A deletion request is already pending. Check your email.' }, { status: 400 })
+    await supabaseAdmin
+      .from('account_deletion_requests')
+      .delete()
+      .eq('id', existing.id)
   }
 
   const token = crypto.randomUUID()

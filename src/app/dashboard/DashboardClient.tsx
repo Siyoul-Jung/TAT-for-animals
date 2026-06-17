@@ -74,6 +74,9 @@ export default function DashboardClient({
   const [confirmingDowngrade, setConfirmingDowngrade] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [deleteRequested, setDeleteRequested] = useState(false)
+  // Account deletion is destructive, so the first click only opens an inline
+  // confirm (mirrors the PayPal cancel step) — it must not fire the email outright.
+  const [confirmingDelete, setConfirmingDelete] = useState(false)
   const [cancelling, setCancelling] = useState(false)
   // Action failures (cancel / change plan / delete) surface as a calm inline box, not a native alert().
   const [actionError, setActionError] = useState<string | null>(null)
@@ -176,7 +179,7 @@ export default function DashboardClient({
 
         {/* Header */}
         <div>
-          <p className="text-sm font-medium text-charcoal/65 uppercase tracking-widest mb-1">
+          <p className="text-sm font-medium text-green uppercase tracking-widest mb-1">
             Dashboard
           </p>
           <h1 className="text-2xl sm:text-3xl text-charcoal font-medium tracking-tight">
@@ -186,13 +189,22 @@ export default function DashboardClient({
               'Good to see you.'
             )}
           </h1>
-          <p className="text-charcoal/65 mt-1 text-base">{email}</p>
         </div>
 
-        {/* Action error (cancel / change plan / delete) — calm inline box instead of a native alert() */}
+        {/* Action error (cancel / change plan / delete) — calm inline box instead of a native alert().
+            Dismissible so a one-off failure doesn't linger at the top of the page. */}
         {actionError && (
-          <section role="alert" className="bg-red-50 border border-red-200 rounded-2xl px-6 py-4">
-            <p className="text-sm text-red-700 leading-relaxed">{actionError}</p>
+          <section role="alert" className="bg-red-50 border border-red-200 rounded-2xl px-6 py-4 flex items-start gap-3">
+            <p className="text-sm text-red-700 leading-relaxed flex-1">{actionError}</p>
+            <button
+              onClick={() => setActionError(null)}
+              aria-label="Dismiss"
+              className="shrink-0 -mr-1 -mt-1 w-9 h-9 flex items-center justify-center text-red-700/60 hover:text-red-700 transition-colors"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </section>
         )}
 
@@ -268,7 +280,7 @@ export default function DashboardClient({
 
         {/* Membership card */}
         <section className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm space-y-5">
-          <h2 className="text-xs font-semibold uppercase tracking-widest text-charcoal/65">
+          <h2 className="text-xs font-semibold uppercase tracking-widest text-green">
             Your Membership
           </h2>
 
@@ -424,8 +436,8 @@ export default function DashboardClient({
             </>
           ) : (
             <div className="space-y-4">
-              <p className="text-charcoal/65 text-base leading-relaxed">
-                You don&apos;t have an active membership yet.
+              <p className="text-charcoal/80 text-base leading-relaxed">
+                Ready to begin? Choose a plan to open the library.
               </p>
               <Link
                 href="/membership#membership"
@@ -440,7 +452,7 @@ export default function DashboardClient({
         {/* Content (subscribers only) */}
         {plan && (
           <section className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm space-y-5">
-            <h2 className="text-xs font-semibold uppercase tracking-widest text-charcoal/65">
+            <h2 className="text-xs font-semibold uppercase tracking-widest text-green">
               Your Content
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -479,7 +491,7 @@ export default function DashboardClient({
 
         {/* Account */}
         <section className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm space-y-1">
-          <h2 className="text-xs font-semibold uppercase tracking-widest text-charcoal/65 mb-4">
+          <h2 className="text-xs font-semibold uppercase tracking-widest text-green mb-4">
             Account
           </h2>
           <div className="divide-y divide-charcoal/8">
@@ -497,7 +509,7 @@ export default function DashboardClient({
                   <button
                     onClick={handleChangePassword}
                     disabled={sendingReset}
-                    className="text-sm text-green hover:text-green font-medium min-h-[44px] flex items-center px-2 disabled:opacity-50"
+                    className="text-sm text-green hover:text-green font-medium underline underline-offset-2 min-h-[44px] flex items-center px-2 disabled:opacity-50"
                   >
                     {sendingReset ? 'Sending…' : 'Change'}
                   </button>
@@ -524,38 +536,6 @@ export default function DashboardClient({
               )}
             </div>
             <div className="py-3.5">
-              <p className="text-sm text-charcoal/65">Delete account</p>
-              {hasSubscription ? (
-                <div className="mt-3 space-y-3">
-                  <p className="text-sm text-charcoal/65 leading-relaxed">
-                    Please cancel your membership first. You can do that here.
-                  </p>
-                  {isPayPal ? (
-                    <PayPalCancelButton onClick={handlePayPalCancel} loading={cancelling} label="Cancel membership" />
-                  ) : (
-                    <ManageSubscriptionButton label="Manage subscription" />
-                  )}
-                </div>
-              ) : deleteRequested ? (
-                <div className="mt-3 flex items-start gap-2.5 rounded-xl border border-green-200 bg-green-50 px-4 py-3">
-                  <svg className="w-5 h-5 shrink-0 mt-0.5 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                  </svg>
-                  <p className="text-sm text-green-800 leading-relaxed">
-                    Check your email — we sent a link to confirm deleting your account.
-                  </p>
-                </div>
-              ) : (
-                <button
-                  onClick={handleDeleteRequest}
-                  disabled={deleting}
-                  className="mt-3 text-sm text-charcoal/65 hover:text-red-500 transition-colors font-medium min-h-[44px] disabled:opacity-50"
-                >
-                  {deleting ? 'Sending...' : 'Request account deletion →'}
-                </button>
-              )}
-            </div>
-            <div className="py-3.5">
               <form action="/api/auth/logout" method="POST">
                 <button
                   type="submit"
@@ -564,6 +544,74 @@ export default function DashboardClient({
                   Sign out
                 </button>
               </form>
+            </div>
+            <div className="py-3.5">
+              {hasSubscription ? (
+                <div className="space-y-3">
+                  <p className="text-sm text-charcoal/65 leading-relaxed">
+                    To delete your account, please cancel your membership first.
+                  </p>
+                  {isPayPal ? (
+                    <PayPalCancelButton onClick={handlePayPalCancel} loading={cancelling} label="Cancel membership" />
+                  ) : (
+                    <ManageSubscriptionButton label="Manage subscription" />
+                  )}
+                </div>
+              ) : deleteRequested ? (
+                <div className="space-y-2">
+                  <div className="flex items-start gap-2.5 rounded-xl border border-green-200 bg-green-50 px-4 py-3">
+                    <svg className="w-5 h-5 shrink-0 mt-0.5 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                    <p className="text-sm text-green-800 leading-relaxed">
+                      Check your email — we sent a link to confirm deleting your account.
+                    </p>
+                  </div>
+                  <button
+                    onClick={handleDeleteRequest}
+                    disabled={deleting}
+                    className="text-sm min-h-[44px] disabled:opacity-50"
+                  >
+                    {deleting ? (
+                      <span className="text-green font-medium">Sending…</span>
+                    ) : (
+                      <>
+                        <span className="text-charcoal/65">Didn&apos;t receive it? </span>
+                        <span className="text-green font-medium underline underline-offset-2">Send again</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              ) : confirmingDelete ? (
+                <div className="rounded-xl border border-charcoal/10 bg-cream px-4 py-3 space-y-3">
+                  <p className="text-sm text-charcoal/80 leading-relaxed">
+                    Delete your account? We&apos;ll email you a link to confirm.
+                  </p>
+                  <div className="flex flex-col items-start gap-1">
+                    <button
+                      onClick={handleDeleteRequest}
+                      disabled={deleting}
+                      className="min-h-[44px] flex items-center text-sm font-medium text-red-600 hover:text-red-700 transition-colors disabled:opacity-50"
+                    >
+                      {deleting ? 'Sending…' : 'Yes, email me the link'}
+                    </button>
+                    <button
+                      onClick={() => setConfirmingDelete(false)}
+                      disabled={deleting}
+                      className="min-h-[44px] flex items-center text-sm text-charcoal/70 hover:text-charcoal/90 transition-colors disabled:opacity-50"
+                    >
+                      Keep my account
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setConfirmingDelete(true)}
+                  className="text-sm text-charcoal/65 hover:text-red-500 transition-colors font-medium min-h-[44px]"
+                >
+                  Delete account
+                </button>
+              )}
             </div>
           </div>
         </section>
