@@ -24,6 +24,10 @@ const MESSAGES: Record<string, { tone: 'success' | 'error'; text: string }> = {
     tone: 'error',
     text: 'That account-deletion link has expired. Please request a new one from your dashboard.',
   },
+  'error:cancel-subscription-first': {
+    tone: 'error',
+    text: 'We couldn’t delete your account because you still have an active membership. Please cancel it first from your dashboard, then request deletion again.',
+  },
   'error:deletion-failed': {
     tone: 'error',
     text: 'Something went wrong deleting your account. Please try again, or email hello@tatforanimals.com.',
