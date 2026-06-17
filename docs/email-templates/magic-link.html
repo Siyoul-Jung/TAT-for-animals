@@ -3,103 +3,80 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="x-apple-disable-message-reformatting" />
   <title>Your sign-in link</title>
+  <style>
+    @media only screen and (max-width:480px) {
+      .email-outer { padding: 24px 10px !important; }
+      .email-card  { padding: 32px 22px !important; }
+      .email-h1    { font-size: 25px !important; }
+    }
+  </style>
 </head>
-<body style="margin:0;padding:0;background-color:#F0EBE4;font-family:Arial,Helvetica,sans-serif;">
-
-  <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
+<body style="margin:0;padding:0;background:#FBF5F3;font-family:'Helvetica Neue',Arial,sans-serif;-webkit-text-size-adjust:100%;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" class="email-outer" style="background:#FBF5F3;padding:48px 16px;">
     <tr>
-      <td align="center" style="padding:40px 16px;">
+      <td align="center">
 
-        <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="max-width:520px;">
-
-          <!-- Logo -->
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" align="center" style="max-width:480px;background:#ffffff;border:1px solid rgba(28,16,7,0.06);border-radius:24px;">
           <tr>
-            <td align="center" style="padding-bottom:28px;">
-              <img
-                src="https://tat-calm-animals.vercel.app/images/logo2.png"
-                alt="TAT for Animals"
-                width="48"
-                height="48"
-                style="display:block;margin:0 auto 10px;"
-              />
-              <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:18px;color:#2E1A0C;opacity:0.75;letter-spacing:0.01em;">
-                TAT for Animals<sup style="font-size:10px;color:#D4703A;">®</sup>
+            <td align="center" class="email-card" style="padding:48px 40px;text-align:center;">
+
+              <!-- Logo (image blocked? the green wordmark below still carries the brand) -->
+              <img src="https://tat-calm-animals.vercel.app/images/logo2.png" alt="TAT for Animals" width="44" height="44" style="display:block;margin:0 auto 16px;border:0;outline:none;text-decoration:none;" />
+
+              <!-- Eyebrow -->
+              <p style="margin:0 0 24px;font-size:13px;letter-spacing:0.2em;text-transform:uppercase;color:#467826;font-weight:600;">
+                Sign in
               </p>
-            </td>
-          </tr>
 
-          <!-- Card -->
-          <tr>
-            <td style="background-color:#FAF6F1;border-radius:20px;overflow:hidden;box-shadow:0 2px 16px rgba(46,26,12,0.08);">
+              <!-- Heading -->
+              <h1 class="email-h1" style="margin:0 0 16px;font-family:'Georgia',serif;font-size:28px;font-weight:500;color:#1C1007;line-height:1.3;">
+                Your sign-in link
+              </h1>
+              <p style="margin:0;font-size:17px;color:rgba(28,16,7,0.65);line-height:1.7;">
+                Click below to sign in to your account. No password needed.
+              </p>
 
-              <!-- Top gradient strip -->
-              <div style="height:5px;background:linear-gradient(to right,#b0aec8,#e8a0a0,#8fba7a,#e8a890);"></div>
-
-              <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
+              <!-- CTA Button -->
+              <table role="presentation" cellpadding="0" cellspacing="0" align="center" style="margin:36px auto 0;">
                 <tr>
-                  <td style="padding:36px 30px 28px;">
-
-                    <!-- Heading -->
-                    <h1 style="margin:0 0 12px;font-family:Georgia,'Times New Roman',serif;font-size:26px;font-weight:normal;color:#2E1A0C;line-height:1.3;">
-                      Your sign-in link
-                    </h1>
-                    <p style="margin:0 0 28px;font-size:16px;color:#8B6F5E;line-height:1.7;">
-                      Click the button below to sign in to your TAT for Animals account.
-                      No password needed.
-                    </p>
-
-                    <!-- CTA Button -->
-                    <table cellpadding="0" cellspacing="0" role="presentation">
-                      <tr>
-                        <td style="border-radius:100px;background-color:#D4703A;">
-                          <a
-                            href="{{ .ConfirmationURL }}"
-                            style="display:inline-block;padding:14px 32px;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:600;color:#FAF6F1;text-decoration:none;letter-spacing:0.01em;white-space:nowrap;"
-                          >
-                            Sign in
-                          </a>
-                        </td>
-                      </tr>
-                    </table>
-
-                    <!-- Expiry note -->
-                    <p style="margin:24px 0 0;font-size:13px;color:#8B6F5E;line-height:1.6;">
-                      This link expires in 1 hour and can only be used once.
-                      If you didn't request this, you can safely ignore this email.
-                    </p>
-
+                  <td align="center" style="border-radius:100px;background:#D4703A;">
+                    <a href="{{ .ConfirmationURL }}"
+                      style="display:inline-block;padding:16px 36px;color:#ffffff;font-size:19px;font-weight:700;text-decoration:none;border-radius:100px;">
+                      Sign in &rarr;
+                    </a>
                   </td>
                 </tr>
+              </table>
 
-                <!-- Divider -->
-                <tr>
-                  <td style="padding:0 30px;">
-                    <div style="height:1px;background-color:rgba(46,26,12,0.07);"></div>
-                  </td>
-                </tr>
+              <!-- Expiry note -->
+              <p style="margin:24px 0 0;font-size:14px;color:rgba(28,16,7,0.5);line-height:1.6;">
+                This link expires in 1 hour and can only be used once. If you didn&rsquo;t
+                request this, you can safely ignore this email.
+              </p>
 
-                <!-- Footer -->
+              <!-- Footer -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:36px;">
                 <tr>
-                  <td style="padding:20px 30px 28px;">
-                    <p style="margin:0;font-size:12px;color:#8B6F5E;line-height:1.6;">
+                  <td style="padding-top:28px;border-top:1px solid rgba(28,16,7,0.08);text-align:center;">
+                    <p style="margin:0 0 8px;font-size:13px;color:rgba(28,16,7,0.6);line-height:1.6;">
                       Questions? Reply to this email or reach us at
                       <a href="mailto:hello@tatforanimals.com" style="color:#D4703A;text-decoration:none;">hello@tatforanimals.com</a>
                     </p>
-                    <p style="margin:8px 0 0;font-size:12px;color:rgba(46,26,12,0.3);">
-                      © 2026 TAT for Animals®
+                    <p style="margin:0;font-size:13px;color:rgba(28,16,7,0.6);">
+                      &copy; 2026 TATLife&reg;, Inc. &middot; tatforanimals.com
                     </p>
                   </td>
                 </tr>
-
               </table>
+
             </td>
           </tr>
-
         </table>
+
       </td>
     </tr>
   </table>
-
 </body>
 </html>

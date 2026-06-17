@@ -19,7 +19,7 @@ export function cancellationEmail(name: string | null): { subject: string; html:
 
   const html = emailShell({
     title: subject,
-    eyebrow: 'TAT for Animals',
+    eyebrow: 'Membership',
     content,
   });
 

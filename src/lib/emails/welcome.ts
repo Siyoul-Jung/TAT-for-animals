@@ -35,7 +35,7 @@ export function welcomeEmail(name: string | null, plan: Plan): { subject: string
 
   const html = emailShell({
     title: subject,
-    eyebrow: 'TAT for Animals',
+    eyebrow: 'Welcome',
     content,
     footerNote: 'Cancel anytime from your account settings.',
   });

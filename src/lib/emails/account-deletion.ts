@@ -17,7 +17,7 @@ export function accountDeletionEmail(confirmUrl: string): { subject: string; htm
 
   const html = emailShell({
     title: subject,
-    eyebrow: 'TAT for Animals',
+    eyebrow: 'Account',
     content,
   });
 

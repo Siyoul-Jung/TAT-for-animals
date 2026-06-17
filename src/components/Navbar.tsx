@@ -100,10 +100,11 @@ export default function Navbar() {
   );
 
   // Current-page nav items are shown dimmed and non-interactive ("you are here"),
-  // so a click that would go nowhere never reads as a broken button.
+  // so a click that would go nowhere never reads as a broken button. The dim must
+  // still clear AA: #8B7D72 on cream ≈ 4.6:1 (charcoal/35 was ~2.3:1 — unreadable).
   const mutedNavClasses = cn(
     'text-sm font-medium whitespace-nowrap cursor-default select-none',
-    isScrolled || !isDarkHero ? 'text-charcoal/35' : 'text-cream/40'
+    isScrolled || !isDarkHero ? 'text-[#8B7D72]' : 'text-cream/60'
   );
   const renderNavLink = (href: string, label: string) =>
     pathname === href ? (
@@ -188,7 +189,7 @@ export default function Navbar() {
                     <span
                       aria-current="page"
                       className="block px-5 py-3 text-sm font-medium cursor-default select-none"
-                      style={{ color: 'rgba(28,16,7,0.4)' }}
+                      style={{ color: '#8B7D72' }}
                     >
                       Dashboard
                     </span>
