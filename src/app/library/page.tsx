@@ -35,6 +35,15 @@ export type WebinarSession = {
   meetingUrl: string | null
 }
 
+// A locked teaser of the recording archive for non-Pro members — real titles
+// and dates so they can see what The Calm Circle unlocks, but deliberately NO
+// videoUrl: the access boundary is the query itself, not the UI.
+export type RecordingPreview = {
+  _id: string
+  title: string
+  date: string
+}
+
 export default async function LibraryPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -52,7 +61,9 @@ export default async function LibraryPage() {
   if (role !== 'subscriber' && role !== 'pro_subscriber') redirect('/membership')
   if (profile?.subscription_status === 'past_due') redirect('/dashboard?error=payment_failed')
 
-  const [animalsVideos, acesVideos, recordings, upcoming] = await Promise.all([
+  const isPro = role === 'pro_subscriber'
+
+  const [animalsVideos, acesVideos, recordings, upcoming, lockedRecordings] = await Promise.all([
     sanityClient.fetch<Video[]>(
       `*[_type == "video" && status == "published" && library == "TAT for Animals"] | order(category asc, dateRecorded asc) {
         _id, title, category, duration, summary, videoUrl
@@ -63,7 +74,7 @@ export default async function LibraryPage() {
         _id, title, category, duration, summary, videoUrl
       }`
     ),
-    role === 'pro_subscriber'
+    isPro
       ? sanityClient.fetch<WebinarRecording[]>(
           `*[_type == "webinarRecording" && status == "published"] | order(date desc) {
             _id, title, date, videoUrl, summary
@@ -75,6 +86,15 @@ export default async function LibraryPage() {
         _id, title, date, description, meetingUrl
       }`
     ),
+    // Locked archive teaser — only for non-Pro members, and only metadata
+    // (never videoUrl), so the upgrade screen shows the real archive.
+    !isPro
+      ? sanityClient.fetch<RecordingPreview[]>(
+          `*[_type == "webinarRecording" && status == "published"] | order(date desc) [0..3] {
+            _id, title, date
+          }`
+        )
+      : Promise.resolve([]),
   ])
 
   return (
@@ -84,6 +104,7 @@ export default async function LibraryPage() {
         acesVideos={acesVideos}
         recordings={recordings}
         upcoming={upcoming}
+        lockedRecordings={lockedRecordings}
         role={role}
       />
     </Suspense>

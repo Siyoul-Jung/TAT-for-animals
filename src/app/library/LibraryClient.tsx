@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Player from '@vimeo/player'
-import type { Video, WebinarRecording, WebinarSession } from './page'
+import type { Video, WebinarRecording, WebinarSession, RecordingPreview } from './page'
 import { loadAllProgress, saveProgress, type ProgressMap } from '@/lib/videoProgress'
 
 const CATEGORY_ORDER = ['Foundational', 'Main Content', 'Bonus 2025', 'Bonus 2026']
@@ -288,12 +288,14 @@ export default function LibraryClient({
   acesVideos,
   recordings,
   upcoming,
+  lockedRecordings,
   role,
 }: {
   animalsVideos: Video[]
   acesVideos: Video[]
   recordings: WebinarRecording[]
   upcoming: WebinarSession[]
+  lockedRecordings: RecordingPreview[]
   role: string
 }) {
   const searchParams = useSearchParams()
@@ -467,39 +469,77 @@ export default function LibraryClient({
               </div>
             </div>
           ) : (
-            <div className="p-7 bg-white rounded-2xl border border-charcoal/10 shadow-sm space-y-5">
+            <div className="space-y-6">
+              {/* 다가오는 세션 — 실제 일정을 히어로로 (있을 때만) */}
               {upcoming[0] && (
-                <div className="flex items-start gap-3 p-4 rounded-xl" style={{ backgroundColor: 'rgba(70,120,38,0.06)', border: '1px solid rgba(70,120,38,0.15)' }}>
-                  <div className="w-1.5 h-1.5 rounded-full mt-2 shrink-0" style={{ backgroundColor: '#467826' }} />
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-widest mb-0.5" style={{ color: '#467826' }}>
-                      Next live session
-                    </p>
-                    <p className="text-base text-charcoal font-medium">{upcoming[0].title}</p>
-                    <p className="text-sm text-charcoal/65 mt-0.5">{formatDateTime(upcoming[0].date)}</p>
-                  </div>
+                <div className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm">
+                  <p className="text-xs font-semibold uppercase tracking-widest text-green mb-3">
+                    Next live session
+                  </p>
+                  <p className="font-serif text-2xl text-charcoal leading-snug">{upcoming[0].title}</p>
+                  <p className="text-sm text-charcoal/65 mt-1.5">{formatDateTime(upcoming[0].date)}</p>
+                  {upcoming[0].description && (
+                    <p className="text-base text-charcoal/65 mt-3 leading-relaxed">{upcoming[0].description}</p>
+                  )}
                 </div>
               )}
-              <div>
-                <p className="font-serif text-xl text-charcoal mb-1.5">Join Tapas live every month.</p>
-                <p className="text-charcoal/65 text-base leading-relaxed">
-                  The Calm Circle includes monthly live webinars with Tapas — for your animal and for you — plus the full archive of past recordings.
-                </p>
-              </div>
-              <div className="space-y-2.5">
-                <button
-                  onClick={handleUpgrade}
-                  disabled={upgrading}
-                  className="flex w-full justify-center items-center text-center min-h-[44px] px-6 py-3 rounded-2xl bg-brand text-white text-[19px] font-bold hover:opacity-90 transition-all disabled:opacity-60"
-                >
-                  {upgrading ? 'Connecting…' : 'Upgrade to The Calm Circle →'}
-                </button>
-                {upgradeError && (
-                  <div role="alert" className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 max-w-md">
-                    <p className="text-sm text-red-700 leading-relaxed">{upgradeError}</p>
-                  </div>
+
+              {/* 잠긴 녹화 아카이브 미리보기 + 업그레이드 — 한 카드에 묶음 */}
+              <div className="bg-white rounded-2xl border border-charcoal/10 shadow-sm overflow-hidden">
+                {lockedRecordings.length > 0 && (
+                  <>
+                    <div className="px-6 pt-5 pb-3 border-b border-charcoal/6">
+                      <p className="text-xs font-semibold uppercase tracking-widest text-charcoal/65">
+                        In the recording archive
+                      </p>
+                    </div>
+                    <div className="px-6">
+                      {lockedRecordings.map((rec) => (
+                        <div
+                          key={rec._id}
+                          className="flex items-center gap-4 py-4 border-b border-charcoal/8 last:border-0"
+                        >
+                          <span className="w-9 h-9 rounded-full bg-charcoal/8 flex items-center justify-center shrink-0">
+                            <svg width="13" height="13" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth={1.5}
+                              className="text-charcoal/40">
+                              <rect x="2" y="5" width="8" height="6" rx="1" />
+                              <path strokeLinecap="round" d="M4 5V3.5a2 2 0 0 1 4 0V5" />
+                            </svg>
+                          </span>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-base text-charcoal/80 leading-snug">{rec.title}</p>
+                            <p className="text-sm text-charcoal/65 mt-0.5">{formatDate(rec.date)}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </>
                 )}
-                <p className="text-sm text-charcoal/65">Cancel anytime</p>
+
+                <div className="p-7 space-y-5">
+                  <div>
+                    <p className="font-serif text-xl text-charcoal mb-1.5">Join Tapas live every month.</p>
+                    <p className="text-charcoal/65 text-base leading-relaxed">
+                      The Calm Circle adds monthly live webinars with Tapas — for your animal and for you — plus the
+                      full archive of past recordings{lockedRecordings.length > 0 ? ' above' : ''}.
+                    </p>
+                  </div>
+                  <div className="space-y-2.5">
+                    <button
+                      onClick={handleUpgrade}
+                      disabled={upgrading}
+                      className="flex w-full justify-center items-center text-center min-h-[44px] px-6 py-3 rounded-2xl bg-brand text-white text-[19px] font-bold hover:opacity-90 transition-all disabled:opacity-60"
+                    >
+                      {upgrading ? 'Connecting…' : 'Upgrade to The Calm Circle →'}
+                    </button>
+                    {upgradeError && (
+                      <div role="alert" className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 max-w-md">
+                        <p className="text-sm text-red-700 leading-relaxed">{upgradeError}</p>
+                      </div>
+                    )}
+                    <p className="text-sm text-charcoal/65">Cancel anytime</p>
+                  </div>
+                </div>
               </div>
             </div>
           )
