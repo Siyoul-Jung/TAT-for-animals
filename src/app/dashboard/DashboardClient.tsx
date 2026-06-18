@@ -72,8 +72,11 @@ export default function DashboardClient({
 }: Props) {
   const [changingPlan, setChangingPlan] = useState(false)
   // Upgrade now charges immediately (we replaced Stripe's hosted confirm screen
-  // with our own), so the first click opens a plain-language confirm.
+  // with our own), so the first click opens a plain-language confirm — which
+  // fetches the prorated amount due today so we can show it before charging.
   const [confirmingUpgrade, setConfirmingUpgrade] = useState(false)
+  const [previewLoading, setPreviewLoading] = useState(false)
+  const [previewAmount, setPreviewAmount] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
   const [deleteRequested, setDeleteRequested] = useState(false)
   // Account deletion is destructive, so the first click only opens an inline
@@ -143,6 +146,42 @@ export default function DashboardClient({
       setActionError(err instanceof Error && err.message ? err.message : 'Something went wrong on our end. Please try again in a moment.')
       setChangingPlan(false)
     }
+  }
+
+  // Ask the server for the prorated amount due today (Stripe preview), so the
+  // confirm box can show it before charging. On failure we leave it null and the
+  // box falls back to generic copy.
+  const fetchUpgradePreview = async () => {
+    setPreviewLoading(true)
+    setPreviewAmount(null)
+    try {
+      const res = await fetch('/api/change-plan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ targetTier: 'pro_subscriber', preview: true }),
+      })
+      const data = await res.json()
+      if (res.ok && typeof data.amountDue === 'number') {
+        const cur = (data.currency || 'usd').toUpperCase()
+        const value = (data.amountDue / 100).toFixed(2)
+        setPreviewAmount(cur === 'USD' ? `$${value}` : `${value} ${cur}`)
+      }
+    } catch {
+      // Leave previewAmount null → confirm box uses the generic wording.
+    } finally {
+      setPreviewLoading(false)
+    }
+  }
+
+  // Both upgrade entry points — the membership CTA and the locked "Live Sessions"
+  // content card — open the same confirm box in the membership section, so the
+  // charge always goes through one confirmed path (and the two buttons no longer
+  // share a loading state).
+  const openUpgrade = (scroll = false) => {
+    setConfirmingUpgrade(true)
+    setActionError(null)
+    fetchUpgradePreview()
+    if (scroll) window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   const handleChangePassword = async () => {
@@ -364,9 +403,21 @@ export default function DashboardClient({
                             Move up to The Calm Circle
                           </p>
                           <p className="text-sm text-charcoal/70 leading-relaxed">
-                            Live sessions with Tapas, starting today. You&apos;ll pay just the difference for the
-                            rest of this month — then{' '}
-                            <span className="font-medium text-charcoal">$47 / month</span>.
+                            Live sessions with Tapas, starting today.{' '}
+                            {previewLoading ? (
+                              <span className="text-charcoal/50">Working out today&apos;s charge…</span>
+                            ) : previewAmount ? (
+                              <>
+                                You&apos;ll pay <span className="font-medium text-charcoal">{previewAmount}</span> today
+                                for the rest of this month — then{' '}
+                                <span className="font-medium text-charcoal">$47 / month</span>.
+                              </>
+                            ) : (
+                              <>
+                                You&apos;ll pay just the difference for the rest of this month — then{' '}
+                                <span className="font-medium text-charcoal">$47 / month</span>.
+                              </>
+                            )}
                           </p>
                         </div>
                         <div className="flex flex-col items-stretch sm:items-start gap-1 pt-1">
@@ -390,7 +441,7 @@ export default function DashboardClient({
                     ) : (
                       <PlanSwitchButton
                         label="Upgrade to The Calm Circle"
-                        onClick={() => setConfirmingUpgrade(true)}
+                        onClick={() => openUpgrade()}
                         loading={false}
                       />
                     )
@@ -475,8 +526,8 @@ export default function DashboardClient({
                 href={role === 'pro_subscriber' ? '/library?tab=live' : ''}
                 badge={role === 'pro_subscriber' ? 'The Calm Circle' : 'Pro members only'}
                 locked={role !== 'pro_subscriber'}
-                onClick={role !== 'pro_subscriber' ? () => handleChangePlan('pro_subscriber') : undefined}
-                isLoading={changingPlan}
+                onClick={role !== 'pro_subscriber' ? () => openUpgrade(true) : undefined}
+                isLoading={false}
               />
             </div>
             {/* Quiet 1:1 booking entry for members — the warmest audience for a private session,

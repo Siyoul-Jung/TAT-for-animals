@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { targetTier } = await request.json()
+  const { targetTier, preview } = await request.json()
   if (targetTier !== 'subscriber' && targetTier !== 'pro_subscriber') {
     return NextResponse.json({ error: 'Invalid plan' }, { status: 400 })
   }
@@ -66,6 +66,12 @@ export async function POST(request: NextRequest) {
     )
   }
 
+  // Proration preview is only computable for Stripe; PayPal members (and anyone
+  // without a Stripe subscription) get the generic copy instead of a number.
+  if (preview && !profile?.stripe_subscription_id) {
+    return NextResponse.json({ amountDue: null })
+  }
+
   // ── Stripe ────────────────────────────────────────────────────
   if (profile?.stripe_subscription_id) {
     const targetPrice = STRIPE_PRICE[targetTier]
@@ -77,6 +83,22 @@ export async function POST(request: NextRequest) {
       const currentItem = subscription.items.data[0]
       if (!currentItem) {
         return NextResponse.json({ error: 'Invalid subscription' }, { status: 400 })
+      }
+
+      // Preview mode — return the amount due today for the change, without
+      // applying it, so the dashboard can show "you'll be charged about $X".
+      if (preview) {
+        const previewInvoice = await stripe.invoices.createPreview({
+          subscription: subscription.id,
+          subscription_details: {
+            items: [{ id: currentItem.id, price: targetPrice }],
+            proration_behavior: 'always_invoice',
+          },
+        })
+        return NextResponse.json({
+          amountDue: previewInvoice.amount_due,
+          currency: previewInvoice.currency,
+        })
       }
 
       // Only upgrades reach here (downgrades are handled by support above).

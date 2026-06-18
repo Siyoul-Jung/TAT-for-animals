@@ -420,7 +420,7 @@ export default function LibraryClient({
             <div className="space-y-6">
               {upcoming.length > 0 && (
                 <div className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm space-y-4">
-                  <h2 className="text-xs font-semibold uppercase tracking-widest text-charcoal/65">
+                  <h2 className="text-xs font-semibold uppercase tracking-widest text-green">
                     Upcoming
                   </h2>
                   <div className="divide-y divide-charcoal/8">
@@ -448,7 +448,7 @@ export default function LibraryClient({
               )}
 
               <div className="space-y-4">
-                <h2 className="text-xs font-semibold uppercase tracking-widest text-charcoal/65">
+                <h2 className="text-xs font-semibold uppercase tracking-widest text-green">
                   Past Recordings
                 </h2>
                 {recordings.length === 0 ? (
