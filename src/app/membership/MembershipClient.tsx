@@ -31,106 +31,32 @@ export default function MembershipClient() {
         <PayPalErrorBanner />
       </Suspense>
 
-      {/* ── Hero ── */}
-      <section className="relative overflow-hidden bg-cream">
-
-        {/* Mobile: 스택형 (홈페이지 Hero 동일 패턴) */}
-        <div className="lg:hidden flex flex-col" style={{ minHeight: '100dvh' }}>
-          <div className="relative shrink-0 overflow-hidden" style={{ height: '61.8dvh' }}>
-            <Image
-              src="/images/membership_img.jpg"
-              alt=""
-              aria-hidden="true"
-              fill
-              priority
-              sizes="100vw"
-              className="object-cover object-center"
-            />
-            <div
-              className="absolute inset-0 z-10"
-              style={{ background: 'linear-gradient(to bottom, transparent 55%, rgba(251,245,243,0.5) 80%, rgba(251,245,243,1) 100%)' }}
-            />
-          </div>
-          <div className="flex-1 flex flex-col justify-center px-6 -mt-0.5 bg-cream relative z-20">
-            <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-2" style={{ color: '#467826' }}>
-              Membership
-            </p>
-            <h1 className="font-serif text-3xl sm:text-4xl leading-[1.2] text-charcoal mb-2 font-semibold">
-              Heal together.
-            </h1>
-            <p className="font-sans text-sm mb-5 font-normal text-charcoal/65">
-              For your animal and you. At your own pace.
-            </p>
-            <a
-              href="#membership"
-              className="inline-flex min-h-[48px] w-fit items-center px-7 py-3.5 rounded-full text-cream font-bold text-[19px] transition-all active:scale-95"
-              style={{ backgroundColor: '#D4703A', boxShadow: '0 6px 20px rgba(212,112,58,0.25)' }}
-            >
-              See plans
-            </a>
-          </div>
-        </div>
-
-        {/* Desktop: 2컬럼 */}
-        <div
-          className="hidden lg:grid lg:grid-cols-[5fr_6fr] lg:min-h-screen relative"
+      {/* ── Compact header ── a brief, warm intro that hands straight to the
+          plans (Pricing's own header is turned off below to avoid duplication). */}
+      <section className="bg-cream pt-28 sm:pt-32 lg:pt-36 pb-2 px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="max-w-5xl mx-auto text-center"
         >
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{ background: 'radial-gradient(ellipse 60% 50% at 30% 60%, rgba(212,112,58,0.07) 0%, transparent 65%)' }}
-          />
-
-          <motion.div
-            initial={{ opacity: 0, y: 32 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
-            className="relative z-10 flex flex-col justify-center px-14 xl:px-20 2xl:px-28 pt-24 pb-20"
-          >
-            <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-5" style={{ color: '#467826' }}>
-              Membership
-            </p>
-            <h1 className="font-serif text-4xl xl:text-5xl 2xl:text-6xl leading-[1.2] text-charcoal font-semibold mb-5">
-              Heal together.
-            </h1>
-            <p className="font-sans text-xl mb-10 font-normal text-charcoal/65">
-              For your animal and you.<br />At your own pace.
-            </p>
-            <a
-              href="#membership"
-              className="inline-flex w-fit px-9 py-4 rounded-full text-cream font-bold text-[19px] transition-all hover:scale-105 hover:shadow-lg active:scale-95"
-              style={{ backgroundColor: '#D4703A', boxShadow: '0 8px 32px rgba(212,112,58,0.25)' }}
-            >
-              See plans
-            </a>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1.2, delay: 0.15 }}
-            className="relative overflow-hidden"
-          >
-            <Image
-              src="/images/membership_img.jpg"
-              alt=""
-              aria-hidden="true"
-              fill
-              priority
-              sizes="55vw"
-              className="object-cover object-center"
-            />
-            <div className="absolute inset-0 z-10" style={{ background: 'linear-gradient(to right, rgba(251,245,243,1) 0%, rgba(251,245,243,0.85) 12%, rgba(251,245,243,0.2) 35%, transparent 55%)' }} />
-            <div className="absolute inset-0 z-10" style={{ background: 'linear-gradient(to top, rgba(251,245,243,0.9) 0%, rgba(251,245,243,0.3) 20%, transparent 45%)' }} />
-            <div className="absolute inset-0 z-10" style={{ background: 'linear-gradient(to bottom, rgba(251,245,243,0.9) 0%, rgba(251,245,243,0.3) 15%, transparent 35%)' }} />
-          </motion.div>
-        </div>
+          <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-5" style={{ color: '#467826' }}>
+            Membership
+          </p>
+          <h1 className="font-serif text-4xl sm:text-5xl text-charcoal font-semibold leading-tight mb-4">
+            Heal together.
+          </h1>
+          <p className="font-sans text-base sm:text-lg text-charcoal/65 max-w-md mx-auto">
+            For your animal and you. At your own pace.
+          </p>
+        </motion.div>
       </section>
 
-      {/* ── Pricing ── */}
-      <Pricing />
+      {/* ── Pricing (header off — the compact header above stands in for it) ── */}
+      <Pricing showHeader={false} bg="bg-cream" />
 
       {/* ── What's included ── */}
-      <section id="whats-included" className="bg-cream py-14 lg:py-20 px-6">
+      <section id="whats-included" className="bg-white py-14 lg:py-20 px-6">
         <div className="max-w-5xl mx-auto">
 
           <motion.div
@@ -155,7 +81,7 @@ export default function MembershipClient() {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
             {/* The Calm Library */}
-            <div className="rounded-3xl bg-white border border-charcoal/8 p-6 sm:p-9 lg:p-10 mb-6">
+            <div className="rounded-3xl bg-cream border border-charcoal/8 p-6 sm:p-9 lg:p-10 mb-6">
               <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-6" style={{ color: '#467826' }}>
                 The Calm Library — $27 / mo
               </p>
@@ -163,7 +89,7 @@ export default function MembershipClient() {
                 {/* TAT for Animals */}
                 <div>
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(212,112,58,0.12)' }}>
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: '#fff', boxShadow: '0 0 0 1px rgba(28,16,7,0.06)' }}>
                       <PawPrint size={20} strokeWidth={1.75} style={{ color: '#D4703A' }} />
                     </div>
                     <p className="text-[13px] tracking-[0.15em] uppercase font-medium" style={{ color: '#467826' }}>
@@ -191,7 +117,7 @@ export default function MembershipClient() {
                 {/* Healing ACEs Plus — 모바일에서는 위 항목과 연한 선으로 구분 */}
                 <div className="pt-8 border-t border-charcoal/8 lg:pt-0 lg:border-t-0">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(212,112,58,0.12)' }}>
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: '#fff', boxShadow: '0 0 0 1px rgba(28,16,7,0.06)' }}>
                       <HeartHandshake size={20} strokeWidth={1.75} style={{ color: '#D4703A' }} />
                     </div>
                     <p className="text-[13px] tracking-[0.15em] uppercase font-medium" style={{ color: '#467826' }}>
@@ -220,13 +146,13 @@ export default function MembershipClient() {
             </div>
 
             {/* The Calm Circle */}
-            <div className="rounded-3xl bg-white border border-charcoal/8 p-6 sm:p-9 lg:p-10">
+            <div className="rounded-3xl bg-cream border border-charcoal/8 p-6 sm:p-9 lg:p-10">
               <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-6" style={{ color: '#467826' }}>
                 The Calm Circle — $47 / mo
               </p>
               <div className="max-w-xl">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(212,112,58,0.12)' }}>
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: '#fff', boxShadow: '0 0 0 1px rgba(28,16,7,0.06)' }}>
                     <Video size={20} strokeWidth={1.75} style={{ color: '#D4703A' }} />
                   </div>
                   <p className="text-[13px] tracking-[0.15em] uppercase font-medium" style={{ color: '#467826' }}>
@@ -259,7 +185,7 @@ export default function MembershipClient() {
       </section>
 
       {/* ── Tapas 인용구 + FAQ ── */}
-      <section className="bg-white py-20 lg:py-28 px-6">
+      <section className="bg-cream py-20 lg:py-28 px-6">
         <div className="max-w-3xl mx-auto">
 
           <motion.div

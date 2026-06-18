@@ -40,7 +40,7 @@ const tiers = [
   },
 ];
 
-export default function Pricing() {
+export default function Pricing({ showHeader = true, bg = 'bg-white' }: { showHeader?: boolean; bg?: string }) {
   const router = useRouter();
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
 
@@ -76,28 +76,30 @@ export default function Pricing() {
   return (
     <section
       id="membership"
-      className="relative py-20 lg:py-28 px-6 overflow-hidden bg-white"
+      className={`relative py-20 lg:py-28 px-6 overflow-hidden ${bg}`}
     >
       <div className="relative z-10 max-w-5xl mx-auto">
 
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="text-center mb-10 lg:mb-16"
-        >
-          <p
-            className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-5"
-            style={{ color: '#467826' }}
+        {showHeader && (
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="text-center mb-10 lg:mb-16"
           >
-            Membership
-          </p>
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-charcoal font-medium leading-tight text-balance">
-            Give your animal the gift of calm.
-          </h2>
-        </motion.div>
+            <p
+              className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-5"
+              style={{ color: '#467826' }}
+            >
+              Membership
+            </p>
+            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-charcoal font-medium leading-tight text-balance">
+              Give your animal the gift of calm.
+            </h2>
+          </motion.div>
+        )}
 
         {/* Cards */}
         <div className="grid md:grid-cols-2 gap-4">
