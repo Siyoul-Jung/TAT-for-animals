@@ -71,7 +71,9 @@ export default function DashboardClient({
   upcoming,
 }: Props) {
   const [changingPlan, setChangingPlan] = useState(false)
-  const [confirmingDowngrade, setConfirmingDowngrade] = useState(false)
+  // Upgrade now charges immediately (we replaced Stripe's hosted confirm screen
+  // with our own), so the first click opens a plain-language confirm.
+  const [confirmingUpgrade, setConfirmingUpgrade] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [deleteRequested, setDeleteRequested] = useState(false)
   // Account deletion is destructive, so the first click only opens an inline
@@ -129,8 +131,13 @@ export default function DashboardClient({
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Could not change your plan')
-      // Stripe → portal confirm screen; PayPal → approval screen
-      window.location.href = data.url
+      // PayPal returns an approval URL to redirect to; Stripe applies the
+      // upgrade server-side and returns { ok: true } — reload to show Pro.
+      if (data.url) {
+        window.location.href = data.url
+        return
+      }
+      window.location.reload()
     } catch (err) {
       console.error('Change plan error:', err)
       setActionError(err instanceof Error && err.message ? err.message : 'Something went wrong on our end. Please try again in a moment.')
@@ -343,13 +350,41 @@ export default function DashboardClient({
                     </div>
                   )}
 
-                  {/* Upgrade is a prominent, plain-language CTA (Library → Circle). */}
+                  {/* Upgrade (Library → Circle). First click opens a plain-language
+                      confirm — the change is immediate and charges a prorated
+                      amount, so we say so before doing it. */}
                   {subscriptionStatus === 'active' && !isCancelling && !pendingPlan && role !== 'pro_subscriber' && (
-                    <PlanSwitchButton
-                      label="Upgrade to The Calm Circle"
-                      onClick={() => handleChangePlan('pro_subscriber')}
-                      loading={changingPlan}
-                    />
+                    confirmingUpgrade ? (
+                      <div className="rounded-xl border border-charcoal/10 bg-cream p-4 space-y-3">
+                        <p className="text-sm text-charcoal/80 leading-relaxed">
+                          You&apos;ll move to <span className="font-medium text-charcoal">The Calm Circle</span> right
+                          away — including the monthly live sessions with Tapas. We&apos;ll charge the prorated
+                          difference for the rest of this billing period, then $47 / month.
+                        </p>
+                        <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+                          <button
+                            onClick={() => handleChangePlan('pro_subscriber')}
+                            disabled={changingPlan}
+                            className="min-h-[44px] flex items-center text-base font-medium text-green hover:text-green transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                          >
+                            {changingPlan ? 'Upgrading…' : 'Confirm upgrade →'}
+                          </button>
+                          <button
+                            onClick={() => setConfirmingUpgrade(false)}
+                            disabled={changingPlan}
+                            className="min-h-[44px] flex items-center text-sm text-charcoal/70 hover:text-charcoal/90 transition-colors disabled:opacity-50"
+                          >
+                            Not now
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <PlanSwitchButton
+                        label="Upgrade to The Calm Circle"
+                        onClick={() => setConfirmingUpgrade(true)}
+                        loading={false}
+                      />
+                    )
                   )}
 
                   {isPayPal ? (
@@ -381,49 +416,18 @@ export default function DashboardClient({
                     </p>
                   )}
 
-                  {/* Downgrade stays available but quiet — we don't advertise a
-                      revenue-reducing action, but hiding it would push members to
-                      cancel instead. Muted link near Manage, not a peer CTA.
-                      Clicking it first shows a plain-language explanation in OUR
-                      UI, because Stripe's hosted confirm screen for a scheduled
-                      downgrade prominently shows the *current* ($47) price and is
-                      easy to misread as a charge. */}
+                  {/* Downgrade is handled by support, not self-service (rare, and
+                      the self-service period-end schedule adds fragile state).
+                      Kept visible as a quiet link — not hidden — so a member
+                      weighing cancellation sees a cheaper option first. Jez makes
+                      the change in Stripe and the webhook syncs the role. */}
                   {subscriptionStatus === 'active' && !isCancelling && !pendingPlan && role === 'pro_subscriber' && (
-                    confirmingDowngrade ? (
-                      <div className="rounded-xl border border-charcoal/10 bg-cream p-4 space-y-3">
-                        <p className="text-sm text-charcoal/80 leading-relaxed">
-                          You&apos;ll keep <span className="font-medium text-charcoal">The Calm Circle</span>
-                          {nextChargeDate && (
-                            <> until <span className="whitespace-nowrap font-medium text-charcoal">{nextChargeDate}</span></>
-                          )}
-                          , then move to <span className="font-medium text-charcoal">The Calm Library</span> ($27 / month).
-                          You won&apos;t be charged today.
-                        </p>
-                        <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-                          <button
-                            onClick={() => handleChangePlan('subscriber')}
-                            disabled={changingPlan}
-                            className="min-h-[44px] flex items-center text-base font-medium text-green hover:text-green transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-                          >
-                            {changingPlan ? 'Loading…' : 'Continue →'}
-                          </button>
-                          <button
-                            onClick={() => setConfirmingDowngrade(false)}
-                            disabled={changingPlan}
-                            className="min-h-[44px] flex items-center text-sm text-charcoal/70 hover:text-charcoal/90 transition-colors disabled:opacity-50"
-                          >
-                            Keep The Calm Circle
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => setConfirmingDowngrade(true)}
-                        className="block min-h-[44px] text-sm text-charcoal/70 hover:text-charcoal/90 transition-colors"
-                      >
-                        Switch to The Calm Library
-                      </button>
-                    )
+                    <Link
+                      href="/contact"
+                      className="flex items-center min-h-[44px] text-sm text-charcoal/70 hover:text-charcoal/90 transition-colors"
+                    >
+                      Prefer a smaller plan? Contact us to switch →
+                    </Link>
                   )}
 
                   {!isCancelling && (

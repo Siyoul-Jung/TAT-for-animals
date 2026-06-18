@@ -1,14 +1,24 @@
 import { stripe } from '@/lib/stripe'
 import { createClient } from '@/lib/supabase/server'
+import { supabaseAdmin } from '@/lib/supabase/admin'
 import { paypalRequest } from '@/lib/paypal'
 import { NextRequest, NextResponse } from 'next/server'
 
 // Unified plan change (upgrade OR downgrade) for both providers, in place — no
 // cancel-and-rejoin, so the member never forfeits the time they've paid for.
-//   Stripe → Customer Portal `subscription_update_confirm` (shows the prorated
-//            amount/credit, member confirms; webhook syncs the role).
-//   PayPal → `revise` the subscription to the target plan (requires the buyer's
-//            re-approval; the BILLING.SUBSCRIPTION.UPDATED webhook syncs the role).
+//   Stripe upgrade   → subscriptions.update now, prorated charge for the rest of
+//                      the period (immediate access to the higher tier).
+//   Stripe downgrade → a subscription schedule that swaps to the lower price at
+//                      period end; the member keeps the higher tier until then.
+//   PayPal           → `revise` the subscription (requires the buyer's
+//                      re-approval; BILLING.SUBSCRIPTION.UPDATED syncs the role).
+//
+// We change Stripe plans directly via the API rather than the hosted Customer
+// Portal `subscription_update_confirm` flow: this (shared, legacy-API) account
+// will not persist a portal configuration's `subscription_update.products`
+// allow-list, which that flow requires. Our own dashboard confirmation replaces
+// the portal's confirm screen, and the customer.subscription.updated webhook
+// remains the source of truth for role / pending_tier.
 
 const STRIPE_PRICE: Record<string, string | undefined> = {
   subscriber:     process.env.STRIPE_PRICE_CALM_LIBRARY,
@@ -35,7 +45,7 @@ export async function POST(request: NextRequest) {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('stripe_customer_id, stripe_subscription_id, paypal_subscription_id, role')
+    .select('stripe_subscription_id, paypal_subscription_id, role')
     .eq('id', user.id)
     .single()
 
@@ -43,7 +53,18 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'You are already on this plan.' }, { status: 400 })
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL!
+  // Downgrades (→ the smaller plan) are handled by support, not self-service.
+  // They're rare, and a scheduled period-end downgrade adds fragile state
+  // (schedule ↔ cancel interactions, a switch that only fires a month later)
+  // for little benefit. The dashboard points members to /contact instead;
+  // Jez changes the plan in Stripe and the webhook syncs the role. This guard
+  // is belt-and-suspenders in case the route is called directly.
+  if (targetTier === 'subscriber') {
+    return NextResponse.json(
+      { error: 'To switch to a smaller plan, please contact us and we’ll take care of it.' },
+      { status: 400 }
+    )
+  }
 
   // ── Stripe ────────────────────────────────────────────────────
   if (profile?.stripe_subscription_id) {
@@ -58,25 +79,32 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Invalid subscription' }, { status: 400 })
       }
 
-      const portalSession = await stripe.billingPortal.sessions.create({
-        customer: profile.stripe_customer_id!,
-        return_url: `${siteUrl}/dashboard`,
-        // Use our isolated portal configuration (subscription_update enabled,
-        // upgrades prorated, downgrades scheduled at period end) — NOT the shared
-        // account's default config, which tatlife.com relies on. Falls back to the
-        // account default if the env var isn't set (local/test).
-        ...(process.env.STRIPE_PORTAL_CONFIG_ID
-          ? { configuration: process.env.STRIPE_PORTAL_CONFIG_ID }
-          : {}),
-        flow_data: {
-          type: 'subscription_update_confirm',
-          subscription_update_confirm: {
-            subscription: profile.stripe_subscription_id,
-            items: [{ id: currentItem.id, price: targetPrice, quantity: 1 }],
-          },
-        },
+      // Only upgrades reach here (downgrades are handled by support above).
+      // A leftover schedule (e.g. a downgrade Jez set manually) would leave the
+      // subscription "managed by a schedule" and block a direct price change —
+      // release it first so the upgrade always applies immediately.
+      if (subscription.schedule) {
+        const scheduleId =
+          typeof subscription.schedule === 'string' ? subscription.schedule : subscription.schedule.id
+        await stripe.subscriptionSchedules.release(scheduleId)
+      }
+
+      // Switch now and invoice the prorated difference for the rest of the
+      // period — the member gets Pro access immediately.
+      await stripe.subscriptions.update(subscription.id, {
+        items: [{ id: currentItem.id, price: targetPrice }],
+        proration_behavior: 'always_invoice',
       })
-      return NextResponse.json({ url: portalSession.url })
+
+      // Optimistic sync so the dashboard shows Pro at once. The
+      // customer.subscription.updated webhook confirms the same value; access
+      // stays gated on subscription_status (past_due) if the charge fails.
+      await supabaseAdmin
+        .from('profiles')
+        .update({ role: 'pro_subscriber', pending_tier: null, pending_tier_at: null })
+        .eq('id', user.id)
+
+      return NextResponse.json({ ok: true })
     } catch (error) {
       const stripeError = error as { message?: string }
       console.error('Stripe change-plan error:', stripeError.message)
@@ -93,6 +121,7 @@ export async function POST(request: NextRequest) {
     if (!targetPlan) {
       return NextResponse.json({ error: 'Plan not configured' }, { status: 500 })
     }
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL!
     try {
       const res = await paypalRequest(
         `/v1/billing/subscriptions/${profile.paypal_subscription_id}/revise`,

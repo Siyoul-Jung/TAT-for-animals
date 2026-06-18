@@ -321,7 +321,13 @@ export default function LibraryClient({
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Upgrade failed')
-      window.location.href = data.url
+      // PayPal returns an approval URL; Stripe applies it server-side and
+      // returns { ok: true } — reload so the now-unlocked Live tab appears.
+      if (data.url) {
+        window.location.href = data.url
+        return
+      }
+      window.location.reload()
     } catch (err) {
       console.error('Upgrade error:', err)
       // Surface the server's message (e.g. PayPal members are told to cancel
