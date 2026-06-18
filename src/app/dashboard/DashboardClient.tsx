@@ -369,11 +369,11 @@ export default function DashboardClient({
                             <span className="font-medium text-charcoal">$47 / month</span>.
                           </p>
                         </div>
-                        <div className="flex flex-col sm:flex-row sm:items-center gap-3 pt-1">
+                        <div className="flex flex-col items-stretch sm:items-start gap-1 pt-1">
                           <button
                             onClick={() => handleChangePlan('pro_subscriber')}
                             disabled={changingPlan}
-                            className="w-full sm:w-auto inline-flex justify-center items-center min-h-[48px] px-7 rounded-full text-cream font-bold text-[19px] transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
+                            className="w-full sm:w-auto inline-flex justify-center items-center whitespace-nowrap min-h-[48px] px-7 rounded-full text-cream font-bold text-[19px] transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
                             style={{ backgroundColor: '#D4703A', boxShadow: '0 6px 20px rgba(212,112,58,0.25)' }}
                           >
                             {changingPlan ? 'Upgrading…' : 'Confirm upgrade →'}
@@ -381,7 +381,7 @@ export default function DashboardClient({
                           <button
                             onClick={() => setConfirmingUpgrade(false)}
                             disabled={changingPlan}
-                            className="min-h-[44px] flex items-center justify-center text-sm text-charcoal/70 hover:text-charcoal/90 transition-colors disabled:opacity-50"
+                            className="w-full sm:w-auto min-h-[44px] flex items-center justify-center sm:justify-start text-sm text-charcoal/70 hover:text-charcoal/90 transition-colors disabled:opacity-50"
                           >
                             Not now
                           </button>
@@ -439,11 +439,6 @@ export default function DashboardClient({
                     </Link>
                   )}
 
-                  {!isCancelling && (
-                    <p className="text-sm text-charcoal/65 leading-relaxed">
-                      Cancel anytime.
-                    </p>
-                  )}
                 </div>
               )}
             </>
