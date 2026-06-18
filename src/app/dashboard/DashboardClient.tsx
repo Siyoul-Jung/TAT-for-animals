@@ -409,14 +409,14 @@ export default function DashboardClient({
                           </div>
                           <dl className="text-sm space-y-1.5">
                             <div className="flex gap-4">
-                              <dt className="w-12 shrink-0 text-charcoal/60">Today</dt>
+                              <dt className="w-16 shrink-0 text-charcoal/60">Today</dt>
                               <dd className="font-medium text-charcoal">
                                 {previewLoading ? 'Working it out…' : (previewAmount ?? 'Just the difference')}
                               </dd>
                             </div>
                             <div className="flex gap-4">
-                              <dt className="w-12 shrink-0 text-charcoal/60">Then</dt>
-                              <dd className="font-medium text-charcoal">$47 / month</dd>
+                              <dt className="w-16 shrink-0 text-charcoal/60">Monthly</dt>
+                              <dd className="font-medium text-charcoal">$47</dd>
                             </div>
                           </dl>
                         </div>
