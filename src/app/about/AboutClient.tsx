@@ -167,8 +167,8 @@ export default function AboutClient() {
             </p>
             <Link
               href="/membership"
-              className="inline-flex items-center min-h-[44px] text-base font-medium transition-colors hover:opacity-70"
-              style={{ color: '#D4703A' }}
+              className="inline-flex items-center min-h-[44px] text-base font-medium underline underline-offset-2 transition-colors hover:opacity-70"
+              style={{ color: '#467826' }}
             >
               See membership options →
             </Link>
