@@ -355,24 +355,33 @@ export default function DashboardClient({
                       amount, so we say so before doing it. */}
                   {subscriptionStatus === 'active' && !isCancelling && !pendingPlan && role !== 'pro_subscriber' && (
                     confirmingUpgrade ? (
-                      <div className="rounded-xl border border-charcoal/10 bg-cream p-4 space-y-3">
-                        <p className="text-sm text-charcoal/80 leading-relaxed">
-                          You&apos;ll move to <span className="font-medium text-charcoal">The Calm Circle</span> right
-                          away — including the monthly live sessions with Tapas. We&apos;ll charge the prorated
-                          difference for the rest of this billing period, then $47 / month.
-                        </p>
-                        <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+                      <div
+                        className="rounded-2xl border p-5 space-y-4"
+                        style={{ backgroundColor: 'rgba(212,112,58,0.05)', borderColor: 'rgba(212,112,58,0.20)' }}
+                      >
+                        <div className="space-y-1.5">
+                          <p className="font-serif text-lg text-charcoal leading-snug">
+                            Move up to The Calm Circle
+                          </p>
+                          <p className="text-sm text-charcoal/70 leading-relaxed">
+                            Live sessions with Tapas, starting today. You&apos;ll pay just the difference for the
+                            rest of this month — then{' '}
+                            <span className="font-medium text-charcoal">$47 / month</span>.
+                          </p>
+                        </div>
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-3 pt-1">
                           <button
                             onClick={() => handleChangePlan('pro_subscriber')}
                             disabled={changingPlan}
-                            className="min-h-[44px] flex items-center text-base font-medium text-green hover:text-green transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                            className="inline-flex justify-center items-center min-h-[48px] px-7 rounded-full text-cream font-bold text-base transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
+                            style={{ backgroundColor: '#D4703A', boxShadow: '0 6px 20px rgba(212,112,58,0.25)' }}
                           >
                             {changingPlan ? 'Upgrading…' : 'Confirm upgrade →'}
                           </button>
                           <button
                             onClick={() => setConfirmingUpgrade(false)}
                             disabled={changingPlan}
-                            className="min-h-[44px] flex items-center text-sm text-charcoal/70 hover:text-charcoal/90 transition-colors disabled:opacity-50"
+                            className="min-h-[44px] flex items-center justify-center text-sm text-charcoal/60 hover:text-charcoal/90 transition-colors disabled:opacity-50"
                           >
                             Not now
                           </button>
