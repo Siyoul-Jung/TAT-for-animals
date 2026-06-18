@@ -119,6 +119,15 @@ export default function Hero({ images }: { images: HeroImage[] }) {
             <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4 lg:gap-6">
               <Link
                 href="#experience"
+                onClick={(e) => {
+                  // A bare hash link only scrolls when the hash *changes*, so a second
+                  // click (URL already #experience) does nothing. Scroll on every click.
+                  const el = document.getElementById('experience');
+                  if (!el) return;
+                  e.preventDefault();
+                  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                  el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+                }}
                 className="inline-flex shrink-0 whitespace-nowrap w-full sm:w-[240px] min-h-[48px] items-center justify-center px-7 py-3.5 lg:py-4 rounded-full text-cream font-bold text-[19px] transition-all hover:scale-105 hover:shadow-lg active:scale-95"
                 style={{ backgroundColor: '#D4703A', boxShadow: '0 6px 20px rgba(212,112,58,0.25)' }}
               >
@@ -126,7 +135,7 @@ export default function Hero({ images }: { images: HeroImage[] }) {
               </Link>
               <Link
                 href="/membership"
-                className="inline-flex shrink-0 whitespace-nowrap w-full sm:w-[240px] min-h-[48px] items-center justify-center px-7 py-3.5 lg:py-4 rounded-full border-2 text-[19px] font-bold transition-all hover:bg-brand hover:text-cream active:scale-95"
+                className="inline-flex shrink-0 whitespace-nowrap w-full sm:w-[240px] min-h-[48px] items-center justify-center px-7 py-3.5 lg:py-4 rounded-full border-2 text-[19px] font-bold transition-all hover:bg-brand/10 hover:scale-105 active:scale-95"
                 style={{ borderColor: '#D4703A', color: '#D4703A' }}
               >
                 Join the members
