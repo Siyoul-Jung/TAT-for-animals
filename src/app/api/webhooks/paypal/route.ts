@@ -70,6 +70,10 @@ export async function POST(request: NextRequest) {
             subscription_status: 'active',
             pending_tier: null,
             pending_tier_at: null,
+            // A fresh activation is, by definition, not cancelling — clear any
+            // stale cancel_at so a cancel-then-rejoin member (e.g. a PayPal
+            // downgrade) isn't lapsed by the previous subscription's end date.
+            cancel_at: null,
           })
           .eq('id', userId)
         break
