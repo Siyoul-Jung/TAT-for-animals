@@ -98,7 +98,7 @@ export default function Hero({ images }: { images: HeroImage[] }) {
         </div>
 
         {/* ── Text — mobile: below image; desktop: left column ── */}
-        <div className="flex flex-1 flex-col justify-center px-6 py-8 lg:px-14 xl:px-20 2xl:px-28 lg:py-0 lg:col-start-1 lg:row-start-1 -mt-0.5 lg:mt-0 bg-cream lg:bg-transparent relative z-20">
+        <div className="flex flex-1 flex-col justify-center px-6 py-8 [@media(max-height:740px)]:py-3 lg:px-14 xl:px-20 2xl:px-28 lg:py-0 lg:col-start-1 lg:row-start-1 -mt-0.5 lg:mt-0 bg-cream lg:bg-transparent relative z-20">
           <div
             className="lg:!pb-0"
             style={{ paddingBottom: 'calc(var(--cookie-banner-offset, 0px) + env(safe-area-inset-bottom))' }}
