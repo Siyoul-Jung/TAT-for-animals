@@ -69,8 +69,8 @@
 <div class="wrap">
 
   <p class="eyebrow">Function &amp; design check</p>
-  <h1>The build, in your hands</h1>
-  <p class="lead">Hi Jez. Tapas is reading through every word; this side &mdash; does it <b>work</b>, does it <b>hold together</b>, does it <b>look right</b> &mdash; is yours. You&rsquo;ve built and run a site, so you know exactly what to poke at. Go through it like it&rsquo;s one of your own.</p>
+  <h1>Walk through it as a visitor would</h1>
+  <p class="lead">Go through the site the way a real customer would &mdash; arriving for the first time, signing up, paying, then finding their way around the account and library. At each step, check that it both <b>works</b> and <b>looks and feels right</b>, and flag anything that confuses you, looks off, or doesn&rsquo;t behave.</p>
 
   <div class="howto">
     <p><b>Nothing here can cost real money.</b> Stripe is in test mode, so the checkout step uses a test card (given below) and never charges anything.</p>
@@ -80,13 +80,9 @@
 
   <div class="howto" style="border-left:4px solid var(--green-border); background:var(--green-tint)">
     <p style="margin:0 0 6px"><b>What we were going for &mdash; a quick frame for your eye:</b></p>
-    <p style="margin:0">This is built for animal owners who aren&rsquo;t especially technical, so it leans <b>simple, warm and human</b> &mdash; never slick or &ldquo;AI-looking,&rdquo; one clear purpose per screen. Accessibility isn&rsquo;t optional here: large readable text, big tappable buttons, strong contrast, a visible focus outline. If anything pulls against that, it&rsquo;s worth flagging.</p>
+    <p style="margin:0">The site leans <b>simple, warm and human</b> &mdash; never slick or &ldquo;AI-looking,&rdquo; one clear purpose per screen, clean and uncluttered. If anything pulls against that &mdash; a screen that feels busy, cold, or off-brand &mdash; it&rsquo;s worth flagging.</p>
   </div>
 
-  <div class="meta">
-    <label>Your name<input type="text" data-key="reviewer" placeholder="Jez" /></label>
-    <label>Date<input type="text" data-key="date" placeholder="e.g. June 18" /></label>
-  </div>
 
   <!-- =================== SECTION 1: MEMBER JOURNEY =================== -->
   <h2 class="sec">1 &middot; The core member journey</h2>
@@ -117,6 +113,7 @@
       <p style="margin:4px 0">Any future expiry (e.g. <b>12&thinsp;/&thinsp;34</b>) &middot; any CVC (e.g. <b>123</b>) &middot; any ZIP.</p>
       <p class="rea" style="margin:6px 0 0">Test mode &mdash; no real charge is possible.</p>
     </div>
+    <p class="info">If a PayPal option shows next to the card, use the <b>card</b> &mdash; there&rsquo;s no test PayPal, so PayPal can be skipped here.</p>
     <p class="sub">Does it land on thank-you and then a dashboard that reflects the plan? Try an edge if you like: a logged-out checkout, or hitting pay twice.</p>
     <div class="feel">
       <label><input type="radio" name="m2" data-key="m2" value="ok" /> Good</label>
@@ -167,7 +164,7 @@
 
   <div class="check">
     <p class="ctitle">About <span class="path">/about</span></p>
-    <p class="sub">Tapas&rsquo;s story is accurate and current, images load, links work, and it reads warmly. (Tapas owns the words &mdash; you&rsquo;re checking it functions and looks right.)</p>
+    <p class="sub">Tapas&rsquo;s story is accurate and current, images load, links work, and it reads warmly. If any wording catches your eye, note that too.</p>
     <div class="feel">
       <label><input type="radio" name="c-about" data-key="c-about" value="ok" /> Good</label>
       <label><input type="radio" name="c-about" data-key="c-about" value="issue" /> Found an issue</label>
@@ -239,9 +236,29 @@
     <textarea class="notes" data-key="c-cancel-n" placeholder="Notes…"></textarea>
   </div>
 
+  <div class="check">
+    <p class="ctitle">Upgrade Basic &rarr; Pro</p>
+    <p class="sub">As a Calm Library (basic) member, find the upgrade to Calm Circle &mdash; on the dashboard or the Live Sessions card &mdash; and go through it (test mode). Does it move you to Pro, show the right pro-rata difference, and unlock the Pro-only Live content afterwards? (If you joined on Pro, cancel and re-join on basic to test this.)</p>
+    <div class="feel">
+      <label><input type="radio" name="c-upgrade" data-key="c-upgrade" value="ok" /> Good</label>
+      <label><input type="radio" name="c-upgrade" data-key="c-upgrade" value="issue" /> Found an issue</label>
+    </div>
+    <textarea class="notes" data-key="c-upgrade-n" placeholder="Notes on the upgrade flow…"></textarea>
+  </div>
+
+  <div class="check">
+    <p class="ctitle">Delete account</p>
+    <p class="sub">From the account page (cancel any subscription first), request deletion. You should get a <b>confirm step</b> before anything happens, then an email with a link &mdash; try the &ldquo;send again&rdquo; option too. Does the whole loop hold, read clearly, and feel calm rather than alarming?</p>
+    <div class="feel">
+      <label><input type="radio" name="c-delete" data-key="c-delete" value="ok" /> Good</label>
+      <label><input type="radio" name="c-delete" data-key="c-delete" value="issue" /> Found an issue</label>
+    </div>
+    <textarea class="notes" data-key="c-delete-n" placeholder="Notes on account deletion…"></textarea>
+  </div>
+
   <!-- =================== SECTION 4: ACROSS THE BOARD =================== -->
   <h2 class="sec">4 &middot; Across the board</h2>
-  <p class="secsub">The cross-cutting builder checks &mdash; the things that don&rsquo;t belong to one page.</p>
+  <p class="secsub">The cross-cutting checks &mdash; the things that don&rsquo;t belong to one page.</p>
 
   <div class="check">
     <p class="ctitle">Responsive &mdash; phone, tablet, desktop</p>
@@ -275,7 +292,7 @@
 
   <div class="check">
     <p class="ctitle">Anything off-brand or visually off</p>
-    <p class="sub">A builder&rsquo;s eye for the things a visitor wouldn&rsquo;t name: misalignment, inconsistent spacing, an odd colour, a font that looks wrong, something that feels cheap or &ldquo;not us.&rdquo;</p>
+    <p class="sub">A practised eye for the things a visitor wouldn&rsquo;t name: misalignment, inconsistent spacing, an odd colour, a font that looks wrong, something that feels cheap or &ldquo;not us.&rdquo;</p>
     <div class="feel">
       <label><input type="radio" name="c-brand" data-key="c-brand" value="ok" /> Good</label>
       <label><input type="radio" name="c-brand" data-key="c-brand" value="issue" /> Found an issue</label>
@@ -350,7 +367,7 @@
     return lines.join('\n');
   }
   function downloadAnswers(){
-    var text = 'TAT for Animals - Function & design check\nReviewer: '+get('reviewer')+'   Date: '+get('date')+'\n========================================\n'+buildAnswersText();
+    var text = 'TAT for Animals - Function & design check\nReviewer: Jez\n========================================\n'+buildAnswersText();
     var blob = new Blob([text], {type:'text/plain'});
     var a = document.createElement('a');
     a.href = URL.createObjectURL(blob); a.download = 'function-design-check.txt'; a.click();
@@ -364,7 +381,7 @@
       var res = await fetch('/api/review-feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reviewer: get('reviewer'), date: get('date'), subjectTag: 'Function & design', body: buildAnswersText(), token: 'tat-content-review-2026' })
+        body: JSON.stringify({ reviewer: 'Jez', date: '', subjectTag: 'Function & design', body: buildAnswersText(), token: 'tat-content-review-2026' })
       });
       if (!res.ok) throw new Error();
       msg.style.color = '#467826';
