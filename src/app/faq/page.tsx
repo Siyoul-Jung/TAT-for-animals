@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 
@@ -110,7 +111,7 @@ export default function FAQ() {
             FAQ
           </p>
           <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-charcoal font-semibold leading-tight mb-4">
-            Questions & Answers
+            Your questions, answered.
           </h1>
           <p className="text-base sm:text-lg leading-relaxed text-charcoal/65">
             Everything you're wondering about TAT for Animals — answered simply.
@@ -126,12 +127,12 @@ export default function FAQ() {
         <div className="mt-14">
           <p className="text-base sm:text-lg leading-relaxed text-charcoal/65">
             Still have questions?{' '}
-            <a
-              href="mailto:hello@tatforanimals.com"
-              className="text-green hover:text-green transition-colors"
+            <Link
+              href="/contact"
+              className="text-green underline underline-offset-2 hover:text-green transition-colors"
             >
-              Email us
-            </a>
+              Get in touch
+            </Link>
             {' '}— we'd love to hear from you.
           </p>
         </div>

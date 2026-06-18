@@ -1,3 +1,6 @@
+import Link from 'next/link';
+import { BOOKING_URL } from '@/lib/links';
+
 export default function Contact() {
   return (
     <main
@@ -42,6 +45,36 @@ export default function Contact() {
         >
           We typically respond within 1–2 business days.
         </p>
+
+        <div
+          className="mt-10 pt-8 space-y-3 text-base leading-relaxed"
+          style={{ borderTop: '1px solid #F2EAE0', color: 'rgba(28,16,7,0.65)' }}
+        >
+          <p>
+            Many common questions are already answered in our{' '}
+            <Link
+              href="/faq"
+              className="underline underline-offset-2"
+              style={{ color: '#467826' }}
+            >
+              FAQ
+            </Link>
+            .
+          </p>
+          <p>
+            Prefer to work with Tapas one-on-one? You can{' '}
+            <a
+              href={BOOKING_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2"
+              style={{ color: '#467826' }}
+            >
+              book a private session ↗
+            </a>
+            .
+          </p>
+        </div>
 
       </div>
     </main>
