@@ -407,15 +407,15 @@ export default function DashboardClient({
                               Live sessions with Tapas, starting today.
                             </p>
                           </div>
-                          <dl className="text-sm">
-                            <div className="flex items-center justify-between py-2 border-t border-charcoal/10">
-                              <dt className="text-charcoal/70">Today</dt>
+                          <dl className="text-sm space-y-1.5">
+                            <div className="flex gap-4">
+                              <dt className="w-12 shrink-0 text-charcoal/60">Today</dt>
                               <dd className="font-medium text-charcoal">
                                 {previewLoading ? 'Working it out…' : (previewAmount ?? 'Just the difference')}
                               </dd>
                             </div>
-                            <div className="flex items-center justify-between py-2 border-t border-charcoal/10">
-                              <dt className="text-charcoal/70">Then</dt>
+                            <div className="flex gap-4">
+                              <dt className="w-12 shrink-0 text-charcoal/60">Then</dt>
                               <dd className="font-medium text-charcoal">$47 / month</dd>
                             </div>
                           </dl>
