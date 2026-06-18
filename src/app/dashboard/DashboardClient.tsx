@@ -398,27 +398,27 @@ export default function DashboardClient({
                         className="rounded-2xl border p-5 space-y-4"
                         style={{ backgroundColor: 'rgba(212,112,58,0.05)', borderColor: 'rgba(212,112,58,0.20)' }}
                       >
-                        <div className="space-y-1.5">
-                          <p className="font-serif text-lg text-charcoal leading-snug">
-                            Move up to The Calm Circle
-                          </p>
-                          <p className="text-sm text-charcoal/70 leading-relaxed">
-                            Live sessions with Tapas, starting today.{' '}
-                            {previewLoading ? (
-                              <span className="text-charcoal/50">Working out today&apos;s charge…</span>
-                            ) : previewAmount ? (
-                              <>
-                                You&apos;ll pay <span className="font-medium text-charcoal">{previewAmount}</span> today
-                                for the rest of this month — then{' '}
-                                <span className="font-medium text-charcoal">$47 / month</span>.
-                              </>
-                            ) : (
-                              <>
-                                You&apos;ll pay just the difference for the rest of this month — then{' '}
-                                <span className="font-medium text-charcoal">$47 / month</span>.
-                              </>
-                            )}
-                          </p>
+                        <div className="space-y-3">
+                          <div className="space-y-1">
+                            <p className="font-serif text-lg text-charcoal leading-snug">
+                              Move up to The Calm Circle
+                            </p>
+                            <p className="text-sm text-charcoal/70 leading-relaxed">
+                              Live sessions with Tapas, starting today.
+                            </p>
+                          </div>
+                          <dl className="text-sm">
+                            <div className="flex items-center justify-between py-2 border-t border-charcoal/10">
+                              <dt className="text-charcoal/70">Today</dt>
+                              <dd className="font-medium text-charcoal">
+                                {previewLoading ? 'Working it out…' : (previewAmount ?? 'Just the difference')}
+                              </dd>
+                            </div>
+                            <div className="flex items-center justify-between py-2 border-t border-charcoal/10">
+                              <dt className="text-charcoal/70">Then</dt>
+                              <dd className="font-medium text-charcoal">$47 / month</dd>
+                            </div>
+                          </dl>
                         </div>
                         <div className="flex flex-col items-stretch sm:items-start gap-1 pt-1">
                           <button
