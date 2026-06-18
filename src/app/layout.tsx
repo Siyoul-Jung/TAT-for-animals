@@ -39,8 +39,8 @@ export default function RootLayout({
       className={`${playfair.variable} ${dmSans.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans bg-cream text-charcoal selection:bg-brand/20">
-        <ScrollToTop />
         <Suspense fallback={null}>
+          <ScrollToTop />
           <Navbar />
         </Suspense>
         <main className="flex-grow">
