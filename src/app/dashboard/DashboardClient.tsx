@@ -373,7 +373,7 @@ export default function DashboardClient({
                           <button
                             onClick={() => handleChangePlan('pro_subscriber')}
                             disabled={changingPlan}
-                            className="inline-flex justify-center items-center min-h-[48px] px-7 rounded-full text-cream font-bold text-base transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
+                            className="w-full sm:w-auto inline-flex justify-center items-center min-h-[48px] px-7 rounded-full text-cream font-bold text-[19px] transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
                             style={{ backgroundColor: '#D4703A', boxShadow: '0 6px 20px rgba(212,112,58,0.25)' }}
                           >
                             {changingPlan ? 'Upgrading…' : 'Confirm upgrade →'}
@@ -381,7 +381,7 @@ export default function DashboardClient({
                           <button
                             onClick={() => setConfirmingUpgrade(false)}
                             disabled={changingPlan}
-                            className="min-h-[44px] flex items-center justify-center text-sm text-charcoal/60 hover:text-charcoal/90 transition-colors disabled:opacity-50"
+                            className="min-h-[44px] flex items-center justify-center text-sm text-charcoal/70 hover:text-charcoal/90 transition-colors disabled:opacity-50"
                           >
                             Not now
                           </button>
