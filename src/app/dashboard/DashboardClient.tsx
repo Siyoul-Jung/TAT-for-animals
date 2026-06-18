@@ -317,7 +317,7 @@ export default function DashboardClient({
                         {isPayPal ? (
                           <>
                             {' '}You&apos;re welcome to{' '}
-                            <Link href="/membership#membership" className="text-green underline hover:text-green">
+                            <Link href="/membership" className="text-green underline hover:text-green">
                               rejoin
                             </Link>
                             {' '}anytime.
@@ -440,7 +440,7 @@ export default function DashboardClient({
                 Ready to begin? Choose a plan to open the library.
               </p>
               <Link
-                href="/membership#membership"
+                href="/membership"
                 className="inline-flex items-center min-h-[44px] px-7 py-3 rounded-full bg-brand text-white text-[19px] font-bold hover:opacity-90 transition-all whitespace-nowrap"
               >
                 See plans

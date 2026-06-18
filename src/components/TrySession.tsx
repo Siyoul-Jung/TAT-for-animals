@@ -162,7 +162,7 @@ export default function TrySession() {
           className="text-center"
         >
           <Link
-            href="/membership#membership"
+            href="/membership"
             className="inline-flex items-center min-h-[44px] gap-1 text-base font-medium transition-opacity hover:opacity-70"
             style={{ color: '#467826' }}
           >

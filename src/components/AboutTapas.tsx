@@ -124,7 +124,7 @@ export default function AboutTapas() {
               Learn more about Tapas →
             </Link>
             <Link
-              href="/membership#membership"
+              href="/membership"
               className="inline-flex w-fit min-h-[44px] items-center px-7 py-3 rounded-full text-cream font-bold text-[19px] transition-all hover:scale-105 active:scale-95"
               style={{ backgroundColor: '#D4703A', boxShadow: '0 4px 16px rgba(212,112,58,0.22)' }}
             >
@@ -134,7 +134,7 @@ export default function AboutTapas() {
 
           {/* Desktop CTA only */}
           <Link
-            href="/membership#membership"
+            href="/membership"
             className="hidden lg:inline-flex w-fit min-h-[44px] items-center px-7 py-3 rounded-full text-cream font-bold text-[19px] transition-all hover:scale-105 active:scale-95"
             style={{ backgroundColor: '#D4703A', boxShadow: '0 4px 16px rgba(212,112,58,0.22)' }}
           >

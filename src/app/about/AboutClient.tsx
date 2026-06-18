@@ -16,7 +16,7 @@ export default function AboutClient() {
     <main className="bg-cream">
 
       {/* 1. 헤더 */}
-      <section className="pt-32 pb-4 px-6">
+      <section className="pt-28 sm:pt-32 pb-4 px-6">
         <div className="max-w-4xl mx-auto">
           <motion.div {...fadeUp}>
             <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-5"
@@ -70,7 +70,7 @@ export default function AboutClient() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="absolute -bottom-5 -right-5 bg-cream rounded-2xl px-6 py-4 flex flex-col gap-0.5"
+              className="absolute -bottom-7 right-3 sm:-bottom-5 sm:-right-5 bg-cream rounded-2xl px-5 py-3 sm:px-6 sm:py-4 flex flex-col gap-0.5"
               style={{ boxShadow: '0 8px 32px rgba(28,16,7,0.10), 0 0 0 1px rgba(28,16,7,0.07)' }}
             >
               <span className="font-serif text-2xl font-semibold text-charcoal">1993</span>
