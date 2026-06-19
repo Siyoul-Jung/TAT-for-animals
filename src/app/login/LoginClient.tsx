@@ -175,7 +175,7 @@ export default function LoginClient() {
                 <label htmlFor="password" className="text-sm font-medium text-charcoal">
                   Password
                 </label>
-                <a href="/reset-password" className="text-xs text-muted hover:text-green transition-colors">
+                <a href="/reset-password" className="inline-flex items-center min-h-[44px] text-xs text-muted hover:text-green transition-colors">
                   Forgot your password?
                 </a>
               </div>

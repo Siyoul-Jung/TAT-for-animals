@@ -54,7 +54,7 @@ export default function ResetPasswordClient() {
                 Try again
               </button>
             </p>
-            <Link href="/login" className="text-sm text-muted hover:text-green transition-colors">
+            <Link href="/login" className="inline-flex items-center min-h-[44px] text-sm text-muted hover:text-green transition-colors">
               ← Back to sign in
             </Link>
           </div>
@@ -116,7 +116,7 @@ export default function ResetPasswordClient() {
           </form>
 
           <div className="mt-6 pt-6 border-t border-surface text-center">
-            <Link href="/login" className="text-sm text-muted hover:text-green transition-colors">
+            <Link href="/login" className="inline-flex items-center min-h-[44px] text-sm text-muted hover:text-green transition-colors">
               ← Back to sign in
             </Link>
           </div>

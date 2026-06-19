@@ -155,7 +155,7 @@ export default function UpdatePasswordClient() {
               <div className="bg-red-50 border border-red-100 rounded-xl px-4 py-3 mb-5">
                 <p className="text-sm text-red-600 leading-relaxed">{error}</p>
                 {error.includes('expired') && (
-                  <a href="/reset-password" className="text-sm text-green hover:underline mt-1 block">
+                  <a href="/reset-password" className="inline-flex items-center min-h-[44px] text-sm text-green hover:underline mt-1">
                     Request a new reset link →
                   </a>
                 )}

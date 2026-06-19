@@ -51,7 +51,10 @@ export async function POST(request: NextRequest) {
   const approveLink = data.links?.find((l: { rel: string }) => l.rel === 'approve')?.href
 
   if (!approveLink) {
-    return NextResponse.json({ error: 'PayPal subscription creation failed' }, { status: 500 })
+    return NextResponse.json(
+      { error: "We couldn't start your PayPal checkout — nothing was charged. Please try again in a moment, or pay with a card." },
+      { status: 500 }
+    )
   }
 
   return NextResponse.json({ url: approveLink })

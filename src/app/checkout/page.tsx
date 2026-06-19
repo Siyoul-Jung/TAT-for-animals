@@ -1,8 +1,9 @@
 'use client';
 
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Suspense } from 'react';
+import Link from 'next/link';
 
 const PLANS: Record<string, { name: string; price: string }> = {
   calm_library: { name: 'The Calm Library', price: '27' },
@@ -12,10 +13,18 @@ const PLANS: Record<string, { name: string; price: string }> = {
 function CheckoutContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const plan = searchParams.get('plan') ?? 'calm_library';
-  const tier = PLANS[plan] ?? PLANS['calm_library'];
+  const plan = searchParams.get('plan');
+  const tier = plan ? PLANS[plan] : undefined;
   const [loading, setLoading] = useState<'stripe' | 'paypal' | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // An unknown/missing plan would otherwise silently bill the default tier —
+  // send them back to choose instead of charging for something they didn't pick.
+  useEffect(() => {
+    if (!tier) router.replace('/membership');
+  }, [tier, router]);
+
+  if (!tier || !plan) return <div className="min-h-screen bg-cream" />;
 
   async function handlePayment(provider: 'stripe' | 'paypal') {
     setLoading(provider);
@@ -72,6 +81,14 @@ function CheckoutContent() {
         {error && (
           <div className="bg-red-50 border border-red-100 rounded-xl px-4 py-3 mb-4">
             <p className="text-sm text-red-600 leading-relaxed">{error}</p>
+            {error.includes('already have an active subscription') && (
+              <Link
+                href="/dashboard"
+                className="inline-flex items-center min-h-[44px] mt-1 text-sm font-medium text-red-700 underline underline-offset-2 hover:no-underline"
+              >
+                Go to your dashboard →
+              </Link>
+            )}
           </div>
         )}
 
