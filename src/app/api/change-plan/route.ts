@@ -49,6 +49,8 @@ export async function POST(request: NextRequest) {
     .eq('id', user.id)
     .single()
 
+  // Advisory fast-path on the locally-cached role to reject an obvious no-op.
+  // The provider (re-fetched below) and the webhook remain authoritative.
   if (profile?.role === targetTier) {
     return NextResponse.json({ error: 'You are already on this plan.' }, { status: 400 })
   }
@@ -128,10 +130,11 @@ export async function POST(request: NextRequest) {
 
       return NextResponse.json({ ok: true })
     } catch (error) {
-      const stripeError = error as { message?: string }
-      console.error('Stripe change-plan error:', stripeError.message)
+      // Log the real error server-side; return fixed friendly copy to the client
+      // (don't leak Stripe internals) — mirrors the PayPal branch below.
+      console.error('Stripe change-plan error:', error instanceof Error ? error.message : error)
       return NextResponse.json(
-        { error: stripeError.message || 'Failed to change plan' },
+        { error: 'We couldn’t change your plan just now. Please try again, or email us and we’ll help.' },
         { status: 500 }
       )
     }
