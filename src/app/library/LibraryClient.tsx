@@ -290,6 +290,7 @@ export default function LibraryClient({
   upcoming,
   lockedRecordings,
   role,
+  isPayPal,
 }: {
   animalsVideos: Video[]
   acesVideos: Video[]
@@ -297,6 +298,7 @@ export default function LibraryClient({
   upcoming: WebinarSession[]
   lockedRecordings: RecordingPreview[]
   role: string
+  isPayPal: boolean
 }) {
   const searchParams = useSearchParams()
   const tabParam = searchParams.get('tab')
@@ -311,6 +313,44 @@ export default function LibraryClient({
   const [progressMap, setProgressMap] = useState<ProgressMap>({})
   const [upgrading, setUpgrading] = useState(false)
   const [upgradeError, setUpgradeError] = useState<string | null>(null)
+  const [confirmingUpgrade, setConfirmingUpgrade] = useState(false)
+  const [previewLoading, setPreviewLoading] = useState(false)
+  const [previewAmount, setPreviewAmount] = useState<string | null>(null)
+
+  // Show what today's prorated charge will be before the member commits — same
+  // promise the dashboard makes, so this CTA never charges without a confirm.
+  async function fetchUpgradePreview() {
+    setPreviewLoading(true)
+    setPreviewAmount(null)
+    try {
+      const res = await fetch('/api/change-plan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ targetTier: 'pro_subscriber', preview: true }),
+      })
+      const data = await res.json()
+      if (res.ok && typeof data.amountDue === 'number') {
+        const amt = data.amountDue / 100
+        setPreviewAmount(
+          data.currency && data.currency.toLowerCase() !== 'usd'
+            ? `${amt.toFixed(2)} ${data.currency.toUpperCase()}`
+            : `$${amt.toFixed(2)}`
+        )
+      }
+    } catch {
+      // Preview is best-effort — fall back to generic copy if it fails.
+    } finally {
+      setPreviewLoading(false)
+    }
+  }
+
+  function openUpgrade() {
+    setUpgradeError(null)
+    setConfirmingUpgrade(true)
+    // PayPal can't be previewed (the price is confirmed on PayPal's own screen),
+    // so only fetch a proration amount for Stripe members.
+    if (!isPayPal) fetchUpgradePreview()
+  }
 
   async function handleUpgrade() {
     setUpgrading(true)
@@ -329,7 +369,8 @@ export default function LibraryClient({
         window.location.href = data.url
         return
       }
-      window.location.reload()
+      // Stripe applied it server-side — land on the now-unlocked Live tab.
+      window.location.href = '/library?tab=live'
     } catch (err) {
       console.error('Upgrade error:', err)
       // Surface the server's message (e.g. PayPal members are told to cancel
@@ -517,28 +558,73 @@ export default function LibraryClient({
                 )}
 
                 <div className="p-7 space-y-5">
-                  <div>
-                    <p className="font-serif text-xl text-charcoal mb-1.5">Join Tapas live every month.</p>
-                    <p className="text-charcoal/65 text-base leading-relaxed">
-                      The Calm Circle adds monthly live webinars with Tapas — for your animal and for you — plus the
-                      full archive of past recordings{lockedRecordings.length > 0 ? ' above' : ''}.
-                    </p>
-                  </div>
-                  <div className="space-y-2.5">
-                    <button
-                      onClick={handleUpgrade}
-                      disabled={upgrading}
-                      className="flex w-full justify-center items-center text-center min-h-[44px] px-6 py-3 rounded-2xl bg-brand text-white text-[19px] font-bold hover:opacity-90 transition-all disabled:opacity-60"
-                    >
-                      {upgrading ? 'Connecting…' : 'Upgrade to The Calm Circle →'}
-                    </button>
-                    {upgradeError && (
-                      <div role="alert" className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 max-w-md">
-                        <p className="text-sm text-red-700 leading-relaxed">{upgradeError}</p>
+                  {confirmingUpgrade ? (
+                    // Confirm step — show today's prorated charge + the ongoing
+                    // price before anything is billed (parity with the dashboard).
+                    <div className="space-y-4">
+                      <div className="space-y-1">
+                        <p className="font-serif text-xl text-charcoal leading-snug">Move up to The Calm Circle</p>
+                        <p className="text-charcoal/65 text-base leading-relaxed">
+                          {isPayPal
+                            ? 'Live sessions with Tapas. You’ll confirm the new price with PayPal on the next screen.'
+                            : 'Live sessions with Tapas, starting today.'}
+                        </p>
                       </div>
-                    )}
-                    <p className="text-sm text-charcoal/65">Cancel anytime</p>
-                  </div>
+                      <dl className="text-sm space-y-1.5">
+                        {/* Stripe shows today's prorated charge; PayPal can't be
+                            previewed, so we only state the ongoing price. */}
+                        {!isPayPal && (
+                          <div className="flex gap-4">
+                            <dt className="w-16 shrink-0 text-charcoal/60">Today</dt>
+                            <dd className="font-medium text-charcoal">
+                              {previewLoading ? 'Working it out…' : (previewAmount ?? 'Just the difference')}
+                            </dd>
+                          </div>
+                        )}
+                        <div className="flex gap-4">
+                          <dt className="w-16 shrink-0 text-charcoal/60">Monthly</dt>
+                          <dd className="font-medium text-charcoal">$47</dd>
+                        </div>
+                      </dl>
+                      {upgradeError && (
+                        <div role="alert" className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 max-w-md">
+                          <p className="text-sm text-red-700 leading-relaxed">{upgradeError}</p>
+                        </div>
+                      )}
+                      <div className="flex flex-col items-stretch sm:items-start gap-1 pt-1">
+                        <button
+                          onClick={handleUpgrade}
+                          disabled={upgrading}
+                          className="w-full sm:w-auto inline-flex justify-center items-center whitespace-nowrap min-h-[48px] px-7 rounded-full bg-brand text-white text-[19px] font-bold hover:opacity-90 transition-all disabled:opacity-60"
+                        >
+                          {upgrading ? 'Upgrading…' : 'Confirm upgrade →'}
+                        </button>
+                        <button
+                          onClick={() => setConfirmingUpgrade(false)}
+                          disabled={upgrading}
+                          className="w-full sm:w-auto min-h-[44px] flex items-center justify-center sm:justify-start text-sm text-charcoal/70 hover:text-charcoal/90 transition-colors disabled:opacity-50"
+                        >
+                          Not now
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <div>
+                        <p className="font-serif text-xl text-charcoal mb-1.5">Join Tapas live every month.</p>
+                        <p className="text-charcoal/65 text-base leading-relaxed">
+                          The Calm Circle adds monthly live webinars with Tapas — for your animal and for you — plus the
+                          full archive of past recordings{lockedRecordings.length > 0 ? ' above' : ''}.
+                        </p>
+                      </div>
+                      <button
+                        onClick={openUpgrade}
+                        className="inline-flex justify-center items-center whitespace-nowrap min-h-[44px] px-7 py-2.5 rounded-full bg-brand text-white text-[19px] font-bold hover:opacity-90 transition-all"
+                      >
+                        Upgrade
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
             </div>

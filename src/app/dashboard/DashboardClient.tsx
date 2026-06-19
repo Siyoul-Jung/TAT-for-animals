@@ -180,7 +180,9 @@ export default function DashboardClient({
   const openUpgrade = (scroll = false) => {
     setConfirmingUpgrade(true)
     setActionError(null)
-    fetchUpgradePreview()
+    // PayPal can't be previewed (the price is confirmed on PayPal's own screen),
+    // so only fetch a proration amount for Stripe members.
+    if (!isPayPal) fetchUpgradePreview()
     if (scroll) window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
@@ -404,16 +406,22 @@ export default function DashboardClient({
                               Move up to The Calm Circle
                             </p>
                             <p className="text-sm text-charcoal/70 leading-relaxed">
-                              Live sessions with Tapas, starting today.
+                              {isPayPal
+                                ? 'Live sessions with Tapas. You’ll confirm the new price with PayPal on the next screen.'
+                                : 'Live sessions with Tapas, starting today.'}
                             </p>
                           </div>
                           <dl className="text-sm space-y-1.5">
-                            <div className="flex gap-4">
-                              <dt className="w-16 shrink-0 text-charcoal/60">Today</dt>
-                              <dd className="font-medium text-charcoal">
-                                {previewLoading ? 'Working it out…' : (previewAmount ?? 'Just the difference')}
-                              </dd>
-                            </div>
+                            {/* Stripe shows today's prorated charge; PayPal can't be
+                                previewed, so we only state the ongoing price. */}
+                            {!isPayPal && (
+                              <div className="flex gap-4">
+                                <dt className="w-16 shrink-0 text-charcoal/60">Today</dt>
+                                <dd className="font-medium text-charcoal">
+                                  {previewLoading ? 'Working it out…' : (previewAmount ?? 'Just the difference')}
+                                </dd>
+                              </div>
+                            )}
                             <div className="flex gap-4">
                               <dt className="w-16 shrink-0 text-charcoal/60">Monthly</dt>
                               <dd className="font-medium text-charcoal">$47</dd>

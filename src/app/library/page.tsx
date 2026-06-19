@@ -51,7 +51,7 @@ export default async function LibraryPage() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('role, subscription_status, cancel_at')
+    .select('role, subscription_status, cancel_at, paypal_subscription_id')
     .eq('id', user.id)
     .single()
 
@@ -106,6 +106,7 @@ export default async function LibraryPage() {
         upcoming={upcoming}
         lockedRecordings={lockedRecordings}
         role={role}
+        isPayPal={!!profile?.paypal_subscription_id}
       />
     </Suspense>
   )
