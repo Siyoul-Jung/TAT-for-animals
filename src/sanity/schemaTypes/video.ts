@@ -29,6 +29,10 @@ export const videoType = defineType({
       name: 'category',
       title: 'Category',
       type: 'string',
+      // Required so a manual Studio add can't be saved without picking a shelf —
+      // an empty category drops the video into an ungrouped pile in the library.
+      // (Studio-only guard; bulk API writes bypass validation, so the import
+      // mapping must still include this field.)
       options: {
         list: [
           { title: 'Foundational', value: 'Foundational' },
@@ -38,6 +42,7 @@ export const videoType = defineType({
         ],
         layout: 'radio',
       },
+      validation: (r) => r.required(),
     }),
     defineField({
       name: 'videoUrl',
