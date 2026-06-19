@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import ManageSubscriptionButton from './ManageSubscriptionButton'
 import { BOOKING_URL } from '@/lib/links'
@@ -92,6 +93,30 @@ export default function DashboardClient({
   const [sendingReset, setSendingReset] = useState(false)
   const [passwordResetSent, setPasswordResetSent] = useState(false)
 
+  // Returning to the dashboard should never show a half-open confirm card. Reset
+  // every transient confirm on (re)entry to this route and on browser back/forward
+  // or bfcache restore — we can't rely on a remount, since App Router soft
+  // navigation can preserve client state across a round trip.
+  const pathname = usePathname()
+  useEffect(() => {
+    setConfirmingUpgrade(false)
+    setConfirmingDelete(false)
+    setConfirmingCancel(false)
+  }, [pathname])
+  useEffect(() => {
+    const reset = () => {
+      setConfirmingUpgrade(false)
+      setConfirmingDelete(false)
+      setConfirmingCancel(false)
+    }
+    window.addEventListener('pageshow', reset)
+    window.addEventListener('popstate', reset)
+    return () => {
+      window.removeEventListener('pageshow', reset)
+      window.removeEventListener('popstate', reset)
+    }
+  }, [])
+
   // First click opens the inline confirm; confirmPayPalCancel does the actual work.
   const handlePayPalCancel = () => {
     setActionError(null)
@@ -173,17 +198,17 @@ export default function DashboardClient({
     }
   }
 
-  // Both upgrade entry points — the membership CTA and the locked "Live Sessions"
-  // content card — open the same confirm box in the membership section, so the
-  // charge always goes through one confirmed path (and the two buttons no longer
-  // share a loading state).
-  const openUpgrade = (scroll = false) => {
+  // Upgrade has a single entry point — the locked "Live Sessions" content card —
+  // and its confirm box opens inline right below that card, so the charge always
+  // goes through one confirmed path (no scroll jump between button and confirm).
+  const openUpgrade = () => {
+    // Already open — ignore re-clicks so the amount doesn't reload mid-confirm.
+    if (confirmingUpgrade) return
     setConfirmingUpgrade(true)
     setActionError(null)
     // PayPal can't be previewed (the price is confirmed on PayPal's own screen),
     // so only fetch a proration amount for Stripe members.
     if (!isPayPal) fetchUpgradePreview()
-    if (scroll) window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   const handleChangePassword = async () => {
@@ -327,7 +352,7 @@ export default function DashboardClient({
         )}
 
         {/* Membership card */}
-        <section className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm space-y-5">
+        <section id="your-membership" className="scroll-mt-24 bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm space-y-5">
           <h2 className="text-xs font-semibold uppercase tracking-widest text-green">
             Your Membership
           </h2>
@@ -391,70 +416,6 @@ export default function DashboardClient({
                     </div>
                   )}
 
-                  {/* Upgrade (Library → Circle). First click opens a plain-language
-                      confirm — the change is immediate and charges a prorated
-                      amount, so we say so before doing it. */}
-                  {subscriptionStatus === 'active' && !isCancelling && !pendingPlan && role !== 'pro_subscriber' && (
-                    confirmingUpgrade ? (
-                      <div
-                        className="rounded-2xl border p-5 space-y-4"
-                        style={{ backgroundColor: 'rgba(212,112,58,0.05)', borderColor: 'rgba(212,112,58,0.20)' }}
-                      >
-                        <div className="space-y-3">
-                          <div className="space-y-1">
-                            <p className="font-serif text-lg text-charcoal leading-snug">
-                              Move up to The Calm Circle
-                            </p>
-                            <p className="text-sm text-charcoal/70 leading-relaxed">
-                              {isPayPal
-                                ? 'Live sessions with Tapas. You’ll confirm the new price with PayPal on the next screen.'
-                                : 'Live sessions with Tapas, starting today.'}
-                            </p>
-                          </div>
-                          <dl className="text-sm space-y-1.5">
-                            {/* Stripe shows today's prorated charge; PayPal can't be
-                                previewed, so we only state the ongoing price. */}
-                            {!isPayPal && (
-                              <div className="flex gap-4">
-                                <dt className="w-16 shrink-0 text-charcoal/60">Today</dt>
-                                <dd className="font-medium text-charcoal">
-                                  {previewLoading ? 'Working it out…' : (previewAmount ?? 'Just the difference')}
-                                </dd>
-                              </div>
-                            )}
-                            <div className="flex gap-4">
-                              <dt className="w-16 shrink-0 text-charcoal/60">Monthly</dt>
-                              <dd className="font-medium text-charcoal">$47</dd>
-                            </div>
-                          </dl>
-                        </div>
-                        <div className="flex flex-col items-stretch sm:items-start gap-1 pt-1">
-                          <button
-                            onClick={() => handleChangePlan('pro_subscriber')}
-                            disabled={changingPlan}
-                            className="w-full sm:w-auto inline-flex justify-center items-center whitespace-nowrap min-h-[48px] px-7 rounded-full text-cream font-bold text-[19px] transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
-                            style={{ backgroundColor: '#D4703A', boxShadow: '0 6px 20px rgba(212,112,58,0.25)' }}
-                          >
-                            {changingPlan ? 'Upgrading…' : 'Confirm upgrade →'}
-                          </button>
-                          <button
-                            onClick={() => setConfirmingUpgrade(false)}
-                            disabled={changingPlan}
-                            className="w-full sm:w-auto min-h-[44px] flex items-center justify-center sm:justify-start text-sm text-charcoal/70 hover:text-charcoal/90 transition-colors disabled:opacity-50"
-                          >
-                            Not now
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <PlanSwitchButton
-                        label="Upgrade to The Calm Circle"
-                        onClick={() => openUpgrade()}
-                        loading={false}
-                      />
-                    )
-                  )}
-
                   {isPayPal ? (
                     /* No resume path for PayPal — hide the cancel button once a
                        cancellation is already pending (the note explains it). */
@@ -482,20 +443,6 @@ export default function DashboardClient({
                       </a>
                       .
                     </p>
-                  )}
-
-                  {/* Downgrade is handled by support, not self-service (rare, and
-                      the self-service period-end schedule adds fragile state).
-                      Kept visible as a quiet link — not hidden — so a member
-                      weighing cancellation sees a cheaper option first. Jez makes
-                      the change in Stripe and the webhook syncs the role. */}
-                  {subscriptionStatus === 'active' && !isCancelling && !pendingPlan && role === 'pro_subscriber' && (
-                    <Link
-                      href="/contact"
-                      className="flex items-center min-h-[44px] text-sm text-charcoal/70 hover:text-charcoal/90 transition-colors"
-                    >
-                      Prefer a smaller plan? Contact us to switch →
-                    </Link>
                   )}
 
                 </div>
@@ -527,17 +474,77 @@ export default function DashboardClient({
                 title="Library"
                 description="TAT for Animals · Healing ACEs Plus"
                 href="/library"
+                badge="The Calm Library"
               />
               <ContentCard
                 title="Live Sessions"
                 description={role === 'pro_subscriber' ? 'Monthly sessions with Tapas · Past recordings included' : 'Connect live with Tapas every month for your animal—and for you'}
                 href={role === 'pro_subscriber' ? '/library?tab=live' : ''}
-                badge={role === 'pro_subscriber' ? 'The Calm Circle' : 'Pro members only'}
+                badge="The Calm Circle"
                 locked={role !== 'pro_subscriber'}
-                onClick={role !== 'pro_subscriber' ? () => openUpgrade(true) : undefined}
+                onClick={role !== 'pro_subscriber' ? () => openUpgrade() : undefined}
                 isLoading={false}
               />
             </div>
+
+            {/* Upgrade confirm — opens inline right under the Live Sessions card
+                (the single upgrade entry point). The change is immediate and
+                charges a prorated amount, so we say so before doing it. Guarded
+                on the same conditions as the card's Upgrade action. */}
+            {confirmingUpgrade && subscriptionStatus === 'active' && !isCancelling && !pendingPlan && role !== 'pro_subscriber' && (
+              <div
+                className="rounded-2xl border p-5 space-y-4"
+                style={{ backgroundColor: 'rgba(212,112,58,0.05)', borderColor: 'rgba(212,112,58,0.20)' }}
+              >
+                <div className="space-y-3">
+                  <div className="space-y-1">
+                    <p className="font-serif text-lg text-charcoal leading-snug">
+                      Move up to The Calm Circle
+                    </p>
+                    <p className="text-sm text-charcoal/70 leading-relaxed">
+                      {isPayPal
+                        ? 'Live sessions with Tapas. You’ll confirm the new price with PayPal on the next screen.'
+                        : 'Live sessions with Tapas, starting today.'}
+                    </p>
+                  </div>
+                  <dl className="text-sm space-y-1.5">
+                    {/* The amount slot only ever shows a number (or "Working it out…"
+                        while we fetch it). If the prorated amount can't be previewed,
+                        we explain it in a sentence below — never a phrase where a price
+                        belongs. PayPal can't be previewed at all; only the ongoing
+                        price is shown. */}
+                    {!isPayPal && (previewLoading || previewAmount) && (
+                      <div className="flex gap-4">
+                        <dt className="w-16 shrink-0 text-charcoal/60">Today</dt>
+                        <dd className="font-medium text-charcoal">
+                          {previewLoading ? 'Working it out…' : previewAmount}
+                        </dd>
+                      </div>
+                    )}
+                    <div className="flex gap-4">
+                      <dt className="w-16 shrink-0 text-charcoal/60">Monthly</dt>
+                      <dd className="font-medium text-charcoal">$47</dd>
+                    </div>
+                  </dl>
+                </div>
+                <div className="flex items-center gap-5 pt-2 border-t border-charcoal/8">
+                  <button
+                    onClick={() => handleChangePlan('pro_subscriber')}
+                    disabled={changingPlan || (!isPayPal && previewLoading)}
+                    className="inline-flex items-center min-h-[44px] text-[19px] font-bold text-brand underline underline-offset-[5px] decoration-2 hover:opacity-70 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {changingPlan ? 'Upgrading…' : 'Confirm'}
+                  </button>
+                  <button
+                    onClick={() => setConfirmingUpgrade(false)}
+                    disabled={changingPlan}
+                    className="min-h-[44px] flex items-center text-sm text-charcoal/60 hover:text-charcoal/90 transition-colors disabled:opacity-50"
+                  >
+                    Not now
+                  </button>
+                </div>
+              </div>
+            )}
             {/* Quiet 1:1 booking entry for members — the warmest audience for a private session,
                 placed gently (no payment pressure). Green is AA-legible on this light card.
                 Placeholder copy pending Tapas's wording; URL shared via lib/links. */}
@@ -613,18 +620,7 @@ export default function DashboardClient({
               </form>
             </div>
             <div className="py-3.5">
-              {hasSubscription ? (
-                <div className="space-y-3">
-                  <p className="text-sm text-charcoal/65 leading-relaxed">
-                    To delete your account, please cancel your membership first.
-                  </p>
-                  {isPayPal ? (
-                    <PayPalCancelButton onClick={handlePayPalCancel} loading={cancelling} label="Cancel membership" />
-                  ) : (
-                    <ManageSubscriptionButton label="Manage subscription" />
-                  )}
-                </div>
-              ) : deleteRequested ? (
+              {deleteRequested ? (
                 <div className="space-y-2">
                   <div className="flex items-start gap-2.5 rounded-xl border border-green-200 bg-green-50 px-4 py-3">
                     <svg className="w-5 h-5 shrink-0 mt-0.5 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -650,27 +646,51 @@ export default function DashboardClient({
                   </button>
                 </div>
               ) : confirmingDelete ? (
-                <div className="rounded-xl border border-charcoal/10 bg-cream px-4 py-3 space-y-3">
-                  <p className="text-sm text-charcoal/80 leading-relaxed">
-                    Delete your account? We&apos;ll email you a link to confirm.
-                  </p>
-                  <div className="flex flex-col items-start gap-1">
-                    <button
-                      onClick={handleDeleteRequest}
-                      disabled={deleting}
-                      className="min-h-[44px] flex items-center text-sm font-medium text-red-600 hover:text-red-700 transition-colors disabled:opacity-50"
-                    >
-                      {deleting ? 'Sending…' : 'Yes, email me the link'}
-                    </button>
+                hasSubscription ? (
+                  /* Reactive guard — only once the member actually asks to delete do
+                     we tell a subscriber to cancel first (the server enforces this
+                     too). Cancel lives once, under Your Membership above. */
+                  <div className="rounded-xl border border-charcoal/10 bg-cream px-4 py-3 flex items-start gap-3">
+                    <p className="text-sm text-charcoal/80 leading-relaxed flex-1">
+                      To delete your account, please cancel your membership first — use{' '}
+                      <a href="#your-membership" className="font-medium text-green underline underline-offset-2 hover:text-green">
+                        {isPayPal ? 'Cancel membership' : 'Manage subscription'}
+                      </a>
+                      {' '}above.
+                    </p>
                     <button
                       onClick={() => setConfirmingDelete(false)}
-                      disabled={deleting}
-                      className="min-h-[44px] flex items-center text-sm text-charcoal/70 hover:text-charcoal/90 transition-colors disabled:opacity-50"
+                      aria-label="Dismiss"
+                      className="shrink-0 -mr-1 -mt-1 w-11 h-11 flex items-center justify-center text-charcoal/40 hover:text-charcoal/70 transition-colors"
                     >
-                      Keep my account
+                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
                     </button>
                   </div>
-                </div>
+                ) : (
+                  <div className="rounded-xl border border-charcoal/10 bg-cream px-4 py-3 space-y-3">
+                    <p className="text-sm text-charcoal/80 leading-relaxed">
+                      Delete your account? We&apos;ll email you a link to confirm.
+                    </p>
+                    <div className="flex flex-col items-start gap-1">
+                      <button
+                        onClick={handleDeleteRequest}
+                        disabled={deleting}
+                        className="min-h-[44px] flex items-center text-sm font-medium text-red-600 hover:text-red-700 transition-colors disabled:opacity-50"
+                      >
+                        {deleting ? 'Sending…' : 'Yes, email me the link'}
+                      </button>
+                      <button
+                        onClick={() => setConfirmingDelete(false)}
+                        disabled={deleting}
+                        className="min-h-[44px] flex items-center text-sm text-charcoal/70 hover:text-charcoal/90 transition-colors disabled:opacity-50"
+                      >
+                        Keep my account
+                      </button>
+                    </div>
+                  </div>
+                )
               ) : (
                 <button
                   onClick={() => setConfirmingDelete(true)}
@@ -687,26 +707,6 @@ export default function DashboardClient({
     </main>
 
 </>
-  )
-}
-
-function PlanSwitchButton({
-  label,
-  onClick,
-  loading,
-}: {
-  label: string
-  onClick: () => void
-  loading: boolean
-}) {
-  return (
-    <button
-      onClick={onClick}
-      disabled={loading}
-      className="min-h-[44px] flex items-center text-base font-medium text-green hover:text-green transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-    >
-      {loading ? 'Loading…' : `${label} →`}
-    </button>
   )
 }
 
@@ -757,11 +757,11 @@ function ContentCard({
     return (
       <div className={`${cardClasses} cursor-default`}>
         {badge && (
-          <span className={`inline-block text-xs font-semibold px-2 py-0.5 rounded-full mb-2 ${
-            locked
-              ? 'bg-charcoal/10 text-charcoal/65'
-              : 'bg-brand/10 text-green'
-          }`}>
+          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full mb-2 bg-charcoal/10 text-charcoal/65">
+            <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
+              <rect x="2" y="5" width="8" height="6" rx="1" />
+              <path strokeLinecap="round" d="M4 5V3.5a2 2 0 0 1 4 0V5" />
+            </svg>
             {badge}
           </span>
         )}

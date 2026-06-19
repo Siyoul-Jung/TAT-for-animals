@@ -56,7 +56,7 @@ const faqs = [
   },
   {
     q: 'Can I change or cancel my membership?',
-    a: 'Yes, anytime — there\'s no long-term commitment. To switch between The Calm Library and The Calm Circle, just use the change-plan option in your account. Your plan updates right away and the difference is prorated, so you\'re never charged twice. And you can cancel whenever you like — your access continues until the end of the period you\'ve already paid for.',
+    a: 'Yes, anytime — there\'s no long-term commitment. To move up from The Calm Library to The Calm Circle, just use the upgrade option in your account. It takes effect right away, and you only pay the prorated difference — never twice. If you\'d prefer a smaller plan, send us a quick note and we\'ll switch it for you. And you can cancel whenever you like — your access continues until the end of the period you\'ve already paid for.',
   },
 ];
 

@@ -203,7 +203,7 @@ function VideoTab({ videos, progressMap, onProgressUpdate }: {
       {categorized.map((cat) => (
         <div key={cat} className="bg-white rounded-2xl border border-charcoal/10 shadow-sm overflow-hidden">
           <div className="px-6 pt-5 pb-3 border-b border-charcoal/6">
-            <p className="text-xs font-semibold uppercase tracking-widest text-charcoal/65">{cat}</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-green">{cat}</p>
           </div>
           <div className="px-6">
             {videos.filter((v) => v.category === cat).map((video) => (
@@ -215,7 +215,7 @@ function VideoTab({ videos, progressMap, onProgressUpdate }: {
       {uncategorized.length > 0 && (
         <div className="bg-white rounded-2xl border border-charcoal/10 shadow-sm overflow-hidden">
           <div className="px-6 pt-5 pb-3 border-b border-charcoal/6">
-            <p className="text-xs font-semibold uppercase tracking-widest text-charcoal/65">Videos</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-green">Videos</p>
           </div>
           <div className="px-6">
             {uncategorized.map((video) => (
@@ -345,6 +345,8 @@ export default function LibraryClient({
   }
 
   function openUpgrade() {
+    // Already open — ignore re-clicks so the amount doesn't reload mid-confirm.
+    if (confirmingUpgrade) return
     setUpgradeError(null)
     setConfirmingUpgrade(true)
     // PayPal can't be previewed (the price is confirmed on PayPal's own screen),
@@ -385,6 +387,16 @@ export default function LibraryClient({
   useEffect(() => {
     setActiveTab(resolveTab(tabParam))
   }, [tabParam])
+
+  // Leaving the Live tab closes the upgrade confirm, so switching tabs and coming
+  // back never shows a half-open confirm. Tab switches keep this component mounted,
+  // so the state would otherwise persist.
+  useEffect(() => {
+    if (activeTab !== 'live') {
+      setConfirmingUpgrade(false)
+      setUpgradeError(null)
+    }
+  }, [activeTab])
 
   const handleTabChange = (tab: Tab) => {
     setActiveTab(tab)
@@ -432,10 +444,10 @@ export default function LibraryClient({
             <button
               key={tab.id}
               onClick={() => handleTabChange(tab.id)}
-              className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-sm font-medium transition-all min-h-[44px] ${
+              className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-sm transition-all min-h-[44px] ${
                 activeTab === tab.id
-                  ? 'bg-white text-charcoal shadow-sm'
-                  : 'text-charcoal/65 hover:text-charcoal'
+                  ? 'bg-white text-green font-semibold shadow-sm'
+                  : 'text-charcoal/60 font-medium hover:text-charcoal'
               }`}
             >
               <span className="hidden sm:inline">{tab.label}</span>
@@ -511,13 +523,24 @@ export default function LibraryClient({
             </div>
           ) : (
             <div className="space-y-6">
-              {/* 다가오는 세션 — 실제 일정을 히어로로 (있을 때만) */}
+              {/* 다가오는 세션 — 실제 일정을 히어로로 (있을 때만). 잠금 뱃지를
+                  카드 위에 둬, Library 회원이 "참여 가능한 콘텐츠"로 오해하지 않게.
+                  뱃지 표현은 대시보드 ContentCard의 잠금 뱃지와 통일. */}
               {upcoming[0] && (
                 <div className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm">
-                  <p className="text-xs font-semibold uppercase tracking-widest text-green mb-3">
-                    Next live session
-                  </p>
-                  <p className="font-serif text-2xl text-charcoal leading-snug">{upcoming[0].title}</p>
+                  <div className="flex items-center justify-between gap-3 mb-3">
+                    <p className="text-xs font-semibold uppercase tracking-widest text-green">
+                      Next live session
+                    </p>
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-charcoal/10 text-charcoal/65 shrink-0">
+                      <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
+                        <rect x="2" y="5" width="8" height="6" rx="1" />
+                        <path strokeLinecap="round" d="M4 5V3.5a2 2 0 0 1 4 0V5" />
+                      </svg>
+                      The Calm Circle
+                    </span>
+                  </div>
+                  <p className="font-serif text-xl text-charcoal leading-snug">{upcoming[0].title}</p>
                   <p className="text-sm text-charcoal/65 mt-1.5">{formatDateTime(upcoming[0].date)}</p>
                   {upcoming[0].description && (
                     <p className="text-base text-charcoal/65 mt-3 leading-relaxed">{upcoming[0].description}</p>
@@ -571,13 +594,16 @@ export default function LibraryClient({
                         </p>
                       </div>
                       <dl className="text-sm space-y-1.5">
-                        {/* Stripe shows today's prorated charge; PayPal can't be
-                            previewed, so we only state the ongoing price. */}
-                        {!isPayPal && (
+                        {/* The amount slot only ever shows a number (or "Working it
+                            out…" while we fetch it). If the prorated amount can't be
+                            previewed, we explain it in a sentence below — never a
+                            phrase where a price belongs. PayPal can't be previewed at
+                            all; only the ongoing price is shown. */}
+                        {!isPayPal && (previewLoading || previewAmount) && (
                           <div className="flex gap-4">
                             <dt className="w-16 shrink-0 text-charcoal/60">Today</dt>
                             <dd className="font-medium text-charcoal">
-                              {previewLoading ? 'Working it out…' : (previewAmount ?? 'Just the difference')}
+                              {previewLoading ? 'Working it out…' : previewAmount}
                             </dd>
                           </div>
                         )}
@@ -591,18 +617,18 @@ export default function LibraryClient({
                           <p className="text-sm text-red-700 leading-relaxed">{upgradeError}</p>
                         </div>
                       )}
-                      <div className="flex flex-col items-stretch sm:items-start gap-1 pt-1">
+                      <div className="flex items-center gap-5 pt-2 border-t border-charcoal/8">
                         <button
                           onClick={handleUpgrade}
-                          disabled={upgrading}
-                          className="w-full sm:w-auto inline-flex justify-center items-center whitespace-nowrap min-h-[48px] px-7 rounded-full bg-brand text-white text-[19px] font-bold hover:opacity-90 transition-all disabled:opacity-60"
+                          disabled={upgrading || (!isPayPal && previewLoading)}
+                          className="inline-flex items-center min-h-[44px] text-[19px] font-bold text-brand underline underline-offset-[5px] decoration-2 hover:opacity-70 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          {upgrading ? 'Upgrading…' : 'Confirm upgrade →'}
+                          {upgrading ? 'Upgrading…' : 'Confirm'}
                         </button>
                         <button
                           onClick={() => setConfirmingUpgrade(false)}
                           disabled={upgrading}
-                          className="w-full sm:w-auto min-h-[44px] flex items-center justify-center sm:justify-start text-sm text-charcoal/70 hover:text-charcoal/90 transition-colors disabled:opacity-50"
+                          className="min-h-[44px] flex items-center text-sm text-charcoal/60 hover:text-charcoal/90 transition-colors disabled:opacity-50"
                         >
                           Not now
                         </button>
@@ -617,11 +643,15 @@ export default function LibraryClient({
                           full archive of past recordings{lockedRecordings.length > 0 ? ' above' : ''}.
                         </p>
                       </div>
+                      {/* Quiet green text link — same as the dashboard's locked Live
+                          Sessions card. Green (#467826, ~5.3:1) is the AA-safe color
+                          for small text links; orange would fail (globals.css:27). The
+                          price isn't shown here — it appears in the confirm step. */}
                       <button
                         onClick={openUpgrade}
-                        className="inline-flex justify-center items-center whitespace-nowrap min-h-[44px] px-7 py-2.5 rounded-full bg-brand text-white text-[19px] font-bold hover:opacity-90 transition-all"
+                        className="inline-flex items-center min-h-[44px] text-sm font-medium text-green hover:text-green transition-colors"
                       >
-                        Upgrade
+                        Upgrade →
                       </button>
                     </>
                   )}

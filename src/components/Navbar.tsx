@@ -91,17 +91,17 @@ export default function Navbar() {
     isScrolled || !isDarkHero ? 'text-charcoal/65 hover:text-green' : 'text-cream/70 hover:text-cream'
   );
 
-  // Current-page nav items are shown dimmed and non-interactive ("you are here"),
-  // so a click that would go nowhere never reads as a broken button. The dim must
-  // still clear AA: #7A5F4F on cream ≈ 5.4:1 (charcoal/35 was ~2.3:1 — unreadable;
-  // #8B7D72 was ~3.9:1 — borderline for 14px normal, so use the muted token value).
-  const mutedNavClasses = cn(
-    'text-sm font-medium whitespace-nowrap cursor-default select-none',
-    isScrolled || !isDarkHero ? 'text-[#7A5F4F]' : 'text-cream/60'
+  // Current-page nav items are highlighted (green + underline) and non-interactive
+  // ("you are here") — emphasis, not dimming, so the active page reads clearly as
+  // current rather than disabled, and matches the green "active" cue used elsewhere
+  // (library tabs). Green (#467826) on cream clears AA at this size.
+  const activeNavClasses = cn(
+    'text-sm font-semibold whitespace-nowrap cursor-default select-none underline underline-offset-[6px] decoration-2',
+    isScrolled || !isDarkHero ? 'text-green decoration-green' : 'text-cream decoration-cream'
   );
   const renderNavLink = (href: string, label: string) =>
     pathname === href ? (
-      <span aria-current="page" className={mutedNavClasses}>{label}</span>
+      <span aria-current="page" className={activeNavClasses}>{label}</span>
     ) : (
       <Link href={href} className={navLinkClasses}>{label}</Link>
     );
@@ -149,7 +149,7 @@ export default function Navbar() {
           {isLoggedIn ? (
             <>
               {renderNavLink(isMember ? '/library' : '/membership', isMember ? 'Library' : 'Membership')}
-              {renderNavLink('/dashboard', 'Account')}
+              {renderNavLink('/dashboard', 'Dashboard')}
             </>
           ) : (
             <>
