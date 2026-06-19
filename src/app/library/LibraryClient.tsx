@@ -585,12 +585,12 @@ export default function LibraryClient({
                     !isPayPal && previewLoading ? (
                       /* Work out the amount first, then reveal the full card — no
                          placeholder price, no shift as the number lands. */
-                      <div className="flex items-center gap-3">
+                      <div role="status" className="flex items-center gap-3">
                         <svg className="w-5 h-5 animate-spin text-brand shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                           <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" className="opacity-25" />
                           <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
                         </svg>
-                        <p className="text-base text-charcoal/65">Working out today’s amount…</p>
+                        <p className="text-base text-charcoal/65">One moment…</p>
                       </div>
                     ) : (
                     // Confirm step — today's prorated charge + the ongoing price,

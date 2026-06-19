@@ -496,6 +496,7 @@ export default function DashboardClient({
                 /* Work out the amount first, then reveal the full card — so it never
                    shows with a placeholder price or shifts as the number lands. */
                 <div
+                  role="status"
                   className="rounded-2xl border p-5 flex items-center gap-3"
                   style={{ backgroundColor: 'rgba(212,112,58,0.05)', borderColor: 'rgba(212,112,58,0.20)' }}
                 >
@@ -503,7 +504,7 @@ export default function DashboardClient({
                     <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" className="opacity-25" />
                     <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
                   </svg>
-                  <p className="text-sm text-charcoal/70">Working out today’s amount…</p>
+                  <p className="text-sm text-charcoal/70">One moment…</p>
                 </div>
               ) : (
                 <div
