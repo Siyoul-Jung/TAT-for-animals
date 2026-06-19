@@ -582,8 +582,19 @@ export default function LibraryClient({
 
                 <div className="p-7 space-y-5">
                   {confirmingUpgrade ? (
-                    // Confirm step — show today's prorated charge + the ongoing
-                    // price before anything is billed (parity with the dashboard).
+                    !isPayPal && previewLoading ? (
+                      /* Work out the amount first, then reveal the full card — no
+                         placeholder price, no shift as the number lands. */
+                      <div className="flex items-center gap-3">
+                        <svg className="w-5 h-5 animate-spin text-brand shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                          <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" className="opacity-25" />
+                          <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                        </svg>
+                        <p className="text-base text-charcoal/65">Working out today’s amount…</p>
+                      </div>
+                    ) : (
+                    // Confirm step — today's prorated charge + the ongoing price,
+                    // shown only once computed (parity with the dashboard).
                     <div className="space-y-4">
                       <div className="space-y-1">
                         <p className="font-serif text-xl text-charcoal leading-snug">Move up to The Calm Circle</p>
@@ -594,17 +605,12 @@ export default function LibraryClient({
                         </p>
                       </div>
                       <dl className="text-sm space-y-1.5">
-                        {/* The amount slot only ever shows a number (or "Working it
-                            out…" while we fetch it). If the prorated amount can't be
-                            previewed, we explain it in a sentence below — never a
-                            phrase where a price belongs. PayPal can't be previewed at
-                            all; only the ongoing price is shown. */}
-                        {!isPayPal && (previewLoading || previewAmount) && (
+                        {/* Today's prorated charge — shown only once computed. PayPal
+                            can't be previewed; only the ongoing price is shown. */}
+                        {!isPayPal && previewAmount && (
                           <div className="flex gap-4">
                             <dt className="w-16 shrink-0 text-charcoal/60">Today</dt>
-                            <dd className="font-medium text-charcoal">
-                              {previewLoading ? 'Working it out…' : previewAmount}
-                            </dd>
+                            <dd className="font-medium text-charcoal">{previewAmount}</dd>
                           </div>
                         )}
                         <div className="flex gap-4">
@@ -620,7 +626,7 @@ export default function LibraryClient({
                       <div className="flex items-center gap-5 pt-2 border-t border-charcoal/8">
                         <button
                           onClick={handleUpgrade}
-                          disabled={upgrading || (!isPayPal && previewLoading)}
+                          disabled={upgrading}
                           className="inline-flex items-center min-h-[44px] text-[19px] font-bold text-brand underline underline-offset-[5px] decoration-2 hover:opacity-70 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {upgrading ? 'Upgrading…' : 'Confirm'}
@@ -634,6 +640,7 @@ export default function LibraryClient({
                         </button>
                       </div>
                     </div>
+                    )
                   ) : (
                     <>
                       <div>

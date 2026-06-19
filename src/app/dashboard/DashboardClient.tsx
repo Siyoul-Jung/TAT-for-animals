@@ -492,58 +492,68 @@ export default function DashboardClient({
                 charges a prorated amount, so we say so before doing it. Guarded
                 on the same conditions as the card's Upgrade action. */}
             {confirmingUpgrade && subscriptionStatus === 'active' && !isCancelling && !pendingPlan && role !== 'pro_subscriber' && (
-              <div
-                className="rounded-2xl border p-5 space-y-4"
-                style={{ backgroundColor: 'rgba(212,112,58,0.05)', borderColor: 'rgba(212,112,58,0.20)' }}
-              >
-                <div className="space-y-3">
-                  <div className="space-y-1">
-                    <p className="font-serif text-lg text-charcoal leading-snug">
-                      Move up to The Calm Circle
-                    </p>
-                    <p className="text-sm text-charcoal/70 leading-relaxed">
-                      {isPayPal
-                        ? 'Live sessions with Tapas. You’ll confirm the new price with PayPal on the next screen.'
-                        : 'Live sessions with Tapas, starting today.'}
-                    </p>
-                  </div>
-                  <dl className="text-sm space-y-1.5">
-                    {/* The amount slot only ever shows a number (or "Working it out…"
-                        while we fetch it). If the prorated amount can't be previewed,
-                        we explain it in a sentence below — never a phrase where a price
-                        belongs. PayPal can't be previewed at all; only the ongoing
-                        price is shown. */}
-                    {!isPayPal && (previewLoading || previewAmount) && (
-                      <div className="flex gap-4">
-                        <dt className="w-16 shrink-0 text-charcoal/60">Today</dt>
-                        <dd className="font-medium text-charcoal">
-                          {previewLoading ? 'Working it out…' : previewAmount}
-                        </dd>
-                      </div>
-                    )}
-                    <div className="flex gap-4">
-                      <dt className="w-16 shrink-0 text-charcoal/60">Monthly</dt>
-                      <dd className="font-medium text-charcoal">$47</dd>
+              !isPayPal && previewLoading ? (
+                /* Work out the amount first, then reveal the full card — so it never
+                   shows with a placeholder price or shifts as the number lands. */
+                <div
+                  className="rounded-2xl border p-5 flex items-center gap-3"
+                  style={{ backgroundColor: 'rgba(212,112,58,0.05)', borderColor: 'rgba(212,112,58,0.20)' }}
+                >
+                  <svg className="w-5 h-5 animate-spin text-brand shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" className="opacity-25" />
+                    <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                  </svg>
+                  <p className="text-sm text-charcoal/70">Working out today’s amount…</p>
+                </div>
+              ) : (
+                <div
+                  className="rounded-2xl border p-5 space-y-4"
+                  style={{ backgroundColor: 'rgba(212,112,58,0.05)', borderColor: 'rgba(212,112,58,0.20)' }}
+                >
+                  <div className="space-y-3">
+                    <div className="space-y-1">
+                      <p className="font-serif text-lg text-charcoal leading-snug">
+                        Move up to The Calm Circle
+                      </p>
+                      <p className="text-sm text-charcoal/70 leading-relaxed">
+                        {isPayPal
+                          ? 'Live sessions with Tapas. You’ll confirm the new price with PayPal on the next screen.'
+                          : 'Live sessions with Tapas, starting today.'}
+                      </p>
                     </div>
-                  </dl>
+                    <dl className="text-sm space-y-1.5">
+                      {/* Today's prorated charge — shown only once computed. PayPal
+                          can't be previewed; only the ongoing price is shown. */}
+                      {!isPayPal && previewAmount && (
+                        <div className="flex gap-4">
+                          <dt className="w-16 shrink-0 text-charcoal/60">Today</dt>
+                          <dd className="font-medium text-charcoal">{previewAmount}</dd>
+                        </div>
+                      )}
+                      <div className="flex gap-4">
+                        <dt className="w-16 shrink-0 text-charcoal/60">Monthly</dt>
+                        <dd className="font-medium text-charcoal">$47</dd>
+                      </div>
+                    </dl>
+                  </div>
+                  <div className="flex items-center gap-5 pt-2 border-t border-charcoal/8">
+                    <button
+                      onClick={() => handleChangePlan('pro_subscriber')}
+                      disabled={changingPlan}
+                      className="inline-flex items-center min-h-[44px] text-[19px] font-bold text-brand underline underline-offset-[5px] decoration-2 hover:opacity-70 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {changingPlan ? 'Upgrading…' : 'Confirm'}
+                    </button>
+                    <button
+                      onClick={() => setConfirmingUpgrade(false)}
+                      disabled={changingPlan}
+                      className="min-h-[44px] flex items-center text-sm text-charcoal/60 hover:text-charcoal/90 transition-colors disabled:opacity-50"
+                    >
+                      Not now
+                    </button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-5 pt-2 border-t border-charcoal/8">
-                  <button
-                    onClick={() => handleChangePlan('pro_subscriber')}
-                    disabled={changingPlan || (!isPayPal && previewLoading)}
-                    className="inline-flex items-center min-h-[44px] text-[19px] font-bold text-brand underline underline-offset-[5px] decoration-2 hover:opacity-70 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {changingPlan ? 'Upgrading…' : 'Confirm'}
-                  </button>
-                  <button
-                    onClick={() => setConfirmingUpgrade(false)}
-                    disabled={changingPlan}
-                    className="min-h-[44px] flex items-center text-sm text-charcoal/60 hover:text-charcoal/90 transition-colors disabled:opacity-50"
-                  >
-                    Not now
-                  </button>
-                </div>
-              </div>
+              )
             )}
             {/* Quiet 1:1 booking entry for members — the warmest audience for a private session,
                 placed gently (no payment pressure). Green is AA-legible on this light card.
