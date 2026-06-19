@@ -141,6 +141,13 @@ export default function DashboardClient({
   const isCancelling = !!cancelAt
   const cancelDate = formatPeriodEnd(cancelAt)
 
+  // Upgrade is only offered to a Library member whose billing is in good standing.
+  // past_due / cancelling / a pending plan change all have their own notice
+  // elsewhere on the page, so the Live card stays locked but never shows a dead
+  // "Upgrade" button for them.
+  const canUpgrade =
+    subscriptionStatus === 'active' && !isCancelling && !pendingPlan && role !== 'pro_subscriber'
+
   const handleChangePlan = async (targetTier: 'subscriber' | 'pro_subscriber') => {
     setChangingPlan(true)
     setActionError(null)
@@ -475,7 +482,7 @@ export default function DashboardClient({
                 href={role === 'pro_subscriber' ? '/library?tab=live' : ''}
                 badge="The Calm Circle"
                 locked={role !== 'pro_subscriber'}
-                onClick={role !== 'pro_subscriber' ? () => openUpgrade() : undefined}
+                onClick={canUpgrade ? () => openUpgrade() : undefined}
                 isLoading={false}
               />
             </div>
@@ -484,7 +491,7 @@ export default function DashboardClient({
                 (the single upgrade entry point). The change is immediate and
                 charges a prorated amount, so we say so before doing it. Guarded
                 on the same conditions as the card's Upgrade action. */}
-            {confirmingUpgrade && subscriptionStatus === 'active' && !isCancelling && !pendingPlan && role !== 'pro_subscriber' && (
+            {confirmingUpgrade && canUpgrade && (
               !isPayPal && previewLoading ? (
                 /* Work out the amount first, then reveal the full card — so it never
                    shows with a placeholder price or shifts as the number lands. */
@@ -780,6 +787,29 @@ function ContentCard({
         >
           {isLoading ? 'Upgrading...' : 'Upgrade →'}
         </button>
+      </div>
+    )
+  }
+
+  // Locked, but upgrading isn't available right now (past_due / cancelling /
+  // pending change). Show it as a calm, non-clickable Circle feature — the reason
+  // is already explained higher up the page, so no button and no dead link.
+  if (locked) {
+    return (
+      <div className={`${cardClasses} cursor-default`}>
+        {badge && (
+          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full mb-2 bg-charcoal/10 text-charcoal/65">
+            <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
+              <rect x="2" y="5" width="8" height="6" rx="1" />
+              <path strokeLinecap="round" d="M4 5V3.5a2 2 0 0 1 4 0V5" />
+            </svg>
+            {badge}
+          </span>
+        )}
+        <p className={titleClasses}>
+          {title}
+        </p>
+        <p className="text-sm text-charcoal/65 leading-relaxed">{description}</p>
       </div>
     )
   }
