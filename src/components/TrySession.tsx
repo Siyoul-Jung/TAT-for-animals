@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { motion, useInView, useReducedMotion } from 'framer-motion';
-import { Play } from 'lucide-react';
+import { Play, Check } from 'lucide-react';
 import Link from 'next/link';
 
 // TAT for Animals homepage demo (Vimeo, unlisted — h= is the privacy hash from Jez's link).
@@ -11,6 +11,17 @@ import Link from 'next/link';
 const EMBED_SRC = 'https://player.vimeo.com/video/1198312189?h=a5438c1c2f&autoplay=1&title=0&byline=0&portrait=0&dnt=1';
 const THUMBNAIL = 'https://i.vimeocdn.com/video/2164871332-82ad71535420021c251d59b77f1996fd26e6d47d3a901de5ea6000007a0570a5-d_1280?region=us';
 
+// The seven signs, in Tapas's own words (verbatim from his content review) — rendered as
+// a quiet left-aligned list, no bullets, so it reads as recognition rather than a checklist.
+const SIGNS = [
+  'Does your dog panic during thunderstorms, fireworks, or loud noises?',
+  'Does your cat hide, freeze, or seem on edge when guests come over?',
+  'Does your cat cry out, meow endlessly, or seem impossible to soothe?',
+  'Does your animal get distressed when you leave the house?',
+  'Does fear sometimes show up as barking, lunging, hiding, or aggression?',
+  'Is your rescue animal still anxious months after coming home?',
+  'Does your animal seem tense, vigilant, or unable to fully relax?',
+];
 
 export default function TrySession() {
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -35,39 +46,72 @@ export default function TrySession() {
 
   return (
     <section id="experience" className="bg-white py-20 lg:py-28 px-6 overflow-hidden">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-3xl mx-auto">
 
-        {/* Header */}
+        {/* Heading */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="text-center mb-14"
+          className="text-center mb-8"
         >
           <p className="text-[13px] tracking-[0.2em] uppercase font-medium mb-5"
             style={{ color: '#467826' }}>
             TAT for Animals
           </p>
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-charcoal font-medium leading-tight mb-6">
-            Help your animal feel more<br className="hidden sm:block" /> joyful, relaxed, and at peace.
+          <h2 className="font-serif text-3xl lg:text-4xl text-charcoal font-medium leading-tight">
+            Feel calm, together.
           </h2>
-          <p className="text-base sm:text-lg text-charcoal/65 font-light leading-relaxed max-w-xl mx-auto">
-            In just a few quiet minutes, TAT can help your animal
-            feel safer, softer, and more at ease.
-            Watch a short intro with Tapas — then try it with your
-            own cat, dog, or any animal you love.
+        </motion.div>
+
+        {/* Recognition hook — one flowing question, the signs emphasised inline so it
+            stays a single short paragraph and the video keeps the focus. */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="mb-12 max-w-2xl mx-auto text-center"
+        >
+          <p className="text-xl sm:text-2xl font-serif text-charcoal font-medium mb-1">
+            Does this sound familiar?
+          </p>
+          <p className="text-base text-charcoal/65 mb-7">
+            Is your animal showing signs of stress or fear?
+          </p>
+
+          {/* Recognition panel — a soft green-tinted aside holding Tapas's signs verbatim,
+              two columns on desktop so it reads as a calm grouping, not a long checklist. */}
+          <div
+            className="rounded-2xl px-6 py-7 sm:px-9 sm:py-8 mb-8 text-left"
+            style={{ backgroundColor: 'rgba(70,120,38,0.05)', border: '1px solid rgba(70,120,38,0.14)' }}
+          >
+            <ul className="grid sm:grid-cols-2 gap-x-10 gap-y-4">
+              {SIGNS.map((q) => (
+                <li key={q} className="flex gap-2.5 text-[15px] sm:text-base leading-relaxed text-charcoal/80">
+                  <Check size={18} strokeWidth={2.5} aria-hidden="true" className="mt-1 shrink-0" style={{ color: '#467826' }} />
+                  <span>{q}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <p className="text-base sm:text-lg leading-relaxed text-charcoal/80 max-w-xl mx-auto">
+            If you recognized your animal in even one of these situations, you&rsquo;re not alone.
+            For more than 30 years, I&rsquo;ve used TAT&reg; to help animals move through fear,
+            anxiety, and stress by helping the nervous system feel safe enough to let go.
           </p>
         </motion.div>
 
-        {/* Video player */}
+        {/* Video player — the centerpiece */}
         <motion.div
           ref={videoRef}
           initial={{ opacity: 0, y: 32 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-          className="relative mb-14 max-w-2xl mx-auto"
+          className="relative"
         >
           {/* Warm glow */}
           <div
@@ -153,20 +197,28 @@ export default function TrySession() {
           </div>
         </motion.div>
 
-        {/* CTA */}
+        {/* Invitation + signature under the video */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-center"
+          className="text-center mt-7"
         >
+          <p className="max-w-xl mx-auto text-base sm:text-lg leading-relaxed text-charcoal/80 mb-6">
+            You don&rsquo;t have to wonder whether TAT is right for your animal. Press play and
+            follow along with your own animal as you watch &mdash; many people notice their
+            animal relaxing during their very first experience.
+          </p>
+          <p className="text-sm sm:text-base text-charcoal font-medium">
+            Tapas Fleming, Founder and Creator of TAT&reg;
+          </p>
           <Link
-            href="/membership"
-            className="inline-flex items-center min-h-[44px] gap-1 text-base font-medium transition-opacity hover:opacity-70"
+            href="/about"
+            className="inline-flex items-center min-h-[44px] gap-1 mt-1 text-base font-medium transition-opacity hover:opacity-70"
             style={{ color: '#467826' }}
           >
-            Start helping your animal →
+            Read Tapas&rsquo;s story &rarr;
           </Link>
         </motion.div>
 

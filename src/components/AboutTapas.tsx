@@ -76,7 +76,7 @@ export default function AboutTapas() {
             The founder
           </p>
 
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-charcoal font-medium leading-tight mb-2">
+          <h2 className="font-serif text-3xl lg:text-4xl text-charcoal font-medium leading-tight mb-2">
             Tapas Fleming
           </h2>
           <p className="font-sans text-base sm:text-lg text-muted mb-6 lg:mb-10">

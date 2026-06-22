@@ -95,7 +95,7 @@ export default function Pricing({ showHeader = true, bg = 'bg-white' }: { showHe
             >
               Membership
             </p>
-            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-charcoal font-medium leading-tight text-balance">
+            <h2 className="font-serif text-3xl lg:text-4xl text-charcoal font-medium leading-tight text-balance">
               Give your animal the gift of calm.
             </h2>
           </motion.div>
