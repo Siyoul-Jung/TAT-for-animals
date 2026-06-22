@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { BOOKING_URL } from '@/lib/links';
 
 const navLinks = [
-  { name: 'Membership', href: '/membership' },
+  { name: 'Pricing', href: '/membership' },
   { name: 'About', href: '/about' },
   { name: 'FAQ', href: '/faq' },
   { name: 'Contact', href: '/contact' },

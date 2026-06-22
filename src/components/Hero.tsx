@@ -107,10 +107,10 @@ export default function Hero({ images }: { images: HeroImage[] }) {
               TAT for Animals
             </p>
             <h1 className="font-serif text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl leading-[1.2] text-charcoal mb-2 lg:mb-5 font-semibold">
-              Your animal feels<br />everything you carry.
+              Help your animal feel safe,<br />calm and connected.
             </h1>
             <p className="font-sans text-sm lg:text-xl mb-5 lg:mb-8 font-normal text-charcoal/65">
-              A few quiet minutes together — and something releases in you both.
+              When they settle, you do too.
             </p>
             <p className="hidden lg:block text-lg leading-relaxed mb-12" style={{ color: 'rgba(28,16,7,0.65)' }}>
               No special training. No reliving anything painful.
@@ -131,14 +131,7 @@ export default function Hero({ images }: { images: HeroImage[] }) {
                 className="inline-flex shrink-0 whitespace-nowrap w-full sm:w-[240px] min-h-[48px] items-center justify-center px-7 py-3.5 lg:py-4 rounded-full text-cream font-bold text-[19px] transition-all hover:scale-105 hover:shadow-lg active:scale-95"
                 style={{ backgroundColor: '#D4703A', boxShadow: '0 6px 20px rgba(212,112,58,0.25)' }}
               >
-                Try a session
-              </Link>
-              <Link
-                href="/membership"
-                className="inline-flex shrink-0 whitespace-nowrap w-full sm:w-[240px] min-h-[48px] items-center justify-center px-7 py-3.5 lg:py-4 rounded-full border-2 text-[19px] font-bold transition-all hover:bg-brand/10 hover:scale-105 active:scale-95"
-                style={{ borderColor: '#D4703A', color: '#D4703A' }}
-              >
-                Join the members
+                Try it together
               </Link>
             </div>
           </div>

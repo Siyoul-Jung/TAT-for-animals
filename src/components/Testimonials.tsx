@@ -137,7 +137,7 @@ export default function Testimonials() {
             Real Stories
           </p>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-charcoal font-medium leading-tight">
-            They felt it too.
+            What animals and their people share about TAT.
           </h2>
         </motion.div>
 

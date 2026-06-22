@@ -148,7 +148,7 @@ export default function Navbar() {
         <div className="flex items-center justify-end gap-5 sm:gap-6">
           {isLoggedIn ? (
             <>
-              {renderNavLink(isMember ? '/library' : '/membership', isMember ? 'Library' : 'Membership')}
+              {renderNavLink(isMember ? '/library' : '/membership', isMember ? 'Library' : 'Pricing')}
               {renderNavLink('/dashboard', 'Dashboard')}
             </>
           ) : (
@@ -156,7 +156,7 @@ export default function Navbar() {
               <Link href="/login" className={navLinkClasses}>
                 Sign in
               </Link>
-              {renderNavLink('/membership', 'Join')}
+              {renderNavLink('/membership', 'Pricing')}
             </>
           )}
         </div>
