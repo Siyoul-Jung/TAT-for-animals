@@ -97,10 +97,62 @@ export default function TrySession() {
             </ul>
           </div>
 
-          <p className="text-base sm:text-lg leading-relaxed text-charcoal/80 max-w-xl mx-auto">
+          <p className="text-base sm:text-lg leading-relaxed text-charcoal/80 max-w-xl mx-auto mb-5">
             If you recognized your animal in even one of these situations, you&rsquo;re not alone.
+          </p>
+          <p className="text-base sm:text-lg leading-relaxed text-charcoal/80 max-w-xl mx-auto mb-5">
             For more than 30 years, I&rsquo;ve used TAT&reg; to help animals move through fear,
             anxiety, and stress by helping the nervous system feel safe enough to let go.
+          </p>
+          <p className="text-base sm:text-lg leading-relaxed text-charcoal/80 max-w-xl mx-auto">
+            When animals feel safe, they often become calmer, more connected, and more able to
+            be themselves.
+          </p>
+        </motion.div>
+
+        {/* I'm Tapas Fleming — Tapas's intro, verbatim (his order: before the video lead-in).
+            Kept here to avoid duplicating the signature below the video. Pending a proposal to
+            Tapas to drop it from home entirely (it lives in full on the About page). */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="mb-12 max-w-2xl mx-auto text-center"
+        >
+          <h3 className="text-xl sm:text-2xl font-serif text-charcoal font-medium mb-4">
+            I&rsquo;m Tapas Fleming
+          </h3>
+          <p className="text-base sm:text-lg leading-relaxed text-charcoal/80 max-w-xl mx-auto mb-4">
+            I&rsquo;m Tapas Fleming, creator of TAT&reg;.
+          </p>
+          <p className="text-base sm:text-lg leading-relaxed text-charcoal/80 max-w-xl mx-auto">
+            Through this work, I&rsquo;ve helped animals&mdash;and the people who love them&mdash;find
+            their way back to calm, connection, and emotional well-being.
+          </p>
+        </motion.div>
+
+        {/* Experience TAT Together — lead-in to the video, verbatim */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="mb-8 max-w-2xl mx-auto text-center"
+        >
+          <h3 className="text-xl sm:text-2xl font-serif text-charcoal font-medium mb-4">
+            Experience TAT Together
+          </h3>
+          <p className="text-base sm:text-lg leading-relaxed text-charcoal/80 max-w-xl mx-auto mb-3">
+            You don&rsquo;t have to wonder whether TAT is right for your animal. In the short video
+            below, I&rsquo;ll guide you through a simple TAT process you can try with your own animal
+            as you watch.
+          </p>
+          <p className="text-base sm:text-lg leading-relaxed text-charcoal/80 max-w-xl mx-auto mb-3">
+            Find a comfortable place to sit, press play, and simply follow along.
+          </p>
+          <p className="text-base sm:text-lg leading-relaxed text-charcoal/80 max-w-xl mx-auto">
+            Many people notice their animals becoming more relaxed during their very first experience.
           </p>
         </motion.div>
 
@@ -197,7 +249,7 @@ export default function TrySession() {
           </div>
         </motion.div>
 
-        {/* Invitation + signature under the video */}
+        {/* Signature under the video */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -205,11 +257,6 @@ export default function TrySession() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="text-center mt-7"
         >
-          <p className="max-w-xl mx-auto text-base sm:text-lg leading-relaxed text-charcoal/80 mb-6">
-            You don&rsquo;t have to wonder whether TAT is right for your animal. Press play and
-            follow along with your own animal as you watch &mdash; many people notice their
-            animal relaxing during their very first experience.
-          </p>
           <p className="text-sm sm:text-base text-charcoal font-medium">
             Tapas Fleming, Founder and Creator of TAT&reg;
           </p>

@@ -17,7 +17,6 @@ const tiers = [
     description: 'Everything you need to begin — at your own pace, in your own time.',
     features: [
       'TAT for Animals full video library',
-      'Healing ACEs Plus full video library',
       'Self-guided practice materials',
     ],
     cta: 'Join The Calm Library',
@@ -32,7 +31,6 @@ const tiers = [
       'Everything in The Calm Library',
       'Monthly live webinars with Tapas',
       'TAT for Animals live sessions',
-      'Healing ACEs Plus live sessions',
       'Full archive of all past recordings',
     ],
     cta: 'Join The Calm Circle',
@@ -40,7 +38,7 @@ const tiers = [
   },
 ];
 
-export default function Pricing({ showHeader = true, bg = 'bg-white' }: { showHeader?: boolean; bg?: string }) {
+export default function Pricing({ showHeader = true, bg = 'bg-white', showBooking = true }: { showHeader?: boolean; bg?: string; showBooking?: boolean }) {
   const router = useRouter();
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
 
@@ -213,21 +211,25 @@ export default function Pricing({ showHeader = true, bg = 'bg-white' }: { showHe
         {/* Quiet third path — a 1:1 private session with Tapas (booked via TATLife/Amelia).
             A low-key link set off by a hairline divider so it reads as "another way" rather than
             competing with the subscription CTAs. Tapas is named in the lead-in so the link itself
-            stays short and on one line (no awkward wrap). Distinct from the Hero's "Try a session". */}
-        <div className="mt-10 pt-8 border-t border-charcoal/10 max-w-sm mx-auto text-center">
-          <p className="text-sm sm:text-base text-charcoal/65 leading-relaxed">
-            Prefer to work one-on-one with Tapas?
-          </p>
-          <a
-            href={BOOKING_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 mt-2 text-base font-semibold underline underline-offset-4 hover:opacity-70 transition-opacity whitespace-nowrap"
-            style={{ color: '#467826' }}
-          >
-            Book a private session →
-          </a>
-        </div>
+            stays short and on one line (no awkward wrap). Distinct from the Hero's "Try a session".
+            Hidden on the About page (showBooking=false), which already places Tapas's own
+            "Book a session" link right after the story + Kai video. */}
+        {showBooking && (
+          <div className="mt-10 pt-8 border-t border-charcoal/10 max-w-sm mx-auto text-center">
+            <p className="text-sm sm:text-base text-charcoal/65 leading-relaxed">
+              Prefer to work one-on-one with Tapas?
+            </p>
+            <a
+              href={BOOKING_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 mt-2 text-base font-semibold underline underline-offset-4 hover:opacity-70 transition-opacity whitespace-nowrap"
+              style={{ color: '#467826' }}
+            >
+              Book a private session →
+            </a>
+          </div>
+        )}
 
       </div>
     </section>

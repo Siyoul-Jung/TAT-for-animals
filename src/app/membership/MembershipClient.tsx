@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Check, PawPrint, HeartHandshake, Video } from 'lucide-react';
+import { Check, PawPrint, Video } from 'lucide-react';
 import Pricing from '@/components/Pricing';
 
 function PayPalErrorBanner() {
@@ -85,7 +85,7 @@ export default function MembershipClient() {
               <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-6" style={{ color: '#467826' }}>
                 The Calm Library — $27 / mo
               </p>
-              <div className="grid lg:grid-cols-2 gap-8 lg:gap-14">
+              <div className="max-w-xl">
                 {/* TAT for Animals */}
                 <div>
                   <div className="flex items-center gap-3 mb-4">
@@ -104,34 +104,6 @@ export default function MembershipClient() {
                       'Full video library of TAT® sessions for animals',
                       'Fear, anxiety, and past trauma, gently released',
                       'As your animal settles, something in you shifts too',
-                    ].map((item) => (
-                      <li key={item} className="flex items-start gap-2.5">
-                        <span className="mt-1 w-4 h-4 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(70,120,38,0.12)' }}>
-                          <Check size={10} strokeWidth={3} style={{ color: '#467826' }} />
-                        </span>
-                        <span className="text-base text-charcoal/80 leading-snug">{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                {/* Healing ACEs Plus — 모바일에서는 위 항목과 연한 선으로 구분 */}
-                <div className="pt-8 border-t border-charcoal/8 lg:pt-0 lg:border-t-0">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: '#fff', boxShadow: '0 0 0 1px rgba(28,16,7,0.06)' }}>
-                      <HeartHandshake size={20} strokeWidth={1.75} style={{ color: '#D4703A' }} />
-                    </div>
-                    <p className="text-[13px] tracking-[0.15em] uppercase font-medium" style={{ color: '#467826' }}>
-                      Healing ACEs Plus
-                    </p>
-                  </div>
-                  <h3 className="font-serif text-xl text-charcoal font-medium mb-4 leading-snug">
-                    Release what you've been carrying.
-                  </h3>
-                  <ul className="flex flex-col gap-2.5">
-                    {[
-                      'A video library for your own healing',
-                      'Old beliefs gently dissolved — without reliving them',
-                      'Entirely at your own pace',
                     ].map((item) => (
                       <li key={item} className="flex items-start gap-2.5">
                         <span className="mt-1 w-4 h-4 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(70,120,38,0.12)' }}>
@@ -164,7 +136,7 @@ export default function MembershipClient() {
                 </h3>
                 <ul className="flex flex-col gap-2.5">
                   {[
-                    'Monthly live webinars — TAT for Animals & Healing ACEs Plus',
+                    'Monthly live webinars with Tapas',
                     'Real-time guidance — your questions answered',
                     'Full archive of all past recordings',
                   ].map((item) => (

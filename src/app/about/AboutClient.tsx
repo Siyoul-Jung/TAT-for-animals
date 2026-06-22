@@ -2,7 +2,8 @@
 
 import { motion } from 'framer-motion'
 import Image from 'next/image'
-import Link from 'next/link'
+import Pricing from '@/components/Pricing'
+import { BOOKING_URL } from '@/lib/links'
 
 const fadeUp = {
   initial: { opacity: 0, y: 24 },
@@ -33,7 +34,7 @@ export default function AboutClient() {
         </div>
       </section>
 
-      {/* 2. 사진 + 초기 스토리 */}
+      {/* 2. 사진 + 창업자 바이오 (Tapas 원문 verbatim) */}
       <section className="pt-4 pb-16 px-6">
         <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-24 items-center">
 
@@ -87,32 +88,42 @@ export default function AboutClient() {
             className="flex flex-col gap-6 text-charcoal/65 font-light leading-relaxed text-base sm:text-lg pt-6"
           >
             <p>
-              After years of searching for a simpler, gentler way to help people heal —
-              without reliving their pain — Tapas developed TAT® in 1993.
+              After years of searching for a gentler way to help people heal &mdash; without
+              asking them to relive their pain &mdash; Tapas developed TAT&reg; in 1993.
             </p>
             <p>
-              What began as a quiet discovery in her acupuncture practice grew into something
-              she could not have imagined: a technique that has since reached people
-              around the world.
+              What began as a quiet discovery in her acupuncture practice gradually became
+              something far greater than she could have imagined. Over the years, more and more
+              animals came into her care, and working with animals naturally became a deeper and
+              more meaningful part of her practice.
             </p>
             <p>
-              TAT® works by allowing the nervous system to gently release what it has been
-              holding — beliefs, fears, memories — not by forcing them back into awareness,
-              but by creating the conditions for something new to take their place.
+              Again and again, she saw how much fear, stress, and emotional tension animals can
+              carry &mdash; and how profoundly things can shift when the nervous system is given
+              space to soften and feel safe.
+            </p>
+            <p>
+              TAT&reg; works by creating the conditions for the nervous system to gently release
+              what it has been holding &mdash; beliefs, fears, memories &mdash; not by forcing them
+              back into awareness, but by inviting something new to emerge in their place.
+            </p>
+            <p>
+              Through this work, Tapas has helped people and animals around the world find more
+              peace, connection, and emotional well-being.
             </p>
 
             <div className="h-px bg-charcoal/8 my-2" />
 
             <blockquote className="font-serif text-xl sm:text-2xl text-charcoal/80 leading-snug">
-              &ldquo;Help people find peace. One person —
-              and one animal — at a time.&rdquo;
+              &ldquo;I love to help people and animals find peace &mdash;
+              one person, one animal at a time.&rdquo;
             </blockquote>
           </motion.div>
         </div>
       </section>
 
-      {/* 3. TAT for Animals 스토리 */}
-      <section className="py-20 lg:py-28 px-6">
+      {/* 3. How TAT for Animals Began — Celeste Yarnall 스토리 (Tapas 원문 verbatim) */}
+      <section className="py-20 lg:py-28 px-6 bg-white">
         <div className="max-w-3xl mx-auto">
 
           <motion.div {...fadeUp} className="mb-12">
@@ -121,8 +132,8 @@ export default function AboutClient() {
               style={{ color: '#467826' }}>
               TAT for Animals
             </p>
-            <h2 className="font-serif text-3xl sm:text-4xl text-charcoal font-medium leading-tight">
-              How it began with animals.
+            <h2 className="font-serif text-3xl lg:text-4xl text-charcoal font-medium leading-tight">
+              How TAT&reg; for Animals Began
             </h2>
           </motion.div>
 
@@ -131,50 +142,125 @@ export default function AboutClient() {
             className="flex flex-col gap-6 text-charcoal/65 font-light leading-relaxed text-base sm:text-lg"
           >
             <p>
-              Tapas has always believed that healing is not separate from love —
-              and that love is not separate from the animals who share our lives.
+              In the 1990s, I received a phone call from a woman asking if I would make a house
+              call to help her cat, who appeared to be suffering from an allergic reaction.
+            </p>
+            <p>I agreed and drove to her home in Beverly Hills, California.</p>
+            <p>
+              As she showed me around, I quickly realized this was no ordinary visit. One room was
+              filled with mother cats and their kittens. Another housed playful young cats with
+              climbing trees, toys, and plenty of space to explore. A third room was home to
+              elegant adult cats. Everywhere I looked, I saw healthy, well-loved felines.
             </p>
             <p>
-              TAT for Animals grew from watching what happens when the technique is
-              offered to animals directly: the way a dog's body softens, the way a cat
-              that has been withdrawn slowly begins to re-engage with the world.
+              My client was Celeste Yarnall, who was writing a book on holistic cat care and was
+              deeply interested in nutrition and natural approaches to animal wellness. At the
+              time, I knew her only as a passionate advocate for cats and dogs. Years later, I
+              learned that before becoming a respected authority on holistic animal care, she had
+              also been a successful actress.
             </p>
             <p>
-              And then noticing what happens in the person holding the intention —
-              how something in them shifts too. That reflection became the heart of
-              this program.
+              Celeste explained that she had loaned one of her favorite cats, Juliet, to a friend.
+              While Juliet was away, she began losing her hair and didn&rsquo;t seem to be doing
+              well. After some time, Celeste brought Juliet back home and became concerned that the
+              cat food her friend had been feeding her might be contributing to the problem. She
+              called me to see whether I could help determine if the food was affecting
+              Juliet&rsquo;s health.
             </p>
             <p>
-              <span className="text-charcoal/85 font-normal">
-                TAT for Animals is not just about your animal.
-              </span>{' '}
-              It is an invitation to heal together — gently, without force,
-              at whatever pace feels right.
+              Celeste and I sat on the floor, with Juliet resting comfortably on my outstretched
+              legs. Using the methods I was developing at the time, I was able to confirm that the
+              new cat food had indeed been the problem. Celeste decided she would return Juliet to
+              her original food.
+            </p>
+            <p>
+              Then I asked whether there were other stressful experiences that might still be
+              affecting Juliet and keeping her from feeling like herself again.
+            </p>
+            <p>
+              Celeste told me that Juliet had never quite been the same after having her first
+              litter. She also felt that a medication Juliet had received had affected her
+              negatively. We addressed each of these experiences using TAT&reg; (Tapas Acupressure
+              Technique&reg;).
+            </p>
+            <p>When we finished, Juliet let out a deep sigh.</p>
+            <p>She stood up, gave herself a full-body shake, and calmly walked away.</p>
+            <p>I asked Celeste, &ldquo;Is there anything else we should look at for Juliet?&rdquo;</p>
+            <p>She replied, &ldquo;No, that was everything.&rdquo;</p>
+            <p>I sat there amazed.</p>
+            <p>&ldquo;Wow,&rdquo; I said. &ldquo;I didn&rsquo;t know cats sighed.&rdquo;</p>
+            <p>Celeste smiled and told me that was actually quite common for cats.</p>
+            <p>
+              About a week later, I called Celeste to see how Juliet was doing. She happily
+              reported that Juliet&rsquo;s hair was growing back, she had regained her energy, and
+              she was doing fine.
+            </p>
+            <p className="text-charcoal/85 font-normal">
+              That experience marked the beginning of my work with animals using TAT&reg;.
+            </p>
+            <p>
+              Since then, working with animals&mdash;including cats, dogs, horses and birds&mdash;has
+              been a continuing and rewarding part of my practice. Over the years, I have seen
+              animals respond in ways that are often surprising, touching, and deeply meaningful to
+              the people who love them.
+            </p>
+            <p>
+              What began with a single house call grew into decades of experience supporting
+              animals and their human companions.
+            </p>
+            <p>
+              Today, TAT&reg; for Animals continues that journey&mdash;offering a gentle way to
+              support emotional well-being, ease stress, and deepen the connection between animals
+              and their humans.
             </p>
           </motion.div>
 
         </div>
       </section>
 
-      {/* 4. CTA */}
-      <section className="pb-24 px-6">
+      {/* 4. Kai 세션 영상 + 1:1 예약 — "영상 보고 감동 → 바로 신청"이 끊기지 않게 한 블록으로 묶음.
+          영상은 placeholder(tatlife의 Kai 영상 ~9분 URL 미수령). URL 받으면 iframe으로 교체.
+          연결 문구는 우리 카피, 예약 문구는 Tapas 원문 그대로. */}
+      <section className="pb-20 lg:pb-28 px-6 bg-white">
         <div className="max-w-3xl mx-auto">
-          <div className="h-px bg-charcoal/8 mb-14" />
-
           <motion.div {...fadeUp}>
-            <p className="font-sans text-lg text-charcoal/65 font-light leading-relaxed mb-6">
-              Whenever you feel ready, Tapas is here.
-            </p>
-            <Link
-              href="/membership"
-              className="inline-flex items-center min-h-[44px] text-base font-medium underline underline-offset-2 transition-colors hover:opacity-70"
-              style={{ color: '#467826' }}
+            {/* 영상 */}
+            <div
+              className="relative aspect-video rounded-2xl overflow-hidden flex items-center justify-center"
+              style={{
+                backgroundColor: 'rgba(70,120,38,0.06)',
+                boxShadow: '0 0 0 1px rgba(28,16,7,0.06)',
+              }}
             >
-              See membership options →
-            </Link>
+              {/* TODO: replace with Vimeo/YouTube embed of Kai's session once Jez/Tapas send the URL */}
+              <span className="text-sm text-charcoal/45 font-light px-6 text-center">
+                Kai&rsquo;s session — video coming soon
+              </span>
+            </div>
+            <p className="text-center text-sm text-muted mt-4">
+              A full TAT&reg; session with Kai
+            </p>
+
+            {/* 영상 → 예약: 새 카피 없이 같은 블록·좁은 간격만으로 흐름을 이음.
+                연결 문장이 필요하면 Tapas에게 한 줄 요청 (콘텐츠는 Tapas 영역). */}
+            <div className="text-center mt-6">
+              <a
+                href={BOOKING_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center min-h-[44px] gap-1.5 text-base sm:text-lg font-semibold underline underline-offset-4 hover:opacity-70 transition-opacity"
+                style={{ color: '#467826' }}
+              >
+                Book a session for your animal&rsquo;s calm and well-being →
+              </a>
+            </div>
           </motion.div>
         </div>
       </section>
+
+      {/* 5. 구독 2단계 재노출 (Tapas 요청: "offer two subscription tiers again as on homepage").
+          showBooking=false — 위 Book a session이 1:1 예약을 담당하므로 중복 방지. */}
+      <Pricing showHeader bg="bg-white" showBooking={false} />
 
     </main>
   )

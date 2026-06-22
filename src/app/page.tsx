@@ -6,7 +6,6 @@ import Hero from "@/components/Hero";
 import TrySession from "@/components/TrySession";
 import Testimonials from "@/components/Testimonials";
 import Pricing from "@/components/Pricing";
-import AboutTapas from "@/components/AboutTapas";
 
 function getHeroImages() {
   const dir = path.join(process.cwd(), 'public/images/hero/vertical');
@@ -25,10 +24,9 @@ export default function Home() {
     <div className="flex flex-col">
       <Suspense fallback={null}><AccountNotice /></Suspense>
       <Hero images={heroImages} />        {/* 1. 약속 */}
-      <TrySession />                      {/* 2. 즉각 증명 */}
-      <Testimonials />                    {/* 4. 사회적 증명 */}
-      <Pricing />                         {/* 5. 전환 */}
-      <AboutTapas />                      {/* 6. 최후 신뢰 */}
+      <TrySession />                      {/* 2. 즉각 증명 (끝에 About 링크) */}
+      <Testimonials />                    {/* 3. 사회적 증명 */}
+      <Pricing />                         {/* 4. 전환 */}
     </div>
   );
 }
