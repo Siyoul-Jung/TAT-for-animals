@@ -73,6 +73,14 @@
     <p class="sub" style="color:var(--muted)">Heads-up: the video library isn&rsquo;t populated yet, so it&rsquo;ll look sparse &mdash; we&rsquo;re only checking the shell and the access rules.</p>
   </div>
 
+  <div class="howto" style="display:flex; align-items:center; gap:10px; flex-wrap:wrap">
+    <label style="font-weight:700">Your name
+      <input type="text" data-key="reviewer" placeholder="e.g. Jez"
+        style="margin-left:8px; font-family:inherit; font-size:1rem; padding:9px 12px; border:1px solid var(--surface); border-radius:10px; background:var(--cream); color:var(--charcoal)" />
+    </label>
+    <span class="sub" style="color:var(--muted)">So we know whose feedback this is.</span>
+  </div>
+
   <!-- =================== SECTION 1: MEMBER JOURNEY =================== -->
   <h2 class="sec">1 &middot; The core member journey</h2>
   <p class="secsub">The path a new member takes. Start logged out, in a fresh browser if you can.</p>
@@ -103,12 +111,31 @@
       <p class="rea" style="margin:6px 0 0">A real charge, but tiny &mdash; we refund every test charge.</p>
     </div>
     <p class="info">Heads-up: the plan pages still show the full <b>$27 / $47</b> price, but the actual charge is the reduced test amount above. Please test using <b>&ldquo;Pay with card.&rdquo;</b></p>
-    <p class="sub">Does it land on thank-you and then a dashboard that reflects the plan you bought? Try an edge if you like: a logged-out checkout, or hitting pay twice &mdash; should never double-charge or break.</p>
+    <p class="sub">Does it land on thank-you and then a dashboard that reflects the plan you bought, and does the <b>welcome email</b> arrive in your inbox? Try an edge if you like: a logged-out checkout, or hitting pay twice &mdash; should never double-charge or break.</p>
     <div class="feel">
       <label><input type="radio" name="m2" data-key="m2" value="ok" /> Works</label>
       <label><input type="radio" name="m2" data-key="m2" value="issue" /> Found an issue</label>
     </div>
     <textarea class="notes" data-key="m2n" placeholder="Notes on checkout + thank-you + landing…"></textarea>
+  </div>
+
+  <div class="mission">
+    <span class="pill">Checkout &middot; PayPal</span>
+    <h2>Pay with PayPal &mdash; the other payment path</h2>
+    <p class="lbl">Do</p>
+    <p>Sign up again with another fresh email, pick a plan, and this time pay with <b>PayPal</b> instead of a card. PayPal is a separate payment system from the card checkout, so it needs its own check.</p>
+    <div class="card-callout">
+      <div>Test charge</div>
+      <div class="big">$0.50 &middot; The Calm Library</div>
+      <div class="big">$1.00 &middot; The Calm Circle</div>
+      <p class="rea" style="margin:6px 0 0">PayPal&rsquo;s test prices are already set to these amounts &mdash; a real charge, but tiny, and refunded.</p>
+    </div>
+    <p class="sub">Same checks as the card path: does it land on thank-you and a dashboard that reflects the plan you bought, does the account unlock the right content, and does the <b>welcome email</b> arrive?</p>
+    <div class="feel">
+      <label><input type="radio" name="m2p" data-key="m2p" value="ok" /> Works</label>
+      <label><input type="radio" name="m2p" data-key="m2p" value="issue" /> Found an issue</label>
+    </div>
+    <textarea class="notes" data-key="m2p-n" placeholder="Notes on PayPal checkout…"></textarea>
   </div>
 
   <div class="mission">
@@ -162,8 +189,18 @@
   </div>
 
   <div class="check">
+    <p class="ctitle">Change password &amp; sign out (from your account)</p>
+    <p class="sub">While signed in, open your account and use <b>Change password</b> &mdash; you should get an email with a link to set a new one (a different starting point from the logged-out &ldquo;forgot password&rdquo; above). Then use <b>Sign out</b> and confirm you&rsquo;re actually logged out.</p>
+    <div class="feel">
+      <label><input type="radio" name="c-acct" data-key="c-acct" value="ok" /> Works</label>
+      <label><input type="radio" name="c-acct" data-key="c-acct" value="issue" /> Found an issue</label>
+    </div>
+    <textarea class="notes" data-key="c-acct-n" placeholder="Notes on change-password + sign out…"></textarea>
+  </div>
+
+  <div class="check">
     <p class="ctitle">Manage / cancel subscription</p>
-    <p class="sub">From the dashboard, go into manage and try a cancel (test mode). Does it go through and confirm clearly? Re-subscribe after if you want to reset.</p>
+    <p class="sub">From the dashboard, go into manage and try a cancel (test mode). Does it go through and confirm clearly, and does the <b>cancellation email</b> arrive? If you signed up with <b>PayPal</b>, the cancel path is a different one &mdash; please test whichever you used. Re-subscribe after if you want to reset.</p>
     <div class="feel">
       <label><input type="radio" name="c-cancel" data-key="c-cancel" value="ok" /> Works</label>
       <label><input type="radio" name="c-cancel" data-key="c-cancel" value="issue" /> Found an issue</label>
@@ -291,8 +328,10 @@
     });
     return lines.join('\n');
   }
+  function reviewerName(){ var el = document.querySelector('[data-key="reviewer"]'); return (el && el.value.trim()) || ''; }
+  function today(){ return new Date().toISOString().slice(0,10); }
   function downloadAnswers(){
-    var text = 'TAT for Animals - ' + TAG + '\n========================================\n'+buildAnswersText();
+    var text = 'TAT for Animals - ' + TAG + '\nReviewer: ' + (reviewerName() || '—') + '   Date: ' + today() + '\n========================================\n'+buildAnswersText();
     var blob = new Blob([text], {type:'text/plain'});
     var a = document.createElement('a');
     a.href = URL.createObjectURL(blob); a.download = 'function-review.txt'; a.click();
@@ -306,7 +345,7 @@
       var res = await fetch('/api/review-feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reviewer: '', date: '', subjectTag: TAG, body: buildAnswersText(), token: 'tat-content-review-2026' })
+        body: JSON.stringify({ reviewer: reviewerName(), date: today(), subjectTag: TAG, body: buildAnswersText(), token: 'tat-content-review-2026' })
       });
       if (!res.ok) throw new Error();
       msg.style.color = '#467826';

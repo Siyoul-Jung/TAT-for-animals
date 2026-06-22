@@ -77,6 +77,14 @@
     <p class="sub" style="color:var(--muted)">To see the account screens (dashboard, library), you&rsquo;ll need to sign up and check out &mdash; the charge is a tiny <b>$0.50 / $1</b> on your real card and we refund it (details in section 2). The video library isn&rsquo;t populated yet, so judge the shell, not the emptiness.</p>
   </div>
 
+  <div class="howto" style="display:flex; align-items:center; gap:10px; flex-wrap:wrap">
+    <label style="font-weight:700">Your name
+      <input type="text" data-key="reviewer" placeholder="e.g. Jez"
+        style="margin-left:8px; font-family:inherit; font-size:1rem; padding:9px 12px; border:1px solid var(--surface); border-radius:10px; background:var(--cream); color:var(--charcoal)" />
+    </label>
+    <span class="sub" style="color:var(--muted)">So we know whose feedback this is.</span>
+  </div>
+
   <!-- =================== SECTION 1: PUBLIC PAGES =================== -->
   <h2 class="sec">1 &middot; The public pages</h2>
   <p class="secsub">Open each, scroll slowly, and read it as a first-time visitor would.</p>
@@ -257,8 +265,10 @@
     });
     return lines.join('\n');
   }
+  function reviewerName(){ var el = document.querySelector('[data-key="reviewer"]'); return (el && el.value.trim()) || ''; }
+  function today(){ return new Date().toISOString().slice(0,10); }
   function downloadAnswers(){
-    var text = 'TAT for Animals - ' + TAG + '\n========================================\n'+buildAnswersText();
+    var text = 'TAT for Animals - ' + TAG + '\nReviewer: ' + (reviewerName() || '—') + '   Date: ' + today() + '\n========================================\n'+buildAnswersText();
     var blob = new Blob([text], {type:'text/plain'});
     var a = document.createElement('a');
     a.href = URL.createObjectURL(blob); a.download = 'design-review.txt'; a.click();
@@ -272,7 +282,7 @@
       var res = await fetch('/api/review-feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reviewer: '', date: '', subjectTag: TAG, body: buildAnswersText(), token: 'tat-content-review-2026' })
+        body: JSON.stringify({ reviewer: reviewerName(), date: today(), subjectTag: TAG, body: buildAnswersText(), token: 'tat-content-review-2026' })
       });
       if (!res.ok) throw new Error();
       msg.style.color = '#467826';
