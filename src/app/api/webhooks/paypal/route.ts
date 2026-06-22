@@ -1,5 +1,7 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { paypalRequest, PLAN_ROLE_MAP, getPayPalSubscription } from '@/lib/paypal'
+import { resend, FROM_EMAIL } from '@/lib/resend'
+import { welcomeEmail } from '@/lib/emails/welcome'
 import { NextRequest, NextResponse } from 'next/server'
 
 // Rank roles so we can tell an upgrade from a downgrade. A plan change that
@@ -76,6 +78,23 @@ export async function POST(request: NextRequest) {
             cancel_at: null,
           })
           .eq('id', userId)
+
+        // Welcome email — parity with the Stripe path (sent from its webhook).
+        // The event-level idempotency guard above means this fires once per
+        // activation. Failure must not affect the webhook response.
+        const { data: profile } = await supabaseAdmin
+          .from('profiles')
+          .select('email, full_name')
+          .eq('id', userId)
+          .single()
+        if (profile?.email) {
+          try {
+            const { subject, html } = welcomeEmail(profile.full_name ?? null, role as 'subscriber' | 'pro_subscriber')
+            await resend.emails.send({ from: FROM_EMAIL, to: profile.email, subject, html })
+          } catch (emailError) {
+            console.error('PayPal welcome email failed:', emailError)
+          }
+        }
         break
       }
 
