@@ -345,6 +345,9 @@ describe('Stripe webhook — customer.subscription.deleted', () => {
       stripe_subscription_id: null,
       subscription_status: 'inactive',
       current_period_end: null,
+      pending_tier: null,
+      pending_tier_at: null,
+      cancel_at: null,
     })
     expect(mockEq).toHaveBeenCalledWith('id', 'user-123')
   })

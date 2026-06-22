@@ -67,7 +67,7 @@ describe('SignupClient — client-side validation', () => {
   })
 
   it('accepts password of exactly 8 characters', async () => {
-    mockSignUp.mockResolvedValueOnce({ error: null })
+    mockSignUp.mockResolvedValueOnce({ data: { user: { identities: [{ id: '1' }] }, session: null }, error: null })
     render(<SignupClient />)
     await fillForm('user@test.com', 'exactly8', 'exactly8')
 
@@ -89,7 +89,7 @@ describe('SignupClient — client-side validation', () => {
     expect(screen.getByText(/at least 8 characters/)).toBeInTheDocument()
 
     // Fix the password — should clear error and proceed to Supabase
-    mockSignUp.mockResolvedValueOnce({ error: null })
+    mockSignUp.mockResolvedValueOnce({ data: { user: { identities: [{ id: '1' }] }, session: null }, error: null })
     const passwordInput = screen.getByLabelText('Password')
     const confirmInput = screen.getByLabelText('Confirm password')
     await userEvent.clear(passwordInput)
@@ -132,7 +132,7 @@ describe('SignupClient — Supabase errors', () => {
 
 describe('SignupClient — success screen', () => {
   it('shows confirmation screen after successful signup', async () => {
-    mockSignUp.mockResolvedValueOnce({ error: null })
+    mockSignUp.mockResolvedValueOnce({ data: { user: { identities: [{ id: '1' }] }, session: null }, error: null })
     render(<SignupClient />)
     await fillForm('newuser@test.com', 'password123', 'password123')
 
@@ -143,7 +143,7 @@ describe('SignupClient — success screen', () => {
   })
 
   it('shows sign in link on confirmation screen', async () => {
-    mockSignUp.mockResolvedValueOnce({ error: null })
+    mockSignUp.mockResolvedValueOnce({ data: { user: { identities: [{ id: '1' }] }, session: null }, error: null })
     render(<SignupClient />)
     await fillForm('newuser@test.com', 'password123', 'password123')
 
