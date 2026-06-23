@@ -3,14 +3,18 @@ import { resend, FROM_EMAIL } from '@/lib/resend'
 import { annualRenewalReminderEmail } from '@/lib/emails/annual-renewal-reminder'
 import { NextRequest, NextResponse } from 'next/server'
 
-// Daily cron: remind annual members a week before their yearly charge.
+// Daily cron: remind annual members ~30 days before their yearly charge.
 //
 // Annual members pay a large amount once a year, so a heads-up before the charge
-// is an industry norm (and a legal requirement in some regions) and cuts down on
-// surprise-charge disputes. Vercel Cron hits this once a day; the window + a
-// once-per-cycle guard mean each renewal is reminded exactly once.
+// cuts down on surprise-charge disputes — and for a one-year auto-renewing term
+// California law *requires* the reminder to land "at least 15 days and not more
+// than 45 days before" the renewal (Cal. Bus. & Prof. Code §17602(b), Trigger 2).
+// 30 days sits in the middle of that window, so even if a daily run is missed the
+// notice still falls inside 15–45. Vercel Cron hits this once a day; the window +
+// a once-per-cycle guard mean each renewal is reminded exactly once, on the first
+// day it enters the window (~30 days out).
 
-const DAYS_BEFORE = 7
+const DAYS_BEFORE = 30
 
 // Vercel attaches `Authorization: Bearer <CRON_SECRET>` to cron requests when
 // CRON_SECRET is set. Reject anything else so the endpoint can't be triggered

@@ -17,10 +17,11 @@ const ANNUAL_PRICE: Record<Plan, string> = {
 
 const DASHBOARD_URL = `${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://tatforanimals.com'}/dashboard`;
 
-// Sent a few days before an annual subscription renews. Annual members pay a
-// large amount once a year, so a clear heads-up before the charge is both an
-// industry norm and a legal requirement in some regions — and it heads off
-// surprise-charge disputes. Reassuring, not salesy: nothing is required of them.
+// Sent ~30 days before an annual subscription renews. Annual members pay a large
+// amount once a year, so a clear heads-up before the charge is both an industry
+// norm and, for a one-year auto-renewing term, a California requirement: the
+// notice must land 15–45 days before renewal (Cal. Bus. & Prof. Code §17602(b)).
+// Reassuring, not salesy: nothing is required of them.
 export function annualRenewalReminderEmail(
   name: string | null,
   plan: Plan,
