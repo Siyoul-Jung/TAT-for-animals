@@ -6,6 +6,7 @@ import Link from 'next/link'
 import Player from '@vimeo/player'
 import type { Video, WebinarRecording, WebinarSession, RecordingPreview } from './page'
 import { loadAllProgress, saveProgress, type ProgressMap } from '@/lib/videoProgress'
+import BackToTopButton from '@/components/BackToTopButton'
 
 const CATEGORY_ORDER = ['Foundational', 'Main Content', 'Bonus 2025', 'Bonus 2026']
 
@@ -669,6 +670,8 @@ export default function LibraryClient({
         )}
 
       </div>
+
+      <BackToTopButton />
     </main>
   )
 }
