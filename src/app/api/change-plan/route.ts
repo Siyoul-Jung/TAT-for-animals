@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('stripe_subscription_id, paypal_subscription_id, role')
+    .select('stripe_subscription_id, paypal_subscription_id, role, billing_interval')
     .eq('id', user.id)
     .single()
 
@@ -53,6 +53,18 @@ export async function POST(request: NextRequest) {
   // The provider (re-fetched below) and the webhook remain authoritative.
   if (profile?.role === targetTier) {
     return NextResponse.json({ error: 'You are already on this plan.' }, { status: 400 })
+  }
+
+  // Annual plans have no self-serve change path. The price maps below are the
+  // *monthly* prices only, so applying a change to a yearly subscription would
+  // also flip the member to monthly billing. The dashboard already hides the
+  // upgrade for annual members; this is the server-side guard so a direct call
+  // can't trigger that mis-switch. Annual changes are handled manually.
+  if (profile?.billing_interval === 'year') {
+    return NextResponse.json(
+      { error: 'Annual plans are changed by our team — please contact us and we’ll help.' },
+      { status: 400 }
+    )
   }
 
   // Downgrades (→ the smaller plan) are handled by support, not self-service.
