@@ -34,7 +34,7 @@ function buildPreviews(): Record<string, Preview> {
     meetingUrl: 'https://example.com/meeting',
   })
   const recording = recordingNotificationEmail('Marion', {
-    title: 'June live session — soothing separation anxiety',
+    title: 'June live webinar — soothing separation anxiety',
     date: 'June 2026',
     summary: 'Tapas walks through a full session for an animal that struggles when left alone, plus a short grounding practice for you.',
     recordingUrl: 'https://example.com/recording',

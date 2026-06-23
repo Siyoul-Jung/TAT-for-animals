@@ -418,7 +418,7 @@ export default function LibraryClient({
   const tabs: { id: Tab; label: string; locked?: boolean }[] = [
     { id: 'animals', label: 'TAT for Animals' },
     { id: 'aces', label: 'For You' },
-    { id: 'live', label: 'Live Sessions', locked: role !== 'pro_subscriber' },
+    { id: 'live', label: 'Live Webinars', locked: role !== 'pro_subscriber' },
   ]
 
   return (
@@ -509,7 +509,7 @@ export default function LibraryClient({
                 {recordings.length === 0 ? (
                   <div className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm">
                     <p className="text-charcoal/65 text-base">
-                      Recordings will appear here after each live session.
+                      Recordings will appear here after each live webinar.
                     </p>
                   </div>
                 ) : (
@@ -530,7 +530,7 @@ export default function LibraryClient({
                 <div className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm">
                   <div className="flex items-center justify-between gap-3 mb-3">
                     <p className="text-xs font-semibold uppercase tracking-widest text-green">
-                      Next live session
+                      Next live webinar
                     </p>
                     <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-charcoal/10 text-charcoal/65 shrink-0">
                       <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
@@ -600,8 +600,8 @@ export default function LibraryClient({
                         <p className="font-serif text-xl text-charcoal leading-snug">Move up to The Calm Circle</p>
                         <p className="text-charcoal/65 text-base leading-relaxed">
                           {isPayPal
-                            ? 'Live sessions with Tapas. You’ll confirm the new price with PayPal on the next screen.'
-                            : 'Live sessions with Tapas, starting today.'}
+                            ? 'Live webinars with Tapas. You’ll confirm the new price with PayPal on the next screen.'
+                            : 'Live webinars with Tapas, starting today.'}
                         </p>
                       </div>
                       <dl className="text-sm space-y-1.5">

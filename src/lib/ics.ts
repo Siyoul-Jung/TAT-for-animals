@@ -49,7 +49,7 @@ export function buildIcs(ev: IcsEvent): string {
   return [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//TAT for Animals//Live Session//EN',
+    'PRODID:-//TAT for Animals//Live Webinar//EN',
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
     'BEGIN:VEVENT',

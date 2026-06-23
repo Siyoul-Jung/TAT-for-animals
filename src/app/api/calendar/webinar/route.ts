@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
   const durationMin = Number(p.get('min')) || 60
   const endDate = new Date(startDate.getTime() + durationMin * 60_000)
 
-  const title = p.get('title') ?? 'TAT for Animals — Live Session'
+  const title = p.get('title') ?? 'TAT for Animals — Live Webinar'
   const meetingUrl = p.get('url') ?? undefined
   const description = p.get('desc') ?? undefined
 
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
     status: 200,
     headers: {
       'Content-Type': 'text/calendar; charset=utf-8',
-      'Content-Disposition': 'attachment; filename="tat-live-session.ics"',
+      'Content-Disposition': 'attachment; filename="tat-live-webinar.ics"',
       'Cache-Control': 'public, max-age=3600',
     },
   })

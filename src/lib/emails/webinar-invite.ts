@@ -96,7 +96,7 @@ export function webinarInviteEmail(
 
   const html = emailShell({
     title: subject,
-    eyebrow: 'Live Session',
+    eyebrow: 'Live Webinar',
     content,
     footerNote: "You're receiving this as a member of The Calm Circle.",
   });

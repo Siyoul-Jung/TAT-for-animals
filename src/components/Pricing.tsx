@@ -33,7 +33,7 @@ const tiers = [
     features: [
       'Everything in The Calm Library',
       'Monthly live webinars with Tapas',
-      'TAT for Animals live sessions',
+      'TAT for Animals live webinars',
       'Full archive of all past recordings',
     ],
     cta: 'Join The Calm Circle',

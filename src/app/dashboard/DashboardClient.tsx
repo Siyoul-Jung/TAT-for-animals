@@ -211,7 +211,7 @@ export default function DashboardClient({
     }
   }
 
-  // Upgrade has a single entry point — the locked "Live Sessions" content card —
+  // Upgrade has a single entry point — the locked "Live Webinars" content card —
   // and its confirm box opens inline right below that card, so the charge always
   // goes through one confirmed path (no scroll jump between button and confirm).
   const openUpgrade = () => {
@@ -490,8 +490,8 @@ export default function DashboardClient({
                 badge="The Calm Library"
               />
               <ContentCard
-                title="Live Sessions"
-                description={role === 'pro_subscriber' ? 'Monthly sessions with Tapas · Past recordings included' : 'Connect live with Tapas every month for your animal—and for you'}
+                title="Live Webinars"
+                description={role === 'pro_subscriber' ? 'Monthly webinars with Tapas · Past recordings included' : 'Connect live with Tapas every month for your animal—and for you'}
                 href={role === 'pro_subscriber' ? '/library?tab=live' : ''}
                 badge="The Calm Circle"
                 locked={role !== 'pro_subscriber'}
@@ -500,7 +500,7 @@ export default function DashboardClient({
               />
             </div>
 
-            {/* Upgrade confirm — opens inline right under the Live Sessions card
+            {/* Upgrade confirm — opens inline right under the Live Webinars card
                 (the single upgrade entry point). The change is immediate and
                 charges a prorated amount, so we say so before doing it. Guarded
                 on the same conditions as the card's Upgrade action. */}
@@ -531,8 +531,8 @@ export default function DashboardClient({
                       </p>
                       <p className="text-sm text-charcoal/70 leading-relaxed">
                         {isPayPal
-                          ? 'Live sessions with Tapas. You’ll confirm the new price with PayPal on the next screen.'
-                          : 'Live sessions with Tapas, starting today.'}
+                          ? 'Live webinars with Tapas. You’ll confirm the new price with PayPal on the next screen.'
+                          : 'Live webinars with Tapas, starting today.'}
                       </p>
                     </div>
                     <dl className="text-sm space-y-1.5">

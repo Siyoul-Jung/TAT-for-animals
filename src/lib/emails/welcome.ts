@@ -18,7 +18,7 @@ export function welcomeEmail(name: string | null, plan: Plan): { subject: string
 
   // What they get — one calm line, adapts to the tier (no decorative list).
   const summary = isCircle
-    ? 'Your full video library and monthly live sessions with Tapas are ready whenever you are.'
+    ? 'Your full video library and monthly live webinars with Tapas are ready whenever you are.'
     : 'Your full video library is ready whenever you are.';
 
   const content = `
