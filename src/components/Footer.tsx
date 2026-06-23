@@ -159,36 +159,38 @@ export default function Footer() {
           </a>
         </div>
 
-        {/* Bottom row — copyright + legal */}
-        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 pt-2">
-          <p
-            className="text-xs font-light"
-            style={{ color: 'rgba(250,246,241,0.60)' }}
-          >
-            <span className="sm:hidden">© 2026 TATLife®, Inc.</span>
-            <span className="hidden sm:inline">© 2026 TATLife®, Inc. All rights reserved.</span>
-          </p>
-
-          <div className="flex items-center gap-4">
-            {legalLinks.map((link) => (
-              <Link
-                key={link.name}
-                href={link.href}
-                className="text-sm font-light transition-colors"
-                style={{ color: 'rgba(250,246,241,0.60)' }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.color = 'rgba(250,246,241,0.9)';
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.color = 'rgba(250,246,241,0.60)';
-                }}
-              >
-                <span className="sm:hidden">{link.short}</span>
-                <span className="hidden sm:inline">{link.name}</span>
-              </Link>
-            ))}
-          </div>
+        {/* Bottom row — legal links */}
+        <div className="flex flex-wrap items-center gap-4 pt-2">
+          {legalLinks.map((link) => (
+            <Link
+              key={link.name}
+              href={link.href}
+              className="text-sm font-light transition-colors"
+              style={{ color: 'rgba(250,246,241,0.60)' }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.color = 'rgba(250,246,241,0.9)';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.color = 'rgba(250,246,241,0.60)';
+              }}
+            >
+              <span className="sm:hidden">{link.short}</span>
+              <span className="hidden sm:inline">{link.name}</span>
+            </Link>
+          ))}
         </div>
+
+        {/* Full copyright + trademark notice — verbatim from Jez's content review.
+            0.60 cream on the deep-green footer clears AA (~5.6:1) even at this small size. */}
+        <p
+          className="text-xs font-light leading-relaxed mt-3 max-w-4xl"
+          style={{ color: 'rgba(250,246,241,0.60)' }}
+        >
+          © 2005–2026 TATLife®, Inc. All rights reserved. No portion of this web site may be
+          copied, retransmitted, reposted, duplicated or otherwise used without the express
+          written approval of TATLife®, Inc. Tapas Acupressure Technique®, TAT®, and TATLife® are
+          registered trademarks of TATLife®, Inc. and may only be used with permission.
+        </p>
 
       </div>
     </footer>
