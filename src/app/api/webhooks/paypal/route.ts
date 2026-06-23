@@ -1,7 +1,6 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
-import { paypalRequest, PLAN_ROLE_MAP, getPayPalSubscription } from '@/lib/paypal'
-import { resend, FROM_EMAIL } from '@/lib/resend'
-import { welcomeEmail } from '@/lib/emails/welcome'
+import { paypalRequest, PLAN_ROLE_MAP, getPayPalSubscription, getPlanInterval } from '@/lib/paypal'
+import { sendWelcomeOnce } from '@/lib/sendWelcomeOnce'
 import { NextRequest, NextResponse } from 'next/server'
 
 // Rank roles so we can tell an upgrade from a downgrade. A plan change that
@@ -70,6 +69,7 @@ export async function POST(request: NextRequest) {
             role,
             paypal_subscription_id: resource.id,
             subscription_status: 'active',
+            billing_interval: getPlanInterval(resource.plan_id),
             pending_tier: null,
             pending_tier_at: null,
             // A fresh activation is, by definition, not cancelling — clear any
@@ -79,22 +79,20 @@ export async function POST(request: NextRequest) {
           })
           .eq('id', userId)
 
-        // Welcome email — parity with the Stripe path (sent from its webhook).
-        // The event-level idempotency guard above means this fires once per
-        // activation. Failure must not affect the webhook response.
+        // Welcome email — sent exactly once across every activation path
+        // (this webhook / PayPal return handler / self-heal) via the shared
+        // guard. Failure must not affect the webhook response.
         const { data: profile } = await supabaseAdmin
           .from('profiles')
           .select('email, full_name')
           .eq('id', userId)
           .single()
-        if (profile?.email) {
-          try {
-            const { subject, html } = welcomeEmail(profile.full_name ?? null, role as 'subscriber' | 'pro_subscriber')
-            await resend.emails.send({ from: FROM_EMAIL, to: profile.email, subject, html })
-          } catch (emailError) {
-            console.error('PayPal welcome email failed:', emailError)
-          }
-        }
+        await sendWelcomeOnce({
+          subscriptionId: resource.id,
+          email: profile?.email,
+          name: profile?.full_name,
+          role: role as 'subscriber' | 'pro_subscriber',
+        })
         break
       }
 
@@ -154,6 +152,9 @@ export async function POST(request: NextRequest) {
           const sub = await getPayPalSubscription(subscriptionId)
           if (sub.plan_id && PLAN_ROLE_MAP[sub.plan_id]) {
             update.role = PLAN_ROLE_MAP[sub.plan_id]
+            // Keep the cadence in sync with the plan actually billed (covers an
+            // admin-driven month↔year switch landing at renewal).
+            update.billing_interval = getPlanInterval(sub.plan_id)
           }
           if (sub.billing_info?.next_billing_time) {
             update.current_period_end = sub.billing_info.next_billing_time

@@ -8,8 +8,8 @@ import { createClient } from '@/lib/supabase/client';
 
 function ThankYouContent() {
   // Payment is confirmed, but the subscription webhook (Stripe or PayPal) may
-  // take a few seconds to grant the role. Poll until access is ready so we never
-  // send the member to /library before it would bounce them back to /membership.
+  // take a few seconds to grant the role. Resolve access before sending the
+  // member to /library so they're never bounced back to /membership.
   const [ready, setReady] = useState(false);
   const [timedOut, setTimedOut] = useState(false);
 
@@ -19,7 +19,8 @@ function ThankYouContent() {
     let attempts = 0;
     const maxAttempts = 15; // ~30s at 2s intervals
 
-    async function check() {
+    // Backstop poll: watch the profile until the webhook flips the role.
+    async function poll() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!active) return;
       if (user) {
@@ -39,10 +40,28 @@ function ThankYouContent() {
         setTimedOut(true);
         return;
       }
-      setTimeout(check, 2000);
+      setTimeout(poll, 2000);
     }
 
-    check();
+    // First, confirm access directly from the payment provider so activation
+    // never hinges on webhook timing. On any miss, fall back to polling.
+    async function start() {
+      try {
+        const res = await fetch('/api/checkout/verify', { method: 'POST' });
+        if (!active) return;
+        const data = await res.json().catch(() => ({}));
+        if (data.active) {
+          setReady(true);
+          return;
+        }
+      } catch {
+        // network/again — fall through to polling
+      }
+      if (!active) return;
+      poll();
+    }
+
+    start();
     return () => {
       active = false;
     };

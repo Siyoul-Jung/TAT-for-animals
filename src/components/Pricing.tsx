@@ -9,11 +9,13 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { BOOKING_URL } from '@/lib/links';
 
+// Annual = monthly × 10 (two months free), per Tapas's request.
 const tiers = [
   {
     plan: 'calm_library',
     name: 'The Calm Library',
-    price: '27',
+    monthly: '27',
+    annual: '270',
     description: 'Everything you need to begin — at your own pace, in your own time.',
     features: [
       'TAT for Animals full video library',
@@ -25,7 +27,8 @@ const tiers = [
   {
     plan: 'calm_circle',
     name: 'The Calm Circle',
-    price: '47',
+    monthly: '47',
+    annual: '470',
     description: 'Live connection with Tapas, plus everything in The Calm Library.',
     features: [
       'Everything in The Calm Library',
@@ -41,6 +44,13 @@ const tiers = [
 export default function Pricing({ showHeader = true, bg = 'bg-white', showBooking = true }: { showHeader?: boolean; bg?: string; showBooking?: boolean }) {
   const router = useRouter();
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  // Default to monthly: for an unproven, pre-launch brand with no free trial, the
+  // first priority is the easier "first yes" — so the first price a cold visitor
+  // sees stays low ($27). Annual is still made attractive (savings + per-month
+  // equivalent below) for those ready to commit; revisit the default once there's
+  // traffic data or a trial. See the A/B reasoning discussed at build time.
+  const [billing, setBilling] = useState<'monthly' | 'annual'>('monthly');
+  const isAnnual = billing === 'annual';
 
   // Returning via the back button restores this page from the bfcache with its old
   // state — which would leave the button stuck on "Loading…" forever. Reset it.
@@ -52,8 +62,12 @@ export default function Pricing({ showHeader = true, bg = 'bg-white', showBookin
     return () => window.removeEventListener('pageshow', onShow);
   }, []);
 
-  async function handleCheckout(plan: string) {
-    setLoadingPlan(plan);
+  async function handleCheckout(basePlan: string) {
+    setLoadingPlan(basePlan);
+    // Monthly and annual are distinct checkout plans (separate Stripe prices /
+    // PayPal plans); the suffix routes to the right one. The spinner stays keyed
+    // to the base plan so the toggle choice doesn't change which button shows it.
+    const plan = isAnnual ? `${basePlan}_annual` : basePlan;
     try {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
@@ -98,6 +112,41 @@ export default function Pricing({ showHeader = true, bg = 'bg-white', showBookin
             </h2>
           </motion.div>
         )}
+
+        {/* Billing toggle — monthly vs yearly (yearly = two months free).
+            Large segments (≥44px) with a clear filled active state so the choice
+            is obvious; the savings hint sits below so the buttons stay short. */}
+        <div className="flex flex-col items-center mb-8">
+          <div
+            className="inline-flex items-center rounded-full p-1 bg-white"
+            style={{ boxShadow: 'inset 0 0 0 1px rgba(28,16,7,0.12)' }}
+            role="group"
+            aria-label="Choose billing period"
+          >
+            {([['monthly', 'Monthly'], ['annual', 'Yearly']] as const).map(([value, label]) => {
+              const active = billing === value;
+              return (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setBilling(value)}
+                  aria-pressed={active}
+                  className="min-h-[44px] px-6 sm:px-8 rounded-full text-base font-semibold transition-colors"
+                  style={active ? { backgroundColor: '#467826', color: '#FAF6F1' } : { color: '#1C1007' }}
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+          <p
+            className="mt-3 text-sm font-medium h-5"
+            style={{ color: isAnnual ? '#467826' : 'transparent' }}
+            aria-hidden={!isAnnual}
+          >
+            ✓ Two months free
+          </p>
+        </div>
 
         {/* Cards */}
         <div className="grid md:grid-cols-2 gap-4">
@@ -146,10 +195,21 @@ export default function Pricing({ showHeader = true, bg = 'bg-white', showBookin
                 <div className="flex items-baseline gap-1.5">
                   <span className="font-sans text-2xl font-medium text-charcoal/65">$</span>
                   <span className="font-serif text-4xl sm:text-5xl font-semibold text-charcoal">
-                    {tier.price}
+                    {isAnnual ? tier.annual : tier.monthly}
                   </span>
-                  <span className="text-sm font-light ml-0.5 text-charcoal/65">/ mo</span>
+                  <span className="text-sm font-light ml-0.5 text-charcoal/65">/ {isAnnual ? 'yr' : 'mo'}</span>
                 </div>
+
+                {/* Annual reframe — the big yearly number shown as a per-month
+                    equivalent (defuses sticker shock) plus the concrete saving
+                    (makes the discount tangible). Reserves its own height so the
+                    card doesn't jump when toggling. */}
+                {isAnnual && (
+                  <p className="mt-1.5 text-sm" style={{ color: '#467826' }}>
+                    ≈ ${(Number(tier.annual) / 12).toFixed(2)} / mo
+                    <span className="font-semibold"> · Save ${Number(tier.monthly) * 12 - Number(tier.annual)}</span>
+                  </p>
+                )}
               </div>
 
               {/* Description */}
@@ -199,7 +259,7 @@ export default function Pricing({ showHeader = true, bg = 'bg-white', showBookin
               {/* Billing disclosure — recurring terms at point of purchase.
                   Refund policy lives in Terms (not shouted on the card — see industry norm). */}
               <p className="text-center text-xs mt-2 text-charcoal/65 leading-relaxed">
-                Billed monthly until you cancel.{' '}
+                Billed {isAnnual ? 'yearly' : 'monthly'} until you cancel.{' '}
                 <Link href="/terms" className="underline hover:text-green transition-colors">
                   See Terms
                 </Link>

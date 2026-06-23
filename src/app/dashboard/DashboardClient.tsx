@@ -23,6 +23,7 @@ type Props = {
   hasSubscription: boolean
   isPayPal: boolean
   currentPeriodEnd: string | null
+  billingInterval: 'month' | 'year' | null
   pendingTier: string | null
   pendingTierAt: string | null
   cancelAt: string | null
@@ -31,9 +32,13 @@ type Props = {
   upcoming: WebinarSession[]
 }
 
-const PLAN_INFO: Record<string, { name: string; price: string }> = {
-  subscriber:     { name: 'The Calm Library', price: '$27 / month' },
-  pro_subscriber: { name: 'The Calm Circle',  price: '$47 / month' },
+// Price varies by billing cadence (monthly vs yearly = ×10). The dashboard reads
+// the stored billing_interval so an annual member sees "$270 / year", not the
+// monthly figure. Rows with no interval (every pre-annual member) fall back to
+// monthly — unchanged from before.
+const PLAN_INFO: Record<string, { name: string; month: string; year: string }> = {
+  subscriber:     { name: 'The Calm Library', month: '$27 / month', year: '$270 / year' },
+  pro_subscriber: { name: 'The Calm Circle',  month: '$47 / month', year: '$470 / year' },
 }
 
 const STATUS_BADGE: Record<string, { label: string; classes: string }> = {
@@ -57,6 +62,7 @@ export default function DashboardClient({
   hasSubscription,
   isPayPal,
   currentPeriodEnd,
+  billingInterval,
   pendingTier,
   pendingTierAt,
   cancelAt,
@@ -135,6 +141,7 @@ export default function DashboardClient({
   const nextChargeDate = formatPeriodEnd(currentPeriodEnd)
   const displayName = fullName ? fullName.trim().split(/\s+/)[0] : null
   const plan = PLAN_INFO[role]
+  const planPrice = plan ? (billingInterval === 'year' ? plan.year : plan.month) : ''
   const badge = STATUS_BADGE[subscriptionStatus] ?? STATUS_BADGE.inactive
   const pendingPlan = pendingTier ? PLAN_INFO[pendingTier] : null
   const pendingDate = formatPeriodEnd(pendingTierAt)
@@ -145,8 +152,14 @@ export default function DashboardClient({
   // past_due / cancelling / a pending plan change all have their own notice
   // elsewhere on the page, so the Live card stays locked but never shows a dead
   // "Upgrade" button for them.
+  // Annual members are excluded: self-serve upgrade targets the *monthly* Circle
+  // price, which would silently switch their cadence. Changing an annual member's
+  // tier is handled by admin (same as downgrades) until annual↔annual self-serve
+  // exists — so the hardcoded "$47 / month" preview below only ever shows to
+  // monthly members it's actually true for.
   const canUpgrade =
-    subscriptionStatus === 'active' && !isCancelling && !pendingPlan && role !== 'pro_subscriber'
+    subscriptionStatus === 'active' && !isCancelling && !pendingPlan &&
+    role !== 'pro_subscriber' && billingInterval !== 'year'
 
   const handleChangePlan = async (targetTier: 'subscriber' | 'pro_subscriber') => {
     setChangingPlan(true)
@@ -362,7 +375,7 @@ export default function DashboardClient({
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <p className="font-serif text-xl text-charcoal">{plan.name}</p>
-                  <p className="text-charcoal/65 mt-0.5 text-base">{plan.price}</p>
+                  <p className="text-charcoal/65 mt-0.5 text-base">{planPrice}</p>
                 </div>
                 <span className={`text-xs font-semibold px-3 py-1 rounded-full ${badge.classes}`}>
                   {badge.label}

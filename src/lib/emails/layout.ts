@@ -13,9 +13,10 @@ type ShellOptions = {
   eyebrow: string;      // small green uppercase label
   content: string;      // inner HTML: heading, paragraphs, button
   footerNote?: string;  // optional line above the copyright
+  preheader?: string;   // hidden inbox-preview text (the snippet shown in the list)
 };
 
-export function emailShell({ title, eyebrow, content, footerNote }: ShellOptions): string {
+export function emailShell({ title, eyebrow, content, footerNote, preheader }: ShellOptions): string {
   return `
 <!DOCTYPE html>
 <html lang="en">
@@ -33,6 +34,7 @@ export function emailShell({ title, eyebrow, content, footerNote }: ShellOptions
   </style>
 </head>
 <body style="margin:0;padding:0;background:#FBF5F3;font-family:'Helvetica Neue',Arial,sans-serif;-webkit-text-size-adjust:100%;">
+  ${preheader ? `<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#FBF5F3;">${preheader}</div>` : ''}
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" class="email-outer" style="background:#FBF5F3;padding:48px 16px;">
     <tr>
       <td align="center">
@@ -56,6 +58,17 @@ export function emailShell({ title, eyebrow, content, footerNote }: ShellOptions
                 <tr>
                   <td style="padding-top:28px;border-top:1px solid rgba(28,16,7,0.08);text-align:center;">
                     ${footerNote ? `<p style="margin:0 0 8px;font-size:13px;color:rgba(28,16,7,0.6);line-height:1.6;">${footerNote}</p>` : ''}
+                    <!-- Why-received line: marks these as account/transactional mail
+                         (helps deliverability and sets expectations). -->
+                    <p style="margin:0 0 6px;font-size:13px;color:rgba(28,16,7,0.6);line-height:1.6;">
+                      You're receiving this because you have a TAT for Animals account.
+                    </p>
+                    <p style="margin:0 0 6px;font-size:13px;color:rgba(28,16,7,0.6);line-height:1.6;">
+                      Questions? <a href="mailto:hello@tatforanimals.com" style="color:#467826;text-decoration:underline;">hello@tatforanimals.com</a>
+                    </p>
+                    <!-- TODO: add the company postal address here once Tapas/Jez
+                         provide it (CAN-SPAM best practice). e.g.:
+                         <p style="...">TATLife®, Inc. · [street, city, state ZIP]</p> -->
                     <p style="margin:0;font-size:13px;color:rgba(28,16,7,0.6);">
                       &copy; 2026 TATLife&reg;, Inc. &middot; tatforanimals.com
                     </p>

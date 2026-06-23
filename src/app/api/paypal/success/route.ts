@@ -1,5 +1,6 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
-import { paypalRequest, PLAN_ROLE_MAP } from '@/lib/paypal'
+import { paypalRequest, PLAN_ROLE_MAP, getPlanInterval } from '@/lib/paypal'
+import { sendWelcomeOnce } from '@/lib/sendWelcomeOnce'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
@@ -33,9 +34,27 @@ export async function GET(request: NextRequest) {
         role,
         paypal_subscription_id: subscriptionId,
         subscription_status: 'active',
+        // Set the cadence here too (not just in the webhook) so an annual PayPal
+        // member shows "$470 / year" immediately, even if the webhook lags.
+        billing_interval: getPlanInterval(planId),
       })
       .eq('id', userId)
   }
+
+  // Welcome email — exactly once across this handler, the webhook, and self-heal
+  // (shared guard). This handler runs synchronously on return, so it usually
+  // wins; the webhook then skips.
+  const { data: profile } = await supabaseAdmin
+    .from('profiles')
+    .select('email, full_name')
+    .eq('id', userId)
+    .single()
+  await sendWelcomeOnce({
+    subscriptionId,
+    email: profile?.email,
+    name: profile?.full_name,
+    role: role as 'subscriber' | 'pro_subscriber',
+  })
 
   return NextResponse.redirect(`${process.env.NEXT_PUBLIC_SITE_URL}/thank-you`)
 }

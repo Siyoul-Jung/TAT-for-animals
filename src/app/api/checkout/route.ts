@@ -3,8 +3,10 @@ import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 
 const PRICE_IDS: Record<string, string | undefined> = {
-  calm_library: process.env.STRIPE_PRICE_CALM_LIBRARY,
-  calm_circle:  process.env.STRIPE_PRICE_CALM_CIRCLE,
+  calm_library:        process.env.STRIPE_PRICE_CALM_LIBRARY,
+  calm_circle:         process.env.STRIPE_PRICE_CALM_CIRCLE,
+  calm_library_annual: process.env.STRIPE_PRICE_CALM_LIBRARY_ANNUAL,
+  calm_circle_annual:  process.env.STRIPE_PRICE_CALM_CIRCLE_ANNUAL,
 }
 
 export async function POST(request: NextRequest) {

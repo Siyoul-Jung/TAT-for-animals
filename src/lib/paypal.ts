@@ -47,11 +47,27 @@ export async function getPayPalSubscription(id: string): Promise<{
 }
 
 export const PLAN_IDS: Record<string, string> = {
-  calm_library: process.env.PAYPAL_PLAN_CALM_LIBRARY!,
-  calm_circle:  process.env.PAYPAL_PLAN_CALM_CIRCLE!,
+  calm_library:        process.env.PAYPAL_PLAN_CALM_LIBRARY!,
+  calm_circle:         process.env.PAYPAL_PLAN_CALM_CIRCLE!,
+  calm_library_annual: process.env.PAYPAL_PLAN_CALM_LIBRARY_ANNUAL!,
+  calm_circle_annual:  process.env.PAYPAL_PLAN_CALM_CIRCLE_ANNUAL!,
 };
 
+// Both billing intervals of a tier grant the same role — the role is the tier,
+// not the cadence. Annual plans map to the same role as their monthly twin.
 export const PLAN_ROLE_MAP: Record<string, string> = {
-  [process.env.PAYPAL_PLAN_CALM_LIBRARY!]: 'subscriber',
-  [process.env.PAYPAL_PLAN_CALM_CIRCLE!]:  'pro_subscriber',
+  [process.env.PAYPAL_PLAN_CALM_LIBRARY!]:        'subscriber',
+  [process.env.PAYPAL_PLAN_CALM_CIRCLE!]:         'pro_subscriber',
+  [process.env.PAYPAL_PLAN_CALM_LIBRARY_ANNUAL!]: 'subscriber',
+  [process.env.PAYPAL_PLAN_CALM_CIRCLE_ANNUAL!]:  'pro_subscriber',
 };
+
+// PayPal events don't carry the billing cadence, but the plan does. Map the two
+// annual plan IDs so the webhook can store the right interval for the dashboard
+// label. Anything else (the monthly plans, or an unknown plan) → 'month'.
+const ANNUAL_PLAN_IDS = new Set(
+  [process.env.PAYPAL_PLAN_CALM_LIBRARY_ANNUAL, process.env.PAYPAL_PLAN_CALM_CIRCLE_ANNUAL].filter(Boolean)
+);
+export function getPlanInterval(planId: string | undefined): 'month' | 'year' {
+  return planId && ANNUAL_PLAN_IDS.has(planId) ? 'year' : 'month';
+}

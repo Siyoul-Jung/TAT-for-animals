@@ -1,26 +1,13 @@
 import { stripe } from '@/lib/stripe'
 import { resend, FROM_EMAIL } from '@/lib/resend'
-import { welcomeEmail } from '@/lib/emails/welcome'
 import { cancellationEmail } from '@/lib/emails/cancellation'
+import { sendWelcomeOnce } from '@/lib/sendWelcomeOnce'
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { PRICE_ROLE_MAP, getBillingInterval, getPeriodEndISO } from '@/lib/subscriptionAccess'
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 
-// Subscription plan → role mapping
-// Manage Price IDs and roles here after pricing is confirmed
-const PRICE_ROLE_MAP: Record<string, string> = {
-  [process.env.STRIPE_PRICE_CALM_LIBRARY!]: 'subscriber',
-  [process.env.STRIPE_PRICE_CALM_CIRCLE!]:  'pro_subscriber',
-}
-
-// Stripe API 2025-03-31 (basil) and later moved `current_period_end` off the
-// Subscription object onto each Subscription Item. Read it from there.
-function getPeriodEndISO(subscription: Stripe.Subscription): string | null {
-  const periodEnd = subscription.items.data[0]?.current_period_end
-  return periodEnd ? new Date(periodEnd * 1000).toISOString() : null
-}
-
-// The same release removed `Invoice.subscription`; it now lives under
+// Stripe API 2025-03-31 (basil) and later removed `Invoice.subscription`; it now lives under
 // `invoice.parent.subscription_details.subscription`. Fall back to the legacy
 // field so older in-flight events are still handled.
 function getInvoiceSubscriptionId(invoice: Stripe.Invoice): string | null {
@@ -134,6 +121,7 @@ export async function POST(request: NextRequest) {
           stripe_subscription_id: subscriptionId,
           subscription_status: 'active',
           current_period_end: getPeriodEndISO(subscription),
+          billing_interval: getBillingInterval(subscription),
           cancel_at: null,
         }
         if (customerName) updatePayload.full_name = customerName
@@ -144,15 +132,15 @@ export async function POST(request: NextRequest) {
           .update(updatePayload)
           .eq('id', userId)
 
-        // Send welcome email — failure does not affect webhook response
-        if (customerEmail) {
-          try {
-            const { subject, html } = welcomeEmail(customerName, role as 'subscriber' | 'pro_subscriber')
-            await resend.emails.send({ from: FROM_EMAIL, to: customerEmail, subject, html })
-          } catch (emailError) {
-            console.error('Welcome email failed:', emailError)
-          }
-        }
+        // Welcome email — sent exactly once across every activation path
+        // (webhook / verify / self-heal) via the shared guard. Failure does not
+        // affect the webhook response.
+        await sendWelcomeOnce({
+          subscriptionId,
+          email: customerEmail,
+          name: customerName,
+          role: role as 'subscriber' | 'pro_subscriber',
+        })
 
         break
       }
@@ -243,6 +231,7 @@ export async function POST(request: NextRequest) {
             pending_tier: pending.tier,
             pending_tier_at: pending.at,
             cancel_at: cancelAt,
+            billing_interval: getBillingInterval(subscription),
             ...(periodEndISO ? { current_period_end: periodEndISO } : {}),
           })
           .eq('id', userId)

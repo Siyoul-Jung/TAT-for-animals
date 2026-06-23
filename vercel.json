@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/annual-renewal-reminder",
+      "schedule": "0 9 * * *"
+    }
+  ]
+}

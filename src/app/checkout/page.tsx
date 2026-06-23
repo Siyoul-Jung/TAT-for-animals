@@ -5,9 +5,11 @@ import { useState, useEffect } from 'react';
 import { Suspense } from 'react';
 import Link from 'next/link';
 
-const PLANS: Record<string, { name: string; price: string }> = {
-  calm_library: { name: 'The Calm Library', price: '27' },
-  calm_circle:  { name: 'The Calm Circle',  price: '47' },
+const PLANS: Record<string, { name: string; price: string; interval: 'month' | 'year' }> = {
+  calm_library:        { name: 'The Calm Library', price: '27',  interval: 'month' },
+  calm_circle:         { name: 'The Calm Circle',  price: '47',  interval: 'month' },
+  calm_library_annual: { name: 'The Calm Library', price: '270', interval: 'year'  },
+  calm_circle_annual:  { name: 'The Calm Circle',  price: '470', interval: 'year'  },
 };
 
 function CheckoutContent() {
@@ -73,7 +75,7 @@ function CheckoutContent() {
             {tier.name}
           </h1>
           <p className="text-charcoal/65">
-            <span className="text-2xl font-semibold text-charcoal">${tier.price}</span> / month
+            <span className="text-2xl font-semibold text-charcoal">${tier.price}</span> / {tier.interval === 'year' ? 'year' : 'month'}
           </p>
         </div>
 

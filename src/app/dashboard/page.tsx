@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { membershipHasLapsed } from '@/lib/access'
+import { reconcileAccess } from '@/lib/reconcileAccess'
 import { redirect } from 'next/navigation'
 import type { Metadata } from 'next'
 import { sanityClient } from '@/lib/sanity'
@@ -28,11 +29,25 @@ export default async function DashboardPage({
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login?next=/dashboard')
 
-  const { data: profile } = await supabase
+  const { data: profileRow } = await supabase
     .from('profiles')
-    .select('full_name, role, subscription_status, stripe_subscription_id, paypal_subscription_id, current_period_end, pending_tier, pending_tier_at, cancel_at')
+    .select('full_name, role, subscription_status, stripe_customer_id, stripe_subscription_id, paypal_subscription_id, current_period_end, billing_interval, pending_tier, pending_tier_at, cancel_at')
     .eq('id', user.id)
     .single()
+
+  // Self-heal: if the member has no active role but actually has an active
+  // subscription at the provider (a missed webhook), grant it now from the
+  // payment record — so a paid member is never shown the "choose a plan" state.
+  let profile = profileRow
+  if (profileRow && profileRow.role !== 'subscriber' && profileRow.role !== 'pro_subscriber') {
+    const healed = await reconcileAccess({
+      id: user.id,
+      role: profileRow.role,
+      stripe_customer_id: profileRow.stripe_customer_id,
+      paypal_subscription_id: profileRow.paypal_subscription_id,
+    })
+    if (healed) profile = { ...profileRow, ...healed }
+  }
 
   const upcoming = await sanityClient.fetch<WebinarSession[]>(
     `*[_type == "webinarSchedule" && date > now()] | order(date asc) [0..0] {
@@ -54,6 +69,7 @@ export default async function DashboardPage({
       hasSubscription={!lapsed && !!(profile?.stripe_subscription_id || profile?.paypal_subscription_id)}
       isPayPal={!!profile?.paypal_subscription_id}
       currentPeriodEnd={profile?.current_period_end ?? null}
+      billingInterval={profile?.billing_interval ?? null}
       pendingTier={lapsed ? null : (profile?.pending_tier ?? null)}
       pendingTierAt={lapsed ? null : (profile?.pending_tier_at ?? null)}
       cancelAt={lapsed ? null : (profile?.cancel_at ?? null)}
