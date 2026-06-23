@@ -99,13 +99,20 @@ export default function AboutClient() {
             </p>
             <p>
               Again and again, she saw how much fear, stress, and emotional tension animals can
-              carry &mdash; and how profoundly things can shift when the nervous system is given
-              space to soften and feel safe.
+              carry &mdash; and how profoundly things can shift when their whole system &mdash;
+              emotional, physical and energetic &mdash; is given new information that naturally
+              allows them to soften and feel safe.
             </p>
             <p>
-              TAT&reg; works by creating the conditions for the nervous system to gently release
-              what it has been holding &mdash; beliefs, fears, memories &mdash; not by forcing them
-              back into awareness, but by inviting something new to emerge in their place.
+              The new information allows an animal to no longer be locked in past traumas. They
+              become present and at ease. They don&rsquo;t have to relive anything stressful to get
+              over bad memories that had been a recurring pattern of fear, stress and negative
+              influence.
+            </p>
+            <p>
+              The communication with animals is done with natural frequencies that animals
+              immediately feel and healing thoughts they understand. Most animals respond
+              immediately. For others, repeating the process helps them over time.
             </p>
             <p>
               Through this work, Tapas has helped people and animals around the world find more
