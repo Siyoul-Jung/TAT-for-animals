@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
@@ -56,7 +56,11 @@ const faqs = [
   },
   {
     q: 'Can I change or cancel my membership?',
-    a: 'Yes, anytime — there\'s no long-term commitment. To move up from The Calm Library to The Calm Circle, just use the upgrade option in your account. It takes effect right away, and you only pay the prorated difference — never twice. If you\'d prefer a smaller plan, send us a quick note and we\'ll switch it for you. And you can cancel whenever you like — your access continues until the end of the period you\'ve already paid for.',
+    a: 'Yes, anytime — there\'s no long-term commitment. You can cancel whenever you like, and your access continues until the end of the period you\'ve already paid for — the rest of the month, or the rest of the year on an annual plan. To move up from The Calm Library to The Calm Circle on a monthly plan, just use the upgrade option in your account; it takes effect right away, and you only pay the prorated difference — never twice. For a smaller plan, or to change an annual plan, send us a quick note and we\'ll take care of it. Annual memberships are billed once a year (two months free compared with paying monthly) and renew automatically until you cancel.',
+  },
+  {
+    q: 'Do you offer refunds?',
+    a: 'Payments already made aren\'t refundable — this is standard for digital memberships, where your full library is available the moment you join. There\'s no need to worry about being stuck, though: you can cancel anytime, and you\'ll keep access until the end of the period you\'ve already paid for, so you\'re never charged again after you cancel. If you\'re not yet sure an annual plan is right for you, the monthly plan is an easy, low-commitment way to begin.',
   },
 ];
 
@@ -102,6 +106,18 @@ function FAQItem({ q, a }: { q: string; a: string }) {
 }
 
 export default function FAQ() {
+  // Collapse every item when the page is restored from the browser's bfcache
+  // (back/forward), which would otherwise reopen whatever was expanded before
+  // leaving. Bumping the key remounts the list so each item resets to closed.
+  const [resetKey, setResetKey] = useState(0);
+  useEffect(() => {
+    const onShow = (e: PageTransitionEvent) => {
+      if (e.persisted) setResetKey((k) => k + 1);
+    };
+    window.addEventListener('pageshow', onShow);
+    return () => window.removeEventListener('pageshow', onShow);
+  }, []);
+
   return (
     <main className="min-h-screen bg-cream pt-28 pb-24 px-6">
       <div className="max-w-2xl mx-auto">
@@ -118,7 +134,7 @@ export default function FAQ() {
           </p>
         </div>
 
-        <div>
+        <div key={resetKey}>
           {faqs.map(({ q, a }, i) => (
             <FAQItem key={i} q={q} a={a} />
           ))}
