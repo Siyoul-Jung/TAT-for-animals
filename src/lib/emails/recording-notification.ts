@@ -19,7 +19,7 @@ export function recordingNotificationEmail(
                 ${recording.title}
               </h1>
               <p style="margin:0;font-size:17px;color:rgba(28,16,7,0.65);line-height:1.7;">
-                Hi ${firstName}, the recording from your ${recording.date} live session with Tapas is now ready to watch.
+                Hi ${firstName}, the recording from your ${recording.date} live webinar with Tapas is now ready to watch.
               </p>
 
               ${recording.summary ? `
@@ -28,7 +28,7 @@ export function recordingNotificationEmail(
                 <tr>
                   <td style="padding-top:28px;border-top:1px solid rgba(28,16,7,0.08);text-align:center;">
                     <p style="margin:0 0 8px;font-size:13px;letter-spacing:0.15em;text-transform:uppercase;color:#467826;font-weight:600;">
-                      In this session
+                      In this webinar
                     </p>
                     <p style="margin:0;font-size:15px;color:rgba(28,16,7,0.65);line-height:1.7;">
                       ${recording.summary}

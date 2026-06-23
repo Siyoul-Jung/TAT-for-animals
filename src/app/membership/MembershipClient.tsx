@@ -180,7 +180,7 @@ export default function MembershipClient() {
               />
             </div>
             <blockquote className="font-serif italic text-2xl sm:text-3xl text-charcoal/80 leading-[1.6] mb-5 text-balance">
-              &ldquo;Help people find peace. One person — and one animal — at a time.&rdquo;
+              &ldquo;I love to help people find peace — one person, and one animal at a time.&rdquo;
             </blockquote>
             <p className="text-xs tracking-[0.25em] uppercase text-charcoal/65">
               — Tapas Fleming, Founder of TAT®

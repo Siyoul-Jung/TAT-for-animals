@@ -485,7 +485,7 @@ export default function DashboardClient({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <ContentCard
                 title="Library"
-                description="TAT for Animals · Healing ACEs Plus"
+                description="TAT for Animals"
                 href="/library"
                 badge="The Calm Library"
               />
@@ -569,21 +569,23 @@ export default function DashboardClient({
                 </div>
               )
             )}
-            {/* Quiet 1:1 booking entry for members — the warmest audience for a private session,
-                placed gently (no payment pressure). Green is AA-legible on this light card.
-                Placeholder copy pending Tapas's wording; URL shared via lib/links. */}
-            <p className="text-sm text-charcoal/65 leading-relaxed">
-              Want personal, hands-on guidance?{' '}
+            {/* Quiet 1:1 booking entry for members — the warmest audience for a private
+                session, placed gently (no payment pressure). Green is AA-legible here.
+                Copy per Tapas's review; URL shared via lib/links. */}
+            <div className="pt-1">
               <a
                 href={BOOKING_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-medium underline underline-offset-2 hover:opacity-70 transition-opacity"
+                className="inline-block font-medium underline underline-offset-2 hover:opacity-70 transition-opacity"
                 style={{ color: '#467826' }}
               >
-                Book a private session with Tapas →
+                Book a Private Session with Tapas →
               </a>
-            </p>
+              <p className="text-sm text-charcoal/65 leading-relaxed mt-1">
+                Personalized support for your animal&rsquo;s calm and well-being.
+              </p>
+            </div>
           </section>
         )}
 

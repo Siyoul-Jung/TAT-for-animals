@@ -41,7 +41,7 @@ export function webinarInviteEmail(
   webinar: WebinarInviteData
 ): { subject: string; html: string } {
   const firstName = name?.split(' ')[0] ?? 'there';
-  const subject = `Upcoming live session with Tapas — ${webinar.title}`;
+  const subject = `Upcoming live webinar with Tapas — ${webinar.title}`;
 
   // If the date parses as ISO we get a clean PT label + a working calendar link.
   // If a pre-formatted string ever sneaks through, fall back to showing it raw
@@ -55,7 +55,7 @@ export function webinarInviteEmail(
                 ${webinar.title}
               </h1>
               <p style="margin:0;font-size:17px;color:rgba(28,16,7,0.65);line-height:1.7;">
-                Hi ${firstName}, your next live session with Tapas is coming up.
+                Hi ${firstName}, your next live webinar with Tapas is coming up.
               </p>
 
               <!-- When -->
@@ -73,6 +73,9 @@ export function webinarInviteEmail(
                       Shown in Pacific Time &middot; add it to your calendar below to see your own local time.
                     </p>
                     ` : ''}
+                    <p style="margin:16px 0 0;font-size:15px;color:rgba(28,16,7,0.65);line-height:1.7;">
+                      A question and answer session followed by a led group TAT session supporting all the animals present (and their people, too).
+                    </p>
                     ${webinar.description ? `
                     <p style="margin:16px 0 0;font-size:15px;color:rgba(28,16,7,0.65);line-height:1.7;">
                       ${webinar.description}
@@ -81,7 +84,7 @@ export function webinarInviteEmail(
                   </td>
                 </tr>
               </table>
-              ${emailButton(webinar.meetingUrl, 'Join the session &rarr;')}
+              ${emailButton(webinar.meetingUrl, 'Join the webinar &rarr;')}
               ${showCalendar ? `
               <p style="margin:20px 0 0;">
                 <a href="${calendarUrl(webinar)}"

@@ -66,9 +66,11 @@ export function emailShell({ title, eyebrow, content, footerNote, preheader }: S
                     <p style="margin:0 0 6px;font-size:13px;color:rgba(28,16,7,0.6);line-height:1.6;">
                       Questions? <a href="mailto:hello@tatforanimals.com" style="color:#467826;text-decoration:underline;">hello@tatforanimals.com</a>
                     </p>
-                    <!-- TODO: add the company postal address here once Tapas/Jez
-                         provide it (CAN-SPAM best practice). e.g.:
-                         <p style="...">TATLife®, Inc. · [street, city, state ZIP]</p> -->
+                    <!-- Postal address (CAN-SPAM): provided by Tapas 2026-06-23.
+                         Currently her home address; swap for a PO box if she moves to one. -->
+                    <p style="margin:0 0 6px;font-size:13px;color:rgba(28,16,7,0.6);line-height:1.6;">
+                      TATLife&reg;, Inc. &middot; 1317 Portola Ave., Torrance, CA 90501
+                    </p>
                     <p style="margin:0;font-size:13px;color:rgba(28,16,7,0.6);">
                       &copy; 2026 TATLife&reg;, Inc. &middot; tatforanimals.com
                     </p>

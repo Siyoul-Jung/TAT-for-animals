@@ -14,7 +14,7 @@ export function cancellationEmail(name: string | null): { subject: string; html:
                 Your membership has been cancelled.
               </p>
               <p style="margin:0;font-size:17px;color:rgba(28,16,7,0.65);line-height:1.7;">
-                You'll keep full access until the end of your current billing period. Whenever you feel ready to return, your animal will be waiting.
+                You'll keep full access until the end of your current billing period. You're welcome to return anytime.
               </p>`;
 
   const html = emailShell({

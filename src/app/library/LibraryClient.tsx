@@ -417,7 +417,7 @@ export default function LibraryClient({
 
   const tabs: { id: Tab; label: string; locked?: boolean }[] = [
     { id: 'animals', label: 'TAT for Animals' },
-    { id: 'aces', label: 'Healing ACEs Plus' },
+    { id: 'aces', label: 'For You' },
     { id: 'live', label: 'Live Sessions', locked: role !== 'pro_subscriber' },
   ]
 
@@ -452,7 +452,7 @@ export default function LibraryClient({
             >
               <span className="hidden sm:inline">{tab.label}</span>
               <span className="sm:hidden">
-                {tab.id === 'animals' ? 'Animals' : tab.id === 'aces' ? 'ACEs' : 'Live'}
+                {tab.id === 'animals' ? 'Animals' : tab.id === 'aces' ? 'For You' : 'Live'}
               </span>
               {tab.locked && (
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth={1.5}

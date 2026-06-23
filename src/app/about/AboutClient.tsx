@@ -28,7 +28,7 @@ export default function AboutClient() {
               Tapas Fleming
             </h1>
             <p className="font-sans text-lg text-muted">
-              Creator and Founder of TATLife®
+              Creator and Founder of TAT®
             </p>
           </motion.div>
         </div>
@@ -224,18 +224,18 @@ export default function AboutClient() {
       <section className="pb-20 lg:pb-28 px-6 bg-white">
         <div className="max-w-3xl mx-auto">
           <motion.div {...fadeUp}>
-            {/* 영상 */}
+            {/* 영상 — Kai's Journey (TATLife 공식 Vimeo, ~9.7분). autoplay 미설정(프로젝트 자동재생 금지 규칙). */}
             <div
-              className="relative aspect-video rounded-2xl overflow-hidden flex items-center justify-center"
-              style={{
-                backgroundColor: 'rgba(70,120,38,0.06)',
-                boxShadow: '0 0 0 1px rgba(28,16,7,0.06)',
-              }}
+              className="relative aspect-video rounded-2xl overflow-hidden"
+              style={{ boxShadow: '0 0 0 1px rgba(28,16,7,0.06)' }}
             >
-              {/* TODO: replace with Vimeo/YouTube embed of Kai's session once Jez/Tapas send the URL */}
-              <span className="text-sm text-charcoal/45 font-light px-6 text-center">
-                Kai&rsquo;s session — video coming soon
-              </span>
+              <iframe
+                src="https://player.vimeo.com/video/1080084066?title=0&byline=0&portrait=0&dnt=1"
+                title="Kai&rsquo;s Journey — a full TAT&reg; session"
+                className="absolute inset-0 w-full h-full"
+                allow="fullscreen; picture-in-picture"
+                allowFullScreen
+              />
             </div>
             <p className="text-center text-sm text-muted mt-4">
               A full TAT&reg; session with Kai

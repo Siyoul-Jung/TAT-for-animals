@@ -8,27 +8,27 @@ import { ChevronDown } from 'lucide-react';
 const faqs = [
   {
     q: 'What is TAT for Animals?',
-    a: 'TAT (Tapas Acupressure Technique) is a simple, gentle approach to helping animals feel calmer, happier, and more at ease. You don\'t need any special training or skills. You just place your hands over your heart, listen to a recording, and the healing information transfers to your animal — wherever they are.',
+    a: 'TAT (Tapas Acupressure Technique) is a simple, gentle approach to helping animals feel calmer, happier, and more at ease. You don\'t need any special training or skills. You just place your hands over your heart, listen to a recording, and the healing information is received by your animal — wherever they are.',
   },
   {
     q: 'How does it actually work?',
-    a: 'TAT works by sending new information to your animal\'s whole body — every cell, every frequency. The message is simple: whatever happened before is over. It\'s safe to relax now. You don\'t need to understand exactly how it works before it works. (Do you understand exactly how Wi-Fi works? Probably not — but you use it every day.)',
+    a: 'TAT works by sending new information to your animal\'s whole body — every cell, every frequency. The message is simple: whatever happened before is over. It\'s safe to relax now. DNA is a frequency antenna. Your animal receives the supportive information — thoughts and feelings — communicated in all the TAT statements. Their whole system updates and they can relax and feel better immediately. You don\'t need to understand exactly how it works before it works. (Do you understand exactly how Wi-Fi works? Probably not — but you use it every day.)',
   },
   {
     q: 'Do I need to be an animal communicator or have special abilities?',
-    a: 'Not at all. One of the most common worries is "I\'m not an animal communicator — can my animal really hear me?" The answer is yes. You\'re already connected with your animal through your heart. TAT works through that connection, not through any special skill.',
+    a: 'Not at all. One of the most common worries is "I\'m not an animal communicator — can my animal really hear me?" The answer is yes. You\'re already connected with your animal through your heart. TAT works through that special bond of love. Nothing more is needed for the success of you helping your animal with TAT.',
   },
   {
     q: 'What if I\'m skeptical? What if I don\'t believe this can work?',
-    a: 'That\'s completely fine — and actually, you can work with that. If you catch yourself thinking "this is too easy" or "this can\'t work for something this serious," just include that doubt in the session. Add it to what\'s being transformed. You don\'t have to believe for it to work.',
+    a: 'That\'s completely fine — and actually, you can work with those kinds of thoughts. If you notice yourself thinking "this is too easy" or "this can\'t work for something this serious," just include that doubt in the session. Add it to what\'s being transformed. You don\'t have to believe anything for it to work (and neither does your animal!).',
   },
   {
     q: 'Does my animal need to be in the room with me?',
-    a: 'No. You\'re connected with your animal in your heart, and that connection doesn\'t depend on physical distance. Whether they\'re next to you or across the house, they receive what you\'re sending.',
+    a: 'No. You\'re connected with your animal in your heart, and that connection doesn\'t depend on physical distance. Whether they\'re next to you, across the house, or even miles away, they receive what you\'re sending.',
   },
   {
     q: 'What situations can TAT help with?',
-    a: 'Fear of loud noises, strangers, or other animals. Anxiety and stress. Recovery from illness or surgery. Unknown trauma — especially in adopted animals who arrived with a difficult past. Unexplained crying or hiding. Behavioral changes you can\'t quite put your finger on. You don\'t need to know the exact cause. Just work with what you can see.',
+    a: 'Fear of loud noises, strangers, or other animals. Anxiety and stress. Recovery from illness or surgery. Unknown trauma — especially in adopted animals who arrived with a difficult past. Unexplained crying or hiding. Behavioral changes you can\'t quite put your finger on. You don\'t need to know the exact cause. Just work with what you notice.',
   },
   {
     q: 'Do I need to know what\'s wrong with my animal?',
@@ -36,11 +36,11 @@ const faqs = [
   },
   {
     q: 'What do I actually do in a session?',
-    a: 'Two simple poses. The Heart Pose: place one palm over the other near the center of your chest. The TAT Pose: lightly touch the inner corners of your eyes with your thumb and ring finger, your middle finger just above the midline of your brow, and your other hand cradling the base of your skull. Then you listen to the recording and follow along. No pressure, no concentration required — just a light touch and an open heart.',
+    a: 'During the session, you\'ll place your hands in three easy positions (one over the chest, two lightly on the head). Choose the feeling or situation you want to help your animal with, start the recording, and follow the guidance. You don\'t need to try to make anything happen — just hold the touch and let the session help shift your animal\'s energy and nervous system.',
   },
   {
     q: 'Do I need to concentrate or feel something during a session?',
-    a: 'No. You don\'t need to focus hard, feel anything specific, or be perfectly still. If your attention wanders, that\'s fine. You don\'t have to figure anything out. Just follow the recording and leave the healing to something larger than both of you.',
+    a: 'No. You don\'t need to focus hard, feel anything specific, or be perfectly still. If your attention wanders, that\'s fine. You don\'t have to figure anything out. Just follow the recording and leave the healing to nature, the Divine (whatever you call That), or Whatever Makes Flowers Grow.',
   },
   {
     q: 'How will I know if it\'s working?',
@@ -48,11 +48,11 @@ const faqs = [
   },
   {
     q: 'Can I do this alongside veterinary treatment?',
-    a: 'Yes. TAT works alongside any other care your animal is receiving. If your animal is on medication, they may need less of it over time — so stay in close contact with your veterinarian.',
+    a: 'Yes. TAT works alongside any other care your animal is receiving. If your animal is on medication, they may need less of it after doing a TAT session — stay in close contact with your veterinarian.',
   },
   {
     q: 'What about me — does this affect the owner too?',
-    a: 'Often, yes. Your animal feels what you feel. When you clear your own stress and tension, your animal relaxes too. Many people find that doing TAT for their animal brings them a surprising sense of calm as well.',
+    a: 'Often, yes. You often feel what your animal feels, and your animal feels what you feel. When you clear your own stress and tension, your animal relaxes too. Many people find that doing TAT for their animal brings them a surprising sense of calm as well.',
   },
   {
     q: 'Can I change or cancel my membership?',
