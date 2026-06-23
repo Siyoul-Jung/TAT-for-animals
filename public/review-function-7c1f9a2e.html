@@ -68,7 +68,7 @@
   <p class="lead">This pass is only about <b>behaviour</b> &mdash; not how it looks. Walk the site the way a real member would and check that every step <b>does what it should</b>: forms submit, emails arrive, payment goes through, the right content unlocks, links go somewhere, nothing dead-ends. (A separate pass covers how it looks and feels.)</p>
 
   <div class="howto">
-    <p><b>The charge is tiny, and refunded.</b> Checkout is live, but the test amount is just <b>$0.50</b> (The Calm Library) or <b>$1</b> (The Calm Circle) &mdash; pay with a real card or PayPal, and we&rsquo;ll refund every test charge as soon as you&rsquo;re done. So please don&rsquo;t hold back.</p>
+    <p><b>The charge is tiny, and refunded.</b> Checkout is live, but the charge is just <b>$0.50</b> (The Calm Library) or <b>$1</b> (The Calm Circle) &mdash; pay with a real card or PayPal. When you&rsquo;ve finished testing, just let us know and we&rsquo;ll refund every charge. So please don&rsquo;t hold back.</p>
     <p>Each item has a quick <b>Works / Found an issue</b> toggle and a notes box. Be as blunt and technical as you like &mdash; a broken link, a flow that dead-ends, a wrong price or date, a console error, a redirect that lands in the wrong place. The more specific (which page, what you did, what happened), the faster it gets fixed.</p>
     <p class="sub" style="color:var(--muted)">Heads-up: the TAT for Animals library is filled in, but the &ldquo;For You&rdquo; tab is still being populated (just a test video for now) &mdash; there we&rsquo;re only checking the shell and the access rules.</p>
   </div>
@@ -82,7 +82,7 @@
   </div>
 
   <div class="howto">
-    <p><b>Covering everything without testing all day.</b> You don&rsquo;t need every possible combination &mdash; these four, between them, exercise every payment type, billing period, and plan:</p>
+    <p><b>Covering everything without testing all day.</b> You don&rsquo;t need every possible combination &mdash; these four, between them, cover every payment type, billing period, and plan. Use them as your guide for the checkout steps below:</p>
     <ol style="margin:8px 0 10px; padding-left:22px">
       <li><b>Card</b> &middot; Monthly &middot; The Calm Library</li>
       <li><b>PayPal</b> &middot; Yearly &middot; The Calm Circle</li>
@@ -91,6 +91,10 @@
     </ol>
     <p>Then walk the journeys: <b>upgrade</b> (The Calm Library &rarr; The Calm Circle), <b>cancel</b>, <b>password reset</b>, and <b>delete account</b>.</p>
     <p class="sub" style="color:var(--muted)">Tip: use a fresh email per account and put the scenario right in it &mdash; e.g. <b>hello+card-monthly-library@tatforanimals.com</b> &mdash; so each result is easy to trace. (Anything at hello+&hellip;@tatforanimals.com lands in the same inbox but counts as a brand-new sign-up.)</p>
+  </div>
+
+  <div class="howto">
+    <p class="sub" style="color:var(--muted)"><b>A few things we handle on our side &mdash; no need to test these:</b> the yearly <i>renewal</i> and its reminder email (they only happen much later). The &ldquo;payment failed&rdquo; state is also on us. And moving to a <i>smaller</i> plan, or changing a yearly plan, is done by us on request &mdash; so there&rsquo;s no self-serve button for those on purpose (expected, not a bug).</p>
   </div>
 
   <!-- =================== SECTION 1: MEMBER JOURNEY =================== -->
@@ -113,17 +117,17 @@
 
   <div class="mission">
     <span class="pill">Checkout</span>
-    <h2>Choose a plan and pay with the test card</h2>
+    <h2>Choose a plan and pay by card</h2>
     <p class="lbl">Do</p>
     <p>Pick a plan and pay with your <b>real card</b>. The amount is tiny and refunded:</p>
     <div class="card-callout">
-      <div>Test charge</div>
+      <div>What you&rsquo;ll be charged</div>
       <div class="big">$0.50 &middot; The Calm Library</div>
       <div class="big">$1.00 &middot; The Calm Circle</div>
-      <p class="rea" style="margin:6px 0 0">A real charge, but tiny &mdash; we refund every test charge.</p>
+      <p class="rea" style="margin:6px 0 0">A real charge, but tiny &mdash; we refund every charge.</p>
     </div>
-    <p class="info">Heads-up: the plan pages still show the full <b>$27 / $47</b> price, but the actual charge is the reduced test amount above. Please test using <b>&ldquo;Pay with card.&rdquo;</b></p>
-    <p class="sub">Does it land on thank-you and then a dashboard that reflects the plan you bought, and does the <b>welcome email</b> arrive in your inbox? Try an edge if you like: a logged-out checkout, or hitting pay twice &mdash; should never double-charge or break.</p>
+    <p class="info">Heads-up: the plan pages still show the full <b>$27 / $47</b> price, but the actual charge is the reduced amount above. Please use <b>&ldquo;Pay with card.&rdquo;</b></p>
+    <p class="sub">Does it land on thank-you and then a dashboard that reflects the plan you bought, and does the <b>welcome email</b> arrive in your inbox? Try something tricky if you like: a logged-out checkout, or hitting pay twice &mdash; it should never double-charge or break.</p>
     <div class="feel">
       <label><input type="radio" name="m2" data-key="m2" value="ok" /> Works</label>
       <label><input type="radio" name="m2" data-key="m2" value="issue" /> Found an issue</label>
@@ -137,10 +141,10 @@
     <p class="lbl">Do</p>
     <p>Sign up again with another fresh email, pick a plan, and this time pay with <b>PayPal</b> instead of a card. PayPal is a separate payment system from the card checkout, so it needs its own check.</p>
     <div class="card-callout">
-      <div>Test charge</div>
+      <div>What you&rsquo;ll be charged</div>
       <div class="big">$0.50 &middot; The Calm Library</div>
       <div class="big">$1.00 &middot; The Calm Circle</div>
-      <p class="rea" style="margin:6px 0 0">PayPal&rsquo;s test prices are already set to these amounts &mdash; a real charge, but tiny, and refunded.</p>
+      <p class="rea" style="margin:6px 0 0">These amounts are already set on PayPal &mdash; a real charge, but tiny, and refunded.</p>
     </div>
     <p class="sub">Same checks as the card path: does it land on thank-you and a dashboard that reflects the plan you bought, does the account unlock the right content, and does the <b>welcome email</b> arrive?</p>
     <div class="feel">
@@ -156,10 +160,10 @@
     <p class="lbl">Do</p>
     <p>On the plans, flip the <b>Monthly / Yearly</b> toggle to <b>Yearly</b>, then sign up with a fresh email and pay &mdash; once with a <b>card</b>, and if you can, once with <b>PayPal</b> on another fresh email. Yearly is a separate plan from monthly, so it needs its own check.</p>
     <div class="card-callout">
-      <div>Test charge</div>
+      <div>What you&rsquo;ll be charged</div>
       <div class="big">$0.50 &middot; The Calm Library (per year)</div>
       <div class="big">$1.00 &middot; The Calm Circle (per year)</div>
-      <p class="rea" style="margin:6px 0 0">The page shows the full yearly price ($270 / $470), but the actual charge is the tiny test amount above &mdash; refunded.</p>
+      <p class="rea" style="margin:6px 0 0">The page shows the full yearly price ($270 / $470), but the actual charge is the tiny amount above &mdash; refunded.</p>
     </div>
     <p class="sub">After paying: does the dashboard show the <b>yearly</b> price and a <b>next-renewal date about a year out</b>, and does the <b>welcome email</b> arrive? (A yearly member should see no self-serve &ldquo;upgrade&rdquo; button &mdash; that&rsquo;s expected.)</p>
     <div class="feel">
@@ -173,7 +177,7 @@
     <span class="pill">Account</span>
     <h2>The dashboard shows the right data</h2>
     <p class="lbl">Do</p>
-    <p>On the dashboard, check the plan name, price, status, and next-renewal date are all <b>correct for what you bought</b>, and that &ldquo;manage / cancel&rdquo; is there and works.</p>
+    <p>On the dashboard, check the plan name, price, status, and next-renewal date are all <b>correct for what you bought</b>, and that the way to manage or cancel your membership is there and works.</p>
     <p class="sub">Numbers and dates accurate? Anything mislabeled or missing? Do the buttons do what they say?</p>
     <div class="feel">
       <label><input type="radio" name="m3" data-key="m3" value="ok" /> Works</label>
@@ -187,12 +191,25 @@
     <h2>The library + access rules</h2>
     <p class="lbl">Do</p>
     <p>Open the library. The TAT for Animals tab is filled in; the &ldquo;For You&rdquo; tab is still being populated, so it&rsquo;ll look sparse &mdash; that&rsquo;s expected. Check the tabs/sections load and behave.</p>
-    <p class="info">Sanity-check access: a Calm Library member shouldn&rsquo;t reach the Calm Circle-only &ldquo;Live Webinars&rdquo; content. (You don&rsquo;t have to force it &mdash; just note if anything looks unguarded or errors.)</p>
+    <p class="info">Then check who can see what: a Calm Library member shouldn&rsquo;t be able to open the Calm Circle-only &ldquo;Live Webinars&rdquo; tab; a Calm Circle member <i>should</i>. (That tab stays empty until Jez adds a webinar in the studio &mdash; her task below.) Flag anything that looks unguarded or errors.</p>
     <div class="feel">
       <label><input type="radio" name="m4" data-key="m4" value="ok" /> Works</label>
       <label><input type="radio" name="m4" data-key="m4" value="issue" /> Found an issue</label>
     </div>
     <textarea class="notes" data-key="m4n" placeholder="Notes on the library shell + access…"></textarea>
+  </div>
+
+  <div class="mission">
+    <span class="pill">Watch</span>
+    <h2>Play a video &mdash; and pick up where you left off</h2>
+    <p class="lbl">Do</p>
+    <p>In the TAT for Animals library, open a video and let it play. Watch for at least half a minute, close it, then open the same one again.</p>
+    <p class="sub">Does it actually play? When you reopen it, does it resume near where you left off? Watch one to the end and check it gets a <b>done</b> mark. If any video won&rsquo;t load or shows an error, note which one.</p>
+    <div class="feel">
+      <label><input type="radio" name="m5" data-key="m5" value="ok" /> Works</label>
+      <label><input type="radio" name="m5" data-key="m5" value="issue" /> Found an issue</label>
+    </div>
+    <textarea class="notes" data-key="m5n" placeholder="Notes on video playback + resume…"></textarea>
   </div>
 
   <!-- =================== SECTION 2: SUPPORTING FLOWS =================== -->
@@ -211,7 +228,7 @@
 
   <div class="check">
     <p class="ctitle">Sign in &mdash; password &amp; magic link</p>
-    <p class="sub">Password sign-in works. The magic-link option (if shown) sends a link that signs you in. Error states behave.</p>
+    <p class="sub">Password sign-in works. The magic-link option (if shown) sends a link that signs you in. A wrong password shows a clear message.</p>
     <div class="feel">
       <label><input type="radio" name="c-login" data-key="c-login" value="ok" /> Works</label>
       <label><input type="radio" name="c-login" data-key="c-login" value="issue" /> Found an issue</label>
@@ -231,7 +248,7 @@
 
   <div class="check">
     <p class="ctitle">Manage / cancel subscription</p>
-    <p class="sub">From the dashboard, go into manage and try a cancel (test mode). Does it go through and confirm clearly, and does the <b>cancellation email</b> arrive? If you signed up with <b>PayPal</b>, the cancel path is a different one &mdash; please test whichever you used. Re-subscribe after if you want to reset.</p>
+    <p class="sub">How you cancel depends on how you joined. If you paid <b>by card</b>, click <b>&ldquo;Manage Subscription&rdquo;</b> &mdash; it opens a secure portal where you cancel (and can update your card there). If you paid <b>by PayPal</b>, there&rsquo;s a <b>&ldquo;Cancel membership&rdquo;</b> button right on the dashboard, with a quick confirm step. Cancel on whichever you used: does it go through and confirm clearly, and does the <b>cancellation email</b> arrive? Re-subscribe after if you want to reset.</p>
     <div class="feel">
       <label><input type="radio" name="c-cancel" data-key="c-cancel" value="ok" /> Works</label>
       <label><input type="radio" name="c-cancel" data-key="c-cancel" value="issue" /> Found an issue</label>
@@ -241,7 +258,7 @@
 
   <div class="check">
     <p class="ctitle">Upgrade: The Calm Library &rarr; The Calm Circle</p>
-    <p class="sub">As a <b>monthly</b> Calm Library member, find the upgrade to Calm Circle &mdash; on the dashboard or the Live Webinars card &mdash; and go through it. Does it move you to Calm Circle, show the right pro-rata difference, and unlock the Calm Circle-only Live content afterwards? (If you joined on Calm Circle, cancel and re-join on Calm Library to test this.) Note: yearly members don&rsquo;t see a self-serve upgrade &mdash; those are handled by us &mdash; so test this on a monthly plan.</p>
+    <p class="sub">As a <b>monthly</b> Calm Library member, find the upgrade to Calm Circle &mdash; on the dashboard or the Live Webinars card &mdash; and go through it. Does it move you to Calm Circle, charge only the price difference (never a double charge), and unlock the Calm Circle-only Live Webinars afterwards? (If you joined on Calm Circle, cancel and re-join on Calm Library to test this.) Note: yearly members don&rsquo;t see a self-serve upgrade &mdash; those are handled by us &mdash; so test this on a monthly plan.</p>
     <div class="feel">
       <label><input type="radio" name="c-upgrade" data-key="c-upgrade" value="ok" /> Works</label>
       <label><input type="radio" name="c-upgrade" data-key="c-upgrade" value="issue" /> Found an issue</label>
@@ -259,6 +276,16 @@
     <textarea class="notes" data-key="c-delete-n" placeholder="Notes on account deletion…"></textarea>
   </div>
 
+  <div class="check">
+    <p class="ctitle">Webinar emails &mdash; Jez&rsquo;s separate task (from the studio)</p>
+    <p class="sub"><b>This one is on Jez and is separate from the member walk-through</b>, because it only happens when content is published in the studio. Publish a test webinar (and upload a test recording), then check that a Calm Circle account you made receives the email about it. If nothing arrives, note it &mdash; the studio-to-email link needs a look.</p>
+    <div class="feel">
+      <label><input type="radio" name="c-webinar-email" data-key="c-webinar-email" value="ok" /> Works</label>
+      <label><input type="radio" name="c-webinar-email" data-key="c-webinar-email" value="issue" /> Found an issue</label>
+    </div>
+    <textarea class="notes" data-key="c-webinar-email-n" placeholder="Notes on webinar / recording emails…"></textarea>
+  </div>
+
   <!-- =================== SECTION 3: ACROSS THE BOARD =================== -->
   <h2 class="sec">3 &middot; Across the board</h2>
   <p class="secsub">Cross-cutting behaviour &mdash; things that don&rsquo;t belong to one page.</p>
@@ -274,8 +301,8 @@
   </div>
 
   <div class="check">
-    <p class="ctitle">Responsive &mdash; does anything break?</p>
-    <p class="sub">Resize / use real devices. Anything that <b>clips, overflows, overlaps, or dead-ends</b> at a particular width? Are buttons and links big enough to tap? (This is about things that <i>break</i> &mdash; how it <i>looks</i> is the design pass.)</p>
+    <p class="ctitle">On a real phone (not just resizing)</p>
+    <p class="sub">Best on a real phone, not just by shrinking a desktop window &mdash; that&rsquo;s how most members will use it. Run the core journey (sign up &rarr; pay &rarr; dashboard &rarr; cancel) on your phone and watch for things that <b>break</b>: taps that miss, a checkout that won&rsquo;t complete, the on-screen keyboard covering a field, a redirect that lands wrong. Are buttons and links big enough to tap? (How it <i>looks</i> is the separate design pass.)</p>
     <div class="feel">
       <label><input type="radio" name="c-resp" data-key="c-resp" value="ok" /> Works</label>
       <label><input type="radio" name="c-resp" data-key="c-resp" value="issue" /> Found an issue</label>
