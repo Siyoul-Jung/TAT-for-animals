@@ -266,8 +266,9 @@ export default function AboutClient() {
       </section>
 
       {/* 5. 구독 2단계 재노출 (Tapas 요청: "offer two subscription tiers again as on homepage").
-          showBooking=false — 위 Book a session이 1:1 예약을 담당하므로 중복 방지. */}
-      <Pricing showHeader bg="bg-white" showBooking={false} />
+          showBooking=false — 위 Book a session이 1:1 예약을 담당하므로 중복 방지.
+          bg-cream — 위 Kai/예약 섹션(bg-white)과 색을 갈라 멤버십을 별도 섹션으로 구분. */}
+      <Pricing showHeader bg="bg-cream" showBooking={false} />
 
     </main>
   )
