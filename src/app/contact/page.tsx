@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { BOOKING_URL } from '@/lib/links';
+import ContactForm from './ContactForm';
 
 export default function Contact() {
   return (
@@ -31,19 +32,21 @@ export default function Contact() {
           or just want to share how TAT has helped your animal — we'd love to hear from you.
         </p>
 
-        <a
-          href="mailto:hello@tatforanimals.com"
-          className="inline-flex items-center gap-2 text-base font-medium transition-opacity hover:opacity-70"
-          style={{ color: '#467826' }}
-        >
-          hello@tatforanimals.com
-        </a>
+        <ContactForm />
 
         <p
-          className="text-sm mt-4"
+          className="text-sm mt-6"
           style={{ color: 'rgba(28,16,7,0.65)' }}
         >
-          We typically respond within 1–2 business days.
+          Prefer email? Write to us directly at{' '}
+          <a
+            href="mailto:hello@tatforanimals.com"
+            className="font-medium underline underline-offset-2 transition-opacity hover:opacity-70"
+            style={{ color: '#467826' }}
+          >
+            hello@tatforanimals.com
+          </a>
+          . We typically respond within 1–2 business days.
         </p>
 
         <div
