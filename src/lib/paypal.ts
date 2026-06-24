@@ -54,7 +54,17 @@ export interface PayPalWebhookEvent {
     plan_id?: string
     billing_agreement_id?: string
     status?: string
+    billing_info?: { next_billing_time?: string }
   }
+}
+
+// A bounded fallback "paid-through" date for the rare case where we can't read
+// PayPal's next_billing_time and have no stored period end. Used so cancelling a
+// member who just paid never strips their access immediately — we grant a full
+// interval from now (generous but bounded), erring toward the paying member.
+export function estimatePaidThrough(interval: 'month' | 'year'): string {
+  const days = interval === 'year' ? 366 : 31
+  return new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString()
 }
 
 // Retrieve a subscription's current state — used by webhooks to read the

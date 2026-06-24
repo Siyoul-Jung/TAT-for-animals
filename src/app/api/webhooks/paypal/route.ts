@@ -1,5 +1,5 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
-import { paypalRequest, PLAN_ROLE_MAP, getPayPalSubscription, getPlanInterval, type PayPalWebhookEvent } from '@/lib/paypal'
+import { paypalRequest, PLAN_ROLE_MAP, getPayPalSubscription, getPlanInterval, estimatePaidThrough, type PayPalWebhookEvent } from '@/lib/paypal'
 import { sendWelcomeOnce } from '@/lib/sendWelcomeOnce'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -76,6 +76,11 @@ export async function POST(request: NextRequest) {
             // stale cancel_at so a cancel-then-rejoin member (e.g. a PayPal
             // downgrade) isn't lapsed by the previous subscription's end date.
             cancel_at: null,
+            // Store the paid-through date at activation so the cancel flow has a
+            // reliable fallback even before the first PAYMENT.SALE.COMPLETED.
+            ...(resource.billing_info?.next_billing_time
+              ? { current_period_end: resource.billing_info.next_billing_time }
+              : {}),
           })
           .eq('id', userId)
 
@@ -200,30 +205,20 @@ export async function POST(request: NextRequest) {
 
         const { data: profile } = await supabaseAdmin
           .from('profiles')
-          .select('current_period_end, cancel_at')
+          .select('current_period_end, cancel_at, billing_interval')
           .eq('id', userId)
           .single()
 
-        // Prefer a date already set by /api/paypal/cancel; else the renewal date.
-        const paidThrough = profile?.cancel_at ?? profile?.current_period_end ?? null
-        if (paidThrough) {
-          await supabaseAdmin
-            .from('profiles')
-            .update({ cancel_at: paidThrough, pending_tier: null, pending_tier_at: null })
-            .eq('id', userId)
-        } else {
-          // Unknown paid-through date — end now rather than grant indefinitely.
-          await supabaseAdmin
-            .from('profiles')
-            .update({
-              role: 'guest',
-              paypal_subscription_id: null,
-              subscription_status: 'inactive',
-              pending_tier: null,
-              pending_tier_at: null,
-            })
-            .eq('id', userId)
-        }
+        // Keep access until the paid period ends (parity with Stripe). Prefer a
+        // date already set by /api/paypal/cancel, else the stored renewal date,
+        // else a bounded interval estimate — never revoke a paying member on the
+        // spot just because we couldn't read the exact end date.
+        const interval = profile?.billing_interval === 'year' ? 'year' : 'month'
+        const paidThrough = profile?.cancel_at ?? profile?.current_period_end ?? estimatePaidThrough(interval)
+        await supabaseAdmin
+          .from('profiles')
+          .update({ cancel_at: paidThrough, pending_tier: null, pending_tier_at: null })
+          .eq('id', userId)
         break
       }
 

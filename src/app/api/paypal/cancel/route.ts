@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
-import { paypalRequest, getPayPalSubscription } from '@/lib/paypal'
+import { paypalRequest, getPayPalSubscription, estimatePaidThrough } from '@/lib/paypal'
 import { NextResponse } from 'next/server'
 
 // Self-service cancellation for PayPal members. Stripe members cancel through
@@ -18,7 +18,7 @@ export async function POST() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('paypal_subscription_id, current_period_end')
+    .select('paypal_subscription_id, current_period_end, billing_interval')
     .eq('id', user.id)
     .single()
 
@@ -28,7 +28,11 @@ export async function POST() {
 
   // Read the paid-through date BEFORE cancelling (PayPal nulls next_billing_time
   // once a subscription is cancelled). The member keeps access until then.
-  let paidThrough: string | null = profile.current_period_end ?? null
+  // Resolve in order of accuracy: live PayPal read → the date stored at
+  // activation → a bounded interval estimate. The estimate guarantees we never
+  // strip a paying member's access immediately on a transient read failure.
+  const interval = profile.billing_interval === 'year' ? 'year' : 'month'
+  let paidThrough: string = profile.current_period_end ?? estimatePaidThrough(interval)
   try {
     const sub = await getPayPalSubscription(profile.paypal_subscription_id)
     paidThrough = sub.billing_info?.next_billing_time ?? paidThrough
@@ -56,15 +60,11 @@ export async function POST() {
   }
 
   // Keep access until the paid period ends (parity with Stripe), then it lapses
-  // via the lazy cutoff in lib/access. If we don't know the paid-through date,
-  // fall back to ending access now rather than granting it indefinitely.
+  // via the lazy cutoff in lib/access. paidThrough is always set (estimate is the
+  // last resort), so a cancel never revokes a paying member's access on the spot.
   await supabaseAdmin
     .from('profiles')
-    .update(
-      paidThrough
-        ? { cancel_at: paidThrough }
-        : { role: 'guest', paypal_subscription_id: null, subscription_status: 'inactive' }
-    )
+    .update({ cancel_at: paidThrough })
     .eq('id', user.id)
 
   return NextResponse.json({ success: true })

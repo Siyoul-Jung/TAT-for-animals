@@ -37,6 +37,12 @@ export async function GET(request: NextRequest) {
         // Set the cadence here too (not just in the webhook) so an annual PayPal
         // member shows "$470 / year" immediately, even if the webhook lags.
         billing_interval: getPlanInterval(planId),
+        // Store the paid-through date at activation so a member who cancels right
+        // away still has a reliable fallback (the cancel flow no longer depends
+        // on re-reading PayPal at cancel time).
+        ...(subscription.billing_info?.next_billing_time
+          ? { current_period_end: subscription.billing_info.next_billing_time }
+          : {}),
       })
       .eq('id', userId)
   }
