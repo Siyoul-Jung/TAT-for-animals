@@ -70,7 +70,7 @@ export default function UpdatePasswordClient() {
     <button
       type="button"
       onClick={() => setShowPassword(!showPassword)}
-      className="absolute right-4 top-1/2 -translate-y-1/2 text-muted hover:text-charcoal transition-colors"
+      className="absolute right-2 top-1/2 -translate-y-1/2 w-11 h-11 flex items-center justify-center text-muted hover:text-charcoal transition-colors"
       aria-label={showPassword ? 'Hide password' : 'Show password'}
     >
       {showPassword ? (

@@ -141,7 +141,16 @@ function VideoRow({ video, progress, onProgressUpdate }: {
           </p>
           {/* 진행도 바 */}
           {(completed || (progress?.lastPosition && progress.lastPosition > 5 && video.duration)) && (
-            <div className="mt-2 h-1 rounded-full bg-charcoal/10 overflow-hidden">
+            <div
+              className="mt-2 h-1 rounded-full bg-charcoal/10 overflow-hidden"
+              role="progressbar"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={completed
+                ? 100
+                : Math.round(Math.min((progress!.lastPosition / (video.duration! * 60)) * 100, 100))}
+              aria-label={`${video.title} — viewing progress`}
+            >
               <div
                 className="h-full rounded-full transition-all"
                 style={{
@@ -422,6 +431,24 @@ export default function LibraryClient({
     { id: 'live', label: 'Live Webinars', locked: role !== 'pro_subscriber' },
   ]
 
+  // Roving keyboard navigation across the tabs (WCAG tab pattern): arrow keys move
+  // between tabs, Home/End jump to the ends. Focus follows the new tab so a
+  // keyboard user lands on it.
+  const handleTabKeyDown = (e: React.KeyboardEvent, currentId: Tab) => {
+    const order = tabs.map((t) => t.id)
+    const idx = order.indexOf(currentId)
+    let nextIdx: number | null = null
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') nextIdx = (idx + 1) % order.length
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') nextIdx = (idx - 1 + order.length) % order.length
+    else if (e.key === 'Home') nextIdx = 0
+    else if (e.key === 'End') nextIdx = order.length - 1
+    if (nextIdx === null) return
+    e.preventDefault()
+    const nextId = order[nextIdx]
+    handleTabChange(nextId)
+    document.getElementById(`tab-${nextId}`)?.focus()
+  }
+
   return (
     <main className="min-h-screen bg-cream pt-20 pb-16 px-6">
       <div className="max-w-3xl mx-auto">
@@ -440,11 +467,17 @@ export default function LibraryClient({
         <h1 className="font-serif text-3xl text-charcoal mb-6">Library</h1>
 
         {/* 탭 */}
-        <div className="flex gap-1 p-1 bg-charcoal/6 rounded-2xl mb-8">
+        <div role="tablist" aria-label="Library sections" className="flex gap-1 p-1 bg-charcoal/6 rounded-2xl mb-8">
           {tabs.map((tab) => (
             <button
               key={tab.id}
+              id={`tab-${tab.id}`}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+              aria-controls={`panel-${tab.id}`}
+              tabIndex={activeTab === tab.id ? 0 : -1}
               onClick={() => handleTabChange(tab.id)}
+              onKeyDown={(e) => handleTabKeyDown(e, tab.id)}
               className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-sm transition-all min-h-[44px] ${
                 activeTab === tab.id
                   ? 'bg-white text-green font-semibold shadow-sm'
@@ -467,12 +500,21 @@ export default function LibraryClient({
         </div>
 
         {/* 탭 컨텐츠 */}
-        {activeTab === 'animals' && <VideoTab videos={animalsVideos} progressMap={progressMap} onProgressUpdate={handleProgressUpdate} />}
+        {activeTab === 'animals' && (
+          <div role="tabpanel" id="panel-animals" aria-labelledby="tab-animals" tabIndex={0}>
+            <VideoTab videos={animalsVideos} progressMap={progressMap} onProgressUpdate={handleProgressUpdate} />
+          </div>
+        )}
 
-        {activeTab === 'aces' && <VideoTab videos={acesVideos} progressMap={progressMap} onProgressUpdate={handleProgressUpdate} />}
+        {activeTab === 'aces' && (
+          <div role="tabpanel" id="panel-aces" aria-labelledby="tab-aces" tabIndex={0}>
+            <VideoTab videos={acesVideos} progressMap={progressMap} onProgressUpdate={handleProgressUpdate} />
+          </div>
+        )}
 
         {activeTab === 'live' && (
-          role === 'pro_subscriber' ? (
+          <div role="tabpanel" id="panel-live" aria-labelledby="tab-live" tabIndex={0}>
+          {role === 'pro_subscriber' ? (
             <div className="space-y-6">
               {upcoming.length > 0 && (
                 <div className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm space-y-4">
@@ -666,7 +708,8 @@ export default function LibraryClient({
                 </div>
               </div>
             </div>
-          )
+          )}
+          </div>
         )}
 
       </div>
