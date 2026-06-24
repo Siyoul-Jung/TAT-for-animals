@@ -38,13 +38,14 @@ export default function AboutClient() {
       <section className="pt-4 pb-16 px-6">
         <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-24 items-start">
 
-          {/* 사진 */}
+          {/* 사진 — 본문이 훨씬 길어 생기는 좌측 하단 여백을 줄이려 데스크톱에서 sticky로
+              고정. 스크롤하면 사진이 본문 옆을 따라 내려와 빈 공간이 죽지 않는다. */}
           <motion.div
             initial={{ opacity: 0, x: -24 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            className="relative"
+            className="relative lg:sticky lg:top-28"
           >
             <div
               className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden"
