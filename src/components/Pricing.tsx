@@ -16,10 +16,11 @@ const tiers = [
     name: 'The Calm Library',
     monthly: '27',
     annual: '270',
-    description: 'Everything you need to begin — at your own pace, in your own time.',
+    description: 'Everything you need to begin TAT for Animals — at your own pace, with new stories, videos, and tips added every month.',
     features: [
       'TAT for Animals full video library',
       'Self-guided practice materials',
+      'Previous TAT for Cats and TAT for Dogs recordings',
     ],
     cta: 'Join The Calm Library',
     popular: false,
@@ -33,7 +34,7 @@ const tiers = [
     features: [
       'Everything in The Calm Library',
       'Monthly live webinars with Tapas',
-      'TAT for Animals live webinars',
+      'Guided group TAT for your animal, live',
       'Full archive of all past recordings',
     ],
     cta: 'Join The Calm Circle',
