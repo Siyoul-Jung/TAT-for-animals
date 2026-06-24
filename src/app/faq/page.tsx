@@ -64,7 +64,7 @@ const faqSections = [
     ],
   },
   {
-    category: 'Membership & Billing',
+    category: 'Membership and Billing',
     items: [
       {
         q: 'Can I change or cancel my membership?',

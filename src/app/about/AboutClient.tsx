@@ -16,9 +16,9 @@ export default function AboutClient() {
   return (
     <main className="bg-cream">
 
-      {/* 1. 헤더 */}
+      {/* 1. 헤더 — 본문 그리드와 같은 max-w-6xl 로 왼쪽 끝선을 사진과 맞춤 */}
       <section className="pt-28 sm:pt-32 pb-4 px-6">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <motion.div {...fadeUp}>
             <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-5"
               style={{ color: '#467826' }}>
@@ -36,7 +36,7 @@ export default function AboutClient() {
 
       {/* 2. 사진 + 창업자 바이오 (Tapas 원문 verbatim) */}
       <section className="pt-4 pb-16 px-6">
-        <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-24 items-center">
+        <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-24 items-start">
 
           {/* 사진 */}
           <motion.div
