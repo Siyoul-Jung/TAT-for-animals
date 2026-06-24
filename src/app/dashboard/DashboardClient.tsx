@@ -322,7 +322,7 @@ export default function DashboardClient({
         {/* Plan change confirmed (redirected here from a PayPal plan switch) */}
         {planChanged && (
           <section className="bg-green-50 border border-green-200 rounded-2xl px-6 py-4">
-            <p className="text-sm text-green-800 leading-relaxed">
+            <p className="text-base text-green-800 leading-relaxed">
               Your plan change is confirmed. It may take a moment to update on this page.
             </p>
           </section>
@@ -621,7 +621,7 @@ export default function DashboardClient({
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                   </svg>
                   <div>
-                    <p className="text-sm text-green-800 leading-relaxed">
+                    <p className="text-base text-green-800 leading-relaxed">
                       We&apos;ve emailed you a link to set a new password. Check your inbox.
                     </p>
                     <button
@@ -652,7 +652,7 @@ export default function DashboardClient({
                     <svg className="w-5 h-5 shrink-0 mt-0.5 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                     </svg>
-                    <p className="text-sm text-green-800 leading-relaxed">
+                    <p className="text-base text-green-800 leading-relaxed">
                       Check your email — we sent a link to confirm deleting your account.
                     </p>
                   </div>

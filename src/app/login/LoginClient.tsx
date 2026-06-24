@@ -144,7 +144,7 @@ export default function LoginClient() {
               className="rounded-xl px-4 py-3 mb-6"
               style={{ backgroundColor: 'rgba(70,120,38,0.10)', border: '1px solid rgba(70,120,38,0.25)' }}
             >
-              <p className="text-sm leading-relaxed" style={{ color: '#3A6420' }}>
+              <p className="text-base leading-relaxed" style={{ color: '#3A6420' }}>
                 Please sign in again to finish your payment. Nothing has been charged yet — you&apos;ll go straight back to checkout.
               </p>
             </div>

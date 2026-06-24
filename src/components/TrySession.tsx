@@ -89,8 +89,8 @@ export default function TrySession() {
           >
             <ul className="grid sm:grid-cols-2 gap-x-10 gap-y-4">
               {SIGNS.map((q) => (
-                <li key={q} className="flex gap-2.5 text-[15px] sm:text-base leading-relaxed text-charcoal/80">
-                  <Check size={18} strokeWidth={2.5} aria-hidden="true" className="mt-1 shrink-0" style={{ color: '#467826' }} />
+                <li key={q} className="flex gap-2.5 text-base sm:text-lg leading-relaxed text-charcoal/80">
+                  <Check size={20} strokeWidth={2.5} aria-hidden="true" className="mt-1 shrink-0" style={{ color: '#467826' }} />
                   <span>{q}</span>
                 </li>
               ))}
