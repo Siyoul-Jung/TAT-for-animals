@@ -32,8 +32,23 @@ export async function POST(request: NextRequest) {
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL!
 
+  // Idempotent create. Unlike Stripe, PayPal has no "list subscriptions by
+  // subscriber" we can re-check, so we lean on PayPal's own idempotency: the
+  // same PayPal-Request-Id returns the original subscription instead of creating
+  // a second one (keys are retained 72h). The local profiles check above only
+  // sees what the webhook/return handler has already recorded — during the
+  // approval + webhook-lag window it's blind, which is exactly when a
+  // double-submit could open a second subscription (a real charge).
+  //
+  // The key is bucketed to ~15 min so near-simultaneous attempts for the same
+  // plan dedupe, while a genuine re-subscribe later (different bucket) still
+  // works and isn't blocked by the 72h retention.
+  const bucket = Math.floor(Date.now() / (15 * 60 * 1000))
+  const requestId = `tat-sub-${user.id}-${plan}-${bucket}`
+
   const res = await paypalRequest('/v1/billing/subscriptions', {
     method: 'POST',
+    headers: { 'PayPal-Request-Id': requestId },
     body: JSON.stringify({
       plan_id: planId,
       custom_id: user.id,

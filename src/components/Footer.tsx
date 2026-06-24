@@ -175,7 +175,7 @@ export default function Footer() {
             Symbol Usage Guide (one clean statement per page). Copyright is still asserted
             by "All rights reserved". 0.60 cream on the deep-green footer clears AA. */}
         <p
-          className="text-xs font-light leading-relaxed mt-3 max-w-4xl"
+          className="text-sm font-light leading-relaxed mt-3 max-w-4xl"
           style={{ color: 'rgba(250,246,241,0.60)' }}
         >
           © 2005–2026 TATLife®, Inc. All rights reserved. Tapas Acupressure Technique®, TAT®,
