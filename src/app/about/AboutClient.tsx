@@ -36,7 +36,7 @@ export default function AboutClient() {
 
       {/* 2. 사진 + 창업자 바이오 (Tapas 원문 verbatim) */}
       <section className="pt-4 pb-16 px-6">
-        <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-24 items-start lg:items-stretch">
+        <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-24 items-start">
 
           {/* 사진 + 인용구 */}
           <motion.div
@@ -81,9 +81,8 @@ export default function AboutClient() {
               </motion.div>
             </div>
 
-            {/* 창업자 인용구 — 본문이 길어 생기는 좌측 하단 여백을 채움.
-                데스크톱은 mt-auto 로 칸 바닥에 정렬, 모바일은 사진 아래 자연스럽게 배치. */}
-            <blockquote className="font-serif text-xl sm:text-2xl text-charcoal/80 leading-snug mt-12 lg:mt-auto lg:pt-8">
+            {/* 창업자 인용구 — 사진 바로 아래 붙여 한 덩어리로 보이게 (뱃지 여유분 포함 mt-12). */}
+            <blockquote className="font-serif text-xl sm:text-2xl text-charcoal/80 leading-snug mt-12">
               &ldquo;I love to help people and animals find peace &mdash;
               one person, one animal at a time.&rdquo;
             </blockquote>
