@@ -61,7 +61,10 @@ async function getScheduledChange(
 
 export async function POST(request: NextRequest) {
   const body = await request.text()
-  const signature = request.headers.get('stripe-signature')!
+  const signature = request.headers.get('stripe-signature')
+  if (!signature) {
+    return NextResponse.json({ error: 'Missing signature' }, { status: 400 })
+  }
 
   let event: Stripe.Event
 

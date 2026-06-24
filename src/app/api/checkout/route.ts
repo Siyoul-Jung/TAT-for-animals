@@ -9,6 +9,14 @@ const PRICE_IDS: Record<string, string | undefined> = {
   calm_circle_annual:  process.env.STRIPE_PRICE_CALM_CIRCLE_ANNUAL,
 }
 
+const ALREADY_SUBSCRIBED =
+  'You already have an active subscription. To change your plan, use the upgrade option in your dashboard.'
+
+// Subscription statuses that mean a live, access-granting (or recoverable)
+// subscription — any of these should block opening a second one. Excludes
+// incomplete / canceled (abandoned or finished, safe to start fresh).
+const LIVE_SUB_STATUSES = new Set(['active', 'trialing', 'past_due', 'unpaid'])
+
 export async function POST(request: NextRequest) {
   const supabase = await createClient()
 
@@ -34,10 +42,7 @@ export async function POST(request: NextRequest) {
 
   // Block duplicate subscriptions — existing subscribers change tiers via /api/change-plan
   if (profile?.stripe_subscription_id || profile?.paypal_subscription_id) {
-    return NextResponse.json(
-      { error: 'You already have an active subscription. To change your plan, use the upgrade option in your dashboard.' },
-      { status: 400 }
-    )
+    return NextResponse.json({ error: ALREADY_SUBSCRIBED }, { status: 400 })
   }
 
   let customerId = profile?.stripe_customer_id
@@ -65,13 +70,11 @@ export async function POST(request: NextRequest) {
 
   // Defense in depth: the profile check above only sees what the webhook has
   // recorded. Ask Stripe directly so a delayed or missed webhook can't let the
-  // same customer open a second subscription.
-  const activeSubs = await stripe.subscriptions.list({ customer: customerId, status: 'active', limit: 1 })
-  if (activeSubs.data.length > 0) {
-    return NextResponse.json(
-      { error: 'You already have an active subscription. To change your plan, use the upgrade option in your dashboard.' },
-      { status: 400 }
-    )
+  // same customer open a second subscription. Check all non-terminal statuses
+  // (not just 'active') so a trialing or past_due subscription also blocks.
+  const existingSubs = await stripe.subscriptions.list({ customer: customerId, status: 'all', limit: 10 })
+  if (existingSubs.data.some((s) => LIVE_SUB_STATUSES.has(s.status))) {
+    return NextResponse.json({ error: ALREADY_SUBSCRIBED }, { status: 400 })
   }
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL!

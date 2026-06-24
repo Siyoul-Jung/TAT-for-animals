@@ -27,6 +27,7 @@ export const metadata: Metadata = {
 
 import { Suspense } from "react";
 import Footer from "@/components/Footer";
+import MotionProvider from "@/components/MotionProvider";
 
 export default function RootLayout({
   children,
@@ -39,17 +40,19 @@ export default function RootLayout({
       className={`${playfair.variable} ${dmSans.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans bg-cream text-charcoal selection:bg-brand/20">
-        <Suspense fallback={null}>
-          <ScrollToTop />
-          <Navbar />
-        </Suspense>
-        <main className="flex-grow">
-          <Suspense fallback={<div className="min-h-screen bg-cream" />}>
-            {children}
+        <MotionProvider>
+          <Suspense fallback={null}>
+            <ScrollToTop />
+            <Navbar />
           </Suspense>
-        </main>
-        <Footer />
-        <CookieBanner />
+          <main className="flex-grow">
+            <Suspense fallback={<div className="min-h-screen bg-cream" />}>
+              {children}
+            </Suspense>
+          </main>
+          <Footer />
+          <CookieBanner />
+        </MotionProvider>
       </body>
     </html>
   );

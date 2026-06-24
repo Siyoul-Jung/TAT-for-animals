@@ -169,7 +169,9 @@ export async function POST(request: NextRequest) {
             application_context: {
               brand_name: 'TAT for Animals',
               return_url: `${siteUrl}/dashboard?plan=changed`,
-              cancel_url: `${siteUrl}/dashboard`,
+              // Abandoned approval returns here — flag it so the dashboard can
+              // say "nothing changed" instead of a silent, unexplained return.
+              cancel_url: `${siteUrl}/dashboard?plan=unchanged`,
             },
           }),
         }

@@ -59,7 +59,9 @@ export default async function LibraryPage() {
   // period-end event, so enforce it here).
   const role = membershipHasLapsed(profile?.cancel_at) ? 'guest' : (profile?.role ?? 'none')
   if (role !== 'subscriber' && role !== 'pro_subscriber') redirect('/membership')
-  if (profile?.subscription_status === 'past_due') redirect('/dashboard?error=payment_failed')
+  // past_due members are bounced to the dashboard, where the payment-failed
+  // notice renders from subscription_status (no query param needed).
+  if (profile?.subscription_status === 'past_due') redirect('/dashboard')
 
   const isPro = role === 'pro_subscriber'
 

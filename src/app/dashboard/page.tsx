@@ -75,6 +75,7 @@ export default async function DashboardPage({
       cancelAt={lapsed ? null : (profile?.cancel_at ?? null)}
       errorParam={errorParam ?? null}
       planChanged={planParam === 'changed'}
+      planUnchanged={planParam === 'unchanged'}
       upcoming={upcoming}
     />
   )

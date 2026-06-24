@@ -29,6 +29,7 @@ type Props = {
   cancelAt: string | null
   errorParam: string | null
   planChanged: boolean
+  planUnchanged: boolean
   upcoming: WebinarSession[]
 }
 
@@ -68,6 +69,7 @@ export default function DashboardClient({
   cancelAt,
   errorParam,
   planChanged,
+  planUnchanged,
   upcoming,
 }: Props) {
   const [changingPlan, setChangingPlan] = useState(false)
@@ -324,6 +326,15 @@ export default function DashboardClient({
           <section className="bg-green-50 border border-green-200 rounded-2xl px-6 py-4">
             <p className="text-base text-green-800 leading-relaxed">
               Your plan change is confirmed. It may take a moment to update on this page.
+            </p>
+          </section>
+        )}
+
+        {/* Plan change not completed (member left the PayPal approval screen) */}
+        {planUnchanged && (
+          <section className="bg-surface border border-charcoal/10 rounded-2xl px-6 py-4">
+            <p className="text-base text-charcoal/80 leading-relaxed">
+              No changes were made — your plan is the same as before. You can try again anytime.
             </p>
           </section>
         )}
