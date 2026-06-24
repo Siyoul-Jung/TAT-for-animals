@@ -148,7 +148,7 @@ function VideoRow({ video, progress, onProgressUpdate }: {
               aria-valuemax={100}
               aria-valuenow={completed
                 ? 100
-                : Math.round(Math.min((progress!.lastPosition / (video.duration! * 60)) * 100, 100))}
+                : Math.round(Math.min((progress!.lastPosition / video.duration!) * 100, 100))}
               aria-label={`${video.title} — viewing progress`}
             >
               <div
@@ -156,7 +156,7 @@ function VideoRow({ video, progress, onProgressUpdate }: {
                 style={{
                   width: completed
                     ? '100%'
-                    : `${Math.min((progress!.lastPosition / (video.duration! * 60)) * 100, 100)}%`,
+                    : `${Math.min((progress!.lastPosition / video.duration!) * 100, 100)}%`,
                   backgroundColor: completed ? '#467826' : '#D4703A',
                 }}
               />
