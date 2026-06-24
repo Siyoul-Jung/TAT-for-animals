@@ -3,6 +3,7 @@ import { resend, FROM_EMAIL } from '@/lib/resend'
 import { cancellationEmail } from '@/lib/emails/cancellation'
 import { sendWelcomeOnce } from '@/lib/sendWelcomeOnce'
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { claimOnce, releaseOnce } from '@/lib/onceGuard'
 import { PRICE_ROLE_MAP, getBillingInterval, getPeriodEndISO } from '@/lib/subscriptionAccess'
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
@@ -75,19 +76,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
   }
 
-  // Idempotency — INSERT first; conflict means already processed.
-  //
-  // NOTE: `processed_webhook_events` is a generic once-only store, not just raw
-  // webhook IDs. Other code reuses it as a one-time guard via prefixed keys:
-  //   welcome-<subId>            (sendWelcomeOnce)
-  //   paypal-success-<subId>     (PayPal return handler)
-  //   renewal-reminder-<id>-<dt> (annual reminder cron)
-  // So a cleanup job must NOT purge "old" rows blindly — it would re-open those
-  // guards (duplicate welcome emails, double reminders).
-  const { error: idempotencyError } = await supabaseAdmin
-    .from('processed_webhook_events')
-    .insert({ id: event.id })
-  if (idempotencyError?.code === '23505') return NextResponse.json({ received: true })
+  // Idempotency — claim the event id; a duplicate was already handled.
+  const { alreadyProcessed } = await claimOnce(event.id)
+  if (alreadyProcessed) return NextResponse.json({ received: true })
 
   try {
     switch (event.type) {
@@ -303,10 +294,7 @@ export async function POST(request: NextRequest) {
     // Roll back the idempotency marker so Stripe's automatic retry can
     // reprocess this event — otherwise a transient failure would be
     // permanently swallowed as "already processed".
-    await supabaseAdmin
-      .from('processed_webhook_events')
-      .delete()
-      .eq('id', event.id)
+    await releaseOnce(event.id)
     return NextResponse.json({ error: 'Webhook handler failed' }, { status: 500 })
   }
 }

@@ -1,4 +1,5 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { claimOnce, releaseOnce } from '@/lib/onceGuard'
 import { paypalRequest, PLAN_ROLE_MAP, getPayPalSubscription, getPlanInterval, estimatePaidThrough, type PayPalWebhookEvent } from '@/lib/paypal'
 import { sendWelcomeOnce } from '@/lib/sendWelcomeOnce'
 import { NextRequest, NextResponse } from 'next/server'
@@ -48,11 +49,9 @@ export async function POST(request: NextRequest) {
   const event = JSON.parse(body) as PayPalWebhookEvent
   const resource = event.resource
 
-  // Idempotency — INSERT first; conflict means already processed
-  const { error: idempotencyError } = await supabaseAdmin
-    .from('processed_webhook_events')
-    .insert({ id: event.id })
-  if (idempotencyError?.code === '23505') return NextResponse.json({ received: true })
+  // Idempotency — claim the event id; a duplicate was already handled.
+  const { alreadyProcessed } = await claimOnce(event.id)
+  if (alreadyProcessed) return NextResponse.json({ received: true })
 
   try {
     switch (event.event_type) {
@@ -249,10 +248,7 @@ export async function POST(request: NextRequest) {
     console.error('PayPal webhook error:', error)
     // Roll back the idempotency marker so PayPal's retry can reprocess this
     // event instead of it being permanently swallowed as "already processed".
-    await supabaseAdmin
-      .from('processed_webhook_events')
-      .delete()
-      .eq('id', event.id)
+    await releaseOnce(event.id)
     return NextResponse.json({ error: 'Webhook handler failed' }, { status: 500 })
   }
 }
