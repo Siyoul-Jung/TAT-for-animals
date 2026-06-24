@@ -139,7 +139,7 @@ export default function Navbar() {
               'hidden sm:inline text-base sm:text-2xl font-semibold tracking-normal transition-colors duration-300 whitespace-nowrap font-serif',
               isScrolled || !isDarkHero ? 'text-charcoal/65' : 'text-cream'
             )}>
-              TAT for Animals<span className="text-green text-[11px] sm:text-sm align-super">®</span>
+              TAT<span className="text-green text-[11px] sm:text-sm align-super">®</span> for Animals
             </span>
           </Link>
         </div>

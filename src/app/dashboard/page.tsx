@@ -15,7 +15,7 @@ type WebinarSession = {
 }
 
 export const metadata: Metadata = {
-  title: 'My Account | TAT for Animals®',
+  title: 'My Account | TAT® for Animals',
 }
 
 export default async function DashboardPage({

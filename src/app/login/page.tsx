@@ -3,7 +3,7 @@ import { Suspense } from 'react'
 import LoginClient from './LoginClient'
 
 export const metadata: Metadata = {
-  title: 'Sign In | TAT for Animals®',
+  title: 'Sign In | TAT® for Animals',
 }
 
 export default function LoginPage() {
