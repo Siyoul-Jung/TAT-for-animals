@@ -75,7 +75,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
   }
 
-  // Idempotency — INSERT first; conflict means already processed
+  // Idempotency — INSERT first; conflict means already processed.
+  //
+  // NOTE: `processed_webhook_events` is a generic once-only store, not just raw
+  // webhook IDs. Other code reuses it as a one-time guard via prefixed keys:
+  //   welcome-<subId>            (sendWelcomeOnce)
+  //   paypal-success-<subId>     (PayPal return handler)
+  //   renewal-reminder-<id>-<dt> (annual reminder cron)
+  // So a cleanup job must NOT purge "old" rows blindly — it would re-open those
+  // guards (duplicate welcome emails, double reminders).
   const { error: idempotencyError } = await supabaseAdmin
     .from('processed_webhook_events')
     .insert({ id: event.id })

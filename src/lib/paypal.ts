@@ -33,14 +33,34 @@ export async function paypalRequest(
   });
 }
 
+// PayPal ships no SDK types, so these are the hand-written shapes the handlers
+// rely on — only the fields actually read are declared. Keeping them here gives
+// the webhook and return handler compile-time safety against field-name typos
+// and payload-shape drift (the same protection the Stripe SDK gives for free).
+export interface PayPalSubscription {
+  id?: string
+  status?: string
+  plan_id?: string
+  custom_id?: string
+  billing_info?: { next_billing_time?: string }
+}
+
+export interface PayPalWebhookEvent {
+  id: string
+  event_type: string
+  resource: {
+    id?: string
+    custom_id?: string
+    plan_id?: string
+    billing_agreement_id?: string
+    status?: string
+  }
+}
+
 // Retrieve a subscription's current state — used by webhooks to read the
 // *authoritative* plan_id and next_billing_time rather than trusting the event
 // payload (which can lag or omit fields after a `revise`).
-export async function getPayPalSubscription(id: string): Promise<{
-  plan_id?: string
-  status?: string
-  billing_info?: { next_billing_time?: string }
-}> {
+export async function getPayPalSubscription(id: string): Promise<PayPalSubscription> {
   const res = await paypalRequest(`/v1/billing/subscriptions/${id}`, { method: 'GET' })
   if (!res.ok) throw new Error(`PayPal subscription fetch failed: ${res.status}`)
   return res.json()

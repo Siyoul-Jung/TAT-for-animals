@@ -1,5 +1,5 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
-import { paypalRequest, PLAN_ROLE_MAP, getPlanInterval } from '@/lib/paypal'
+import { paypalRequest, PLAN_ROLE_MAP, getPlanInterval, type PayPalSubscription } from '@/lib/paypal'
 import { sendWelcomeOnce } from '@/lib/sendWelcomeOnce'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -12,11 +12,11 @@ export async function GET(request: NextRequest) {
   }
 
   const res = await paypalRequest(`/v1/billing/subscriptions/${subscriptionId}`)
-  const subscription = await res.json()
+  const subscription = (await res.json()) as PayPalSubscription
 
   const userId = subscription.custom_id
   const planId = subscription.plan_id
-  const role = PLAN_ROLE_MAP[planId] ?? 'subscriber'
+  const role = planId ? (PLAN_ROLE_MAP[planId] ?? 'subscriber') : 'subscriber'
 
   if (!userId || subscription.status !== 'ACTIVE') {
     return NextResponse.redirect(`${process.env.NEXT_PUBLIC_SITE_URL}/membership?error=paypal_failed`)

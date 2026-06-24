@@ -15,6 +15,14 @@ const MAX_PER_WINDOW = 5
 
 function rateLimited(ip: string): boolean {
   const now = Date.now()
+  // Drop IPs whose window has fully expired so the map can't grow unbounded on a
+  // long-lived warm instance. Only sweep once it's grown, to avoid the cost on
+  // every request.
+  if (hits.size > 500) {
+    for (const [k, times] of hits) {
+      if (times.every((t) => now - t >= WINDOW_MS)) hits.delete(k)
+    }
+  }
   const recent = (hits.get(ip) ?? []).filter((t) => now - t < WINDOW_MS)
   recent.push(now)
   hits.set(ip, recent)

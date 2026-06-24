@@ -1,5 +1,5 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
-import { paypalRequest, PLAN_ROLE_MAP, getPayPalSubscription, getPlanInterval } from '@/lib/paypal'
+import { paypalRequest, PLAN_ROLE_MAP, getPayPalSubscription, getPlanInterval, type PayPalWebhookEvent } from '@/lib/paypal'
 import { sendWelcomeOnce } from '@/lib/sendWelcomeOnce'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
   }
 
-  const event = JSON.parse(body)
+  const event = JSON.parse(body) as PayPalWebhookEvent
   const resource = event.resource
 
   // Idempotency — INSERT first; conflict means already processed
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
       // Subscription activated (PayPal approval complete)
       case 'BILLING.SUBSCRIPTION.ACTIVATED': {
         const userId = resource.custom_id
-        const role = PLAN_ROLE_MAP[resource.plan_id] ?? 'subscriber'
+        const role = resource.plan_id ? (PLAN_ROLE_MAP[resource.plan_id] ?? 'subscriber') : 'subscriber'
         if (!userId) break
 
         await supabaseAdmin
@@ -107,7 +107,7 @@ export async function POST(request: NextRequest) {
         const userId = resource.custom_id
         if (!userId) break
 
-        const newRole = PLAN_ROLE_MAP[resource.plan_id] ?? 'subscriber'
+        const newRole = resource.plan_id ? (PLAN_ROLE_MAP[resource.plan_id] ?? 'subscriber') : 'subscriber'
 
         const { data: profile } = await supabaseAdmin
           .from('profiles')
@@ -119,11 +119,13 @@ export async function POST(request: NextRequest) {
         if ((ROLE_RANK[newRole] ?? 0) < (ROLE_RANK[currentRole] ?? 0)) {
           // Downgrade — defer. Read the authoritative next billing date.
           let nextBilling: string | null = null
-          try {
-            const sub = await getPayPalSubscription(resource.id)
-            nextBilling = sub.billing_info?.next_billing_time ?? null
-          } catch (e) {
-            console.error('PayPal getSubscription (downgrade) failed:', e)
+          if (resource.id) {
+            try {
+              const sub = await getPayPalSubscription(resource.id)
+              nextBilling = sub.billing_info?.next_billing_time ?? null
+            } catch (e) {
+              console.error('PayPal getSubscription (downgrade) failed:', e)
+            }
           }
           await supabaseAdmin
             .from('profiles')
