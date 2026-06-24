@@ -226,12 +226,13 @@ export default function AboutClient() {
       </section>
 
       {/* 4. Kai 세션 영상 + 1:1 예약 — "영상 보고 감동 → 바로 신청"이 끊기지 않게 한 블록으로 묶음.
-          영상은 placeholder(tatlife의 Kai 영상 ~9분 URL 미수령). URL 받으면 iframe으로 교체.
+          영상은 현행 ~9분 Kai 클립(1080084066, Tapas "~9분" 사양). Jez가 52분 풀세션(1074372917,
+          "2025-04-04 TAT for Dogs") 교체 제안 — 길이/제목 충돌로 확인 대기(교체 보류).
           연결 문구는 우리 카피, 예약 문구는 Tapas 원문 그대로. */}
       <section className="pb-20 lg:pb-28 px-6 bg-white">
         <div className="max-w-3xl mx-auto">
           <motion.div {...fadeUp}>
-            {/* 영상 — Kai's Journey (TATLife 공식 Vimeo, ~9.7분). autoplay 미설정(프로젝트 자동재생 금지 규칙). */}
+            {/* 영상 — Kai 클립 (Vimeo 1080084066, ~9분). autoplay 미설정(프로젝트 자동재생 금지 규칙). */}
             <div
               className="relative aspect-video rounded-2xl overflow-hidden"
               style={{ boxShadow: '0 0 0 1px rgba(28,16,7,0.06)' }}

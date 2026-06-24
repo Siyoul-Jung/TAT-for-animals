@@ -23,7 +23,7 @@ const testimonials: Testimonial[] = [
     isQuote: false,
   },
   {
-    name: 'Bowie\'s family',
+    name: 'Annida',
     location: '',
     animal: 'Bowie — From Fear to Fun',
     quote: 'Before TAT®, Bowie was in pain — touching him caused extreme distress. During TAT®, his friend Ziggy stayed by his side, offering comfort and closeness. Immediately after TAT®, he got up, became happier, and more playful.',
