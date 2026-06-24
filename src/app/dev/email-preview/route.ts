@@ -24,8 +24,8 @@ function readAuthTemplate(name: string): string {
 type Preview = { label: string; subject: string; html: string }
 
 function buildPreviews(): Record<string, Preview> {
-  const wLibrary = welcomeEmail('Kai', 'subscriber')
-  const wCircle = welcomeEmail('Marion Olsen', 'pro_subscriber')
+  const wLibrary = welcomeEmail('Kai', 'subscriber', 'month')
+  const wCircle = welcomeEmail('Marion Olsen', 'pro_subscriber', 'year')
   const cancel = cancellationEmail('Marion')
   const webinar = webinarInviteEmail('Marion', {
     title: 'Calming an anxious dog — live with Tapas',

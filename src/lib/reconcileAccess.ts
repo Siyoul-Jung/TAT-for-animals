@@ -56,7 +56,7 @@ export async function reconcileAccess(profile: ProfileLike): Promise<ReconcileRe
           cancel_at: null,
         }
         await supabaseAdmin.from('profiles').update(update).eq('id', profile.id)
-        await sendWelcome(profile.id, sub.id, update.role)
+        await sendWelcome(profile.id, sub.id, update.role, getBillingInterval(sub))
         return update
       }
     } catch (e) {
@@ -76,7 +76,7 @@ export async function reconcileAccess(profile: ProfileLike): Promise<ReconcileRe
           billing_interval: getPlanInterval(sub.plan_id),
         }
         await supabaseAdmin.from('profiles').update(update).eq('id', profile.id)
-        await sendWelcome(profile.id, profile.paypal_subscription_id, update.role)
+        await sendWelcome(profile.id, profile.paypal_subscription_id, update.role, getPlanInterval(sub.plan_id))
         return update
       }
     } catch (e) {
@@ -90,7 +90,7 @@ export async function reconcileAccess(profile: ProfileLike): Promise<ReconcileRe
 // Look up the member's contact details and send the welcome (once) after a
 // self-heal — so a member activated by the fallback still gets the same welcome
 // as one activated by the webhook.
-async function sendWelcome(userId: string, subscriptionId: string | null, role: string) {
+async function sendWelcome(userId: string, subscriptionId: string | null, role: string, interval: 'month' | 'year') {
   const { data: contact } = await supabaseAdmin
     .from('profiles')
     .select('email, full_name')
@@ -101,5 +101,6 @@ async function sendWelcome(userId: string, subscriptionId: string | null, role: 
     email: contact?.email,
     name: contact?.full_name,
     role: role as 'subscriber' | 'pro_subscriber',
+    interval,
   })
 }

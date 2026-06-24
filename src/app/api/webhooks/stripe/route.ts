@@ -118,12 +118,13 @@ export async function POST(request: NextRequest) {
           }
         }
 
+        const billingInterval = getBillingInterval(subscription)
         const updatePayload: Record<string, unknown> = {
           role,
           stripe_subscription_id: subscriptionId,
           subscription_status: 'active',
           current_period_end: getPeriodEndISO(subscription),
-          billing_interval: getBillingInterval(subscription),
+          billing_interval: billingInterval,
           cancel_at: null,
         }
         if (customerName) updatePayload.full_name = customerName
@@ -142,6 +143,7 @@ export async function POST(request: NextRequest) {
           email: customerEmail,
           name: customerName,
           role: role as 'subscriber' | 'pro_subscriber',
+          interval: billingInterval,
         })
 
         break

@@ -17,8 +17,9 @@ export async function sendWelcomeOnce(opts: {
   email: string | null | undefined
   name: string | null | undefined
   role: 'subscriber' | 'pro_subscriber'
+  interval: 'month' | 'year'
 }): Promise<void> {
-  const { subscriptionId, email, name, role } = opts
+  const { subscriptionId, email, name, role, interval } = opts
   if (!email || !subscriptionId) return
 
   const guardId = `welcome-${subscriptionId}`
@@ -28,7 +29,7 @@ export async function sendWelcomeOnce(opts: {
   if (guardError?.code === '23505') return // already sent
 
   try {
-    const { subject, html } = welcomeEmail(name ?? null, role)
+    const { subject, html } = welcomeEmail(name ?? null, role, interval)
     await resend.emails.send({ from: FROM_EMAIL, to: email, subject, html })
   } catch (e) {
     console.error('Welcome email failed:', e)

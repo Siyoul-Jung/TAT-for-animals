@@ -60,6 +60,7 @@ export async function GET(request: NextRequest) {
     email: profile?.email,
     name: profile?.full_name,
     role: role as 'subscriber' | 'pro_subscriber',
+    interval: getPlanInterval(planId),
   })
 
   return NextResponse.redirect(`${process.env.NEXT_PUBLIC_SITE_URL}/thank-you`)

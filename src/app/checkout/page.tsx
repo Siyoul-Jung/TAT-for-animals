@@ -19,6 +19,10 @@ function CheckoutContent() {
   const tier = plan ? PLANS[plan] : undefined;
   const [loading, setLoading] = useState<'stripe' | 'paypal' | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // California's auto-renewal law (§17602) asks for the renewal terms shown
+  // clearly before payment AND the buyer's affirmative consent — so the Pay
+  // buttons stay disabled until this box is checked.
+  const [agreed, setAgreed] = useState(false);
 
   // An unknown/missing plan would otherwise silently bill the default tier —
   // send them back to choose instead of charging for something they didn't pick.
@@ -27,6 +31,16 @@ function CheckoutContent() {
   }, [tier, router]);
 
   if (!tier || !plan) return <div className="min-h-screen bg-cream" />;
+
+  const isAnnual = tier.interval === 'year';
+  // Shown before payment. Annual carries the full renewal + refund terms (a
+  // larger once-a-year charge); monthly is the lighter cancel-anytime version.
+  const disclosure = isAnnual
+    ? `Your ${tier.name} membership is $${tier.price}, billed today and once a year after that — two months free compared with paying monthly. It renews automatically each year unless you cancel, and we'll email a reminder before each renewal. Refunds are available within 14 days of purchase; after that, your membership stays active through the year you've paid for.`
+    : `Your ${tier.name} membership is $${tier.price} per month and renews automatically each month. Cancel anytime — your access continues through the month you've paid for.`;
+  const consentLabel = isAnnual
+    ? 'I understand my annual membership renews automatically each year until I cancel, and that refunds are available only within 14 days of purchase.'
+    : 'I understand my membership renews automatically each month until I cancel.';
 
   async function handlePayment(provider: 'stripe' | 'paypal') {
     setLoading(provider);
@@ -94,12 +108,33 @@ function CheckoutContent() {
           </div>
         )}
 
+        {/* Billing terms — shown clearly before payment */}
+        <div className="rounded-xl px-4 py-3 mb-4 border" style={{ backgroundColor: 'rgba(70,120,38,0.05)', borderColor: 'rgba(70,120,38,0.18)' }}>
+          <p className="text-sm leading-relaxed" style={{ color: '#3F3128' }}>
+            {disclosure}
+          </p>
+        </div>
+
+        {/* Affirmative consent — required before the Pay buttons enable */}
+        <label className="flex items-start gap-3 mb-5 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={agreed}
+            onChange={(e) => setAgreed(e.target.checked)}
+            className="mt-0.5 h-5 w-5 shrink-0"
+            style={{ accentColor: '#467826' }}
+          />
+          <span className="text-sm leading-relaxed" style={{ color: '#3F3128' }}>
+            {consentLabel}
+          </span>
+        </label>
+
         {/* Payment options */}
         <div className="flex flex-col gap-3">
           <button
             onClick={() => handlePayment('stripe')}
-            disabled={loading !== null}
-            className="w-full py-4 rounded-xl font-bold text-[19px] transition-all hover:opacity-90 active:scale-95 disabled:opacity-50"
+            disabled={loading !== null || !agreed}
+            className="w-full py-4 rounded-xl font-bold text-[19px] transition-all hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             style={{
               backgroundColor: '#D4703A',
               color: '#FAF6F1',
@@ -111,13 +146,19 @@ function CheckoutContent() {
 
           <button
             onClick={() => handlePayment('paypal')}
-            disabled={loading !== null}
-            className="w-full py-4 rounded-xl font-bold text-[19px] transition-all hover:opacity-90 active:scale-95 disabled:opacity-50"
+            disabled={loading !== null || !agreed}
+            className="w-full py-4 rounded-xl font-bold text-[19px] transition-all hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             style={{ backgroundColor: '#FFC439', color: '#003087' }}
           >
             {loading === 'paypal' ? 'Taking you to payment…' : 'Pay with PayPal'}
           </button>
         </div>
+
+        {!agreed && (
+          <p className="text-center text-sm mt-4" style={{ color: '#7A5F4F' }}>
+            Please check the box above to continue.
+          </p>
+        )}
 
         <p className="text-center text-sm mt-6" style={{ color: '#7A5F4F' }}>
           Cancel anytime · Secure payment

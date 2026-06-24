@@ -96,6 +96,7 @@ export async function POST(request: NextRequest) {
           email: profile?.email,
           name: profile?.full_name,
           role: role as 'subscriber' | 'pro_subscriber',
+          interval: getPlanInterval(resource.plan_id),
         })
         break
       }
