@@ -36,48 +36,57 @@ export default function AboutClient() {
 
       {/* 2. 사진 + 창업자 바이오 (Tapas 원문 verbatim) */}
       <section className="pt-4 pb-16 px-6">
-        <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-24 items-start">
+        <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-24 items-start lg:items-stretch">
 
-          {/* 사진 — 본문이 훨씬 길어 생기는 좌측 하단 여백을 줄이려 데스크톱에서 sticky로
-              고정. 스크롤하면 사진이 본문 옆을 따라 내려와 빈 공간이 죽지 않는다. */}
+          {/* 사진 + 인용구 */}
           <motion.div
             initial={{ opacity: 0, x: -24 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            className="relative lg:sticky lg:top-28"
+            className="flex flex-col"
           >
-            <div
-              className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden"
-              style={{
-                boxShadow: '0 24px 64px rgba(28,16,7,0.12), 0 0 0 1px rgba(28,16,7,0.06)',
-              }}
-            >
-              <Image
-                src="/images/Tapas-Thanks.jpg"
-                alt="Tapas Fleming — Creator of TAT®"
-                fill
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover object-top"
-              />
+            {/* 사진 + 뱃지 — relative 래퍼로 뱃지를 사진에 고정 (칸이 늘어나도 따라가지 않음) */}
+            <div className="relative">
               <div
-                className="absolute inset-0"
-                style={{ background: 'linear-gradient(to top, rgba(28,16,7,0.20) 0%, transparent 50%)' }}
-              />
+                className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden"
+                style={{
+                  boxShadow: '0 24px 64px rgba(28,16,7,0.12), 0 0 0 1px rgba(28,16,7,0.06)',
+                }}
+              >
+                <Image
+                  src="/images/Tapas-Thanks.jpg"
+                  alt="Tapas Fleming — Creator of TAT®"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="object-cover object-top"
+                />
+                <div
+                  className="absolute inset-0"
+                  style={{ background: 'linear-gradient(to top, rgba(28,16,7,0.20) 0%, transparent 50%)' }}
+                />
+              </div>
+
+              {/* Founded badge */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="absolute -bottom-7 right-3 sm:-bottom-5 sm:-right-5 bg-cream rounded-2xl px-5 py-3 sm:px-6 sm:py-4 flex flex-col gap-0.5"
+                style={{ boxShadow: '0 8px 32px rgba(28,16,7,0.10), 0 0 0 1px rgba(28,16,7,0.07)' }}
+              >
+                <span className="font-serif text-2xl font-semibold text-charcoal">1993</span>
+                <span className="text-xs text-charcoal/65 font-light tracking-wide">TATLife® Founded</span>
+              </motion.div>
             </div>
 
-            {/* Founded badge */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="absolute -bottom-7 right-3 sm:-bottom-5 sm:-right-5 bg-cream rounded-2xl px-5 py-3 sm:px-6 sm:py-4 flex flex-col gap-0.5"
-              style={{ boxShadow: '0 8px 32px rgba(28,16,7,0.10), 0 0 0 1px rgba(28,16,7,0.07)' }}
-            >
-              <span className="font-serif text-2xl font-semibold text-charcoal">1993</span>
-              <span className="text-xs text-charcoal/65 font-light tracking-wide">TATLife® Founded</span>
-            </motion.div>
+            {/* 창업자 인용구 — 본문이 길어 생기는 좌측 하단 여백을 채움.
+                데스크톱은 mt-auto 로 칸 바닥에 정렬, 모바일은 사진 아래 자연스럽게 배치. */}
+            <blockquote className="font-serif text-xl sm:text-2xl text-charcoal/80 leading-snug mt-12 lg:mt-auto lg:pt-8">
+              &ldquo;I love to help people and animals find peace &mdash;
+              one person, one animal at a time.&rdquo;
+            </blockquote>
           </motion.div>
 
           {/* 텍스트 */}
@@ -119,13 +128,6 @@ export default function AboutClient() {
               Through this work, Tapas has helped people and animals around the world find more
               peace, connection, and emotional well-being.
             </p>
-
-            <div className="h-px bg-charcoal/8 my-2" />
-
-            <blockquote className="font-serif text-xl sm:text-2xl text-charcoal/80 leading-snug">
-              &ldquo;I love to help people and animals find peace &mdash;
-              one person, one animal at a time.&rdquo;
-            </blockquote>
           </motion.div>
         </div>
       </section>
