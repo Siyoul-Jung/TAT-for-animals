@@ -110,29 +110,10 @@ export default function TrySession() {
           </p>
         </motion.div>
 
-        {/* I'm Tapas Fleming — Tapas's intro, verbatim (his order: before the video lead-in).
-            Kept here to avoid duplicating the signature below the video. Pending a proposal to
-            Tapas to drop it from home entirely (it lives in full on the About page). */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="mb-12 max-w-2xl mx-auto text-center"
-        >
-          <h3 className="text-xl sm:text-2xl font-serif text-charcoal font-medium mb-4">
-            I&rsquo;m Tapas Fleming
-          </h3>
-          <p className="text-base sm:text-lg leading-relaxed text-charcoal/80 max-w-xl mx-auto mb-4">
-            I&rsquo;m Tapas Fleming, creator of TAT&reg;.
-          </p>
-          <p className="text-base sm:text-lg leading-relaxed text-charcoal/80 max-w-xl mx-auto">
-            Through this work, I&rsquo;ve helped animals&mdash;and the people who love them&mdash;find
-            their way back to calm, connection, and emotional <span className="whitespace-nowrap">well-being</span>.
-          </p>
-        </motion.div>
-
-        {/* Experience TAT Together — lead-in to the video, verbatim */}
+        {/* Experience TAT Together — lead-in to the video, verbatim.
+            The separate "I'm Tapas Fleming" intro that used to sit here was removed to get
+            visitors to the video sooner (Tapas approved, 2026-06-25): it duplicated the credit
+            line under the video, and his full story lives on the About page. */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
