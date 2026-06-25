@@ -98,7 +98,7 @@ export default function Hero({ images }: { images: HeroImage[] }) {
         </div>
 
         {/* ── Text — mobile: below image; desktop: left column ── */}
-        <div className="flex flex-1 flex-col justify-center px-6 py-8 [@media(max-height:740px)]:py-3 lg:px-14 xl:px-20 2xl:px-28 lg:py-0 lg:col-start-1 lg:row-start-1 -mt-0.5 lg:mt-0 bg-cream lg:bg-transparent relative z-20">
+        <div className="flex flex-1 flex-col justify-center px-6 pt-8 pb-12 [@media(max-height:740px)]:pt-4 [@media(max-height:740px)]:pb-8 lg:px-14 xl:px-20 2xl:px-28 lg:py-0 lg:col-start-1 lg:row-start-1 -mt-0.5 lg:mt-0 bg-cream lg:bg-transparent relative z-20">
           <div
             className="lg:!pb-0"
             style={{ paddingBottom: 'calc(var(--cookie-banner-offset, 0px) + env(safe-area-inset-bottom))' }}
@@ -106,8 +106,11 @@ export default function Hero({ images }: { images: HeroImage[] }) {
             <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-2 lg:mb-5" style={{ color: '#467826' }}>
               TAT for Animals
             </p>
-            <h1 className="font-serif text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl leading-[1.2] text-charcoal mb-2 lg:mb-5 font-semibold">
-              Help your animal feel safe,<br />calm and connected.
+            <h1 className="font-serif text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl leading-[1.2] text-charcoal mb-2 lg:mb-5 font-semibold text-balance">
+              {/* Force the two-line break only on desktop; on narrow screens the
+                  hard break orphaned "safe," on its own line. Let mobile wrap
+                  naturally (text-balance keeps the lines even). */}
+              Help your animal feel safe, <br className="hidden lg:inline" />calm and connected.
             </h1>
             <p className="font-sans text-sm lg:text-xl mb-5 lg:mb-8 font-normal text-charcoal/65">
               When they settle, you do too.

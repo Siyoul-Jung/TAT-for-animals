@@ -50,7 +50,7 @@ export default function AboutTapas() {
               style={{ boxShadow: '0 8px 32px rgba(31,46,20,0.10), 0 0 0 1px rgba(31,46,20,0.07)' }}
             >
               <span className="font-serif text-2xl font-semibold text-charcoal">1993</span>
-              <span className="text-xs text-charcoal/65 font-light tracking-wide">TATLife® Founded</span>
+              <span className="text-xs text-charcoal/65 font-light tracking-wide">TAT® created</span>
             </motion.div>
           </div>
 

@@ -98,7 +98,7 @@ export default function TrySession() {
           </div>
 
           <p className="text-base sm:text-lg leading-relaxed text-charcoal/80 max-w-xl mx-auto mb-5">
-            If you recognized your animal in even one of these situations, you&rsquo;re not alone.
+            If you recognized your animal in even one of these situations, <span className="whitespace-nowrap">you&rsquo;re not alone.</span>
           </p>
           <p className="text-base sm:text-lg leading-relaxed text-charcoal/80 max-w-xl mx-auto mb-5">
             For more than 30 years, I&rsquo;ve used TAT&reg; to help animals move through fear,
@@ -128,7 +128,7 @@ export default function TrySession() {
           </p>
           <p className="text-base sm:text-lg leading-relaxed text-charcoal/80 max-w-xl mx-auto">
             Through this work, I&rsquo;ve helped animals&mdash;and the people who love them&mdash;find
-            their way back to calm, connection, and emotional well-being.
+            their way back to calm, connection, and emotional <span className="whitespace-nowrap">well-being</span>.
           </p>
         </motion.div>
 

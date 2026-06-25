@@ -287,7 +287,7 @@ export default function Pricing({ showHeader = true, bg = 'bg-white', showBookin
               className="inline-flex items-center min-h-[44px] gap-1.5 mt-2 text-base font-semibold underline underline-offset-4 hover:opacity-70 transition-opacity whitespace-nowrap"
               style={{ color: '#467826' }}
             >
-              Book a private session →
+              Book a private session ↗
             </a>
           </div>
         )}

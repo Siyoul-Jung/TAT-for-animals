@@ -43,7 +43,7 @@ const socials = [
 export default function Footer() {
   return (
     <footer
-      className="px-6 pt-6 pb-4"
+      className="px-6 pt-6 pb-8"
       style={{ backgroundColor: '#1E3310' }}
     >
       <div className="max-w-6xl mx-auto">
@@ -131,7 +131,7 @@ export default function Footer() {
               (e.currentTarget as HTMLElement).style.color = 'rgba(250,246,241,0.60)';
             }}
           >
-            Book a Session ↗
+            Book a session ↗
           </a>
           <a
             href="https://tatlife.com"

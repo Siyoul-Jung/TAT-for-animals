@@ -591,7 +591,7 @@ export default function DashboardClient({
                 className="inline-block font-medium underline underline-offset-2 hover:opacity-70 transition-opacity"
                 style={{ color: '#467826' }}
               >
-                Book a Private Session with Tapas →
+                Book a private session with <span className="whitespace-nowrap">Tapas ↗</span>
               </a>
               <p className="text-sm text-charcoal/65 leading-relaxed mt-1">
                 Personalized support for your animal&rsquo;s calm and well-being.
