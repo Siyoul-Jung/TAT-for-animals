@@ -107,10 +107,10 @@ export default function Hero({ images }: { images: HeroImage[] }) {
               TAT for Animals
             </p>
             <h1 className="font-serif text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl leading-[1.2] text-charcoal mb-2 lg:mb-5 font-semibold text-balance">
-              {/* Force the two-line break only on desktop; on narrow screens the
-                  hard break orphaned "safe," on its own line. Let mobile wrap
-                  naturally (text-balance keeps the lines even). */}
-              Help your animal feel safe, <br className="hidden lg:inline" />calm and connected.
+              {/* Break right before the last word so "connected." always lands
+                  alone on the final line, at every width (Tapas's request).
+                  Everything before it wraps naturally; text-balance evens it. */}
+              Help your animal feel safe, calm and <br />connected.
             </h1>
             <p className="font-sans text-sm lg:text-xl mb-5 lg:mb-8 font-normal text-charcoal/65">
               When they settle, you do too.

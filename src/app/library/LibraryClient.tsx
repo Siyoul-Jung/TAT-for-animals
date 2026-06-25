@@ -312,11 +312,10 @@ function RecordingCard({ recording }: { recording: WebinarRecording }) {
   )
 }
 
-type Tab = 'animals' | 'aces' | 'live'
+type Tab = 'animals' | 'live'
 
 export default function LibraryClient({
   animalsVideos,
-  acesVideos,
   recordings,
   upcoming,
   lockedRecordings,
@@ -324,7 +323,6 @@ export default function LibraryClient({
   isPayPal,
 }: {
   animalsVideos: Video[]
-  acesVideos: Video[]
   recordings: WebinarRecording[]
   upcoming: WebinarSession[]
   lockedRecordings: RecordingPreview[]
@@ -336,7 +334,6 @@ export default function LibraryClient({
 
   function resolveTab(p: string | null): Tab {
     if (p === 'live') return 'live'
-    if (p === 'aces') return 'aces'
     return 'animals'
   }
 
@@ -448,7 +445,6 @@ export default function LibraryClient({
 
   const tabs: { id: Tab; label: string; locked?: boolean }[] = [
     { id: 'animals', label: 'TAT for Animals' },
-    { id: 'aces', label: 'For You' },
     { id: 'live', label: 'Live Webinars', locked: role !== 'pro_subscriber' },
   ]
 
@@ -507,7 +503,7 @@ export default function LibraryClient({
             >
               <span className="hidden sm:inline">{tab.label}</span>
               <span className="sm:hidden">
-                {tab.id === 'animals' ? 'Animals' : tab.id === 'aces' ? 'For You' : 'Live'}
+                {tab.id === 'animals' ? 'Animals' : 'Live'}
               </span>
               {tab.locked && (
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth={1.5}
@@ -524,12 +520,6 @@ export default function LibraryClient({
         {activeTab === 'animals' && (
           <div role="tabpanel" id="panel-animals" aria-labelledby="tab-animals" tabIndex={0}>
             <VideoTab videos={animalsVideos} progressMap={progressMap} onProgressUpdate={handleProgressUpdate} />
-          </div>
-        )}
-
-        {activeTab === 'aces' && (
-          <div role="tabpanel" id="panel-aces" aria-labelledby="tab-aces" tabIndex={0}>
-            <VideoTab videos={acesVideos} progressMap={progressMap} onProgressUpdate={handleProgressUpdate} />
           </div>
         )}
 
