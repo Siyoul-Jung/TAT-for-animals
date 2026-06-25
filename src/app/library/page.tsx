@@ -65,14 +65,9 @@ export default async function LibraryPage() {
 
   const isPro = role === 'pro_subscriber'
 
-  const [animalsVideos, acesVideos, recordings, upcoming, lockedRecordings] = await Promise.all([
+  const [animalsVideos, recordings, upcoming, lockedRecordings] = await Promise.all([
     sanityClient.fetch<Video[]>(
       `*[_type == "video" && status == "published" && library == "TAT for Animals"] | order(category asc, dateRecorded asc) {
-        _id, title, category, duration, summary, videoUrl
-      }`
-    ),
-    sanityClient.fetch<Video[]>(
-      `*[_type == "video" && status == "published" && library == "Healing ACEs Plus"] | order(category asc, dateRecorded asc) {
         _id, title, category, duration, summary, videoUrl
       }`
     ),
@@ -103,7 +98,6 @@ export default async function LibraryPage() {
     <Suspense fallback={<div className="min-h-screen bg-cream" />}>
       <LibraryClient
         animalsVideos={animalsVideos}
-        acesVideos={acesVideos}
         recordings={recordings}
         upcoming={upcoming}
         lockedRecordings={lockedRecordings}
