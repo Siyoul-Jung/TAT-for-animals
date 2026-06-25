@@ -254,43 +254,22 @@ export default function AboutClient() {
         </div>
       </section>
 
-      {/* 4. Kai 세션 영상 + 1:1 예약 — "영상 보고 감동 → 바로 신청"이 끊기지 않게 한 블록으로 묶음.
-          영상은 현행 ~9분 Kai 클립(1080084066, Tapas "~9분" 사양). Jez가 52분 풀세션(1074372917,
-          "2025-04-04 TAT for Dogs") 교체 제안 — 길이/제목 충돌로 확인 대기(교체 보류).
-          연결 문구는 우리 카피, 예약 문구는 Tapas 원문 그대로. */}
+      {/* 4. 1:1 예약 CTA — 파운더 스토리 다음, 구독 티어 앞에 두는 "다른 길".
+          예약 문구는 Tapas 원문 그대로. 아래 Pricing이 showBooking=false로 예약을 끄고 있어
+          (중복 방지), About의 1:1 예약 경로는 이 링크 하나뿐 — 제거 금지.
+          Kai 세션 영상은 About 맥락에 안 맞아 제거 (Tapas 2026-06-25 요청). */}
       <section className="pb-20 lg:pb-28 px-6 bg-white">
         <div className="max-w-3xl mx-auto">
-          <motion.div {...fadeUp}>
-            {/* 영상 — Kai 클립 (Vimeo 1080084066, ~9분). autoplay 미설정(프로젝트 자동재생 금지 규칙). */}
-            <div
-              className="relative aspect-video rounded-2xl overflow-hidden"
-              style={{ boxShadow: '0 0 0 1px rgba(28,16,7,0.06)' }}
+          <motion.div {...fadeUp} className="text-center">
+            <a
+              href={BOOKING_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center min-h-[44px] gap-1.5 text-base sm:text-lg font-semibold underline underline-offset-4 hover:opacity-70 transition-opacity"
+              style={{ color: '#467826' }}
             >
-              <iframe
-                src="https://player.vimeo.com/video/1080084066?title=0&byline=0&portrait=0&dnt=1"
-                title="Kai&rsquo;s Journey — a full TAT&reg; session"
-                className="absolute inset-0 w-full h-full"
-                allow="fullscreen; picture-in-picture"
-                allowFullScreen
-              />
-            </div>
-            <p className="text-center text-sm text-muted mt-4">
-              A full TAT&reg; session with Kai
-            </p>
-
-            {/* 영상 → 예약: 새 카피 없이 같은 블록·좁은 간격만으로 흐름을 이음.
-                연결 문장이 필요하면 Tapas에게 한 줄 요청 (콘텐츠는 Tapas 영역). */}
-            <div className="text-center mt-6">
-              <a
-                href={BOOKING_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center min-h-[44px] gap-1.5 text-base sm:text-lg font-semibold underline underline-offset-4 hover:opacity-70 transition-opacity"
-                style={{ color: '#467826' }}
-              >
-                Book a session for your animal&rsquo;s calm and well-being ↗
-              </a>
-            </div>
+              Book a session for your animal&rsquo;s calm and well-being ↗
+            </a>
           </motion.div>
         </div>
       </section>
