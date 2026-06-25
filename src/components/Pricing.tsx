@@ -275,7 +275,7 @@ export default function Pricing({ showHeader = true, bg = 'bg-white', showBookin
             competing with the subscription CTAs. Tapas is named in the lead-in so the link itself
             stays short and on one line (no awkward wrap). Distinct from the Hero's "Try a session".
             Hidden on the About page (showBooking=false), which uses Tapas's own longer "Book a
-            session for your animal's calm and well-being" wording right after the story + Kai video. */}
+            session for your animal's calm and well-being" wording right after the founder story. */}
         {showBooking && (
           <div className="mt-12 max-w-sm mx-auto text-center">
             <p className="text-sm sm:text-base text-charcoal/65 leading-relaxed">

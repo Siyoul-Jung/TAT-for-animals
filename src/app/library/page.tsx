@@ -66,6 +66,10 @@ export default async function LibraryPage() {
   const isPro = role === 'pro_subscriber'
 
   const [animalsVideos, recordings, upcoming, lockedRecordings] = await Promise.all([
+    // Only "TAT for Animals" videos surface here. "Healing ACEs Plus" is a separate
+    // program that lives solely on tatlife.com (it's for healing people, not animals),
+    // so it is intentionally NOT queried or shown on this site (Tapas, 2026-06-25).
+    // The library option still exists in the Sanity schema to keep Jez's data intact.
     sanityClient.fetch<Video[]>(
       `*[_type == "video" && status == "published" && library == "TAT for Animals"] | order(category asc, dateRecorded asc) {
         _id, title, category, duration, summary, videoUrl
