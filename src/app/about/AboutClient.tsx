@@ -77,7 +77,7 @@ export default function AboutClient() {
                 style={{ boxShadow: '0 8px 32px rgba(28,16,7,0.10), 0 0 0 1px rgba(28,16,7,0.07)' }}
               >
                 <span className="font-serif text-2xl font-semibold text-charcoal">1993</span>
-                <span className="text-xs text-charcoal/65 font-light tracking-wide">TATLife® Founded</span>
+                <span className="text-xs text-charcoal/65 font-light tracking-wide">TAT® created</span>
               </motion.div>
             </div>
 
@@ -161,6 +161,15 @@ export default function AboutClient() {
               climbing trees, toys, and plenty of space to explore. A third room was home to
               elegant adult cats. Everywhere I looked, I saw healthy, well-loved felines.
             </p>
+            <Image
+              src="/images/about/cat1.jpg"
+              alt="A kitten resting calmly"
+              width={5184}
+              height={3456}
+              sizes="(min-width: 768px) 720px, 100vw"
+              className="w-full aspect-[4/3] object-cover rounded-2xl"
+              style={{ boxShadow: '0 8px 32px rgba(28,16,7,0.10)' }}
+            />
             <p>
               My client was Celeste Yarnall, who was writing a book on holistic cat care and was
               deeply interested in nutrition and natural approaches to animal wellness. At the
@@ -194,6 +203,15 @@ export default function AboutClient() {
             </p>
             <p>When we finished, Juliet let out a deep sigh.</p>
             <p>She stood up, gave herself a full-body shake, and calmly walked away.</p>
+            <Image
+              src="/images/about/cat3.jpg"
+              alt="A young kitten at play with a toy"
+              width={4304}
+              height={3452}
+              sizes="(min-width: 768px) 720px, 100vw"
+              className="w-full aspect-[4/3] object-cover rounded-2xl"
+              style={{ boxShadow: '0 8px 32px rgba(28,16,7,0.10)' }}
+            />
             <p>I asked Celeste, &ldquo;Is there anything else we should look at for Juliet?&rdquo;</p>
             <p>She replied, &ldquo;No, that was everything.&rdquo;</p>
             <p>I sat there amazed.</p>
@@ -207,6 +225,15 @@ export default function AboutClient() {
             <p className="text-charcoal/85 font-normal">
               That experience marked the beginning of my work with animals using TAT&reg;.
             </p>
+            <Image
+              src="/images/about/cat2.jpg"
+              alt="A young cat sitting peacefully"
+              width={4368}
+              height={2912}
+              sizes="(min-width: 768px) 720px, 100vw"
+              className="w-full aspect-[4/3] object-cover rounded-2xl"
+              style={{ boxShadow: '0 8px 32px rgba(28,16,7,0.10)' }}
+            />
             <p>
               Since then, working with animals&mdash;including cats, dogs, horses and birds&mdash;has
               been a continuing and rewarding part of my practice. Over the years, I have seen
@@ -261,7 +288,7 @@ export default function AboutClient() {
                 className="inline-flex items-center min-h-[44px] gap-1.5 text-base sm:text-lg font-semibold underline underline-offset-4 hover:opacity-70 transition-opacity"
                 style={{ color: '#467826' }}
               >
-                Book a session for your animal&rsquo;s calm and well-being →
+                Book a session for your animal&rsquo;s calm and well-being ↗
               </a>
             </div>
           </motion.div>
