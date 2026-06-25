@@ -10,9 +10,13 @@ import BackToTopButton from '@/components/BackToTopButton'
 
 const CATEGORY_ORDER = ['Foundational', 'Main Content', 'Bonus 2025', 'Bonus 2026']
 
-function getVimeoId(url: string): string | null {
-  const match = url.match(/vimeo\.com\/(?:video\/)?(\d+)/)
-  return match?.[1] ?? null
+function parseVimeo(url: string): { id: string; hash: string | null } | null {
+  // URLs come in two shapes: public `vimeo.com/{id}` and unlisted
+  // `vimeo.com/{id}/{hash}` (or `?h={hash}`). The hash is the private-link key —
+  // the player fails with "Video not available" if it is dropped.
+  const match = url.match(/vimeo\.com\/(?:video\/)?(\d+)(?:[/?](?:h=)?(\w+))?/)
+  if (!match) return null
+  return { id: match[1], hash: match[2] ?? null }
 }
 
 function formatDuration(seconds: number | null): string | null {
@@ -36,8 +40,15 @@ function VideoRow({ video, progress, onProgressUpdate }: {
   const playerRef = useRef<Player | null>(null)
   const saveTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const currentPositionRef = useRef(0)
-  const vimeoId = getVimeoId(video.videoUrl)
+  const vimeo = parseVimeo(video.videoUrl)
+  const vimeoId = vimeo?.id ?? null
+  const vimeoHash = vimeo?.hash ?? null
   const duration = formatDuration(video.duration)
+
+  // Treat "watched to the end" generously: most people stop a few seconds short
+  // of the literal end, so ≥95% counts as complete (the natural 'ended' event
+  // still marks it too).
+  const reachedEnd = (pos: number) => !!video.duration && pos >= video.duration * 0.95
 
   const cleanup = useCallback(() => {
     if (saveTimerRef.current) clearInterval(saveTimerRef.current)
@@ -53,7 +64,11 @@ function VideoRow({ video, progress, onProgressUpdate }: {
     setPlayerError(false)
 
     const player = new Player(containerRef.current, {
-      id: parseInt(vimeoId),
+      // Pass the full URL (with the unlisted hash) rather than the bare id — the
+      // hash is required for private videos or the player shows "not available".
+      url: vimeoHash
+        ? `https://player.vimeo.com/video/${vimeoId}?h=${vimeoHash}`
+        : `https://player.vimeo.com/video/${vimeoId}`,
       autoplay: true,
       responsive: true,
       title: false,
@@ -85,20 +100,24 @@ function VideoRow({ video, progress, onProgressUpdate }: {
     saveTimerRef.current = setInterval(() => {
       const pos = currentPositionRef.current
       if (pos > 0) {
-        onProgressUpdate(video._id, pos, false)
-        saveProgress(video._id, pos, false)
+        const done = reachedEnd(pos)
+        if (done) setCompleted(true)
+        onProgressUpdate(video._id, pos, done)
+        saveProgress(video._id, pos, done)
       }
     }, 30000)
 
     return cleanup
-  }, [open, vimeoId])
+  }, [open, vimeoId, vimeoHash])
 
   const handleToggle = () => {
     if (open) {
       const pos = currentPositionRef.current
       if (pos > 0) {
-        saveProgress(video._id, pos, completed)
-        onProgressUpdate(video._id, pos, completed)
+        const done = completed || reachedEnd(pos)
+        if (done) setCompleted(true)
+        saveProgress(video._id, pos, done)
+        onProgressUpdate(video._id, pos, done)
       }
       cleanup()
     }
@@ -253,14 +272,16 @@ function formatDateTime(iso: string): string {
 
 function RecordingCard({ recording }: { recording: WebinarRecording }) {
   const [playing, setPlaying] = useState(false)
-  const vimeoId = getVimeoId(recording.videoUrl)
+  const vimeo = parseVimeo(recording.videoUrl)
 
   return (
     <div className="bg-white rounded-2xl border border-charcoal/10 overflow-hidden shadow-sm">
       <div className="relative aspect-video bg-charcoal">
-        {playing && vimeoId ? (
+        {playing && vimeo ? (
           <iframe
-            src={`https://player.vimeo.com/video/${vimeoId}?autoplay=1`}
+            src={vimeo.hash
+              ? `https://player.vimeo.com/video/${vimeo.id}?h=${vimeo.hash}&autoplay=1`
+              : `https://player.vimeo.com/video/${vimeo.id}?autoplay=1`}
             title={recording.title}
             className="absolute inset-0 w-full h-full"
             allow="autoplay; fullscreen; picture-in-picture"
