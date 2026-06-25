@@ -10,9 +10,13 @@ import BackToTopButton from '@/components/BackToTopButton'
 
 const CATEGORY_ORDER = ['Foundational', 'Main Content', 'Bonus 2025', 'Bonus 2026']
 
-function getVimeoId(url: string): string | null {
-  const match = url.match(/vimeo\.com\/(?:video\/)?(\d+)/)
-  return match?.[1] ?? null
+function parseVimeo(url: string): { id: string; hash: string | null } | null {
+  // URLs come in two shapes: public `vimeo.com/{id}` and unlisted
+  // `vimeo.com/{id}/{hash}` (or `?h={hash}`). The hash is the private-link key —
+  // the player fails with "Video not available" if it is dropped.
+  const match = url.match(/vimeo\.com\/(?:video\/)?(\d+)(?:[/?](?:h=)?(\w+))?/)
+  if (!match) return null
+  return { id: match[1], hash: match[2] ?? null }
 }
 
 function formatDuration(seconds: number | null): string | null {
@@ -36,8 +40,15 @@ function VideoRow({ video, progress, onProgressUpdate }: {
   const playerRef = useRef<Player | null>(null)
   const saveTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const currentPositionRef = useRef(0)
-  const vimeoId = getVimeoId(video.videoUrl)
+  const vimeo = parseVimeo(video.videoUrl)
+  const vimeoId = vimeo?.id ?? null
+  const vimeoHash = vimeo?.hash ?? null
   const duration = formatDuration(video.duration)
+
+  // Treat "watched to the end" generously: most people stop a few seconds short
+  // of the literal end, so ≥95% counts as complete (the natural 'ended' event
+  // still marks it too).
+  const reachedEnd = (pos: number) => !!video.duration && pos >= video.duration * 0.95
 
   const cleanup = useCallback(() => {
     if (saveTimerRef.current) clearInterval(saveTimerRef.current)
@@ -53,7 +64,11 @@ function VideoRow({ video, progress, onProgressUpdate }: {
     setPlayerError(false)
 
     const player = new Player(containerRef.current, {
-      id: parseInt(vimeoId),
+      // Pass the full URL (with the unlisted hash) rather than the bare id — the
+      // hash is required for private videos or the player shows "not available".
+      url: vimeoHash
+        ? `https://player.vimeo.com/video/${vimeoId}?h=${vimeoHash}`
+        : `https://player.vimeo.com/video/${vimeoId}`,
       autoplay: true,
       responsive: true,
       title: false,
@@ -85,20 +100,24 @@ function VideoRow({ video, progress, onProgressUpdate }: {
     saveTimerRef.current = setInterval(() => {
       const pos = currentPositionRef.current
       if (pos > 0) {
-        onProgressUpdate(video._id, pos, false)
-        saveProgress(video._id, pos, false)
+        const done = reachedEnd(pos)
+        if (done) setCompleted(true)
+        onProgressUpdate(video._id, pos, done)
+        saveProgress(video._id, pos, done)
       }
     }, 30000)
 
     return cleanup
-  }, [open, vimeoId])
+  }, [open, vimeoId, vimeoHash])
 
   const handleToggle = () => {
     if (open) {
       const pos = currentPositionRef.current
       if (pos > 0) {
-        saveProgress(video._id, pos, completed)
-        onProgressUpdate(video._id, pos, completed)
+        const done = completed || reachedEnd(pos)
+        if (done) setCompleted(true)
+        saveProgress(video._id, pos, done)
+        onProgressUpdate(video._id, pos, done)
       }
       cleanup()
     }
@@ -141,13 +160,22 @@ function VideoRow({ video, progress, onProgressUpdate }: {
           </p>
           {/* 진행도 바 */}
           {(completed || (progress?.lastPosition && progress.lastPosition > 5 && video.duration)) && (
-            <div className="mt-2 h-1 rounded-full bg-charcoal/10 overflow-hidden">
+            <div
+              className="mt-2 h-1 rounded-full bg-charcoal/10 overflow-hidden"
+              role="progressbar"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={completed
+                ? 100
+                : Math.round(Math.min((progress!.lastPosition / video.duration!) * 100, 100))}
+              aria-label={`${video.title} — viewing progress`}
+            >
               <div
                 className="h-full rounded-full transition-all"
                 style={{
                   width: completed
                     ? '100%'
-                    : `${Math.min((progress!.lastPosition / (video.duration! * 60)) * 100, 100)}%`,
+                    : `${Math.min((progress!.lastPosition / video.duration!) * 100, 100)}%`,
                   backgroundColor: completed ? '#467826' : '#D4703A',
                 }}
               />
@@ -244,14 +272,16 @@ function formatDateTime(iso: string): string {
 
 function RecordingCard({ recording }: { recording: WebinarRecording }) {
   const [playing, setPlaying] = useState(false)
-  const vimeoId = getVimeoId(recording.videoUrl)
+  const vimeo = parseVimeo(recording.videoUrl)
 
   return (
     <div className="bg-white rounded-2xl border border-charcoal/10 overflow-hidden shadow-sm">
       <div className="relative aspect-video bg-charcoal">
-        {playing && vimeoId ? (
+        {playing && vimeo ? (
           <iframe
-            src={`https://player.vimeo.com/video/${vimeoId}?autoplay=1`}
+            src={vimeo.hash
+              ? `https://player.vimeo.com/video/${vimeo.id}?h=${vimeo.hash}&autoplay=1`
+              : `https://player.vimeo.com/video/${vimeo.id}?autoplay=1`}
             title={recording.title}
             className="absolute inset-0 w-full h-full"
             allow="autoplay; fullscreen; picture-in-picture"
@@ -422,6 +452,24 @@ export default function LibraryClient({
     { id: 'live', label: 'Live Webinars', locked: role !== 'pro_subscriber' },
   ]
 
+  // Roving keyboard navigation across the tabs (WCAG tab pattern): arrow keys move
+  // between tabs, Home/End jump to the ends. Focus follows the new tab so a
+  // keyboard user lands on it.
+  const handleTabKeyDown = (e: React.KeyboardEvent, currentId: Tab) => {
+    const order = tabs.map((t) => t.id)
+    const idx = order.indexOf(currentId)
+    let nextIdx: number | null = null
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') nextIdx = (idx + 1) % order.length
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') nextIdx = (idx - 1 + order.length) % order.length
+    else if (e.key === 'Home') nextIdx = 0
+    else if (e.key === 'End') nextIdx = order.length - 1
+    if (nextIdx === null) return
+    e.preventDefault()
+    const nextId = order[nextIdx]
+    handleTabChange(nextId)
+    document.getElementById(`tab-${nextId}`)?.focus()
+  }
+
   return (
     <main className="min-h-screen bg-cream pt-20 pb-16 px-6">
       <div className="max-w-3xl mx-auto">
@@ -440,11 +488,17 @@ export default function LibraryClient({
         <h1 className="font-serif text-3xl text-charcoal mb-6">Library</h1>
 
         {/* 탭 */}
-        <div className="flex gap-1 p-1 bg-charcoal/6 rounded-2xl mb-8">
+        <div role="tablist" aria-label="Library sections" className="flex gap-1 p-1 bg-charcoal/6 rounded-2xl mb-8">
           {tabs.map((tab) => (
             <button
               key={tab.id}
+              id={`tab-${tab.id}`}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+              aria-controls={`panel-${tab.id}`}
+              tabIndex={activeTab === tab.id ? 0 : -1}
               onClick={() => handleTabChange(tab.id)}
+              onKeyDown={(e) => handleTabKeyDown(e, tab.id)}
               className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-sm transition-all min-h-[44px] ${
                 activeTab === tab.id
                   ? 'bg-white text-green font-semibold shadow-sm'
@@ -467,12 +521,21 @@ export default function LibraryClient({
         </div>
 
         {/* 탭 컨텐츠 */}
-        {activeTab === 'animals' && <VideoTab videos={animalsVideos} progressMap={progressMap} onProgressUpdate={handleProgressUpdate} />}
+        {activeTab === 'animals' && (
+          <div role="tabpanel" id="panel-animals" aria-labelledby="tab-animals" tabIndex={0}>
+            <VideoTab videos={animalsVideos} progressMap={progressMap} onProgressUpdate={handleProgressUpdate} />
+          </div>
+        )}
 
-        {activeTab === 'aces' && <VideoTab videos={acesVideos} progressMap={progressMap} onProgressUpdate={handleProgressUpdate} />}
+        {activeTab === 'aces' && (
+          <div role="tabpanel" id="panel-aces" aria-labelledby="tab-aces" tabIndex={0}>
+            <VideoTab videos={acesVideos} progressMap={progressMap} onProgressUpdate={handleProgressUpdate} />
+          </div>
+        )}
 
         {activeTab === 'live' && (
-          role === 'pro_subscriber' ? (
+          <div role="tabpanel" id="panel-live" aria-labelledby="tab-live" tabIndex={0}>
+          {role === 'pro_subscriber' ? (
             <div className="space-y-6">
               {upcoming.length > 0 && (
                 <div className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm space-y-4">
@@ -666,7 +729,8 @@ export default function LibraryClient({
                 </div>
               </div>
             </div>
-          )
+          )}
+          </div>
         )}
 
       </div>

@@ -70,7 +70,7 @@ export default function UpdatePasswordClient() {
     <button
       type="button"
       onClick={() => setShowPassword(!showPassword)}
-      className="absolute right-4 top-1/2 -translate-y-1/2 text-muted hover:text-charcoal transition-colors"
+      className="absolute right-2 top-1/2 -translate-y-1/2 w-11 h-11 flex items-center justify-center text-muted hover:text-charcoal transition-colors"
       aria-label={showPassword ? 'Hide password' : 'Show password'}
     >
       {showPassword ? (
@@ -146,7 +146,7 @@ export default function UpdatePasswordClient() {
                   required
                   autoComplete="new-password"
                   placeholder="Re-enter your password"
-                  className="w-full px-4 py-4 rounded-xl border border-surface bg-cream text-charcoal text-base placeholder:text-muted/40 focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand/50 transition-all pr-12"
+                  className="w-full px-4 py-4 rounded-xl border border-surface bg-cream text-charcoal text-base placeholder:text-muted/40 focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand/50 transition-all"
                 />
               </div>
             </div>

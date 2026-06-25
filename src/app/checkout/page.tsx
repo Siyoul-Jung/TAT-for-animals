@@ -121,7 +121,7 @@ function CheckoutContent() {
             type="checkbox"
             checked={agreed}
             onChange={(e) => setAgreed(e.target.checked)}
-            className="mt-0.5 h-5 w-5 shrink-0"
+            className="mt-0.5 h-6 w-6 shrink-0"
             style={{ accentColor: '#467826' }}
           />
           <span className="text-sm leading-relaxed" style={{ color: '#3F3128' }}>

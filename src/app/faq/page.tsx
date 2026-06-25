@@ -94,6 +94,7 @@ function FAQItem({ q, a }: { q: string; a: string }) {
         </span>
         <ChevronDown
           size={18}
+          aria-hidden="true"
           className="text-green shrink-0 transition-transform duration-300"
           style={{ transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}
         />
