@@ -31,7 +31,7 @@ const testimonials: Testimonial[] = [
     isQuote: false,
   },
   {
-    name: 'Marion O.',
+    name: 'Marion',
     location: '',
     animal: 'Misty — A Gentle Shift',
     quote: 'We are so pleased to witness Misty\'s new-found peace! She now begs less for food, engages lovingly through eye contact and spontaneous cuddles, and waits patiently instead of whining. These changes are without doubt due to your valuable input.',
