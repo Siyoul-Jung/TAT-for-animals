@@ -184,7 +184,7 @@ export default function AboutClient() {
               style={{ color: '#467826' }}>
               TAT for Animals
             </p>
-            <h2 className="font-serif text-3xl lg:text-4xl text-charcoal font-medium leading-tight">
+            <h2 className="font-serif text-3xl lg:text-4xl text-charcoal font-medium leading-tight text-balance">
               How TAT&reg; for Animals Began
             </h2>
           </motion.div>
@@ -309,7 +309,7 @@ export default function AboutClient() {
               style={{ color: '#467826' }}>
               Sessions with Tapas
             </p>
-            <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl text-charcoal font-medium leading-snug">
+            <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl text-charcoal font-medium leading-snug text-balance">
               What People Say about their Sessions with Animals
             </h2>
           </motion.div>
