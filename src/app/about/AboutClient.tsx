@@ -12,6 +12,49 @@ const fadeUp = {
   transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
 }
 
+// Real reviews Tapas chose (2026-06-26). Session reviews sit by the private-session
+// booking CTA; recording reviews sit after the membership offer. Quotes are verbatim
+// from TATLife, lightly tidied for the site (ampersands spelled out, emojis dropped).
+// Each carries a short `context` line drawn strictly from the reviewer's own words
+// (no invented facts). With no photos available, this context is what gives an
+// anonymous quote a human face — who the session was for, why it mattered.
+const sessionTestimonials = [
+  {
+    name: 'Kymberly',
+    context: 'Session for her dog',
+    quote:
+      'I had a wonderful session that was centered around my dog and a few health limitations. Tapas was kind and discussed what she saw throughout the session. We worked on my beloved pup and would then check back to see if any additional work was needed. It was a wonderful experience that brought about great results for my guy. Many thanks Tapas for all that you do!',
+  },
+  {
+    name: 'AJ',
+    context: 'A returning client',
+    quote:
+      'It’s always a pleasure to work with Tapas. She’s on time, efficient and insightful. And she’s gentle, compassionate and caring. Our session was for one of my dogs who experienced an unidentified injury to his spine, hip and leg. He feels better today and I look forward to his full recovery in the next few days ahead. Thanks, Tapas!',
+  },
+  {
+    name: 'Zoey',
+    context: 'For her dog — and herself',
+    quote:
+      'I had a session for both my dog and I with Tapas. I could feel the difference in myself even after doing TAT with Tapas for my dog! Tapas is a great Facilitator and I felt very supported during our session. Energy shifted and I was feeling lighter and happier afterwards!',
+  },
+]
+
+// Two recording reviews, intentionally NOT uniform: Michele is a calm observation
+// (smaller, quiet), Betsey is the emotional crescendo (large display) — rendered
+// explicitly below rather than mapped, so their differing treatment is clear.
+const recordingMichele = {
+  name: 'Michele',
+  context: 'On the TAT® recording for pets',
+  quote:
+    'My pets love TAT in general and usually wander over when there is some going on, but they have a notable reaction to the tape specifically for pets. I was surprised the first time because I hadn’t thought there was anything out of sorts with them when I put it on, and yet they were noticeably calmer, more peaceful and more cheerful for at least 2 days after.',
+}
+const recordingBetsey = {
+  name: 'Betsey',
+  context: 'After watching TAT® for Dogs',
+  quote:
+    'I just watched the video for TAT for Dogs. That was amazing! I’m still crying with joy! Thank you, what a gift! You’re always an inspiration!',
+}
+
 export default function AboutClient() {
   return (
     <main className="bg-cream">
@@ -254,11 +297,61 @@ export default function AboutClient() {
         </div>
       </section>
 
-      {/* 4. 1:1 예약 CTA — 파운더 스토리 다음, 구독 티어 앞에 두는 "다른 길".
+      {/* 4. 세션 후기 — 1:1 세션 실제 후기, 예약 CTA 바로 앞에 배치 (Tapas 2026-06-26).
+          제목 문구는 Tapas 지정. 사진이 없으므로 editorial 타이포로 위계를 만든다:
+          큰 장식 따옴표(초록 저투명) + 좌우 지그재그(ml/mr-auto)로 단조로운 벽을 피하고,
+          이름 옆 context 라벨로 익명 텍스트에 사람 냄새를 입힌다.
+          bg-cream — 위 스토리(bg-white)와 갈라, 아래 예약·Pricing까지 이어지는 "결정 존". */}
+      <section className="pt-16 lg:pt-24 pb-12 px-6 bg-cream">
+        <div className="max-w-3xl mx-auto">
+          <motion.div {...fadeUp} className="mb-14 sm:mb-20 text-center">
+            <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-4"
+              style={{ color: '#467826' }}>
+              Sessions with Tapas
+            </p>
+            <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl text-charcoal font-medium leading-snug">
+              What People Say about their Sessions with Animals
+            </h2>
+          </motion.div>
+          <div className="flex flex-col gap-14 sm:gap-20">
+            {sessionTestimonials.map((t, i) => (
+              <motion.figure
+                {...fadeUp}
+                key={t.name}
+                className={`relative w-full max-w-[34rem] ${i % 2 === 1 ? 'ml-auto' : 'mr-auto'}`}
+              >
+                {/* 장식용 큰 따옴표 — 본문은 따옴표 없이 두고 이 글리프가 인용임을 표시.
+                    aria-hidden: 스크린리더는 blockquote 시맨틱으로 이미 인용을 인지. */}
+                <span
+                  aria-hidden="true"
+                  className="absolute -top-9 -left-1 font-serif leading-none select-none"
+                  style={{ fontSize: '5.5rem', color: 'rgba(70,120,38,0.18)' }}
+                >
+                  &ldquo;
+                </span>
+                <blockquote className="relative font-serif text-lg sm:text-xl text-charcoal/85 leading-[1.7]">
+                  {t.quote}
+                </blockquote>
+                <figcaption className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1">
+                  <span className="w-7 h-px flex-shrink-0" style={{ backgroundColor: '#467826' }} />
+                  <span className="font-serif text-lg text-charcoal">{t.name}</span>
+                  <span className="text-[12px] uppercase tracking-[0.12em]" style={{ color: '#467826' }}>
+                    {t.context}
+                  </span>
+                </figcaption>
+              </motion.figure>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 5. 1:1 예약 CTA — 파운더 스토리 다음, 구독 티어 앞에 두는 "다른 길".
           예약 문구는 Tapas 원문 그대로. 아래 Pricing이 showBooking=false로 예약을 끄고 있어
           (중복 방지), About의 1:1 예약 경로는 이 링크 하나뿐 — 제거 금지.
-          Kai 세션 영상은 About 맥락에 안 맞아 제거 (Tapas 2026-06-25 요청). */}
-      <section className="pb-20 lg:pb-28 px-6 bg-white">
+          Kai 세션 영상은 About 맥락에 안 맞아 제거 (Tapas 2026-06-25 요청).
+          bg-white — 위 세션 후기(크림)와 아래 Pricing(크림) 사이의 흰 밴드로,
+          섹션 배경을 크림/흰 교차시켜 Pricing 카드가 또렷이 떠 보이게 한다. */}
+      <section className="pt-14 lg:pt-20 pb-20 lg:pb-28 px-6 bg-white">
         <div className="max-w-3xl mx-auto">
           <motion.div {...fadeUp} className="text-center">
             <a
@@ -274,10 +367,48 @@ export default function AboutClient() {
         </div>
       </section>
 
-      {/* 5. 구독 2단계 재노출 (Tapas 요청: "offer two subscription tiers again as on homepage").
+      {/* 6. 구독 2단계 재노출 (Tapas 요청: "offer two subscription tiers again as on homepage").
           showBooking=false — 위 Book a session이 1:1 예약을 담당하므로 중복 방지.
-          bg-cream — 위 Kai/예약 섹션(bg-white)과 색을 갈라 멤버십을 별도 섹션으로 구분. */}
+          bg-cream — 위 예약 섹션(bg-white)과 색을 갈라 멤버십을 별도 섹션으로 구분. */}
       <Pricing showHeader bg="bg-cream" showBooking={false} />
+
+      {/* 7. 녹화 후기 — 멤버십 offer 바로 뒤, 헤드라인 없이 가볍게 (Tapas 2026-06-26):
+          멤버십이 주는 "녹화"에 동물이 반응한 후기 → 결제 직후의 조용한 안심.
+          흰 여백에 띄우면 허공에 뜬 느낌이라, 부드러운 그린 틴트 패널로 바닥을 깔아
+          두 후기를 한 쌍으로 묶는다. Michele=차분한 관찰, Betsey=감정의 마무리(살짝 크게). */}
+      <section className="py-16 lg:py-24 px-6 bg-white">
+        <div className="max-w-3xl mx-auto">
+          <motion.div
+            {...fadeUp}
+            className="rounded-3xl px-7 py-12 sm:px-14 sm:py-16 flex flex-col items-center gap-10 text-center"
+            style={{ backgroundColor: 'rgba(70,120,38,0.05)' }}
+          >
+            {/* Michele — 차분한 관찰 (조용한 증거 톤) */}
+            <figure className="flex flex-col items-center gap-4">
+              <blockquote className="font-serif text-lg sm:text-xl text-charcoal/80 leading-relaxed">
+                &ldquo;{recordingMichele.quote}&rdquo;
+              </blockquote>
+              <figcaption className="text-[12px] uppercase tracking-[0.12em]" style={{ color: '#467826' }}>
+                {recordingMichele.name} &middot; {recordingMichele.context}
+              </figcaption>
+            </figure>
+
+            {/* 짧은 구분선 — 두 후기를 한 쌍으로 잇는다 */}
+            <span aria-hidden="true" className="w-10 h-px"
+              style={{ backgroundColor: 'rgba(70,120,38,0.25)' }} />
+
+            {/* Betsey — 짧고 강한 감정 (Michele과 동일 크기로 통일) */}
+            <figure className="flex flex-col items-center gap-4">
+              <blockquote className="font-serif text-lg sm:text-xl text-charcoal/80 leading-relaxed">
+                &ldquo;{recordingBetsey.quote}&rdquo;
+              </blockquote>
+              <figcaption className="text-[12px] uppercase tracking-[0.12em]" style={{ color: '#467826' }}>
+                {recordingBetsey.name} &middot; {recordingBetsey.context}
+              </figcaption>
+            </figure>
+          </motion.div>
+        </div>
+      </section>
 
     </main>
   )
