@@ -4,6 +4,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { BOOKING_URL } from '@/lib/links';
+import NewsletterSignup from '@/components/NewsletterSignup';
 
 const navLinks = [
   { name: 'Pricing', href: '/membership' },
@@ -47,6 +48,12 @@ export default function Footer() {
       style={{ backgroundColor: '#1E3310' }}
     >
       <div className="max-w-6xl mx-auto">
+
+        {/* Newsletter signup — posts to Mailchimp (Stories and Special Offers audience).
+            Sits at the top of the footer, set off by a divider from the links below. */}
+        <div className="pb-6 mb-3" style={{ borderBottom: '1px solid rgba(250,246,241,0.08)' }}>
+          <NewsletterSignup />
+        </div>
 
         {/* Top row — logo + socials */}
         <div className="flex items-center justify-between pb-3"
