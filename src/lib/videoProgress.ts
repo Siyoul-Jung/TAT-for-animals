@@ -12,11 +12,12 @@ export async function loadAllProgress(): Promise<ProgressMap> {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return {}
 
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('video_watch_events')
     .select('content_id, last_position, completed')
     .eq('user_id', user.id)
 
+  if (error) console.error('loadAllProgress failed:', error.message)
   if (!data) return {}
 
   return Object.fromEntries(
@@ -33,16 +34,21 @@ export async function saveProgress(
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return
 
-  await supabase
+  // content_type is NOT NULL with no default — omitting it made every upsert
+  // fail silently (the error was never checked), so progress never persisted
+  // and the bars/checks vanished on refresh. Library rows are always videos.
+  const { error } = await supabase
     .from('video_watch_events')
     .upsert(
       {
         user_id: user.id,
         content_id: contentId,
+        content_type: 'video',
         last_position: Math.floor(lastPosition),
         completed,
         updated_at: new Date().toISOString(),
       },
       { onConflict: 'user_id,content_id' }
     )
+  if (error) console.error('saveProgress failed:', error.message)
 }

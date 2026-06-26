@@ -99,7 +99,9 @@ function VideoRow({ video, progress, onProgressUpdate }: {
 
     saveTimerRef.current = setInterval(() => {
       const pos = currentPositionRef.current
-      if (pos > 0) {
+      // Ignore sub-second positions: Math.floor would store them as 0, leaving a
+      // noise row with no visible progress.
+      if (pos >= 1) {
         const done = reachedEnd(pos)
         if (done) setCompleted(true)
         onProgressUpdate(video._id, pos, done)
@@ -113,7 +115,7 @@ function VideoRow({ video, progress, onProgressUpdate }: {
   const handleToggle = () => {
     if (open) {
       const pos = currentPositionRef.current
-      if (pos > 0) {
+      if (pos >= 1) {
         const done = completed || reachedEnd(pos)
         if (done) setCompleted(true)
         saveProgress(video._id, pos, done)
