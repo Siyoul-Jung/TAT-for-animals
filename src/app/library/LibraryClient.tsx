@@ -8,7 +8,9 @@ import type { Video, WebinarRecording, WebinarSession, RecordingPreview } from '
 import { loadAllProgress, saveProgress, type ProgressMap } from '@/lib/videoProgress'
 import BackToTopButton from '@/components/BackToTopButton'
 
-const CATEGORY_ORDER = ['Foundational', 'Main Content', 'Bonus 2025', 'Bonus 2026']
+// Display order for library shelves. Must stay identical to the category options
+// in sanity/schemaTypes/video.ts — see the note there. (Jez's names, 2026-06-26.)
+const CATEGORY_ORDER = ['Foundational Content', 'Main Content', 'Bonus Content 2025', 'Bonus Content 2026', 'Legacy Content']
 
 function parseVimeo(url: string): { id: string; hash: string | null } | null {
   // URLs come in two shapes: public `vimeo.com/{id}` and unlisted
