@@ -73,19 +73,25 @@ Webhook idempotency 보장.
 
 ---
 
-## video_watch_events *(Phase 2 — 미구현)*
+## video_watch_events *(구현됨 — 라이브러리 진행률)*
 
-영상 시청 기록. 데이터 파이프라인용.
+영상 시청 진행률. 라이브러리의 진행바·체크 아이콘 표시에 사용. `src/lib/videoProgress.ts`가 `(user_id, content_id)` UNIQUE로 upsert.
 
-| 컬럼 | 타입 | 설명 |
-|------|------|------|
-| `id` | uuid | PK |
-| `user_id` | uuid | profiles 참조 |
-| `content_id` | text | Sanity 문서 ID |
-| `content_type` | text | `video` / `webinar` |
-| `watched_at` | timestamptz | |
-| `watch_duration` | integer | 초 단위 |
-| `completed` | boolean | |
+| 컬럼 | 타입 | 제약 / 기본값 | 설명 |
+|------|------|------|------|
+| `id` | uuid | PK, default `gen_random_uuid()` | |
+| `user_id` | uuid | NOT NULL, FK profiles(id) ON DELETE CASCADE | |
+| `content_id` | text | NOT NULL | Sanity 문서 ID |
+| `content_type` | text | **NOT NULL, default 없음**, CHECK `video`/`webinar` | ⚠️ 코드가 반드시 보내야 함 (안 보내면 저장 실패) |
+| `watched_at` | timestamptz | NOT NULL, default `now()` | |
+| `watch_duration` | integer | | 초 단위 |
+| `completed` | boolean | default `false` | 완료 여부 |
+| `last_position` | integer | default `0` | 이어보기 위치(초) |
+| `updated_at` | timestamptz | default `now()` | |
+
+- UNIQUE `(user_id, content_id)` — upsert `onConflict` 대상
+- RLS 활성, 본인 행만 접근(`auth.uid() = user_id`)
+- ⚠️ 프로덕션엔 이미 존재하나 마이그레이션이 없었음 → `20260626_video_watch_events.sql`로 실제 스키마 문서화(멱등, 재실행 안전)
 
 ---
 
@@ -98,3 +104,6 @@ Webhook idempotency 보장.
 | `20260531_processed_webhook_events.sql` | processed_webhook_events 테이블 |
 | `20260531_profiles_paypal_and_deletion.sql` | paypal_subscription_id, current_period_end, account_deletion_requests 테이블 |
 | `20260531_account_deletion_token.sql` | account_deletion_requests에 token, expires_at 컬럼 추가 |
+| `20260626_video_watch_events.sql` | video_watch_events 테이블 (실제 프로덕션 스키마 문서화, 멱등) |
+
+> 참고: 위 목록은 일부만 기재돼 있을 수 있음 — 전체는 `supabase/migrations/` 디렉터리 확인.
