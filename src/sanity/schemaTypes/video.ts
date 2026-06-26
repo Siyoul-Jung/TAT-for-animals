@@ -34,11 +34,16 @@ export const videoType = defineType({
       // (Studio-only guard; bulk API writes bypass validation, so the import
       // mapping must still include this field.)
       options: {
+        // Category names defined by Jez (2026-06-26). Must stay identical to
+        // CATEGORY_ORDER in LibraryClient.tsx — a mismatch drops videos into the
+        // ungrouped pile. Existing videos are all 'Main Content' (unchanged), so
+        // no data migration was needed when adding the others.
         list: [
-          { title: 'Foundational', value: 'Foundational' },
+          { title: 'Foundational Content', value: 'Foundational Content' },
           { title: 'Main Content', value: 'Main Content' },
-          { title: 'Bonus 2025', value: 'Bonus 2025' },
-          { title: 'Bonus 2026', value: 'Bonus 2026' },
+          { title: 'Bonus Content 2025', value: 'Bonus Content 2025' },
+          { title: 'Bonus Content 2026', value: 'Bonus Content 2026' },
+          { title: 'Legacy Content', value: 'Legacy Content' },
         ],
         layout: 'radio',
       },
