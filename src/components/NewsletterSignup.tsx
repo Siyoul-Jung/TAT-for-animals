@@ -79,7 +79,7 @@ export default function NewsletterSignup() {
       <div className="max-w-md">
         <p className="font-serif text-lg text-cream/90">Stay close to the stories.</p>
         <p className="text-sm font-light leading-relaxed mt-1" style={{ color: 'rgba(250,246,241,0.65)' }}>
-          Gentle animal stories and the occasional special offer, sent straight to your inbox.
+          Uplifting animal stories and the occasional special offer, straight to your inbox.
         </p>
       </div>
 
