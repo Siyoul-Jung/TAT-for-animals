@@ -39,22 +39,6 @@ const sessionTestimonials = [
   },
 ]
 
-// Two recording reviews, intentionally NOT uniform: Michele is a calm observation
-// (smaller, quiet), Betsey is the emotional crescendo (large display) — rendered
-// explicitly below rather than mapped, so their differing treatment is clear.
-const recordingMichele = {
-  name: 'Michele',
-  context: 'On the TAT® recording for pets',
-  quote:
-    'My pets love TAT in general and usually wander over when there is some going on, but they have a notable reaction to the tape specifically for pets. I was surprised the first time because I hadn’t thought there was anything out of sorts with them when I put it on, and yet they were noticeably calmer, more peaceful and more cheerful for at least 2 days after.',
-}
-const recordingBetsey = {
-  name: 'Betsey',
-  context: 'After watching TAT® for Dogs',
-  quote:
-    'I just watched the video for TAT for Dogs. That was amazing! I’m still crying with joy! Thank you, what a gift! You’re always an inspiration!',
-}
-
 export default function AboutClient() {
   return (
     <main className="bg-cream">
@@ -369,46 +353,10 @@ export default function AboutClient() {
 
       {/* 6. 구독 2단계 재노출 (Tapas 요청: "offer two subscription tiers again as on homepage").
           showBooking=false — 위 Book a session이 1:1 예약을 담당하므로 중복 방지.
-          bg-cream — 위 예약 섹션(bg-white)과 색을 갈라 멤버십을 별도 섹션으로 구분. */}
+          bg-cream — 위 예약 섹션(bg-white)과 색을 갈라 멤버십을 별도 섹션으로 구분.
+          녹화 후기(Michele·Betsey)는 Tapas 요청(2026-06-27)으로 홈페이지 오퍼 바로 아래로
+          이동 → src/components/RecordingTestimonials.tsx. About에는 더 두지 않음. */}
       <Pricing showHeader bg="bg-cream" showBooking={false} />
-
-      {/* 7. 녹화 후기 — 멤버십 offer 바로 뒤, 헤드라인 없이 가볍게 (Tapas 2026-06-26):
-          멤버십이 주는 "녹화"에 동물이 반응한 후기 → 결제 직후의 조용한 안심.
-          흰 여백에 띄우면 허공에 뜬 느낌이라, 부드러운 그린 틴트 패널로 바닥을 깔아
-          두 후기를 한 쌍으로 묶는다. Michele=차분한 관찰, Betsey=감정의 마무리(살짝 크게). */}
-      <section className="py-16 lg:py-24 px-6 bg-white">
-        <div className="max-w-3xl mx-auto">
-          <motion.div
-            {...fadeUp}
-            className="rounded-3xl px-7 py-12 sm:px-14 sm:py-16 flex flex-col items-center gap-10 text-center"
-            style={{ backgroundColor: 'rgba(70,120,38,0.05)' }}
-          >
-            {/* Michele — 차분한 관찰 (조용한 증거 톤) */}
-            <figure className="flex flex-col items-center gap-4">
-              <blockquote className="font-serif text-lg sm:text-xl text-charcoal/80 leading-relaxed">
-                &ldquo;{recordingMichele.quote}&rdquo;
-              </blockquote>
-              <figcaption className="text-[12px] uppercase tracking-[0.12em]" style={{ color: '#467826' }}>
-                {recordingMichele.name} &middot; {recordingMichele.context}
-              </figcaption>
-            </figure>
-
-            {/* 짧은 구분선 — 두 후기를 한 쌍으로 잇는다 */}
-            <span aria-hidden="true" className="w-10 h-px"
-              style={{ backgroundColor: 'rgba(70,120,38,0.25)' }} />
-
-            {/* Betsey — 짧고 강한 감정 (Michele과 동일 크기로 통일) */}
-            <figure className="flex flex-col items-center gap-4">
-              <blockquote className="font-serif text-lg sm:text-xl text-charcoal/80 leading-relaxed">
-                &ldquo;{recordingBetsey.quote}&rdquo;
-              </blockquote>
-              <figcaption className="text-[12px] uppercase tracking-[0.12em]" style={{ color: '#467826' }}>
-                {recordingBetsey.name} &middot; {recordingBetsey.context}
-              </figcaption>
-            </figure>
-          </motion.div>
-        </div>
-      </section>
 
     </main>
   )
