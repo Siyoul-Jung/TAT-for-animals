@@ -4,6 +4,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { Suspense } from 'react';
 import Link from 'next/link';
+import { createClient } from '@/lib/supabase/client';
 
 const PLANS: Record<string, { name: string; price: string; interval: 'month' | 'year' }> = {
   calm_library:        { name: 'The Calm Library', price: '27',  interval: 'month' },
@@ -23,6 +24,14 @@ function CheckoutContent() {
   // clearly before payment AND the buyer's affirmative consent — so the Pay
   // buttons stay disabled until this box is checked.
   const [agreed, setAgreed] = useState(false);
+  // Gate the payment form on the visitor's membership status. An already-active
+  // subscriber has nothing to buy here — sending them to the form lets them check
+  // the box, click Pay, and only then hit the server's "already subscribed" wall:
+  // a dead end with the Pay buttons still lit. So we check once on load and, if
+  // they already have a subscription, show a friendly "you're already a member"
+  // screen instead of the form. 'checking' shows a brief loader so a member never
+  // sees the payment form flash.
+  const [status, setStatus] = useState<'checking' | 'member' | 'ready'>('checking');
 
   // An unknown/missing plan would otherwise silently bill the default tier —
   // send them back to choose instead of charging for something they didn't pick.
@@ -30,7 +39,80 @@ function CheckoutContent() {
     if (!tier) router.replace('/membership');
   }, [tier, router]);
 
+  useEffect(() => {
+    if (!plan || !PLANS[plan]) return; // invalid plan → the effect above redirects
+    let activeReq = true;
+    (async () => {
+      try {
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        // Not signed in → let the form load; the Pay click handles auth (401 →
+        // login with resume), preserving the existing guest-checkout path.
+        if (!user) { if (activeReq) setStatus('ready'); return; }
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('stripe_subscription_id, paypal_subscription_id')
+          .eq('id', user.id)
+          .single();
+        if (!activeReq) return;
+        // Same signal the checkout API uses to block a duplicate subscription.
+        setStatus(
+          profile?.stripe_subscription_id || profile?.paypal_subscription_id ? 'member' : 'ready'
+        );
+      } catch {
+        // Never strand the visitor on a loader — fall through to the form; the
+        // checkout API still blocks a duplicate subscription server-side.
+        if (activeReq) setStatus('ready');
+      }
+    })();
+    return () => { activeReq = false; };
+  }, [plan]);
+
   if (!tier || !plan) return <div className="min-h-screen bg-cream" />;
+
+  // Brief loader while we check membership status — keeps a member from ever
+  // seeing the payment form before we can redirect them.
+  if (status === 'checking') {
+    return (
+      <div className="min-h-screen bg-cream flex items-center justify-center px-6 py-20">
+        <div className="flex flex-col items-center gap-4 text-center">
+          <span
+            className="h-8 w-8 rounded-full border-2 animate-spin"
+            style={{ borderColor: 'rgba(212,112,58,0.25)', borderTopColor: '#D4703A' }}
+            aria-hidden="true"
+          />
+          <p className="text-charcoal/65" role="status">Just a moment…</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Already a member — no payment form, just a warm hand-off to their account.
+  if (status === 'member') {
+    return (
+      <div className="min-h-screen bg-cream flex items-center justify-center px-6 py-20">
+        <div className="w-full max-w-sm text-center">
+          <p className="text-[13px] tracking-[0.2em] uppercase font-medium mb-3" style={{ color: '#467826' }}>
+            You're already a member
+          </p>
+          <h1 className="font-serif text-3xl text-charcoal font-medium mb-4">
+            You're all set.
+          </h1>
+          <p className="text-charcoal/70 leading-relaxed mb-8">
+            You already have an active membership, so there's nothing to pay for here.
+            To change your plan or manage your membership, head to your dashboard.
+          </p>
+          <Link
+            href="/dashboard"
+            className="inline-flex items-center justify-center min-h-[52px] px-8 rounded-full font-bold text-[19px] text-cream transition-all hover:opacity-90 active:scale-95"
+            style={{ backgroundColor: '#D4703A', boxShadow: '0 6px 20px rgba(212,112,58,0.20)' }}
+          >
+            Go to your dashboard
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   const isAnnual = tier.interval === 'year';
   // Shown before payment. Annual carries the full renewal + refund terms (a
