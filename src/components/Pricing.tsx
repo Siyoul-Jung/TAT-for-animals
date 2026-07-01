@@ -8,6 +8,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { BOOKING_URL } from '@/lib/links';
+import { returnScrollKey } from '@/lib/scrollReturn';
 
 // Annual = monthly × 10 (two months free), per Tapas's request.
 const tiers = [
@@ -87,6 +88,14 @@ export default function Pricing({ showHeader = true, bg = 'bg-white', showBookin
 
   async function handleCheckout(basePlan: string) {
     setLoadingPlan(basePlan);
+    // Remember where the visitor is so ScrollToTop can bring them back to the plans
+    // (rather than the hero) if they hit Back from checkout/sign-up. ScrollToTop owns
+    // all scroll-on-navigation, so restoration lives there — here we only record.
+    try {
+      sessionStorage.setItem(returnScrollKey(pathname), `${window.scrollY}:${Date.now()}`);
+    } catch {
+      // sessionStorage unavailable (private mode edge) — skip; navigation still works.
+    }
     // Monthly and annual are distinct checkout plans (separate Stripe prices /
     // PayPal plans); the suffix routes to the right one. The spinner stays keyed
     // to the base plan so the toggle choice doesn't change which button shows it.
