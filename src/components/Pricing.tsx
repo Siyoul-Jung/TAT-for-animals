@@ -1,10 +1,10 @@
 // src/components/Pricing.tsx
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { Check } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, useRef } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { BOOKING_URL } from '@/lib/links';
@@ -45,6 +45,7 @@ const tiers = [
 
 export default function Pricing({ showHeader = true, bg = 'bg-white', showBooking = true }: { showHeader?: boolean; bg?: string; showBooking?: boolean }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   // Default to monthly: for an unproven, pre-launch brand with no free trial, the
   // first priority is the easier "first yes" — so the first price a cold visitor
@@ -54,15 +55,35 @@ export default function Pricing({ showHeader = true, bg = 'bg-white', showBookin
   const [billing, setBilling] = useState<'monthly' | 'annual'>('monthly');
   const isAnnual = billing === 'annual';
 
-  // Returning via the back button restores this page from the bfcache with its old
-  // state — which would leave the button stuck on "Loading…" forever. Reset it.
+  // Scroll-reveal that can NEVER strand the cards (and their Join buttons) invisible.
+  // The cards normally fade up as they scroll into view. But a plain whileInView is
+  // gated on a single IntersectionObserver callback — if that never fires (a restored
+  // scroll position, back-button bfcache, an anchor jump straight to #membership, or a
+  // flaky mobile browser), the cards stay at opacity:0 forever, reading as "faded /
+  // dead" membership buttons with no error. So `revealed` is true if ANY of three
+  // things hold: the section scrolled into view, the visitor prefers reduced motion,
+  // or a short mount-time fallback elapsed. Worst case the reveal animation is skipped
+  // — but the membership buttons are always visible and clickable.
+  const revealRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(revealRef, { once: true, margin: '-10% 0px' });
+  const prefersReducedMotion = useReducedMotion();
+  const [revealFallback, setRevealFallback] = useState(false);
   useEffect(() => {
-    const onShow = (e: PageTransitionEvent) => {
-      if (e.persisted) setLoadingPlan(null);
-    };
-    window.addEventListener('pageshow', onShow);
-    return () => window.removeEventListener('pageshow', onShow);
+    const t = setTimeout(() => setRevealFallback(true), 1200);
+    return () => clearTimeout(t);
   }, []);
+  const revealed = inView || prefersReducedMotion || revealFallback;
+
+  // Reset the loading state on every route change. Clicking a plan sets loadingPlan,
+  // which disables and fades BOTH buttons ("Taking you to checkout…"). If the visitor
+  // then returns here — most often via the browser back button — App Router can
+  // restore this page with that stale state, leaving the buttons faded and dead.
+  // usePathname is driven by React's render cycle (unlike a raw popstate listener,
+  // which proved unreliable for App Router soft navigation), so this effect reliably
+  // fires whenever the URL changes to or from this page, clearing the loading state.
+  useEffect(() => {
+    setLoadingPlan(null);
+  }, [pathname]);
 
   async function handleCheckout(basePlan: string) {
     setLoadingPlan(basePlan);
@@ -92,14 +113,13 @@ export default function Pricing({ showHeader = true, bg = 'bg-white', showBookin
       id="membership"
       className={`relative py-20 lg:py-28 px-6 overflow-hidden ${bg}`}
     >
-      <div className="relative z-10 max-w-5xl mx-auto">
+      <div ref={revealRef} className="relative z-10 max-w-5xl mx-auto">
 
         {/* Header */}
         {showHeader && (
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 24 }}
+            animate={{ opacity: revealed ? 1 : 0, y: revealed ? 0 : 24 }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="text-center mb-10 lg:mb-16"
           >
@@ -155,12 +175,11 @@ export default function Pricing({ showHeader = true, bg = 'bg-white', showBookin
           {tiers.map((tier, i) => (
             <motion.div
               key={tier.name}
-              initial={{ opacity: 0, y: 32 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 32 }}
+              animate={{ opacity: revealed ? 1 : 0, y: revealed ? 0 : 32 }}
               transition={{
                 duration: 0.8,
-                delay: i * 0.12,
+                delay: prefersReducedMotion ? 0 : i * 0.12,
                 ease: [0.16, 1, 0.3, 1],
               }}
               whileHover={{ y: -6, transition: { duration: 0.3 } }}
