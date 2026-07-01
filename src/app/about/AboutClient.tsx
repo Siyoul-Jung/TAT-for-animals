@@ -121,7 +121,7 @@ export default function AboutClient() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="flex flex-col gap-6 text-charcoal/65 font-light leading-relaxed text-base sm:text-lg pt-6"
+            className="flex flex-col gap-6 text-charcoal/65 font-light leading-relaxed text-base sm:text-lg"
           >
             <p>
               After years of searching for a gentler way to help people heal &mdash; without
@@ -189,10 +189,10 @@ export default function AboutClient() {
               elegant adult cats. Everywhere I looked, I saw healthy, well-loved felines.
             </p>
             <Image
-              src="/images/about/cat1.jpg"
-              alt="A kitten resting calmly"
-              width={5184}
-              height={3456}
+              src="/images/about/Photo6.jpg"
+              alt="A cat and a dog nestled together in the grass"
+              width={1080}
+              height={635}
               sizes="(min-width: 768px) 720px, 100vw"
               className="w-full aspect-[4/3] object-cover rounded-2xl"
               style={{ boxShadow: '0 8px 32px rgba(28,16,7,0.10)' }}
@@ -200,9 +200,7 @@ export default function AboutClient() {
             <p>
               My client was Celeste Yarnall, who was writing a book on holistic cat care and was
               deeply interested in nutrition and natural approaches to animal wellness. At the
-              time, I knew her only as a passionate advocate for cats and dogs. Years later, I
-              learned that before becoming a respected authority on holistic animal care, she had
-              also been a successful actress.
+              time, I knew her only as a passionate advocate for cats and dogs.
             </p>
             <p>
               Celeste explained that she had loaned one of her favorite cats, Juliet, to a friend.
@@ -230,15 +228,6 @@ export default function AboutClient() {
             </p>
             <p>When we finished, Juliet let out a deep sigh.</p>
             <p>She stood up, gave herself a full-body shake, and calmly walked away.</p>
-            <Image
-              src="/images/about/cat3.jpg"
-              alt="A young kitten at play with a toy"
-              width={4304}
-              height={3452}
-              sizes="(min-width: 768px) 720px, 100vw"
-              className="w-full aspect-[4/3] object-cover rounded-2xl"
-              style={{ boxShadow: '0 8px 32px rgba(28,16,7,0.10)' }}
-            />
             <p>I asked Celeste, &ldquo;Is there anything else we should look at for Juliet?&rdquo;</p>
             <p>She replied, &ldquo;No, that was everything.&rdquo;</p>
             <p>I sat there amazed.</p>
@@ -253,10 +242,10 @@ export default function AboutClient() {
               That experience marked the beginning of my work with animals using TAT&reg;.
             </p>
             <Image
-              src="/images/about/cat2.jpg"
-              alt="A young cat sitting peacefully"
-              width={4368}
-              height={2912}
+              src="/images/about/Photo5.jpg"
+              alt="Two happy dogs walking side by side outdoors"
+              width={1080}
+              height={721}
               sizes="(min-width: 768px) 720px, 100vw"
               className="w-full aspect-[4/3] object-cover rounded-2xl"
               style={{ boxShadow: '0 8px 32px rgba(28,16,7,0.10)' }}
