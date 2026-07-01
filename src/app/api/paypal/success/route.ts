@@ -63,5 +63,5 @@ export async function GET(request: NextRequest) {
     interval: getPlanInterval(planId),
   })
 
-  return NextResponse.redirect(`${process.env.NEXT_PUBLIC_SITE_URL}/thank-you`)
+  return NextResponse.redirect(`${process.env.NEXT_PUBLIC_SITE_URL}/thank-you?paypal=1`)
 }

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Check, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { Suspense, useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 
 function ThankYouContent() {
@@ -12,8 +13,41 @@ function ThankYouContent() {
   // member to /library so they're never bounced back to /membership.
   const [ready, setReady] = useState(false);
   const [timedOut, setTimedOut] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  // A real arrival here always carries checkout context — Stripe adds ?session_id,
+  // PayPal adds ?paypal=1. Without either, someone reached /thank-you directly (a
+  // bookmark, or an existing member typing the URL), so we shouldn't show a
+  // "payment confirmed" screen they didn't trigger — send them where they belong.
+  const hasContext = !!(searchParams.get('session_id') || searchParams.get('paypal'));
 
   useEffect(() => {
+    if (hasContext) return;
+    let active = true;
+    (async () => {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!active) return;
+      if (!user) {
+        router.replace('/membership');
+        return;
+      }
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+      if (!active) return;
+      const isMember = profile?.role === 'subscriber' || profile?.role === 'pro_subscriber';
+      router.replace(isMember ? '/library' : '/membership');
+    })();
+    return () => {
+      active = false;
+    };
+  }, [hasContext, router]);
+
+  useEffect(() => {
+    if (!hasContext) return; // no checkout context — the guard above redirects
     const supabase = createClient();
     let active = true;
     let attempts = 0;
@@ -65,7 +99,10 @@ function ThankYouContent() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [hasContext]);
+
+  // Direct visit with no checkout context — render nothing while the guard redirects.
+  if (!hasContext) return <div className="min-h-[calc(100dvh-5rem)] bg-cream" />;
 
   return (
     <div className="min-h-[calc(100dvh-5rem)] bg-cream flex items-center justify-center px-6 py-24">
