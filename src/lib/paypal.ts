@@ -43,6 +43,9 @@ export interface PayPalSubscription {
   plan_id?: string
   custom_id?: string
   billing_info?: { next_billing_time?: string }
+  // Present while APPROVAL_PENDING — lets us send a returning buyer back to the
+  // SAME approval page instead of opening a duplicate subscription.
+  links?: { rel: string; href: string }[]
 }
 
 export interface PayPalWebhookEvent {

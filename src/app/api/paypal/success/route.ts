@@ -33,6 +33,8 @@ export async function GET(request: NextRequest) {
       .update({
         role,
         paypal_subscription_id: subscriptionId,
+        // Now active — clear the "pending approval" marker used to block duplicates.
+        paypal_pending_subscription_id: null,
         subscription_status: 'active',
         // Set the cadence here too (not just in the webhook) so an annual PayPal
         // member shows "$470 / year" immediately, even if the webhook lags.

@@ -67,6 +67,8 @@ export async function POST(request: NextRequest) {
           .update({
             role,
             paypal_subscription_id: resource.id,
+            // Now active — clear the "pending approval" marker used to block duplicates.
+            paypal_pending_subscription_id: null,
             subscription_status: 'active',
             billing_interval: getPlanInterval(resource.plan_id),
             pending_tier: null,
@@ -233,6 +235,7 @@ export async function POST(request: NextRequest) {
           .update({
             role: 'guest',
             paypal_subscription_id: null,
+            paypal_pending_subscription_id: null,
             subscription_status: 'inactive',
             pending_tier: null,
             pending_tier_at: null,
