@@ -1,6 +1,7 @@
 import { stripe } from '@/lib/stripe'
 import { resend, FROM_EMAIL } from '@/lib/resend'
 import { cancellationEmail } from '@/lib/emails/cancellation'
+import { cancellationScheduledEmail } from '@/lib/emails/cancellation-scheduled'
 import { sendWelcomeOnce } from '@/lib/sendWelcomeOnce'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { claimOnce, releaseOnce } from '@/lib/onceGuard'
@@ -226,6 +227,17 @@ export async function POST(request: NextRequest) {
           ? new Date(subscription.cancel_at * 1000).toISOString()
           : null
 
+        // Fetch the prior value so we can tell "just scheduled" apart from
+        // "already scheduled, some other field changed" — this webhook fires
+        // for other updates too, and a schedule confirmation email must only
+        // go out once, on the null → set transition.
+        const { data: priorProfile } = await supabaseAdmin
+          .from('profiles')
+          .select('cancel_at, full_name')
+          .eq('id', userId)
+          .single()
+        const justScheduledCancellation = !priorProfile?.cancel_at && !!cancelAt
+
         const periodEndISO = getPeriodEndISO(subscription)
         await supabaseAdmin
           .from('profiles')
@@ -239,6 +251,30 @@ export async function POST(request: NextRequest) {
             ...(periodEndISO ? { current_period_end: periodEndISO } : {}),
           })
           .eq('id', userId)
+
+        // Confirm the scheduled cancellation immediately — the "it's really
+        // over" email (cancellationEmail, above) only fires weeks later when
+        // Stripe deletes the subscription at period end, so without this a
+        // member who cancels gets no email at all until then (Jez's QA
+        // report, 2026-07-02).
+        if (justScheduledCancellation && cancelAt) {
+          try {
+            const customerId = subscription.customer as string
+            const customer = await stripe.customers.retrieve(customerId)
+            if (!customer.deleted) {
+              const toEmail = (customer as Stripe.Customer).email
+              if (toEmail) {
+                const accessUntil = new Date(cancelAt).toLocaleDateString('en-US', {
+                  month: 'long', day: 'numeric', year: 'numeric',
+                })
+                const { subject, html } = cancellationScheduledEmail(priorProfile?.full_name ?? null, accessUntil)
+                await resend.emails.send({ from: FROM_EMAIL, to: toEmail, subject, html })
+              }
+            }
+          } catch (emailError) {
+            console.error('Cancellation-scheduled email failed:', emailError)
+          }
+        }
 
         break
       }

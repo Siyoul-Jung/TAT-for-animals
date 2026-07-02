@@ -2,6 +2,8 @@ import { stripe } from '@/lib/stripe'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { paypalRequest } from '@/lib/paypal'
+import { resend, FROM_EMAIL } from '@/lib/resend'
+import { planChangeEmail } from '@/lib/emails/plan-change'
 import { NextRequest, NextResponse } from 'next/server'
 
 // Unified plan change (upgrade OR downgrade) for both providers, in place — no
@@ -45,7 +47,7 @@ export async function POST(request: NextRequest) {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('stripe_subscription_id, paypal_subscription_id, role, billing_interval')
+    .select('stripe_subscription_id, paypal_subscription_id, role, billing_interval, full_name')
     .eq('id', user.id)
     .single()
 
@@ -126,10 +128,15 @@ export async function POST(request: NextRequest) {
       }
 
       // Switch now and invoice the prorated difference for the rest of the
-      // period — the member gets Pro access immediately.
+      // period — the member gets Pro access immediately. Also clear any
+      // pending cancellation: a member paying more to upgrade clearly wants
+      // to keep the subscription, not have it lapse next period on the new
+      // price (Jez's QA report, 2026-07-02 — found "$1/mo Circle" showing
+      // alongside "Cancels August 2" after cancel-then-upgrade).
       await stripe.subscriptions.update(subscription.id, {
         items: [{ id: currentItem.id, price: targetPrice }],
         proration_behavior: 'always_invoice',
+        cancel_at_period_end: false,
       })
 
       // Optimistic sync so the dashboard shows Pro at once. The
@@ -137,8 +144,15 @@ export async function POST(request: NextRequest) {
       // stays gated on subscription_status (past_due) if the charge fails.
       await supabaseAdmin
         .from('profiles')
-        .update({ role: 'pro_subscriber', pending_tier: null, pending_tier_at: null })
+        .update({ role: 'pro_subscriber', pending_tier: null, pending_tier_at: null, cancel_at: null })
         .eq('id', user.id)
+
+      try {
+        const { subject, html } = planChangeEmail(profile.full_name ?? null, 'pro_subscriber')
+        await resend.emails.send({ from: FROM_EMAIL, to: user.email!, subject, html })
+      } catch (emailError) {
+        console.error('Plan change email failed:', emailError)
+      }
 
       return NextResponse.json({ ok: true })
     } catch (error) {
