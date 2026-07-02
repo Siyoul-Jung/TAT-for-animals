@@ -17,6 +17,9 @@ export type Video = {
   duration: number | null
   summary: string | null
   videoUrl: string
+  topicTags: string[] | null
+  keywords: string | null
+  dateRecorded: string | null
 }
 
 export type WebinarRecording = {
@@ -72,7 +75,7 @@ export default async function LibraryPage() {
     // The library option still exists in the Sanity schema to keep Jez's data intact.
     sanityClient.fetch<Video[]>(
       `*[_type == "video" && status == "published" && library == "TAT for Animals"] | order(category asc, dateRecorded asc) {
-        _id, title, category, duration, summary, videoUrl
+        _id, title, category, duration, summary, videoUrl, topicTags, keywords, dateRecorded
       }`
     ),
     isPro
