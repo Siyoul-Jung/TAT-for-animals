@@ -51,7 +51,10 @@ export function welcomeEmail(
 
   const html = emailShell({
     title: subject,
-    eyebrow: 'Welcome',
+    // "Hello" here (not "Welcome") so it doesn't repeat the h1 "Welcome,
+    // [name]" right below — reads as one line top-to-bottom instead of two
+    // (Jez's suggestion, 2026-07-02).
+    eyebrow: 'Hello',
     content,
     footerNote: 'Cancel anytime from your account settings.',
   });

@@ -24,7 +24,15 @@ export default function ResetPasswordClient() {
     })
 
     if (error) {
-      setError('Something went wrong. Please check your email address and try again.')
+      // Supabase rate-limits repeat requests (~60s) to prevent abuse — this is
+      // what "Didn't receive it? Try again" hits if clicked too soon. The old
+      // generic message blamed the email address, which is misleading and was
+      // reported as a confusing error during QA (Jez, 2026-07-02).
+      if (error.status === 429 || /security purposes/i.test(error.message)) {
+        setError("You've already requested a link recently. Please wait a minute and try again, or check your spam folder.")
+      } else {
+        setError('Something went wrong. Please check your email address and try again.')
+      }
       setLoading(false)
       return
     }

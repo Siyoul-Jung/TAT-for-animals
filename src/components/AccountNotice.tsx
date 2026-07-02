@@ -26,7 +26,7 @@ const MESSAGES: Record<string, { tone: 'success' | 'error'; text: string }> = {
   },
   'error:cancel-subscription-first': {
     tone: 'error',
-    text: 'We couldn’t delete your account because you still have an active membership. Please cancel it first from your dashboard, then request deletion again.',
+    text: 'We couldn’t delete your account because you still have an active membership. If you haven’t already, cancel it from your dashboard — once your paid period ends, you can request deletion again.',
   },
   'error:deletion-failed': {
     tone: 'error',

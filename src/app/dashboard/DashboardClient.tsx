@@ -254,7 +254,12 @@ export default function DashboardClient({
       setDeleteRequested(true)
     } catch (err) {
       console.error('Delete request error:', err)
-      setActionError('Something went wrong on our end. Please try again in a moment.')
+      // Show the server's actual reason (e.g. "cancel your subscription first")
+      // instead of a generic fallback that hid it — this UI path is also reached
+      // reactively (not just via the hasSubscription guard above), so a real
+      // server-side rejection was displaying as an unhelpful "something went
+      // wrong" (Jez's QA report, 2026-07-02).
+      setActionError(err instanceof Error && err.message ? err.message : 'Something went wrong on our end. Please try again in a moment.')
     } finally {
       setDeleting(false)
     }
@@ -343,11 +348,12 @@ export default function DashboardClient({
         {errorParam === 'cancel-subscription-first' && (
           <section className="bg-amber-50 border border-amber-200 rounded-2xl p-6 space-y-1">
             <h2 className="font-serif text-lg text-amber-900">
-              Please cancel your membership first
+              {isCancelling ? 'Your membership is still active' : 'Please cancel your membership first'}
             </h2>
             <p className="text-sm text-amber-800 leading-relaxed">
-              Your account still has an active membership, so we couldn&apos;t delete it yet.
-              Cancel below, then you can request deletion again.
+              {isCancelling
+                ? <>Your account still has access until <strong className="font-medium">{cancelDate}</strong>, so we couldn&apos;t delete it yet. Once that date passes, you can request deletion again.</>
+                : <>Your account still has an active membership, so we couldn&apos;t delete it yet. Cancel below, then you can request deletion again once your paid period ends.</>}
             </p>
           </section>
         )}
@@ -686,14 +692,25 @@ export default function DashboardClient({
                 hasSubscription ? (
                   /* Reactive guard — only once the member actually asks to delete do
                      we tell a subscriber to cancel first (the server enforces this
-                     too). Cancel lives once, under Your Membership above. */
+                     too). Cancel lives once, under Your Membership above.
+                     isCancelling branch: a member who already cancelled still has
+                     hasSubscription=true until the paid period actually ends, so
+                     without this they were told to "cancel first" a second time —
+                     confusing when they'd already done it (Jez's QA report,
+                     2026-07-02: stuck for a month with no clear explanation). */
                   <div className="rounded-xl border border-charcoal/10 bg-cream px-4 py-3 flex items-start gap-3">
                     <p className="text-sm text-charcoal/80 leading-relaxed flex-1">
-                      To delete your account, please cancel your membership first — use{' '}
-                      <a href="#your-membership" className="font-medium text-green underline underline-offset-2 hover:text-green">
-                        {isPayPal ? 'Cancel membership' : 'Manage subscription'}
-                      </a>
-                      {' '}above.
+                      {isCancelling ? (
+                        <>Your membership is already set to cancel on <strong className="font-medium">{cancelDate}</strong>. You'll be able to delete your account once it ends.</>
+                      ) : (
+                        <>
+                          To delete your account, please cancel your membership first — use{' '}
+                          <a href="#your-membership" className="font-medium text-green underline underline-offset-2 hover:text-green">
+                            {isPayPal ? 'Cancel membership' : 'Manage subscription'}
+                          </a>
+                          {' '}above.
+                        </>
+                      )}
                     </p>
                     <button
                       onClick={() => setConfirmingDelete(false)}
