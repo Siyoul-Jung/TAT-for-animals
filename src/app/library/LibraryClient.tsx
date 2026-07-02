@@ -667,13 +667,13 @@ export default function LibraryClient({
                 </p>
               </div>
             ) : !isSearching && activeCategory === null ? (
-              <div role="tabpanel" id="panel-category" aria-label="No category selected" className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm">
+              <div role="tabpanel" id="panel-category" aria-label="No category selected" tabIndex={0} className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm">
                 <p className="text-charcoal/65 text-base">
                   Choose a category above to see its videos — or select All to browse everything.
                 </p>
               </div>
             ) : (
-              <div role="tabpanel" id="panel-category" aria-label={isSearching ? 'Search results' : activeCategory ?? ''}>
+              <div role="tabpanel" id="panel-category" aria-label={isSearching ? 'Search results' : activeCategory ?? ''} tabIndex={0}>
                 <VideoTab videos={displayedAnimalsVideos} progressMap={progressMap} onProgressUpdate={handleProgressUpdate} />
               </div>
             )}
