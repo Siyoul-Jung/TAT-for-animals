@@ -31,6 +31,25 @@ export const webinarRecordingType = defineType({
       rows: 3,
       description: '2–3 sentence description',
     }),
+    defineField({
+      name: 'status',
+      title: 'Status',
+      type: 'string',
+      // Without this, a Studio-created recording has no `status` at all, and
+      // the library query (`status == "published"`) silently excludes it —
+      // it never appears in "Most Recent Recordings" (Jez's QA report,
+      // 2026-07-02). Existing recordings were seeded with status via script,
+      // which is why only new Studio entries were affected.
+      initialValue: 'published',
+      options: {
+        list: [
+          { title: 'Published', value: 'published' },
+          { title: 'Draft (hidden from members)', value: 'draft' },
+        ],
+        layout: 'radio',
+      },
+      validation: (r) => r.required(),
+    }),
   ],
   preview: {
     select: {
