@@ -144,8 +144,26 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Right — menu */}
+        {/* Right — menu. About sits first, smaller than the primary CTA (Sign in/Pricing,
+            Library/Dashboard) so it reads as part of the same nav cluster rather than an
+            orphaned label next to the wordmark — and stays out of the CTA's way (Jez
+            request, 2026-07-01; repositioned after it looked disconnected next to the logo). */}
         <div className="flex items-center justify-end gap-5 sm:gap-6">
+          {pathname === '/about' ? (
+            <span aria-current="page" className={cn(
+              'text-xs sm:text-sm font-semibold whitespace-nowrap cursor-default select-none underline underline-offset-4',
+              isScrolled || !isDarkHero ? 'text-green' : 'text-cream'
+            )}>
+              About
+            </span>
+          ) : (
+            <Link href="/about" className={cn(
+              'text-xs sm:text-sm font-medium transition-colors whitespace-nowrap',
+              isScrolled || !isDarkHero ? 'text-charcoal/65 hover:text-green' : 'text-cream/70 hover:text-cream'
+            )}>
+              About
+            </Link>
+          )}
           {isLoggedIn ? (
             <>
               {renderNavLink(isMember ? '/library' : '/membership', isMember ? 'Library' : 'Pricing')}

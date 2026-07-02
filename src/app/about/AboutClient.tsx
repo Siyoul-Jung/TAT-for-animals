@@ -265,6 +265,15 @@ export default function AboutClient() {
               support emotional well-being, ease stress, and deepen the connection between animals
               and their humans.
             </p>
+            <Image
+              src="/images/about/Photo7.jpg"
+              alt="A cat and a dog resting calmly side by side"
+              width={1080}
+              height={720}
+              sizes="(min-width: 768px) 720px, 100vw"
+              className="w-full aspect-[4/3] object-cover rounded-2xl"
+              style={{ boxShadow: '0 8px 32px rgba(28,16,7,0.10)' }}
+            />
           </motion.div>
 
         </div>

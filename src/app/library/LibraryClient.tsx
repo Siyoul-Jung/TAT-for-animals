@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Player from '@vimeo/player'
@@ -11,6 +11,25 @@ import BackToTopButton from '@/components/BackToTopButton'
 // Display order for library shelves. Must stay identical to the category options
 // in sanity/schemaTypes/video.ts — see the note there. (Jez's names, 2026-06-26.)
 const CATEGORY_ORDER = ['Foundational Content', 'Main Content', 'Bonus Content 2025', 'Bonus Content 2026', 'Legacy Content']
+
+// HTML ids can't contain spaces — category names can ("Bonus Content 2025").
+function slugify(s: string): string {
+  return s.toLowerCase().replace(/\s+/g, '-')
+}
+
+// Matches on topic, keyword, or recording year — the three fields Jez asked for
+// (2026-07-01). Title and summary are included too since that's where a member
+// is most likely to recognize the video they're looking for.
+function videoMatchesSearch(video: Video, query: string): boolean {
+  const q = query.trim().toLowerCase()
+  if (!q) return true
+  if (video.title.toLowerCase().includes(q)) return true
+  if (video.summary?.toLowerCase().includes(q)) return true
+  if (video.keywords?.toLowerCase().includes(q)) return true
+  if (video.topicTags?.some((t) => t.toLowerCase().includes(q))) return true
+  if (video.dateRecorded?.slice(0, 4) === q) return true
+  return false
+}
 
 function parseVimeo(url: string): { id: string; hash: string | null } | null {
   // URLs come in two shapes: public `vimeo.com/{id}` and unlisted
@@ -222,6 +241,10 @@ function VideoTab({ videos, progressMap, onProgressUpdate }: {
 }) {
   const categorized = CATEGORY_ORDER.filter((cat) => videos.some((v) => v.category === cat))
   const uncategorized = videos.filter((v) => !CATEGORY_ORDER.includes(v.category))
+  // A category tab already labels the shelf being shown, so the in-card header
+  // pill would just repeat it — only show the pill when more than one group is
+  // present (e.g. search results spanning categories).
+  const showHeaders = categorized.length + (uncategorized.length > 0 ? 1 : 0) > 1
 
   if (videos.length === 0) {
     return (
@@ -235,10 +258,12 @@ function VideoTab({ videos, progressMap, onProgressUpdate }: {
     <div className="space-y-3">
       {categorized.map((cat) => (
         <div key={cat} className="bg-white rounded-2xl border border-charcoal/10 shadow-sm overflow-hidden">
-          <div className="px-6 pt-5 pb-3 border-b border-charcoal/6">
-            <p className="text-xs font-semibold uppercase tracking-widest text-green">{cat}</p>
-          </div>
-          <div className="px-6">
+          {showHeaders && (
+            <div className="px-6 pt-5 pb-3 border-b border-charcoal/6">
+              <p className="text-xs font-semibold uppercase tracking-widest text-green">{cat}</p>
+            </div>
+          )}
+          <div className={showHeaders ? 'px-6' : 'px-6 pt-2'}>
             {videos.filter((v) => v.category === cat).map((video) => (
               <VideoRow key={video._id} video={video} progress={progressMap[video._id]} onProgressUpdate={onProgressUpdate} />
             ))}
@@ -247,10 +272,12 @@ function VideoTab({ videos, progressMap, onProgressUpdate }: {
       ))}
       {uncategorized.length > 0 && (
         <div className="bg-white rounded-2xl border border-charcoal/10 shadow-sm overflow-hidden">
-          <div className="px-6 pt-5 pb-3 border-b border-charcoal/6">
-            <p className="text-xs font-semibold uppercase tracking-widest text-green">Videos</p>
-          </div>
-          <div className="px-6">
+          {showHeaders && (
+            <div className="px-6 pt-5 pb-3 border-b border-charcoal/6">
+              <p className="text-xs font-semibold uppercase tracking-widest text-green">Videos</p>
+            </div>
+          )}
+          <div className={showHeaders ? 'px-6' : 'px-6 pt-2'}>
             {uncategorized.map((video) => (
               <VideoRow key={video._id} video={video} progress={progressMap[video._id]} onProgressUpdate={onProgressUpdate} />
             ))}
@@ -268,9 +295,13 @@ function formatDate(iso: string): string {
 }
 
 function formatDateTime(iso: string): string {
+  // Always shown in Pacific Time regardless of the viewer's own timezone —
+  // Jez schedules webinars in Pacific and wants members reading the same
+  // time she does, not a value that silently shifts per visitor (2026-07-01).
   return new Date(iso).toLocaleString('en-US', {
     month: 'long', day: 'numeric', year: 'numeric',
     hour: 'numeric', minute: '2-digit', timeZoneName: 'short',
+    timeZone: 'America/Los_Angeles',
   })
 }
 
@@ -348,6 +379,49 @@ export default function LibraryClient({
   const [confirmingUpgrade, setConfirmingUpgrade] = useState(false)
   const [previewLoading, setPreviewLoading] = useState(false)
   const [previewAmount, setPreviewAmount] = useState<string | null>(null)
+  const [showAllRecordings, setShowAllRecordings] = useState(false)
+  const [search, setSearch] = useState('')
+  const filteredAnimalsVideos = useMemo(
+    () => animalsVideos.filter((v) => videoMatchesSearch(v, search)),
+    [animalsVideos, search]
+  )
+
+  // Category tabs — Jez asked to replace the single long scrolling list with
+  // tabs per category (2026-07-01/02), so the visitor can land on one shelf
+  // instead of five stacked ones. Nothing is selected by default — the first
+  // screen is just the category buttons, no video list at all, so there is no
+  // long scroll to avoid in the first place. "All" is still an explicit,
+  // always-visible button for browsing everything at once.
+  const hasUncategorized = animalsVideos.some((v) => !CATEGORY_ORDER.includes(v.category))
+  const categoryTabs = useMemo(() => {
+    const present = CATEGORY_ORDER.filter((cat) => animalsVideos.some((v) => v.category === cat))
+    return ['All', ...present, ...(hasUncategorized ? ['Other'] : [])]
+  }, [animalsVideos, hasUncategorized])
+  const [activeCategory, setActiveCategory] = useState<string | null>(null)
+  // A search spans every category — showing the tab row while its selection no
+  // longer applies would be confusing, so results ignore the active tab and are
+  // grouped by category automatically (VideoTab already does this).
+  const isSearching = search.trim().length > 0
+  const displayedAnimalsVideos = isSearching || activeCategory === 'All'
+    ? filteredAnimalsVideos
+    : activeCategory === null
+    ? []
+    : filteredAnimalsVideos.filter((v) =>
+        activeCategory === 'Other' ? !CATEGORY_ORDER.includes(v.category) : v.category === activeCategory
+      )
+  const handleCategoryKeyDown = (e: React.KeyboardEvent, currentCat: string) => {
+    const idx = categoryTabs.indexOf(currentCat)
+    let nextIdx: number | null = null
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') nextIdx = (idx + 1) % categoryTabs.length
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') nextIdx = (idx - 1 + categoryTabs.length) % categoryTabs.length
+    else if (e.key === 'Home') nextIdx = 0
+    else if (e.key === 'End') nextIdx = categoryTabs.length - 1
+    if (nextIdx === null) return
+    e.preventDefault()
+    const nextCat = categoryTabs[nextIdx]
+    setActiveCategory(nextCat)
+    document.getElementById(`category-tab-${slugify(nextCat)}`)?.focus()
+  }
 
   // Show what today's prorated charge will be before the member commits — same
   // promise the dashboard makes, so this CTA never charges without a confirm.
@@ -419,6 +493,22 @@ export default function LibraryClient({
   useEffect(() => {
     setActiveTab(resolveTab(tabParam))
   }, [tabParam])
+
+  // A fresh page load should always start with no category chosen and no
+  // search — never leave a visitor stuck on whatever they last narrowed to.
+  // Covers both a bfcache restore (persisted === true) and, defensively, any
+  // other path that could leave this component's state stale on what the
+  // visitor sees as a fresh reload.
+  useEffect(() => {
+    function handlePageShow(e: PageTransitionEvent) {
+      if (e.persisted) {
+        setActiveCategory(null)
+        setSearch('')
+      }
+    }
+    window.addEventListener('pageshow', handlePageShow)
+    return () => window.removeEventListener('pageshow', handlePageShow)
+  }, [])
 
   // Leaving the Live tab closes the upgrade confirm, so switching tabs and coming
   // back never shows a half-open confirm. Tab switches keep this component mounted,
@@ -523,7 +613,70 @@ export default function LibraryClient({
         {/* 탭 컨텐츠 */}
         {activeTab === 'animals' && (
           <div role="tabpanel" id="panel-animals" aria-labelledby="tab-animals" tabIndex={0}>
-            <VideoTab videos={animalsVideos} progressMap={progressMap} onProgressUpdate={handleProgressUpdate} />
+            <div className="mb-5">
+              <label htmlFor="library-search" className="sr-only">
+                Search videos by topic, keyword, or year
+              </label>
+              <input
+                id="library-search"
+                type="search"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search by topic, keyword, or year"
+                className="w-full min-h-[44px] rounded-2xl border border-charcoal/15 bg-white px-5 py-3 text-base text-charcoal placeholder:text-charcoal/60 focus:outline-none focus:ring-2 focus:ring-green"
+              />
+            </div>
+
+            {/* Category filters — stacked full-width rather than a horizontal
+                scroller. A row would overflow on mobile with names this long
+                ("Foundational Content", "Bonus Content 2025"), and a horizontal
+                scroll hides categories off-screen with no clear sign there's
+                more — exactly the kind of hidden UI this project avoids.
+                Stacked, all five (plus "All") are visible at once. "All" is a
+                real, always-visible tab rather than a "click the active one
+                again to clear it" toggle — recognition over recall. Hidden
+                while searching, since a result can span every category. */}
+            {!isSearching && categoryTabs.length > 1 && (
+              <div role="tablist" aria-label="Video categories" aria-orientation="vertical" className="flex flex-col gap-2 mb-5">
+                {categoryTabs.map((cat) => (
+                  <button
+                    key={cat}
+                    id={`category-tab-${slugify(cat)}`}
+                    role="tab"
+                    aria-selected={activeCategory === cat}
+                    aria-controls="panel-category"
+                    tabIndex={activeCategory === cat || (activeCategory === null && cat === categoryTabs[0]) ? 0 : -1}
+                    onClick={() => setActiveCategory(cat)}
+                    onKeyDown={(e) => handleCategoryKeyDown(e, cat)}
+                    className={`w-full text-left px-5 py-3 rounded-xl text-base transition-all min-h-[44px] ${
+                      activeCategory === cat
+                        ? 'bg-white text-green font-semibold shadow-sm border border-charcoal/10'
+                        : 'text-charcoal/60 font-medium hover:text-charcoal bg-charcoal/6'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {isSearching && search.trim() && filteredAnimalsVideos.length === 0 ? (
+              <div className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm">
+                <p className="text-charcoal/65 text-base">
+                  No videos found for &ldquo;{search.trim()}&rdquo;. Try a different word.
+                </p>
+              </div>
+            ) : !isSearching && activeCategory === null ? (
+              <div role="tabpanel" id="panel-category" aria-label="No category selected" className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm">
+                <p className="text-charcoal/65 text-base">
+                  Choose a category above to see its videos — or select All to browse everything.
+                </p>
+              </div>
+            ) : (
+              <div role="tabpanel" id="panel-category" aria-label={isSearching ? 'Search results' : activeCategory ?? ''}>
+                <VideoTab videos={displayedAnimalsVideos} progressMap={progressMap} onProgressUpdate={handleProgressUpdate} />
+              </div>
+            )}
           </div>
         )}
 
@@ -562,7 +715,7 @@ export default function LibraryClient({
 
               <div className="space-y-4">
                 <h2 className="text-xs font-semibold uppercase tracking-widest text-green">
-                  Past Recordings
+                  Most Recent Recordings
                 </h2>
                 {recordings.length === 0 ? (
                   <div className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm">
@@ -571,11 +724,24 @@ export default function LibraryClient({
                     </p>
                   </div>
                 ) : (
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    {recordings.map((rec) => (
-                      <RecordingCard key={rec._id} recording={rec} />
-                    ))}
-                  </div>
+                  <>
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      {(showAllRecordings ? recordings : recordings.slice(0, 3)).map((rec) => (
+                        <RecordingCard key={rec._id} recording={rec} />
+                      ))}
+                    </div>
+                    {/* Full archive stays reachable for every Pro member — this just
+                        keeps the default view short (Jez, 2026-07-01). A plain button,
+                        not a tab or accordion, so nothing is hidden, only collapsed. */}
+                    {recordings.length > 3 && (
+                      <button
+                        onClick={() => setShowAllRecordings((v) => !v)}
+                        className="inline-flex items-center min-h-[44px] text-sm font-medium text-green hover:text-green transition-colors"
+                      >
+                        {showAllRecordings ? 'Show fewer' : `Show all ${recordings.length} recordings`}
+                      </button>
+                    )}
+                  </>
                 )}
               </div>
             </div>

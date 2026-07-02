@@ -1,4 +1,6 @@
+import { createElement } from 'react'
 import { defineField, defineType } from 'sanity'
+import { VimeoThumbnail } from '../components/VimeoThumbnail'
 
 export const videoType = defineType({
   name: 'video',
@@ -110,13 +112,17 @@ export const videoType = defineType({
       title: 'title',
       library: 'library',
       status: 'status',
+      videoUrl: 'videoUrl',
     },
-    prepare({ title, library, status }) {
+    prepare({ title, library, status, videoUrl }) {
       const lib = library === 'Healing ACEs Plus' ? 'ACEs' : 'Animals'
       const isDraft = status === 'draft' ? ' · Draft' : ''
       return {
         title,
         subtitle: `${lib}${isDraft}`,
+        // A real thumbnail so Jez can recognize the video without opening
+        // each Vimeo link in a new tab to check it (her request, 2026-07-02).
+        media: createElement(VimeoThumbnail, { videoUrl }),
       }
     },
   },

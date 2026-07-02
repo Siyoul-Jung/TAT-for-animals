@@ -39,6 +39,15 @@ function CheckoutContent() {
     if (!tier) router.replace('/membership');
   }, [tier, router]);
 
+  // Switching plans (e.g. monthly → annual) changes the price and the renewal
+  // disclosure shown above, but only the `plan` search param changes — this
+  // component stays mounted, so `agreed` would otherwise carry over from the
+  // previous plan's terms. California's §17602 consent has to be affirmative
+  // for the terms actually on screen, so a plan change must re-ask for it.
+  useEffect(() => {
+    setAgreed(false);
+  }, [plan]);
+
   useEffect(() => {
     if (!plan || !PLANS[plan]) return; // invalid plan → the effect above redirects
     let activeReq = true;
@@ -67,6 +76,20 @@ function CheckoutContent() {
     })();
     return () => { activeReq = false; };
   }, [plan]);
+
+  // Returning via the browser's back button after `window.location.href` sent
+  // the visitor to Stripe/PayPal restores this page from bfcache rather than
+  // remounting it — so `loading` stays frozen at whatever it was when they
+  // left, leaving the Pay button stuck on "Taking you to payment…" forever.
+  // `pageshow`'s `persisted` flag is the signal that a bfcache restore (not a
+  // fresh load) just happened.
+  useEffect(() => {
+    function handlePageShow(e: PageTransitionEvent) {
+      if (e.persisted) setLoading(null);
+    }
+    window.addEventListener('pageshow', handlePageShow);
+    return () => window.removeEventListener('pageshow', handlePageShow);
+  }, []);
 
   if (!tier || !plan) return <div className="min-h-screen bg-cream" />;
 
