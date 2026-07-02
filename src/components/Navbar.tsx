@@ -87,7 +87,7 @@ export default function Navbar() {
   const isDarkHero = darkHeroPages.includes(pathname);
   const isMember = userRole !== 'guest';
   const navLinkClasses = cn(
-    'text-sm font-medium transition-colors whitespace-nowrap',
+    'inline-flex items-center min-h-[44px] text-sm font-medium transition-colors whitespace-nowrap',
     isScrolled || !isDarkHero ? 'text-charcoal/65 hover:text-green' : 'text-cream/70 hover:text-cream'
   );
 
@@ -96,7 +96,7 @@ export default function Navbar() {
   // current rather than disabled, and matches the green "active" cue used elsewhere
   // (library tabs). Green (#467826) on cream clears AA at this size.
   const activeNavClasses = cn(
-    'text-sm font-semibold whitespace-nowrap cursor-default select-none underline underline-offset-[6px] decoration-2',
+    'inline-flex items-center min-h-[44px] text-sm font-semibold whitespace-nowrap cursor-default select-none underline underline-offset-[6px] decoration-2',
     isScrolled || !isDarkHero ? 'text-green decoration-green' : 'text-cream decoration-cream'
   );
   const renderNavLink = (href: string, label: string) =>
@@ -144,21 +144,23 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Right — menu. About sits first, smaller than the primary CTA (Sign in/Pricing,
-            Library/Dashboard) so it reads as part of the same nav cluster rather than an
-            orphaned label next to the wordmark — and stays out of the CTA's way (Jez
-            request, 2026-07-01; repositioned after it looked disconnected next to the logo). */}
+        {/* Right — menu. About sits first, same size as the other links (a smaller size
+            dropped below the project's 14px floor for secondary text) so it reads as
+            part of the same nav cluster rather than an orphaned label next to the
+            wordmark (Jez request, 2026-07-01; repositioned after it looked disconnected
+            next to the logo). font-medium keeps it visually lighter than the active-page
+            underline treatment without going below 14px. */}
         <div className="flex items-center justify-end gap-5 sm:gap-6">
           {pathname === '/about' ? (
             <span aria-current="page" className={cn(
-              'text-xs sm:text-sm font-semibold whitespace-nowrap cursor-default select-none underline underline-offset-4',
+              'inline-flex items-center min-h-[44px] text-sm font-semibold whitespace-nowrap cursor-default select-none underline underline-offset-4',
               isScrolled || !isDarkHero ? 'text-green' : 'text-cream'
             )}>
               About
             </span>
           ) : (
             <Link href="/about" className={cn(
-              'text-xs sm:text-sm font-medium transition-colors whitespace-nowrap',
+              'inline-flex items-center min-h-[44px] text-sm font-medium transition-colors whitespace-nowrap',
               isScrolled || !isDarkHero ? 'text-charcoal/65 hover:text-green' : 'text-cream/70 hover:text-cream'
             )}>
               About
