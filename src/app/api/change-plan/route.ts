@@ -2,8 +2,6 @@ import { stripe } from '@/lib/stripe'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { paypalRequest } from '@/lib/paypal'
-import { resend, FROM_EMAIL } from '@/lib/resend'
-import { planChangeEmail } from '@/lib/emails/plan-change'
 import { NextRequest, NextResponse } from 'next/server'
 
 // Unified plan change (upgrade OR downgrade) for both providers, in place — no
@@ -47,7 +45,7 @@ export async function POST(request: NextRequest) {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('stripe_subscription_id, paypal_subscription_id, role, billing_interval, full_name')
+    .select('stripe_subscription_id, paypal_subscription_id, role, billing_interval')
     .eq('id', user.id)
     .single()
 
@@ -148,21 +146,13 @@ export async function POST(request: NextRequest) {
       // Optimistic sync so the dashboard shows Pro at once. The
       // customer.subscription.updated webhook confirms the same value; access
       // stays gated on subscription_status (past_due) if the charge fails.
+      // The upgrade confirmation email is NOT sent here — the webhook sends it
+      // on invoice.payment_succeeded (billing_reason 'subscription_update'),
+      // i.e. only once the prorated charge has actually gone through.
       await supabaseAdmin
         .from('profiles')
         .update({ role: 'pro_subscriber', pending_tier: null, pending_tier_at: null, cancel_at: null })
         .eq('id', user.id)
-
-      // user.email is string | undefined in the Supabase types — skip the
-      // email rather than assert; the upgrade itself already succeeded.
-      if (user.email) {
-        try {
-          const { subject, html } = planChangeEmail(profile.full_name ?? null, 'pro_subscriber')
-          await resend.emails.send({ from: FROM_EMAIL, to: user.email, subject, html })
-        } catch (emailError) {
-          console.error('Plan change email failed:', emailError)
-        }
-      }
 
       return NextResponse.json({ ok: true })
     } catch (error) {

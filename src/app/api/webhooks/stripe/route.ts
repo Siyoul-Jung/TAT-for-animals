@@ -2,6 +2,7 @@ import { stripe } from '@/lib/stripe'
 import { resend, FROM_EMAIL } from '@/lib/resend'
 import { cancellationEmail } from '@/lib/emails/cancellation'
 import { cancellationScheduledEmail } from '@/lib/emails/cancellation-scheduled'
+import { planChangeEmail } from '@/lib/emails/plan-change'
 import { sendWelcomeOnce } from '@/lib/sendWelcomeOnce'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { claimOnce, releaseOnce } from '@/lib/onceGuard'
@@ -168,6 +169,34 @@ export async function POST(request: NextRequest) {
             ...(periodEndISO ? { current_period_end: periodEndISO } : {}),
           })
           .eq('id', userId)
+
+        // Plan-change confirmation — sent HERE, once the prorated charge has
+        // actually succeeded, not from /api/change-plan at request time (which
+        // could congratulate a member whose card then declines). Stripe marks
+        // a plan change's invoice with billing_reason 'subscription_update',
+        // so renewals ('subscription_cycle') and signups ('subscription_create',
+        // welcomed via checkout.session.completed) never match. Also covers a
+        // manual plan change Jez applies in the Stripe dashboard. Event-id
+        // idempotency (claimOnce above) prevents duplicate sends.
+        if (invoice.billing_reason === 'subscription_update') {
+          const priceId = subscription.items.data[0]?.price?.id
+          const newRole = priceId ? PRICE_ROLE_MAP[priceId] : undefined
+          if (newRole === 'subscriber' || newRole === 'pro_subscriber') {
+            try {
+              const { data: profile } = await supabaseAdmin
+                .from('profiles')
+                .select('email, full_name')
+                .eq('id', userId)
+                .single()
+              if (profile?.email) {
+                const { subject, html } = planChangeEmail(profile.full_name ?? null, newRole)
+                await resend.emails.send({ from: FROM_EMAIL, to: profile.email, subject, html })
+              }
+            } catch (emailError) {
+              console.error('Plan change email failed:', emailError)
+            }
+          }
+        }
 
         break
       }
