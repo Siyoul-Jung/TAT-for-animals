@@ -12,14 +12,22 @@ export function recordingNotificationEmail(
   recording: RecordingNotificationData
 ): { subject: string; html: string } {
   const firstName = name?.split(' ')[0] ?? 'there';
-  const subject = `New recording available — ${recording.title}`;
+  // Jez's confirmed wording + emoji (2026-07-02): the gentler option over the
+  // original "[Streaming Access] Recap" phrasing she'd first proposed.
+  const subject = `🎥 A new recording is ready to watch — ${recording.title}`;
 
   const content = `
               <h1 class="email-h1" style="margin:0 0 16px;font-family:'Georgia',serif;font-size:28px;font-weight:500;color:#1C1007;line-height:1.3;">
                 ${recording.title}
               </h1>
+              <p style="margin:0 0 8px;font-size:17px;color:#1C1007;line-height:1.7;">
+                Dear ${firstName},
+              </p>
+              <p style="margin:0 0 8px;font-size:17px;color:rgba(28,16,7,0.65);line-height:1.7;">
+                The recording of ${recording.title} is now available for replay! Happy watching!
+              </p>
               <p style="margin:0;font-size:17px;color:rgba(28,16,7,0.65);line-height:1.7;">
-                Hi ${firstName}, the recording from your ${recording.date} live webinar with Tapas is now ready to watch.
+                Feel free to share your feedback and experience with us.
               </p>
 
               ${recording.summary ? `
