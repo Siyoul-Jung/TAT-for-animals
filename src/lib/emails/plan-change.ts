@@ -1,19 +1,13 @@
-import { emailShell, emailButton } from './layout';
+import { emailShell, emailButton, escapeHtml, firstNameOf, SITE_URL } from './layout';
+import { PLAN_NAMES, type Plan } from '@/lib/plans';
 
-type Plan = 'subscriber' | 'pro_subscriber';
-
-const PLAN_NAMES: Record<Plan, string> = {
-  subscriber: 'The Calm Library',
-  pro_subscriber: 'The Calm Circle',
-};
-
-const LIBRARY_URL = `${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://tatforanimals.com'}/library`;
+const LIBRARY_URL = `${SITE_URL}/library`;
 
 export function planChangeEmail(
   name: string | null,
   newPlan: Plan,
 ): { subject: string; html: string } {
-  const firstName = name?.split(' ')[0] ?? 'there';
+  const firstName = firstNameOf(name);
   const planName = PLAN_NAMES[newPlan];
   const subject = `You're now on ${planName}`;
 
@@ -23,7 +17,7 @@ export function planChangeEmail(
 
   const content = `
               <h1 class="email-h1" style="margin:0 0 16px;font-family:'Georgia',serif;font-size:30px;font-weight:500;color:#1C1007;line-height:1.3;">
-                Welcome to ${planName}, ${firstName}.
+                Welcome to ${planName}, ${escapeHtml(firstName)}.
               </h1>
               <p style="margin:0 0 8px;font-size:17px;color:#1C1007;line-height:1.7;">
                 Your membership has been updated.

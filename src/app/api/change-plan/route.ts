@@ -133,10 +133,16 @@ export async function POST(request: NextRequest) {
       // to keep the subscription, not have it lapse next period on the new
       // price (Jez's QA report, 2026-07-02 — found "$1/mo Circle" showing
       // alongside "Cancels August 2" after cancel-then-upgrade).
+      // `cancel_at: ''` (Emptyable in the pinned SDK) also clears a
+      // CUSTOM-dated cancel_at (e.g. set manually by Jez in the Stripe
+      // dashboard), which `cancel_at_period_end: false` alone would not;
+      // Stripe rejects sending both params together, so pick by shape.
       await stripe.subscriptions.update(subscription.id, {
         items: [{ id: currentItem.id, price: targetPrice }],
         proration_behavior: 'always_invoice',
-        cancel_at_period_end: false,
+        ...(subscription.cancel_at
+          ? { cancel_at: '' as const }
+          : { cancel_at_period_end: false }),
       })
 
       // Optimistic sync so the dashboard shows Pro at once. The
@@ -147,11 +153,15 @@ export async function POST(request: NextRequest) {
         .update({ role: 'pro_subscriber', pending_tier: null, pending_tier_at: null, cancel_at: null })
         .eq('id', user.id)
 
-      try {
-        const { subject, html } = planChangeEmail(profile.full_name ?? null, 'pro_subscriber')
-        await resend.emails.send({ from: FROM_EMAIL, to: user.email!, subject, html })
-      } catch (emailError) {
-        console.error('Plan change email failed:', emailError)
+      // user.email is string | undefined in the Supabase types — skip the
+      // email rather than assert; the upgrade itself already succeeded.
+      if (user.email) {
+        try {
+          const { subject, html } = planChangeEmail(profile.full_name ?? null, 'pro_subscriber')
+          await resend.emails.send({ from: FROM_EMAIL, to: user.email, subject, html })
+        } catch (emailError) {
+          console.error('Plan change email failed:', emailError)
+        }
       }
 
       return NextResponse.json({ ok: true })

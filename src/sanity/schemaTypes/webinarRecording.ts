@@ -54,7 +54,15 @@ export const webinarRecordingType = defineType({
   preview: {
     select: {
       title: 'title',
-      subtitle: 'date',
+      date: 'date',
+      status: 'status',
+    },
+    prepare({ title, date, status }) {
+      // Surface drafts in the Studio list (mirrors video.ts) — the status
+      // field exists so Jez can hide a recording, which only helps if she
+      // can see at a glance which ones are hidden.
+      const isDraft = status === 'draft' ? ' · Draft' : ''
+      return { title, subtitle: `${date ?? ''}${isDraft}` }
     },
   },
 })

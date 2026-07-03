@@ -8,6 +8,34 @@
 // padding/heading on small screens where it's supported (Gmail, Apple Mail,
 // Outlook app). Nothing breaks if it's dropped.
 
+// Base URL for links inside emails — one place, matching every template's
+// previous inline fallback.
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://tatforanimals.com';
+
+// Escape the five HTML-special characters for strings interpolated into email
+// bodies. The values come from trusted authors (Stripe checkout names, Sanity
+// titles Jez writes) — this isn't an injection defense so much as rendering
+// safety: an innocent title like "Webinar <May>" would otherwise swallow the
+// rest of the line.
+export function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+// First name for greetings, shared by every template. trim + whitespace split
+// so a padded name can't yield an empty string ("Welcome, ." — the ?? fallback
+// doesn't catch ''), matching the dashboard's derivation. Returned RAW: escape
+// with escapeHtml() at HTML interpolation sites, but use as-is in subjects —
+// a subject line is plain text, and "O&#39;Brien" there would be worse than
+// the problem being solved.
+export function firstNameOf(name: string | null | undefined): string {
+  return name?.trim().split(/\s+/)[0] || 'there';
+}
+
 type ShellOptions = {
   title: string;        // <title> + browser tab
   eyebrow: string;      // small green uppercase label
@@ -24,7 +52,7 @@ export function emailShell({ title, eyebrow, content, footerNote, preheader }: S
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="x-apple-disable-message-reformatting" />
-  <title>${title}</title>
+  <title>${escapeHtml(title)}</title>
   <style>
     @media only screen and (max-width:480px) {
       .email-outer { padding: 24px 10px !important; }
@@ -34,7 +62,7 @@ export function emailShell({ title, eyebrow, content, footerNote, preheader }: S
   </style>
 </head>
 <body style="margin:0;padding:0;background:#FBF5F3;font-family:'Helvetica Neue',Arial,sans-serif;-webkit-text-size-adjust:100%;">
-  ${preheader ? `<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#FBF5F3;">${preheader}</div>` : ''}
+  ${preheader ? `<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#FBF5F3;">${escapeHtml(preheader)}</div>` : ''}
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" class="email-outer" style="background:#FBF5F3;padding:48px 16px;">
     <tr>
       <td align="center">

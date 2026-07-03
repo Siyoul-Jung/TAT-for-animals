@@ -1,6 +1,9 @@
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { paypalRequest, getPayPalSubscription, estimatePaidThrough } from '@/lib/paypal'
+import { resend, FROM_EMAIL } from '@/lib/resend'
+import { cancellationScheduledEmail } from '@/lib/emails/cancellation-scheduled'
+import { claimOnce, releaseOnce } from '@/lib/onceGuard'
 import { NextResponse } from 'next/server'
 
 // Self-service cancellation for PayPal members. Stripe members cancel through
@@ -18,7 +21,7 @@ export async function POST() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('paypal_subscription_id, current_period_end, billing_interval')
+    .select('paypal_subscription_id, current_period_end, billing_interval, full_name')
     .eq('id', user.id)
     .single()
 
@@ -66,6 +69,30 @@ export async function POST() {
     .from('profiles')
     .update({ cancel_at: paidThrough })
     .eq('id', user.id)
+
+  // Confirm the scheduled cancellation by email — parity with the Stripe path
+  // (the Stripe webhook sends this on the cancel_at transition; PayPal's
+  // CANCELLED webhook sends nothing, so this route is where PayPal members get
+  // theirs). claimOnce keyed on the subscription id: the cancel button is
+  // idempotent (a 422 re-click still lands here), and a PayPal subscription
+  // can only ever be cancelled once, so one email per subscription is right.
+  if (user.email) {
+    const emailKey = `cancel-scheduled-${profile.paypal_subscription_id}`
+    const { alreadyProcessed } = await claimOnce(emailKey)
+    if (!alreadyProcessed) {
+      try {
+        const accessUntil = new Date(paidThrough).toLocaleDateString('en-US', {
+          month: 'long', day: 'numeric', year: 'numeric',
+        })
+        const { subject, html } = cancellationScheduledEmail(profile.full_name ?? null, accessUntil)
+        await resend.emails.send({ from: FROM_EMAIL, to: user.email, subject, html })
+      } catch (emailError) {
+        // Release so a retry (member re-clicks) can re-attempt the send.
+        console.error('Cancellation-scheduled email (PayPal) failed:', emailError)
+        await releaseOnce(emailKey)
+      }
+    }
+  }
 
   return NextResponse.json({ success: true })
 }

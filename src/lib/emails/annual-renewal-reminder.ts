@@ -1,11 +1,5 @@
-import { emailShell } from './layout';
-
-type Plan = 'subscriber' | 'pro_subscriber';
-
-const PLAN_NAMES: Record<Plan, string> = {
-  subscriber: 'The Calm Library',
-  pro_subscriber: 'The Calm Circle',
-};
+import { emailShell, escapeHtml, firstNameOf, SITE_URL } from './layout';
+import { PLAN_NAMES, type Plan } from '@/lib/plans';
 
 // What the member will be charged at renewal. Annual = monthly × 10 (two months
 // free): $27→$270, $47→$470. Used for the heads-up only; the actual charge is
@@ -15,7 +9,7 @@ const ANNUAL_PRICE: Record<Plan, string> = {
   pro_subscriber: '$470',
 };
 
-const DASHBOARD_URL = `${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://tatforanimals.com'}/dashboard`;
+const DASHBOARD_URL = `${SITE_URL}/dashboard`;
 
 // Sent ~30 days before an annual subscription renews. Annual members pay a large
 // amount once a year, so a clear heads-up before the charge is both an industry
@@ -27,7 +21,7 @@ export function annualRenewalReminderEmail(
   plan: Plan,
   renewalDateLabel: string,
 ): { subject: string; html: string } {
-  const firstName = name?.split(' ')[0] ?? 'there';
+  const firstName = firstNameOf(name);
   const planName = PLAN_NAMES[plan];
   const amount = ANNUAL_PRICE[plan];
 
@@ -38,7 +32,7 @@ export function annualRenewalReminderEmail(
                 Your upcoming renewal
               </h1>
               <p style="margin:0 0 8px;font-size:17px;color:#1C1007;line-height:1.7;">
-                Hi ${firstName}, your <strong style="font-weight:600;">${planName}</strong> membership renews on
+                Hi ${escapeHtml(firstName)}, your <strong style="font-weight:600;">${planName}</strong> membership renews on
                 <strong style="font-weight:600;">${renewalDateLabel}</strong> for <strong style="font-weight:600;">${amount}</strong>.
               </p>
               <p style="margin:0;font-size:17px;color:rgba(28,16,7,0.65);line-height:1.7;">

@@ -227,17 +227,6 @@ export async function POST(request: NextRequest) {
           ? new Date(subscription.cancel_at * 1000).toISOString()
           : null
 
-        // Fetch the prior value so we can tell "just scheduled" apart from
-        // "already scheduled, some other field changed" — this webhook fires
-        // for other updates too, and a schedule confirmation email must only
-        // go out once, on the null → set transition.
-        const { data: priorProfile } = await supabaseAdmin
-          .from('profiles')
-          .select('cancel_at, full_name')
-          .eq('id', userId)
-          .single()
-        const justScheduledCancellation = !priorProfile?.cancel_at && !!cancelAt
-
         const periodEndISO = getPeriodEndISO(subscription)
         await supabaseAdmin
           .from('profiles')
@@ -256,23 +245,40 @@ export async function POST(request: NextRequest) {
         // over" email (cancellationEmail, above) only fires weeks later when
         // Stripe deletes the subscription at period end, so without this a
         // member who cancels gets no email at all until then (Jez's QA
-        // report, 2026-07-02).
-        if (justScheduledCancellation && cancelAt) {
-          try {
-            const customerId = subscription.customer as string
-            const customer = await stripe.customers.retrieve(customerId)
-            if (!customer.deleted) {
-              const toEmail = (customer as Stripe.Customer).email
-              if (toEmail) {
-                const accessUntil = new Date(cancelAt).toLocaleDateString('en-US', {
-                  month: 'long', day: 'numeric', year: 'numeric',
-                })
-                const { subject, html } = cancellationScheduledEmail(priorProfile?.full_name ?? null, accessUntil)
-                await resend.emails.send({ from: FROM_EMAIL, to: toEmail, subject, html })
+        // report, 2026-07-02). Once-only is enforced atomically via claimOnce
+        // keyed on subscription + cancel_at timestamp: this event fires for
+        // unrelated updates too, and two concurrent events could otherwise
+        // both pass a read-then-write check and double-send. A resume followed
+        // by a re-cancel gets a new cancel_at → a new key → a fresh email,
+        // which is correct.
+        if (cancelAt) {
+          const emailKey = `cancel-scheduled-${subscription.id}-${subscription.cancel_at}`
+          const { alreadyProcessed } = await claimOnce(emailKey)
+          if (!alreadyProcessed) {
+            try {
+              const { data: profile } = await supabaseAdmin
+                .from('profiles')
+                .select('full_name')
+                .eq('id', userId)
+                .single()
+              const customerId = subscription.customer as string
+              const customer = await stripe.customers.retrieve(customerId)
+              if (!customer.deleted) {
+                const toEmail = (customer as Stripe.Customer).email
+                if (toEmail) {
+                  const accessUntil = new Date(cancelAt).toLocaleDateString('en-US', {
+                    month: 'long', day: 'numeric', year: 'numeric',
+                  })
+                  const { subject, html } = cancellationScheduledEmail(profile?.full_name ?? null, accessUntil)
+                  await resend.emails.send({ from: FROM_EMAIL, to: toEmail, subject, html })
+                }
               }
+            } catch (emailError) {
+              // Release the claim so a webhook retry can re-attempt the send —
+              // otherwise a transient Resend failure permanently eats the email.
+              console.error('Cancellation-scheduled email failed:', emailError)
+              await releaseOnce(emailKey)
             }
-          } catch (emailError) {
-            console.error('Cancellation-scheduled email failed:', emailError)
           }
         }
 
