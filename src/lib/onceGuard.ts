@@ -8,6 +8,10 @@ import { supabaseAdmin } from '@/lib/supabase/admin'
 //   welcome-<subId>            — sendWelcomeOnce
 //   paypal-success-<subId>     — PayPal return handler
 //   renewal-reminder-<id>-<dt> — annual reminder cron
+//   cancel-scheduled-<subId>[-<ts>] — cancellation-scheduled email (Stripe
+//                                 webhook keys with the cancel_at timestamp so
+//                                 a re-cancel re-emails; PayPal cancel route
+//                                 keys on the subscription alone)
 // A cleanup job must therefore NOT purge "old" rows blindly — it would re-open
 // those guards (duplicate welcome emails, double reminders, reprocessed events).
 

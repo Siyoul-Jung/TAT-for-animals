@@ -2,6 +2,8 @@ import { supabaseAdmin } from '@/lib/supabase/admin'
 import { claimOnce, releaseOnce } from '@/lib/onceGuard'
 import { paypalRequest, PLAN_ROLE_MAP, getPayPalSubscription, getPlanInterval, estimatePaidThrough, type PayPalWebhookEvent } from '@/lib/paypal'
 import { sendWelcomeOnce } from '@/lib/sendWelcomeOnce'
+import { resend, FROM_EMAIL } from '@/lib/resend'
+import { planChangeEmail } from '@/lib/emails/plan-change'
 import { NextRequest, NextResponse } from 'next/server'
 
 // Rank roles so we can tell an upgrade from a downgrade. A plan change that
@@ -118,7 +120,7 @@ export async function POST(request: NextRequest) {
 
         const { data: profile } = await supabaseAdmin
           .from('profiles')
-          .select('role')
+          .select('role, email, full_name')
           .eq('id', userId)
           .single()
         const currentRole = profile?.role ?? 'guest'
@@ -144,6 +146,21 @@ export async function POST(request: NextRequest) {
             .from('profiles')
             .update({ role: newRole, pending_tier: null, pending_tier_at: null })
             .eq('id', userId)
+
+          // Upgrade confirmation — parity with the Stripe path, where
+          // /api/change-plan sends this directly. PayPal upgrades finalize
+          // here (after the buyer approves on PayPal's site), so this is the
+          // first moment the change is real. Strict rank increase only — a
+          // same-tier revise shouldn't congratulate anyone.
+          const isRealUpgrade = (ROLE_RANK[newRole] ?? 0) > (ROLE_RANK[currentRole] ?? 0)
+          if (isRealUpgrade && profile?.email && (newRole === 'subscriber' || newRole === 'pro_subscriber')) {
+            try {
+              const { subject, html } = planChangeEmail(profile.full_name ?? null, newRole)
+              await resend.emails.send({ from: FROM_EMAIL, to: profile.email, subject, html })
+            } catch (emailError) {
+              console.error('Plan change email (PayPal) failed:', emailError)
+            }
+          }
         }
         break
       }

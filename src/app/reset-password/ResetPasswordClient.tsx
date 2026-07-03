@@ -27,11 +27,20 @@ export default function ResetPasswordClient() {
       // Supabase rate-limits repeat requests (~60s) to prevent abuse — this is
       // what "Didn't receive it? Try again" hits if clicked too soon. The old
       // generic message blamed the email address, which is misleading and was
-      // reported as a confusing error during QA (Jez, 2026-07-02).
-      if (error.status === 429 || /security purposes/i.test(error.message)) {
+      // reported as a confusing error during QA (Jez, 2026-07-02). Detection
+      // uses the stable machine-readable codes from @supabase/auth-js
+      // (error-codes.d.ts), not the English message text, so a Supabase copy
+      // change can't silently break it; status 429 is the belt-and-suspenders.
+      const isRateLimit =
+        error.status === 429 ||
+        error.code === 'over_email_send_rate_limit' ||
+        error.code === 'over_request_rate_limit'
+      if (isRateLimit) {
         setError("You've already requested a link recently. Please wait a minute and try again, or check your spam folder.")
       } else {
-        setError('Something went wrong. Please check your email address and try again.')
+        // Don't blame the email address — a non-rate-limit failure here is
+        // almost always on our side (network/config), not their typing.
+        setError('Something went wrong on our end. Please try again in a moment.')
       }
       setLoading(false)
       return
@@ -114,7 +123,9 @@ export default function ResetPasswordClient() {
 
             {error && (
               <div className="bg-red-50 border border-red-100 rounded-xl px-4 py-3 mb-5">
-                <p className="text-sm text-red-600 leading-relaxed">{error}</p>
+                {/* red-700, not red-600: 600 on red-50 is ~4.42:1, just under AA's
+                    4.5:1 at this size — matches the dashboard's error box. */}
+                <p className="text-sm text-red-700 leading-relaxed">{error}</p>
               </div>
             )}
 
