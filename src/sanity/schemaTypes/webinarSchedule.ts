@@ -13,8 +13,18 @@ export const webinarScheduleType = defineType({
     }),
     defineField({
       name: 'date',
-      title: 'Date & Time',
+      title: 'Date & Time (Pacific Time)',
       type: 'datetime',
+      description: 'Enter the webinar time in US Pacific Time — the site shows all times in Pacific.',
+      options: {
+        // Pin the Studio's input/display to Pacific. Without this the picker
+        // interprets whatever the editor types in THEIR local timezone — Jez
+        // (UTC+8) entering "9:05 AM" stored an instant that renders as 6:05 PM
+        // Pacific on the site (her QA report, 2026-07-04). The switch is locked
+        // so the picker can't silently fall back to the editor's zone.
+        displayTimeZone: 'America/Los_Angeles',
+        allowTimeZoneSwitch: false,
+      },
       validation: (r) => r.required(),
     }),
     defineField({
