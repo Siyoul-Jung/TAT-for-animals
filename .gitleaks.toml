@@ -1,0 +1,31 @@
+# gitleaks configuration — https://github.com/gitleaks/gitleaks
+#
+# Extends gitleaks' built-in ruleset (Stripe, Supabase/JWT, AWS, GitHub, Google,
+# Resend, etc.) and allowlists known non-secret literals so the scan stays
+# signal, not noise.
+
+title = "TAT for Animals — secret scan config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Known non-secret literals and test fixtures (not real credentials)"
+
+paths = [
+  '''\.env\.example$''',       # placeholders only — no real values
+  '''src/__tests__/.*''',      # dummy keys used by the test suite
+  '''\.gitleaks\.toml$''',     # this config file
+]
+
+regexes = [
+  # Public review-page speed-bump token. Intentionally shipped in client-side
+  # HTML; it only gates the review-feedback email endpoint and is not a real
+  # credential (see src/app/api/review-feedback/route.ts).
+  '''tat-content-review-2026''',
+
+  # Obvious placeholders / test fixtures
+  '''sk_test_dummy''',
+  '''whsec_test''',
+  '''test-service-role-key''',
+]

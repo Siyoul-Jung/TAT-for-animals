@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+#
+# Local safety net: block a commit that adds an obvious hardcoded secret.
+# This runs on your machine before the commit is created, so a leaked key
+# never even reaches GitHub.
+#
+# Enable once (per clone):   git config core.hooksPath .githooks
+# Bypass for a false positive: git commit --no-verify
+#
+set -euo pipefail
+
+staged=$(git diff --cached --name-only --diff-filter=ACM)
+[ -z "$staged" ] && exit 0
+
+# High-confidence real-secret shapes (Stripe, Resend, AWS, GitHub, Google, JWT).
+pattern='sk_live_[A-Za-z0-9]{20,}|sk_test_[A-Za-z0-9]{20,}|rk_live_[A-Za-z0-9]{20,}|whsec_[A-Za-z0-9]{24,}|re_[A-Za-z0-9]{24,}|AKIA[0-9A-Z]{16}|ghp_[A-Za-z0-9]{36}|AIza[0-9A-Za-z_-]{35}|eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}'
+
+# Only look at ADDED lines in the staged diff; ignore obvious test/placeholder values.
+hits=$(git diff --cached -U0 --diff-filter=ACM \
+  | grep -E '^\+' \
+  | grep -En "$pattern" \
+  | grep -viE 'dummy|example|placeholder|whsec_test|sk_test_dummy|test-service-role-key' \
+  || true)
+
+if [ -n "$hits" ]; then
+  echo ""
+  echo "✋ Commit blocked — a possible hardcoded secret is in your staged changes:"
+  echo "------------------------------------------------------------------"
+  echo "$hits"
+  echo "------------------------------------------------------------------"
+  echo "Move it into an environment variable (.env is gitignored)."
+  echo "If this is a false positive, re-run with:  git commit --no-verify"
+  echo ""
+  exit 1
+fi
+
+exit 0
