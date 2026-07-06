@@ -7,6 +7,7 @@ import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Check, PawPrint, Video } from 'lucide-react';
 import Pricing from '@/components/Pricing';
+import { LIBRARY_VIDEO_COUNT_LABEL } from '@/lib/plans';
 
 function PayPalErrorBanner() {
   const searchParams = useSearchParams();
@@ -101,7 +102,7 @@ export default function MembershipClient() {
                   </h3>
                   <ul className="flex flex-col gap-2.5">
                     {[
-                      '40+ video recordings of TAT® sessions for animals',
+                      `${LIBRARY_VIDEO_COUNT_LABEL} video recordings of TAT® sessions for animals`,
                       'Fear, anxiety, and past trauma, gently released',
                       'As your animal settles, something in you shifts too',
                     ].map((item) => (

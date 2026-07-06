@@ -8,3 +8,11 @@ export const PLAN_NAMES: Record<Plan, string> = {
   subscriber: 'The Calm Library',
   pro_subscriber: 'The Calm Circle',
 };
+
+// The published library size, surfaced in marketing copy on the pricing and
+// membership cards (Jez's requested wording, 2026-07-06). Currently 41
+// published videos → "40+"; bump this label when the count crosses the next
+// ten (e.g. "50+"). Kept here so the two cards can't drift apart — the library
+// page itself shows exact live counts from the data.
+export const LIBRARY_VIDEO_COUNT_LABEL = '40+';
+
