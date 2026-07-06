@@ -101,7 +101,7 @@ export default function MembershipClient() {
                   </h3>
                   <ul className="flex flex-col gap-2.5">
                     {[
-                      'Full video library of TAT® sessions for animals',
+                      '40+ video recordings of TAT® sessions for animals',
                       'Fear, anxiety, and past trauma, gently released',
                       'As your animal settles, something in you shifts too',
                     ].map((item) => (

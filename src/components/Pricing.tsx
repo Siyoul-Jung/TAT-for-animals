@@ -19,7 +19,10 @@ const tiers = [
     annual: '270',
     description: 'Everything you need to begin TAT for Animals — at your own pace, with new stories, videos, and tips added every month.',
     features: [
-      'TAT for Animals full video library',
+      // "40+ video recordings" is Jez's requested wording (2026-07-06) —
+      // the library holds 41 published videos; update the number if it grows
+      // past the next ten.
+      '40+ video recordings — the full TAT for Animals library',
       'Self-guided practice materials',
       'Previous TAT for Cats and TAT for Dogs recordings',
     ],
