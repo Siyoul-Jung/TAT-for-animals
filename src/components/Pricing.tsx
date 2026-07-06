@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { BOOKING_URL } from '@/lib/links';
 import { returnScrollKey } from '@/lib/scrollReturn';
+import { LIBRARY_VIDEO_COUNT_LABEL } from '@/lib/plans';
 
 // Annual = monthly × 10 (two months free), per Tapas's request.
 const tiers = [
@@ -19,10 +20,7 @@ const tiers = [
     annual: '270',
     description: 'Everything you need to begin TAT for Animals — at your own pace, with new stories, videos, and tips added every month.',
     features: [
-      // "40+ video recordings" is Jez's requested wording (2026-07-06) —
-      // the library holds 41 published videos; update the number if it grows
-      // past the next ten.
-      '40+ video recordings — the full TAT for Animals library',
+      `${LIBRARY_VIDEO_COUNT_LABEL} video recordings — the full TAT for Animals library`,
       'Self-guided practice materials',
       'Previous TAT for Cats and TAT for Dogs recordings',
     ],
