@@ -397,6 +397,14 @@ export default function LibraryClient({
     const present = CATEGORY_ORDER.filter((cat) => animalsVideos.some((v) => v.category === cat))
     return ['All', ...present, ...(hasUncategorized ? ['Other'] : [])]
   }, [animalsVideos, hasUncategorized])
+  // Video count shown after each category name (Jez's request, 2026-07-06) —
+  // tells the member how much is on a shelf before opening it.
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = { All: animalsVideos.length }
+    for (const cat of CATEGORY_ORDER) counts[cat] = animalsVideos.filter((v) => v.category === cat).length
+    counts.Other = animalsVideos.filter((v) => !CATEGORY_ORDER.includes(v.category)).length
+    return counts
+  }, [animalsVideos])
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
   // A search spans every category — showing the tab row while its selection no
   // longer applies would be confusing, so results ignore the active tab and are
@@ -655,6 +663,7 @@ export default function LibraryClient({
                     }`}
                   >
                     {cat}
+                    <span className="font-normal"> ({categoryCounts[cat] ?? 0})</span>
                   </button>
                 ))}
               </div>
