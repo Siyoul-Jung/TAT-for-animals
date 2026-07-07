@@ -1,6 +1,6 @@
 # Database Schema (Supabase)
 
-> 마지막 업데이트: 2026년 6월 1일
+> 마지막 업데이트: 2026년 7월 6일
 
 ---
 
@@ -14,14 +14,21 @@ Supabase `auth.users` 확장. 사용자 데이터 + 구독 상태.
 | `email` | text | — | |
 | `full_name` | text | — | Stripe 결제 완료 시 수집 |
 | `avatar_url` | text | — | |
-| `role` | text | `'guest'` | `guest` / `subscriber` / `pro_subscriber` |
+| `role` | text | `'guest'` | `guest` / `subscriber` / `pro_subscriber` — **CHECK 제약** |
 | `stripe_customer_id` | text | — | UNIQUE |
 | `stripe_subscription_id` | text | — | |
 | `paypal_subscription_id` | text | — | UNIQUE |
-| `subscription_status` | text | `'inactive'` | `active` / `past_due` / `inactive` |
+| `paypal_pending_subscription_id` | text | — | 승인 전 PayPal 구독(중복 결제 방지) |
+| `subscription_status` | text | `'inactive'` | `active` / `past_due` / `inactive` — **CHECK 제약** |
 | `current_period_end` | timestamptz | — | 다음 갱신일 |
+| `billing_interval` | text | — | `month` / `year` (대시보드 표기) ⚠️ **마이그레이션 없음** — 아래 주의 참조 |
+| `pending_tier` | text | — | 예약된 전환 목표 등급 (다운그레이드 등), NULL=예약 없음 |
+| `pending_tier_at` | timestamptz | — | 전환 시점(= 다음 결제일) |
+| `cancel_at` | timestamptz | — | 취소 예정일(그때까지 접근 유지) |
 | `created_at` | timestamptz | `now()` | |
 | `updated_at` | timestamptz | `now()` | 자동 갱신 트리거 |
+
+> ⚠️ **`billing_interval` 마이그레이션 누락**: 코드(웹훅·대시보드)가 이 컬럼을 읽고 씁니다만 `supabase/migrations/`에 생성 마이그레이션이 없습니다(프로덕션에 수동 추가된 것으로 보임 — `video_watch_events`와 동일 상황). **새 환경을 마이그레이션만으로 세팅하면 이 컬럼이 없어 웹훅 update가 실패**하므로, 멱등 마이그레이션 추가 권장: `alter table public.profiles add column if not exists billing_interval text;`
 
 **RLS 정책:**
 - `본인 읽기`: `auth.uid() = id`
@@ -67,7 +74,7 @@ Webhook idempotency 보장.
 | `id` | text | PK — Stripe/PayPal 이벤트 ID |
 | `processed_at` | timestamptz | |
 
-**사용법:** Webhook 수신 시 `INSERT` 시도 → conflict(23505)이면 이미 처리된 이벤트 → 즉시 return
+**사용법:** `lib/onceGuard.ts`의 `claimOnce(id)`가 INSERT 시도 → conflict(23505)이면 이미 처리됨 → 스킵. 처리 중 실패하면 `releaseOnce(id)`로 마커를 롤백해 프로바이더 재시도가 정상 재처리(멱등 + 실패 복구). 웹훅 외에 일부 1회성 가드(연간 갱신 알림 등)도 이 테이블을 공유.
 
 **RLS:** 활성화 (service role만 접근)
 
@@ -104,6 +111,13 @@ Webhook idempotency 보장.
 | `20260531_processed_webhook_events.sql` | processed_webhook_events 테이블 |
 | `20260531_profiles_paypal_and_deletion.sql` | paypal_subscription_id, current_period_end, account_deletion_requests 테이블 |
 | `20260531_account_deletion_token.sql` | account_deletion_requests에 token, expires_at 컬럼 추가 |
+| `20260602_profiles_role_check.sql` | profiles.role CHECK 제약 |
+| `20260602_webhook_events_rls_and_dedup_indexes.sql` | processed_webhook_events RLS + 중복 인덱스 정리 |
+| `20260603_profiles_subscription_status_check.sql` | profiles.subscription_status CHECK 제약 |
+| `20260608_profiles_pending_tier.sql` | pending_tier, pending_tier_at 추가 (지연 다운그레이드) |
+| `20260609_profiles_cancel_at.sql` | cancel_at 추가 (취소 예정일까지 접근 유지) |
 | `20260626_video_watch_events.sql` | video_watch_events 테이블 (실제 프로덕션 스키마 문서화, 멱등) |
+| `20260630_profiles_paypal_pending_subscription.sql` | paypal_pending_subscription_id 추가 (PayPal 중복 결제 방지) |
 
-> 참고: 위 목록은 일부만 기재돼 있을 수 있음 — 전체는 `supabase/migrations/` 디렉터리 확인.
+> ⚠️ **`billing_interval`은 위 어느 마이그레이션에도 없음** — 코드가 사용하는 컬럼이므로 멱등 마이그레이션 추가 권장(위 profiles 표 주의 참조).
+> 참고: 전체 목록은 항상 `supabase/migrations/` 디렉터리를 확인.

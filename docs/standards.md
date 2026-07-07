@@ -22,7 +22,7 @@
 
 | 영역 | 권위 있는 출처 | 언제 |
 |------|---------------|------|
-| Next.js 15 | 공식 docs + `node_modules/next/dist/docs` | App Router·라우팅·캐싱 |
+| Next.js 16 | 공식 docs + `node_modules/next/dist/docs` | App Router·라우팅·캐싱 |
 | React 19 | react.dev | 훅·Server/Client 경계 |
 | TypeScript | TS Handbook | 타입 좁히기·제네릭 |
 | Tailwind v4 | tailwindcss.com/docs | `@theme inline` (v4 신규) |
