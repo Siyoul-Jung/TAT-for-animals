@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Design check — TAT for Animals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --cream:#FBF5F3; --white:#fff; --charcoal:#1C1007; --muted:#7A5F4F;
+    --green:#467826; --green-tint:rgba(70,120,38,0.10); --green-border:rgba(70,120,38,0.30);
+    --orange:#D4703A; --surface:#F2EAE0; --gold-tint:rgba(212,168,67,0.14); --gold-border:rgba(212,168,67,0.55);
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--cream); color:var(--charcoal);
+    font-family:'DM Sans',system-ui,sans-serif; font-size:17px; line-height:1.6; -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:780px; margin:0 auto; padding:48px 24px 150px}
+  .eyebrow{color:var(--green); font-size:13px; letter-spacing:.2em; text-transform:uppercase; font-weight:700; margin:0 0 14px}
+  h1{font-family:'Playfair Display',serif; font-weight:600; font-size:2.3rem; line-height:1.15; margin:0 0 16px}
+  .lead{color:var(--muted); font-size:1.05rem; margin:0 0 24px}
+  a{color:var(--green)}
+
+  .howto{background:var(--white); border:1px solid var(--surface); border-radius:16px; padding:22px 24px; margin:0 0 16px}
+  .howto p{margin:0 0 10px} .howto p:last-child{margin:0}
+
+  h2.sec{font-family:'Playfair Display',serif; font-weight:600; font-size:1.6rem; margin:48px 0 6px; padding-top:22px; border-top:3px solid var(--surface)}
+  .secsub{color:var(--muted); font-size:.97rem; margin:0 0 8px}
+
+  .mission,.check{background:var(--white); border:1px solid var(--surface); border-radius:16px; padding:22px 24px; margin:16px 0; box-shadow:0 2px 14px rgba(28,16,7,0.03)}
+  .pill{display:inline-block; background:var(--green-tint); color:var(--green); font-weight:700; font-size:.78rem; letter-spacing:.05em; text-transform:uppercase; padding:5px 12px; border-radius:999px; margin:0 0 12px}
+  .mission h2{font-family:'Playfair Display',serif; font-weight:600; font-size:1.45rem; margin:0 0 12px; line-height:1.2}
+  .ctitle{font-weight:700; font-size:1.1rem; margin:0 0 4px}
+  .ctitle .path{color:var(--muted); font-weight:500; font-size:.92rem}
+  .lbl{font-size:.78rem; text-transform:uppercase; letter-spacing:.08em; font-weight:700; color:var(--green); margin:16px 0 4px}
+  .mission p,.check p{margin:0 0 6px}
+  .sub{color:var(--muted); font-size:.96rem}
+
+  .card-callout{background:var(--gold-tint); border:1px solid var(--gold-border); border-radius:14px; padding:16px 18px; margin:14px 0}
+  .card-callout .big{font-family:'DM Sans',monospace; font-size:1.4rem; font-weight:700; letter-spacing:.06em; color:var(--charcoal); margin:6px 0}
+  .card-callout .rea{font-weight:700; color:#7a5a12}
+  .info{background:rgba(28,16,7,0.04); border:1px solid var(--surface); border-radius:12px; padding:12px 16px; margin:12px 0; font-size:.93rem; color:var(--muted)}
+
+  .feel{display:flex; gap:10px; flex-wrap:wrap; margin:14px 0 2px}
+  .feel label{flex:1; min-width:140px; display:flex; align-items:center; gap:10px; cursor:pointer;
+    border:1px solid var(--surface); border-radius:12px; padding:12px 15px; font-weight:600; background:var(--cream)}
+  .feel input{width:21px; height:21px; accent-color:var(--green); cursor:pointer}
+  .feel label:hover{border-color:var(--green-border)}
+  .notes{width:100%; margin-top:10px; min-height:48px; padding:12px 14px; font-size:1rem; font-family:inherit;
+    border:1px solid var(--surface); border-radius:10px; background:var(--cream); color:var(--charcoal); resize:vertical; line-height:1.5}
+  .notes::placeholder{color:#b8a594}
+
+  .toolbar{position:sticky; bottom:0; margin-top:40px; background:rgba(251,245,243,0.96); backdrop-filter:blur(8px);
+    border-top:1px solid var(--surface); padding:16px 0; display:flex; gap:12px; flex-wrap:wrap; align-items:center}
+  .btn{appearance:none; border:none; cursor:pointer; font-family:inherit; font-weight:700; font-size:1.05rem;
+    padding:14px 22px; border-radius:999px; color:#FAF6F1; background:var(--orange); box-shadow:0 6px 18px rgba(212,112,58,.22)}
+  .btn.secondary{background:transparent; color:var(--orange); border:2px solid var(--orange); box-shadow:none}
+  .saved{color:var(--green); font-weight:600; font-size:.95rem; opacity:0; transition:opacity .3s}
+  .saved.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <p class="eyebrow">Design check</p>
+  <h1>Does it look and feel right?</h1>
+  <p class="lead">This pass is only about the <b>look and feel</b> &mdash; not whether things work. Move through the site slowly and trust your eye: does each screen feel <b>warm, calm and considered</b>, does it hold together, does anything look off? (A separate pass covers whether everything works.)</p>
+
+  <div class="howto" style="border-left:4px solid var(--green-border); background:var(--green-tint)">
+    <p style="margin:0 0 6px"><b>What we were going for &mdash; a frame for your eye:</b></p>
+    <p style="margin:0">The site leans <b>simple, warm and human</b> &mdash; never slick or &ldquo;AI-looking,&rdquo; one clear purpose per screen, clean and uncluttered. If anything pulls against that &mdash; a screen that feels busy, cold, generic, or off-brand &mdash; that&rsquo;s exactly what to flag.</p>
+  </div>
+
+  <div class="howto">
+    <p>Each item has a quick <b>Looks right / Looks off</b> toggle and a notes box. Trust small instincts &mdash; misalignment, uneven spacing, an odd colour, a font that looks wrong, an image that feels weak, a screen that feels cramped on a phone. The more specific (which page, which width, what felt off), the better.</p>
+    <p class="sub" style="color:var(--muted)">To see the account screens (dashboard, library), you&rsquo;ll need to sign up and check out &mdash; the charge is a tiny <b>$0.50 / $1</b> on your real card and we refund it (details in section 2). The video library isn&rsquo;t populated yet, so judge the shell, not the emptiness.</p>
+  </div>
+
+  <div class="howto" style="display:flex; align-items:center; gap:10px; flex-wrap:wrap">
+    <label style="font-weight:700">Your name
+      <input type="text" data-key="reviewer" placeholder="e.g. Jez"
+        style="margin-left:8px; font-family:inherit; font-size:1rem; padding:9px 12px; border:1px solid var(--surface); border-radius:10px; background:var(--cream); color:var(--charcoal)" />
+    </label>
+    <span class="sub" style="color:var(--muted)">So we know whose feedback this is.</span>
+  </div>
+
+  <!-- =================== SECTION 1: PUBLIC PAGES =================== -->
+  <h2 class="sec">1 &middot; The public pages</h2>
+  <p class="secsub">Open each, scroll slowly, and read it as a first-time visitor would.</p>
+
+  <div class="check">
+    <p class="ctitle">Home <span class="path">/</span></p>
+    <p class="sub">Does the first screen land emotionally? Do the sections flow, the images feel right, the type and spacing read clean? Does it feel like <i>us</i> &mdash; warm and human, not a template?</p>
+    <div class="feel">
+      <label><input type="radio" name="c-home" data-key="c-home" value="ok" /> Looks right</label>
+      <label><input type="radio" name="c-home" data-key="c-home" value="issue" /> Looks off</label>
+    </div>
+    <textarea class="notes" data-key="c-home-n" placeholder="Notes…"></textarea>
+  </div>
+
+  <div class="check">
+    <p class="ctitle">About <span class="path">/about</span></p>
+    <p class="sub">Does Tapas&rsquo;s page feel warm and personal? Image quality, the &ldquo;1993&rdquo; badge placement, spacing, the way the story sits on the page &mdash; anything visually off?</p>
+    <div class="feel">
+      <label><input type="radio" name="c-about" data-key="c-about" value="ok" /> Looks right</label>
+      <label><input type="radio" name="c-about" data-key="c-about" value="issue" /> Looks off</label>
+    </div>
+    <textarea class="notes" data-key="c-about-n" placeholder="Notes…"></textarea>
+  </div>
+
+  <div class="check">
+    <p class="ctitle">Membership <span class="path">/membership</span></p>
+    <p class="sub">Do the two plan cards read clearly and feel inviting, not pushy? Is the hierarchy right (the popular plan, the prices)? Is &ldquo;Cancel anytime&rdquo; visible and reassuring? Does the warm/calm tone hold?</p>
+    <div class="feel">
+      <label><input type="radio" name="c-mem" data-key="c-mem" value="ok" /> Looks right</label>
+      <label><input type="radio" name="c-mem" data-key="c-mem" value="issue" /> Looks off</label>
+    </div>
+    <textarea class="notes" data-key="c-mem-n" placeholder="Notes…"></textarea>
+  </div>
+
+  <div class="check">
+    <p class="ctitle">FAQ &middot; Contact &middot; Sign-in <span class="path">/faq /contact /login</span></p>
+    <p class="sub">Quieter pages, but they should still feel considered &mdash; clean layout, comfortable spacing, on-brand type and colour, nothing that looks like a default form.</p>
+    <div class="feel">
+      <label><input type="radio" name="c-quiet" data-key="c-quiet" value="ok" /> Looks right</label>
+      <label><input type="radio" name="c-quiet" data-key="c-quiet" value="issue" /> Looks off</label>
+    </div>
+    <textarea class="notes" data-key="c-quiet-n" placeholder="Notes…"></textarea>
+  </div>
+
+  <!-- =================== SECTION 2: THE MEMBER AREA =================== -->
+  <h2 class="sec">2 &middot; The member area</h2>
+  <p class="secsub">The screens after you join. You&rsquo;ll need to go through checkout to see them.</p>
+
+  <div class="check">
+    <p class="ctitle">Getting in (so you can see these screens)</p>
+    <p>Sign up with a <b>fresh email</b> (not hello@tatforanimals.com), pick a plan, and pay with your <b>real card</b> &mdash; the charge is tiny and refunded:</p>
+    <div class="card-callout">
+      <div>Test charge</div>
+      <div class="big">$0.50 &middot; The Calm Library</div>
+      <div class="big">$1.00 &middot; The Calm Circle</div>
+      <p class="rea" style="margin:6px 0 0">A real charge, but tiny &mdash; we refund every test charge. (The plan pages show $27 / $47; the actual charge is the amount above.)</p>
+    </div>
+    <p class="sub" style="margin-top:8px">This step is just setup &mdash; no need to rate it. Judge the screens below.</p>
+  </div>
+
+  <div class="check">
+    <p class="ctitle">Thank-you &amp; dashboard</p>
+    <p class="sub">Does the thank-you moment feel warm (not transactional)? Does the dashboard look clean and calm &mdash; clear hierarchy, comfortable spacing, easy to read, nothing cramped or cluttered?</p>
+    <div class="feel">
+      <label><input type="radio" name="d-dash" data-key="d-dash" value="ok" /> Looks right</label>
+      <label><input type="radio" name="d-dash" data-key="d-dash" value="issue" /> Looks off</label>
+    </div>
+    <textarea class="notes" data-key="d-dash-n" placeholder="Notes on thank-you + dashboard…"></textarea>
+  </div>
+
+  <div class="check">
+    <p class="ctitle">The library shell</p>
+    <p class="sub">It&rsquo;s mostly empty (no videos yet) &mdash; so judge the <i>shell</i>: tabs, layout, spacing, how a video row would read. Does the empty state feel intentional and calm rather than broken?</p>
+    <div class="feel">
+      <label><input type="radio" name="d-lib" data-key="d-lib" value="ok" /> Looks right</label>
+      <label><input type="radio" name="d-lib" data-key="d-lib" value="issue" /> Looks off</label>
+    </div>
+    <textarea class="notes" data-key="d-lib-n" placeholder="Notes on the library shell…"></textarea>
+  </div>
+
+  <!-- =================== SECTION 3: ACROSS THE BOARD =================== -->
+  <h2 class="sec">3 &middot; Across the board</h2>
+  <p class="secsub">The visual things that don&rsquo;t belong to one page.</p>
+
+  <div class="check">
+    <p class="ctitle">On a phone</p>
+    <p class="sub">Go through it on a real phone. Does everything feel comfortable &mdash; text big enough, buttons easy to reach, nothing <b>cramped, awkwardly spaced, or visually cut off</b>? (Things that <i>break</i> go in the function pass; here it&rsquo;s about how it <i>looks and feels</i>.)</p>
+    <div class="feel">
+      <label><input type="radio" name="d-mobile" data-key="d-mobile" value="ok" /> Looks right</label>
+      <label><input type="radio" name="d-mobile" data-key="d-mobile" value="issue" /> Looks off</label>
+    </div>
+    <textarea class="notes" data-key="d-mobile-n" placeholder="Which screen/width felt off…"></textarea>
+  </div>
+
+  <div class="check">
+    <p class="ctitle">Warmth &amp; brand feel</p>
+    <p class="sub">Stepping back: does the whole thing feel like a real person&rsquo;s warm, calm space &mdash; or does any part feel cold, generic, &ldquo;AI-looking,&rdquo; or cheap? Trust the gut read.</p>
+    <div class="feel">
+      <label><input type="radio" name="d-brand" data-key="d-brand" value="ok" /> Looks right</label>
+      <label><input type="radio" name="d-brand" data-key="d-brand" value="issue" /> Looks off</label>
+    </div>
+    <textarea class="notes" data-key="d-brand-n" placeholder="Notes…"></textarea>
+  </div>
+
+  <div class="check">
+    <p class="ctitle">Consistency</p>
+    <p class="sub">Across pages: do type, colour, button styles, and spacing feel like one consistent hand? Anything that looks like it came from a different site?</p>
+    <div class="feel">
+      <label><input type="radio" name="d-consistency" data-key="d-consistency" value="ok" /> Looks right</label>
+      <label><input type="radio" name="d-consistency" data-key="d-consistency" value="issue" /> Looks off</label>
+    </div>
+    <textarea class="notes" data-key="d-consistency-n" placeholder="Notes…"></textarea>
+  </div>
+
+  <!-- =================== SECTION 4: ANYTHING ELSE =================== -->
+  <h2 class="sec">4 &middot; Anything else</h2>
+  <div class="check">
+    <p class="sub">Any visual hunch, a small detail that bugged you, an idea to make it warmer or cleaner. All of it helps.</p>
+    <textarea class="notes" data-key="d-else-n" placeholder="Anything else on your mind…"></textarea>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn" id="sendBtn" onclick="sendAnswers()">Send my answers</button>
+    <button class="btn secondary" onclick="downloadAnswers()">Download a copy</button>
+    <span class="saved" id="savedMsg">Saved</span>
+    <span id="sendMsg" style="font-weight:600;font-size:.95rem"></span>
+  </div>
+
+</div>
+
+<script>
+  var STORE = 'tat-review-design';
+  var TAG = 'Design review';
+  function load(){
+    var data = {};
+    try { data = JSON.parse(localStorage.getItem(STORE) || '{}'); } catch(e){}
+    document.querySelectorAll('[data-key]').forEach(function(el){
+      var k = el.getAttribute('data-key');
+      if (data[k] === undefined) return;
+      if (el.type === 'radio') el.checked = (el.value === data[k]);
+      else if (el.type === 'checkbox') el.checked = !!data[k];
+      else el.value = data[k];
+    });
+  }
+  var t;
+  function save(){
+    var data = {};
+    try { data = JSON.parse(localStorage.getItem(STORE) || '{}'); } catch(e){}
+    document.querySelectorAll('[data-key]').forEach(function(el){
+      var k = el.getAttribute('data-key');
+      if (el.type === 'radio') { if (el.checked) data[k] = el.value; }
+      else if (el.type === 'checkbox') data[k] = el.checked;
+      else data[k] = el.value;
+    });
+    localStorage.setItem(STORE, JSON.stringify(data));
+    var m = document.getElementById('savedMsg'); m.classList.add('show');
+    clearTimeout(t); t = setTimeout(function(){ m.classList.remove('show'); }, 1200);
+  }
+  document.addEventListener('input', save);
+  document.addEventListener('change', save);
+  function rowStatus(scope){
+    var el = scope.querySelector('input[type=radio]:checked');
+    if (!el) return scope.querySelector('input[type=radio]') ? '-' : '';
+    return el.value === 'ok' ? 'OK' : 'ISSUE';
+  }
+  function blockTitle(scope){
+    var t = scope.querySelector('h2, .ctitle');
+    return t ? t.textContent.trim() : 'Note';
+  }
+  function buildAnswersText(){
+    var lines = [];
+    document.querySelectorAll('h2.sec, .mission, .check').forEach(function(el){
+      if (el.matches('h2.sec')) { lines.push(''); lines.push('### ' + el.textContent.trim()); lines.push(''); return; }
+      var ta = el.querySelector('textarea');
+      var st = rowStatus(el);
+      lines.push((st ? '[' + st + '] ' : '') + blockTitle(el));
+      if (ta && ta.value.trim()) lines.push('     -> ' + ta.value.trim());
+    });
+    return lines.join('\n');
+  }
+  function reviewerName(){ var el = document.querySelector('[data-key="reviewer"]'); return (el && el.value.trim()) || ''; }
+  function today(){ return new Date().toISOString().slice(0,10); }
+  function downloadAnswers(){
+    var text = 'TAT for Animals - ' + TAG + '\nReviewer: ' + (reviewerName() || '—') + '   Date: ' + today() + '\n========================================\n'+buildAnswersText();
+    var blob = new Blob([text], {type:'text/plain'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = 'design-review.txt'; a.click();
+  }
+  async function sendAnswers(){
+    var btn = document.getElementById('sendBtn');
+    var msg = document.getElementById('sendMsg');
+    var orig = btn.textContent;
+    btn.disabled = true; btn.textContent = 'Sending…'; msg.textContent = '';
+    try {
+      var res = await fetch('/api/review-feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reviewer: reviewerName(), date: today(), subjectTag: TAG, body: buildAnswersText(), token: 'tat-content-review-2026' })
+      });
+      if (!res.ok) throw new Error();
+      msg.style.color = '#467826';
+      msg.textContent = 'Sent — thank you.';
+      btn.textContent = 'Sent';
+    } catch (e) {
+      msg.style.color = '#B91C1C';
+      msg.textContent = 'Couldn’t send — please use “Download a copy” and email it to us.';
+      btn.disabled = false; btn.textContent = orig;
+    }
+  }
+  load();
+</script>
+</body>
+</html>
