@@ -38,7 +38,7 @@ Sanity manages videos and webinar schedules. Supabase manages authentication and
 
 | Layer | Choice | Reason |
 |-------|--------|--------|
-| Framework | Next.js 15 (App Router) | Server components for access control without API round-trips |
+| Framework | Next.js 16 (App Router) | Server components for access control without API round-trips |
 | Styling | Tailwind CSS v4 | No config file, `@theme inline` tokens, fast iteration |
 | Auth & DB | Supabase | Auth + Postgres in one service, RLS, real-time ready |
 | CMS | Sanity | Structured content with a visual editor the client can use independently |

@@ -41,7 +41,7 @@ tatlife.com과 완전히 분리된 독립 사이트입니다.
 ---
 
 ## 기술 스택
-- **프레임워크**: Next.js 15 (App Router) + TypeScript
+- **프레임워크**: Next.js 16 (App Router, Turbopack, `cacheComponents`) + TypeScript
 - **스타일링**: Tailwind CSS v4 (`@theme inline` 방식 — `tailwind.config` 없음)
 - **애니메이션**: Framer Motion v12
 - **아이콘**: lucide-react
@@ -53,68 +53,72 @@ tatlife.com과 완전히 분리된 독립 사이트입니다.
 
 ```
 src/
+├── middleware.ts                         — 보호 라우트(/dashboard·/library) 세션 검사
 ├── app/
-│   ├── layout.tsx                        — 폰트 설정 (Playfair Display + DM Sans)
+│   ├── layout.tsx                        — 폰트(Playfair Display + DM Sans) + Navbar/Footer
 │   ├── globals.css                       — CSS 변수 및 Tailwind @theme 토큰
+│   ├── error.tsx · global-error.tsx      — 에러 바운더리(레이아웃 / 루트 크래시)
+│   ├── not-found.tsx                     — 404
 │   ├── page.tsx                          — 홈페이지
+│   ├── about/                            — Tapas 이야기 (별도 페이지)
 │   ├── membership/                       — 가격 카드 + 가입 플로우
+│   ├── checkout/                         — 결제 확인(카드/PayPal 선택, plan 파라미터)
 │   ├── dashboard/                        — 내 계정 (구독 정보, 콘텐츠 링크)
-│   ├── library/                          — 통합 라이브러리 (탭: Animals / ACEs / Live)
+│   ├── library/                          — 라이브러리 (animals / aces / webinars 탭)
 │   ├── login/ · signup/                  — 인증 페이지
 │   ├── reset-password/ · update-password/
-│   ├── faq/                              — FAQ 페이지
+│   ├── faq/ · contact/                   — FAQ · 문의
+│   ├── privacy/ · terms/ · disclaimer/   — 법률(Termageddon 임베드)
 │   ├── thank-you/                        — 결제 완료 페이지
-│   ├── coming-soon/                      — 론칭 전 대기 페이지
 │   ├── studio/[[...tool]]/               — Sanity Studio
-│   ├── auth/callback/                    — Supabase OAuth 콜백 (기본 리다이렉트: /membership)
+│   ├── auth/callback/                    — Supabase 매직링크/OAuth 콜백 (기본: /dashboard)
 │   └── api/
-│       ├── checkout/                     — Stripe 체크아웃 세션 생성
-│       ├── upgrade/                      — Stripe Portal 업그레이드 플로우
+│       ├── checkout/ · checkout/verify/  — Stripe 체크아웃 생성 · 리턴 검증(웹훅 지연 폴백)
+│       ├── change-plan/                  — 업/다운그레이드 (Stripe update · PayPal revise)
 │       ├── portal/                       — Stripe 구독 관리 포털
-│       ├── request-account-deletion/     — 계정 삭제 요청 (이메일 확인 링크 발송)
-│       ├── confirm-account-deletion/     — 계정 삭제 확인 처리
-│       ├── paypal/checkout · success/    — PayPal 구독
-│       ├── send/webinar-invite · recording-notification/
-│       ├── auth/logout/
-│       └── webhooks/ stripe/ · paypal/   — 구독 상태 동기화 (idempotency 처리)
+│       ├── paypal/checkout · success · cancel/
+│       ├── request-account-deletion · confirm-account-deletion/
+│       ├── send/webinar-invite · recording-notification/  (Sanity 웹훅, fail-closed 인증)
+│       ├── webhooks/ stripe · paypal/    — 구독 상태 동기화 (멱등성 + 실패 롤백/알림)
+│       ├── cron/annual-renewal-reminder/ — 연간 갱신 사전 고지 (Vercel Cron)
+│       ├── contact/ · calendar/webinar/  — 문의 폼 · .ics 다운로드
+│       ├── auth/logout/ · health/        — 로그아웃 · 라이브니스
+│       └── review-feedback/              — (임시) 검수 피드백 이메일
 │
-├── components/
-│   ├── Navbar.tsx                        — 고정 내비게이션 (스크롤 감지)
-│   ├── Hero.tsx                          — 슬라이드쇼 Hero (섹션 1)
-│   ├── TrySession.tsx                    — TAT for Animals 소개 + YouTube 영상 (섹션 2)
-│   ├── Testimonials.tsx                  — 실제 후기 (섹션 3)
-│   ├── Pricing.tsx                       — 멤버십 카드 2단계 (섹션 4)
-│   ├── AboutTapas.tsx                    — Tapas 프로필 (섹션 5)
-│   ├── Footer.tsx                        — 푸터
-│   ├── LogoMark.tsx                      — SVG 로고마크
-│   ├── CookieBanner.tsx                  — 쿠키 동의 배너
-│   └── ui/Button.tsx                     — 재사용 버튼
+├── components/                           — Navbar, Hero, TrySession, Testimonials, Pricing,
+│                                           RecordingTestimonials, AboutTapas, NewsletterSignup,
+│                                           Footer, CookieBanner, TermageddonPolicy, AccountNotice,
+│                                           ScrollToTop, BackToTopButton, MotionProvider, LogoMark,
+│                                           ui/Button
 │
 ├── lib/
-│   ├── sanity.ts                         — Sanity 클라이언트
-│   ├── stripe.ts                         — Stripe 클라이언트
-│   ├── paypal.ts                         — PayPal 유틸
-│   ├── resend.ts                         — Resend 클라이언트
-│   ├── utils.ts                          — cn() 헬퍼
-│   ├── videoProgress.ts                  — 영상 진행률 추적
-│   ├── emails/                           — 이메일 템플릿 (welcome, cancellation, webinar-invite, recording-notification, account-deletion)
-│   └── supabase/ client.ts · server.ts
+│   ├── stripe.ts · paypal.ts · sanity.ts · resend.ts   — 외부 클라이언트 (전부 lazy 초기화)
+│   ├── lazyClient.ts                     — env 없이 빌드되도록 클라이언트 지연 생성 Proxy
+│   ├── subscriptionAccess.ts · access.ts · reconcileAccess.ts — 가격→역할 매핑 · 접근 판정 · 자가치유
+│   ├── plans.ts                          — 티어 표시명 + 라이브러리 영상 수 라벨(단일 진실)
+│   ├── onceGuard.ts · sendWelcomeOnce.ts — 웹훅 멱등성(claim/release) · 환영메일 1회 보장
+│   ├── alertOps.ts                       — 실패 시 운영 알림 이메일 (webhook/결제/삭제)
+│   ├── sanityWebhookAuth.ts              — /api/send/* Bearer 검증 (fail-closed)
+│   ├── links.ts · scrollReturn.ts · ics.ts · videoProgress.ts · utils.ts
+│   ├── emails/                           — 템플릿 (welcome, cancellation(-scheduled), plan-change,
+│   │                                        webinar-invite, recording-notification,
+│   │                                        annual-renewal-reminder, account-deletion, layout)
+│   └── supabase/ client.ts · server.ts · admin.ts  — 브라우저 · 서버 · 서비스롤(관리자)
 │
-└── sanity/schemaTypes/
-    ├── video.ts                          — 영상 스키마 (library: TAT for Animals / ACEs)
-    ├── webinarRecording.ts               — 웨비나 녹화
-    └── webinarSchedule.ts               — 예정 세션
+└── sanity/schemaTypes/                   — video · webinarRecording · webinarSchedule (index.ts 등록)
 ```
 
 ### 홈페이지 섹션 순서 (page.tsx 기준)
 | # | 컴포넌트 | 목적 |
 |---|----------|------|
+| — | `AccountNotice` | 상단 알림 배너 (구독 상태 등) |
 | 1 | `Hero` | 감정적 훅 — 슬라이드쇼 |
-| 2 | `TrySession` | TAT for Animals 소개 + YouTube 영상 |
+| 2 | `TrySession` | TAT for Animals 소개 + 영상 (끝에 About 링크) |
 | 3 | `Testimonials` | 실제 후기 (사회적 증명) |
 | 4 | `Pricing` | 멤버십 카드 + CTA |
-| 5 | `AboutTapas` | 신뢰 — Tapas 프로필 |
-| 6 | `Footer` | 내비게이션 |
+| 5 | `RecordingTestimonials` | 오퍼 직후 안심 — 녹화에 반응한 동물 후기 |
+
+> `Navbar` / `Footer`는 `layout.tsx`에서 전 페이지 공통. `AboutTapas`는 홈이 아닌 **`/about` 페이지**로 이동.
 
 ---
 
@@ -184,17 +188,24 @@ TAT®의 핵심 사용자층은 **시니어 및 기술에 익숙하지 않은 �
 
 ## 미결 항목 (코드 작업 전 확인 필요)
 
-**✅ 확정 완료**
-- 멤버십 이름: The Calm Library ($27/mo) / The Calm Circle ($47/mo)
-- Stripe + PayPal 결제 통합 완료
-- 이메일 자동화 (Resend) 완료
-- 계정 삭제 플로우 구현 완료
-- 보안 감사 완료 (webhook idempotency, 중복 구독 방지 등)
+**✅ 완료 (코드 반영됨)**
+- 멤버십: The Calm Library ($27/mo · $270/yr) / The Calm Circle ($47/mo · $470/yr) — **연간 플랜 포함**
+- Stripe + PayPal 결제 통합 (신규/업그레이드/취소, 카드·PayPal, 월·연)
+- 이메일 자동화 (Resend) — 환영/취소/플랜변경/웨비나/갱신/삭제
+- 계정 삭제 플로우 (이중 확인 + 실패 복구)
+- 웹훅 하드닝 (멱등성 claim/release + 실패 롤백 + 운영 알림)
+- **/about 페이지** — 구현 완료 (홈 About 링크 → 별도 페이지)
+- **법률 페이지** — Privacy/Terms/Disclaimer Termageddon 임베드 완료
+- **실제 후기** — Kai/Bowie/Misty 반영됨 (Testimonials)
+- 시크릿 스캔 CI(gitleaks) + 테스트/빌드 CI 게이트, 보안 헤더, 실패 알림
 
-**⚠️ 아직 미완료**
-- 실제 후기 콘텐츠 — Kai/Bowie/Misty 이야기 (Jez/Tapas 제공 예정)
-- PayPal Business 계정 확인 (Jez 확인 중)
-- /about 페이지 — Phase D 미착수
+**⚠️ 미완료 — 대부분 코드 밖(계정·설정·인프라)**
+- **Vercel Production 환경변수 확인**: `NEXT_PUBLIC_SITE_URL`(도메인), `CRON_SECRET`, `OPS_ALERT_EMAIL`, 연간 가격/플랜 ID 4개, `SANITY_WEBHOOK_SECRET`
+- PayPal Business 계정 활성 확인 (Jez)
 - 도메인 연결 (tatforanimals.com — 현재 paused)
-- Termageddon embed (Privacy / Terms 페이지)
 - Stripe Restricted API Key 발급 (프로덕션 전)
+- 연간·PayPal 실거래 검증 → `docs/qa/annual-and-paypal-verification.md`
+
+**🧹 남은 코드 정리 (선택, 런칭 전 권장)**
+- Rate limiting (이메일·결제 라우트) · 계정삭제 확인 GET→POST · 임시 `review-feedback` 도구 제거
+- CSP Report-Only → enforce 전환 (위반 관찰 후)
