@@ -207,7 +207,6 @@ TAT®의 핵심 사용자층은 **시니어 및 기술에 익숙하지 않은 �
 - 연간·PayPal 실거래 검증 → `docs/qa/annual-and-paypal-verification.md`
 
 **🧹 남은 코드 정리 (선택, 런칭 전 권장)**
-- Rate limiting (이메일·결제 라우트)
 - CSP Report-Only → enforce 전환 (위반 관찰 후)
-- (완료) 계정삭제 확인 GET→POST
+- (완료) 계정삭제 확인 GET→POST · Rate limiting(이메일·결제·문의 라우트, Supabase 기반)
 - `review-feedback` 임시 도구 — 검수 재사용 가능성 있어 **유지**(런칭 시 정리 여부는 그때 판단)

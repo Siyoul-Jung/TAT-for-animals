@@ -2,6 +2,9 @@
 
 > 마지막 업데이트: 2026년 7월 6일
 
+> **Rate limiting** (`lib/rateLimit.ts`, Supabase `check_rate_limit` 함수 기반, 전 인스턴스 공유·fail-open): 남용 시 429 반환.
+> · `account-deletion` 유저별 5회/시간 · `checkout`·`paypal-checkout`·`change-plan` 유저별 10회/5분 · `contact` IP별 5회/10분
+
 ## 결제 — Stripe
 
 | 라우트 | 메서드 | 목적 | 인증 |

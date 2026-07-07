@@ -2,6 +2,7 @@ import { stripe } from '@/lib/stripe'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { paypalRequest } from '@/lib/paypal'
+import { checkRateLimit, RATE_LIMIT_MESSAGE } from '@/lib/rateLimit'
 import { NextRequest, NextResponse } from 'next/server'
 
 // Unified plan change (upgrade OR downgrade) for both providers, in place — no
@@ -36,6 +37,11 @@ export async function POST(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  // Bound repeated plan-change attempts (each hits Stripe/PayPal).
+  if (!(await checkRateLimit('change-plan', user.id, 10, 300))) {
+    return NextResponse.json({ error: RATE_LIMIT_MESSAGE }, { status: 429 })
   }
 
   const { targetTier, preview } = await request.json()

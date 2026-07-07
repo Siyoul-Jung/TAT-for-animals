@@ -23,7 +23,9 @@ jest.mock('@/lib/supabase/admin', () => {
   const updateEq = jest.fn().mockResolvedValue({ error: null })
   const update = jest.fn(() => ({ eq: updateEq }))
   const from = jest.fn(() => ({ update }))
-  return { supabaseAdmin: { from }, __a: { update, updateEq } }
+  // rate limiter calls supabaseAdmin.rpc — allow by default in these tests
+  const rpc = jest.fn().mockResolvedValue({ data: true, error: null })
+  return { supabaseAdmin: { from, rpc }, __a: { update, updateEq } }
 })
 
 jest.mock('@/lib/stripe', () => ({

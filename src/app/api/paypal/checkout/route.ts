@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { paypalRequest, getPayPalSubscription, PLAN_IDS } from '@/lib/paypal'
+import { checkRateLimit, RATE_LIMIT_MESSAGE } from '@/lib/rateLimit'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
@@ -8,6 +9,11 @@ export async function POST(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  // Bound repeated PayPal subscription creation.
+  if (!(await checkRateLimit('paypal-checkout', user.id, 10, 300))) {
+    return NextResponse.json({ error: RATE_LIMIT_MESSAGE }, { status: 429 })
   }
 
   const { data: profile } = await supabase

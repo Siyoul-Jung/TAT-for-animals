@@ -3,6 +3,7 @@ import { supabaseAdmin } from '@/lib/supabase/admin'
 import { resend, FROM_EMAIL } from '@/lib/resend'
 import { accountDeletionEmail } from '@/lib/emails/account-deletion'
 import { membershipHasLapsed } from '@/lib/access'
+import { checkRateLimit, RATE_LIMIT_MESSAGE } from '@/lib/rateLimit'
 import { NextResponse } from 'next/server'
 
 export async function POST() {
@@ -11,6 +12,11 @@ export async function POST() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  // Bound how often one account can trigger a deletion email (Resend cost + spam).
+  if (!(await checkRateLimit('account-deletion', user.id, 5, 3600))) {
+    return NextResponse.json({ error: RATE_LIMIT_MESSAGE }, { status: 429 })
   }
 
   // Block deletion while a subscription is still active — must cancel first.
