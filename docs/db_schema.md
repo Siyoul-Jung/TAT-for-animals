@@ -21,14 +21,14 @@ Supabase `auth.users` 확장. 사용자 데이터 + 구독 상태.
 | `paypal_pending_subscription_id` | text | — | 승인 전 PayPal 구독(중복 결제 방지) |
 | `subscription_status` | text | `'inactive'` | `active` / `past_due` / `inactive` — **CHECK 제약** |
 | `current_period_end` | timestamptz | — | 다음 갱신일 |
-| `billing_interval` | text | — | `month` / `year` (대시보드 표기) ⚠️ **마이그레이션 없음** — 아래 주의 참조 |
+| `billing_interval` | text | — | `month` / `year` (대시보드 표기), NULL=`month` 간주 |
 | `pending_tier` | text | — | 예약된 전환 목표 등급 (다운그레이드 등), NULL=예약 없음 |
 | `pending_tier_at` | timestamptz | — | 전환 시점(= 다음 결제일) |
 | `cancel_at` | timestamptz | — | 취소 예정일(그때까지 접근 유지) |
 | `created_at` | timestamptz | `now()` | |
 | `updated_at` | timestamptz | `now()` | 자동 갱신 트리거 |
 
-> ⚠️ **`billing_interval` 마이그레이션 누락**: 코드(웹훅·대시보드)가 이 컬럼을 읽고 씁니다만 `supabase/migrations/`에 생성 마이그레이션이 없습니다(프로덕션에 수동 추가된 것으로 보임 — `video_watch_events`와 동일 상황). **새 환경을 마이그레이션만으로 세팅하면 이 컬럼이 없어 웹훅 update가 실패**하므로, 멱등 마이그레이션 추가 권장: `alter table public.profiles add column if not exists billing_interval text;`
+> ℹ️ **`billing_interval`**: 코드(웹훅·대시보드)가 읽고 쓰는 표기용 컬럼. 한동안 생성 마이그레이션이 없었으나(프로덕션엔 수동 추가돼 동작) `20260706_profiles_billing_interval.sql`(멱등)로 갭을 닫음 — 이제 새 환경도 마이그레이션만으로 재현 가능.
 
 **RLS 정책:**
 - `본인 읽기`: `auth.uid() = id`
@@ -118,6 +118,6 @@ Webhook idempotency 보장.
 | `20260609_profiles_cancel_at.sql` | cancel_at 추가 (취소 예정일까지 접근 유지) |
 | `20260626_video_watch_events.sql` | video_watch_events 테이블 (실제 프로덕션 스키마 문서화, 멱등) |
 | `20260630_profiles_paypal_pending_subscription.sql` | paypal_pending_subscription_id 추가 (PayPal 중복 결제 방지) |
+| `20260706_profiles_billing_interval.sql` | billing_interval 추가 (누락 갭 보완, 멱등) |
 
-> ⚠️ **`billing_interval`은 위 어느 마이그레이션에도 없음** — 코드가 사용하는 컬럼이므로 멱등 마이그레이션 추가 권장(위 profiles 표 주의 참조).
 > 참고: 전체 목록은 항상 `supabase/migrations/` 디렉터리를 확인.
