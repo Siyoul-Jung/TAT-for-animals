@@ -1,5 +1,6 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { claimOnce, releaseOnce } from '@/lib/onceGuard'
+import { reportOpsError } from '@/lib/alertOps'
 import { paypalRequest, PLAN_ROLE_MAP, getPayPalSubscription, getPlanInterval, estimatePaidThrough, type PayPalWebhookEvent } from '@/lib/paypal'
 import { sendWelcomeOnce } from '@/lib/sendWelcomeOnce'
 import { resend, FROM_EMAIL } from '@/lib/resend'
@@ -266,7 +267,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ received: true })
 
   } catch (error) {
-    console.error('PayPal webhook error:', error)
+    // Alert the team — a failed subscription webhook that nobody sees can leave
+    // a paid member without access, or over-granted after a cancel. (Also logs.)
+    await reportOpsError('paypal-webhook', error, { eventType: event.event_type, eventId: event.id })
     // Roll back the idempotency marker so PayPal's retry can reprocess this
     // event instead of it being permanently swallowed as "already processed".
     await releaseOnce(event.id)
