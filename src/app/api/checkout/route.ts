@@ -1,5 +1,6 @@
 import { stripe } from '@/lib/stripe'
 import { createClient } from '@/lib/supabase/server'
+import { checkRateLimit, RATE_LIMIT_MESSAGE } from '@/lib/rateLimit'
 import { NextRequest, NextResponse } from 'next/server'
 
 const PRICE_IDS: Record<string, string | undefined> = {
@@ -24,6 +25,11 @@ export async function POST(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  // Bound repeated checkout-session creation (Stripe API load + customer churn).
+  if (!(await checkRateLimit('checkout', user.id, 10, 300))) {
+    return NextResponse.json({ error: RATE_LIMIT_MESSAGE }, { status: 429 })
   }
 
   const { plan } = await request.json()

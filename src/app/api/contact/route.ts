@@ -1,33 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { resend, FROM_EMAIL } from '@/lib/resend'
+import { checkRateLimit, getClientIp } from '@/lib/rateLimit'
 
 // Public contact-form endpoint. No auth (anyone can write in), so the spam guards
-// are: a honeypot field, input validation + length caps, and a best-effort
-// per-IP rate limit. Messages are emailed to hello@ with the sender as reply-to.
+// are: a honeypot field, input validation + length caps, and a per-IP rate limit
+// (shared across instances via Supabase). Messages are emailed to hello@ with the
+// sender as reply-to.
 const TO_EMAIL = 'hello@tatforanimals.com'
-
-// Best-effort throttle. Serverless instances don't share memory, so this only
-// slows a bot that keeps hitting the same warm instance — the honeypot is the
-// real guard. Kept intentionally simple (no external store) for now.
-const hits = new Map<string, number[]>()
-const WINDOW_MS = 10 * 60 * 1000
-const MAX_PER_WINDOW = 5
-
-function rateLimited(ip: string): boolean {
-  const now = Date.now()
-  // Drop IPs whose window has fully expired so the map can't grow unbounded on a
-  // long-lived warm instance. Only sweep once it's grown, to avoid the cost on
-  // every request.
-  if (hits.size > 500) {
-    for (const [k, times] of hits) {
-      if (times.every((t) => now - t >= WINDOW_MS)) hits.delete(k)
-    }
-  }
-  const recent = (hits.get(ip) ?? []).filter((t) => now - t < WINDOW_MS)
-  recent.push(now)
-  hits.set(ip, recent)
-  return recent.length > MAX_PER_WINDOW
-}
 
 const ESCAPE: Record<string, string> = {
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
@@ -71,8 +50,7 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
-  if (rateLimited(ip)) {
+  if (!(await checkRateLimit('contact', getClientIp(request), 5, 600))) {
     return NextResponse.json(
       { error: "You've sent a few messages already — please try again in a little while." },
       { status: 429 },

@@ -102,6 +102,20 @@ Webhook idempotency 보장.
 
 ---
 
+## rate_limits
+
+API 남용 방지용 고정 윈도우 카운터. 전 서버리스 인스턴스가 공유. `lib/rateLimit.ts`가 `check_rate_limit(key, limit, window_seconds)` 함수(원자적 upsert)를 호출.
+
+| 컬럼 | 타입 | 기본값 | 설명 |
+|------|------|--------|------|
+| `key` | text | — | PK — `"<scope>:<user_id|ip>"` |
+| `count` | integer | `0` | 현재 윈도우 내 호출 수 |
+| `window_start` | timestamptz | `now()` | 윈도우 시작 시각 (만료 시 in-place 리셋) |
+
+**RLS:** 활성(정책 없음) → service role만 접근. **함수:** `check_rate_limit` → 허용 시 `true` 반환.
+
+---
+
 ## Migration 파일 목록
 
 | 파일 | 내용 |
@@ -119,5 +133,6 @@ Webhook idempotency 보장.
 | `20260626_video_watch_events.sql` | video_watch_events 테이블 (실제 프로덕션 스키마 문서화, 멱등) |
 | `20260630_profiles_paypal_pending_subscription.sql` | paypal_pending_subscription_id 추가 (PayPal 중복 결제 방지) |
 | `20260706_profiles_billing_interval.sql` | billing_interval 추가 (누락 갭 보완, 멱등) |
+| `20260706_rate_limits.sql` | rate_limits 테이블 + check_rate_limit 함수 (API 남용 방지) |
 
 > 참고: 전체 목록은 항상 `supabase/migrations/` 디렉터리를 확인.
