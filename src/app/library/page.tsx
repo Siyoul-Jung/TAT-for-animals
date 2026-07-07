@@ -68,38 +68,49 @@ export default async function LibraryPage() {
 
   const isPro = role === 'pro_subscriber'
 
-  const [animalsVideos, recordings, upcoming, lockedRecordings] = await Promise.all([
-    // Only "TAT for Animals" videos surface here. "Healing ACEs Plus" is a separate
-    // program that lives solely on tatlife.com (it's for healing people, not animals),
-    // so it is intentionally NOT queried or shown on this site (Tapas, 2026-06-25).
-    // The library option still exists in the Sanity schema to keep Jez's data intact.
-    sanityClient.fetch<Video[]>(
-      `*[_type == "video" && status == "published" && library == "TAT for Animals"] | order(category asc, dateRecorded asc) {
-        _id, title, category, duration, summary, videoUrl, topicTags, keywords, dateRecorded
-      }`
-    ),
-    isPro
-      ? sanityClient.fetch<WebinarRecording[]>(
-          `*[_type == "webinarRecording" && status == "published"] | order(date desc) {
-            _id, title, date, videoUrl, summary
-          }`
-        )
-      : Promise.resolve([]),
-    sanityClient.fetch<WebinarSession[]>(
-      `*[_type == "webinarSchedule" && date > now()] | order(date asc) [0..1] {
-        _id, title, date, description, meetingUrl
-      }`
-    ),
-    // Locked archive teaser — only for non-Pro members, and only metadata
-    // (never videoUrl), so the upgrade screen shows the real archive.
-    !isPro
-      ? sanityClient.fetch<RecordingPreview[]>(
-          `*[_type == "webinarRecording" && status == "published"] | order(date desc) [0..3] {
-            _id, title, date
-          }`
-        )
-      : Promise.resolve([]),
-  ])
+  // Degrade gracefully if Sanity is slow/down: the member is already
+  // authenticated and access-checked from Supabase above, so show an empty
+  // library rather than crashing the whole page to the error boundary.
+  let animalsVideos: Video[] = []
+  let recordings: WebinarRecording[] = []
+  let upcoming: WebinarSession[] = []
+  let lockedRecordings: RecordingPreview[] = []
+  try {
+    [animalsVideos, recordings, upcoming, lockedRecordings] = await Promise.all([
+      // Only "TAT for Animals" videos surface here. "Healing ACEs Plus" is a separate
+      // program that lives solely on tatlife.com (it's for healing people, not animals),
+      // so it is intentionally NOT queried or shown on this site (Tapas, 2026-06-25).
+      // The library option still exists in the Sanity schema to keep Jez's data intact.
+      sanityClient.fetch<Video[]>(
+        `*[_type == "video" && status == "published" && library == "TAT for Animals"] | order(category asc, dateRecorded asc) {
+          _id, title, category, duration, summary, videoUrl, topicTags, keywords, dateRecorded
+        }`
+      ),
+      isPro
+        ? sanityClient.fetch<WebinarRecording[]>(
+            `*[_type == "webinarRecording" && status == "published"] | order(date desc) {
+              _id, title, date, videoUrl, summary
+            }`
+          )
+        : Promise.resolve([]),
+      sanityClient.fetch<WebinarSession[]>(
+        `*[_type == "webinarSchedule" && date > now()] | order(date asc) [0..1] {
+          _id, title, date, description, meetingUrl
+        }`
+      ),
+      // Locked archive teaser — only for non-Pro members, and only metadata
+      // (never videoUrl), so the upgrade screen shows the real archive.
+      !isPro
+        ? sanityClient.fetch<RecordingPreview[]>(
+            `*[_type == "webinarRecording" && status == "published"] | order(date desc) [0..3] {
+              _id, title, date
+            }`
+          )
+        : Promise.resolve([]),
+    ])
+  } catch (e) {
+    console.error('Library: Sanity fetch failed, showing empty library:', e)
+  }
 
   return (
     <Suspense fallback={<div className="min-h-screen bg-cream" />}>

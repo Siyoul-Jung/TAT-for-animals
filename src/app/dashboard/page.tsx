@@ -49,11 +49,18 @@ export default async function DashboardPage({
     if (healed) profile = { ...profileRow, ...healed }
   }
 
-  const upcoming = await sanityClient.fetch<WebinarSession[]>(
-    `*[_type == "webinarSchedule" && date > now()] | order(date asc) [0..0] {
-      _id, title, date, description, meetingUrl
-    }`
-  )
+  // Degrade gracefully if Sanity is slow/down — the member's account and
+  // subscription data (from Supabase) must still render, not crash the page.
+  let upcoming: WebinarSession[] = []
+  try {
+    upcoming = await sanityClient.fetch<WebinarSession[]>(
+      `*[_type == "webinarSchedule" && date > now()] | order(date asc) [0..0] {
+        _id, title, date, description, meetingUrl
+      }`
+    )
+  } catch (e) {
+    console.error('Dashboard: webinar fetch failed, showing none:', e)
+  }
 
   // Once a cancelled membership's paid period ends, present it as lapsed
   // (guest) even if no webhook has flipped the role yet — see lib/access.

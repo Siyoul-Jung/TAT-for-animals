@@ -72,10 +72,10 @@
 |--------|--------|------|------|
 | `/api/auth/logout` | POST | Supabase 세션 종료 | 세션 |
 | `/auth/callback` | GET | 매직링크/OAuth 콜백. `next` 파라미터(오픈리다이렉트 방어) | 불필요 |
-| `/api/request-account-deletion` | POST | 삭제 요청 — 확인 이메일(24h 토큰). 발송 실패 시 pending 롤백 | 필수 |
-| `/api/confirm-account-deletion` | GET | 토큰 확인 → 구독 재검증 후 삭제, 실패 시 pending 복구·알림 | 불필요 (토큰) |
+| `/api/request-account-deletion` | POST | 삭제 요청 — 확인 이메일(24h 토큰, `/confirm-account-deletion` 페이지 링크). 발송 실패 시 pending 롤백 | 필수 |
+| `/api/confirm-account-deletion` | POST | 확인 페이지 버튼에서 호출 → 토큰 확인 → 구독 재검증 후 삭제, 실패 시 pending 복구·알림 | 토큰 |
 
-> ⚠️ `confirm-account-deletion`은 현재 GET에서 삭제 수행 — 이메일 링크 스캐너 자동 GET 위험이 있어 POST 전환 권장(런칭 전 정리 항목).
+> 이메일 링크는 **페이지**(`/confirm-account-deletion`)를 열고, 실제 삭제는 사용자의 명시적 **버튼 POST**로만 수행 — 메일 스캐너의 자동 GET 프리페치가 삭제를 트리거할 수 없음.
 
 ---
 
@@ -87,4 +87,3 @@
 | `/api/contact` | POST | 문의 폼 → 이메일 (길이 제한·이메일 검증·HTML 이스케이프) | 불필요 |
 | `/api/calendar/webinar` | GET | 웨비나 `.ics` 다운로드 | 불필요 |
 | `/api/health` | GET | 라이브니스(업타임 모니터링용, 외부 의존 없음) | 불필요 |
-| `/api/review-feedback` | POST | (임시) 검수 페이지 피드백 이메일 — 공개 토큰 게이트 | 토큰 |

@@ -82,8 +82,7 @@ src/
 │       ├── webhooks/ stripe · paypal/    — 구독 상태 동기화 (멱등성 + 실패 롤백/알림)
 │       ├── cron/annual-renewal-reminder/ — 연간 갱신 사전 고지 (Vercel Cron)
 │       ├── contact/ · calendar/webinar/  — 문의 폼 · .ics 다운로드
-│       ├── auth/logout/ · health/        — 로그아웃 · 라이브니스
-│       └── review-feedback/              — (임시) 검수 피드백 이메일
+│       └── auth/logout/ · health/        — 로그아웃 · 라이브니스
 │
 ├── components/                           — Navbar, Hero, TrySession, Testimonials, Pricing,
 │                                           RecordingTestimonials, AboutTapas, NewsletterSignup,
@@ -207,5 +206,6 @@ TAT®의 핵심 사용자층은 **시니어 및 기술에 익숙하지 않은 �
 - 연간·PayPal 실거래 검증 → `docs/qa/annual-and-paypal-verification.md`
 
 **🧹 남은 코드 정리 (선택, 런칭 전 권장)**
-- Rate limiting (이메일·결제 라우트) · 계정삭제 확인 GET→POST · 임시 `review-feedback` 도구 제거
+- Rate limiting (이메일·결제 라우트)
 - CSP Report-Only → enforce 전환 (위반 관찰 후)
+- (완료) 계정삭제 확인 GET→POST · 임시 `review-feedback` 도구 제거

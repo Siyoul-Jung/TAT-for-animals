@@ -2,12 +2,20 @@ import { supabaseAdmin } from '@/lib/supabase/admin'
 import { reportOpsError } from '@/lib/alertOps'
 import { NextRequest, NextResponse } from 'next/server'
 
-export async function GET(request: NextRequest) {
-  const token = request.nextUrl.searchParams.get('token')
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL!
+// POST (not GET): the actual, irreversible deletion must be an explicit user
+// action, never something an email link scanner / antivirus prefetch can trigger
+// with a background GET. The emailed link opens /confirm-account-deletion (a
+// page); its button POSTs here with the token.
+export async function POST(request: NextRequest) {
+  let token: string | undefined
+  try {
+    token = (await request.json())?.token
+  } catch {
+    token = undefined
+  }
 
   if (!token) {
-    return NextResponse.redirect(`${siteUrl}/?error=invalid-link`)
+    return NextResponse.json({ error: 'invalid-link' }, { status: 400 })
   }
 
   const { data: deletionRequest } = await supabaseAdmin
@@ -17,15 +25,15 @@ export async function GET(request: NextRequest) {
     .single()
 
   if (!deletionRequest) {
-    return NextResponse.redirect(`${siteUrl}/?error=invalid-link`)
+    return NextResponse.json({ error: 'invalid-link' }, { status: 400 })
   }
 
   if (deletionRequest.status !== 'pending') {
-    return NextResponse.redirect(`${siteUrl}/?error=already-processed`)
+    return NextResponse.json({ error: 'already-processed' }, { status: 409 })
   }
 
   if (new Date(deletionRequest.expires_at) < new Date()) {
-    return NextResponse.redirect(`${siteUrl}/?error=link-expired`)
+    return NextResponse.json({ error: 'link-expired' }, { status: 410 })
   }
 
   // Re-check subscription at confirmation time. A subscription can be created
@@ -38,14 +46,11 @@ export async function GET(request: NextRequest) {
     .single()
 
   if (profile?.stripe_subscription_id || profile?.paypal_subscription_id) {
-    // Redirect to the homepage notice (not /dashboard): the email link may be
-    // opened in a logged-out browser, where /dashboard bounces to a bare login
-    // form and the reason for the blocked deletion is lost.
-    return NextResponse.redirect(`${siteUrl}/?error=cancel-subscription-first`)
+    return NextResponse.json({ error: 'cancel-subscription-first' }, { status: 400 })
   }
 
-  // Mark as completed before deletion to prevent race conditions (double-click
-  // on the email link). If the delete fails, revert to pending so it can retry.
+  // Mark as completed before deletion to prevent race conditions (double
+  // submit). If the delete fails, revert to pending so it can be retried.
   await supabaseAdmin
     .from('account_deletion_requests')
     .update({ status: 'completed' })
@@ -64,8 +69,8 @@ export async function GET(request: NextRequest) {
       .from('account_deletion_requests')
       .update({ status: 'pending' })
       .eq('token', token)
-    return NextResponse.redirect(`${siteUrl}/?error=deletion-failed`)
+    return NextResponse.json({ error: 'deletion-failed' }, { status: 500 })
   }
 
-  return NextResponse.redirect(`${siteUrl}/?deleted=true`)
+  return NextResponse.json({ ok: true })
 }

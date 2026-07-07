@@ -63,6 +63,7 @@ Vercel 환경변수    ← 배포용 실제 값. Production / Preview 환경별�
 
 ---
 
-## 5. 참고 — 알려진 비(非)시크릿 값
+## 5. 참고 — 테스트/플레이스홀더 값
 
-- `tat-content-review-2026` (`src/app/api/review-feedback/route.ts`): 콘텐츠 검수 페이지용 **공개 토큰**. 클라이언트 HTML에 의도적으로 노출되며, 검수 피드백 이메일 엔드포인트만 살짝 막는 용도. 실제 자격증명 아님 → 스캐너 허용 목록에 등록됨.
+- `src/__tests__/`의 더미 키(`sk_test_dummy`, `whsec_test`, `test-service-role-key` 등)와 `.env.example`의 빈 placeholder는 실제 자격증명이 아니며 스캐너 허용 목록(`​.gitleaks.toml`)에 등록돼 있습니다.
+- (과거 존재하던 `tat-content-review-2026` 공개 검수 토큰은 임시 review 도구와 함께 제거됨.)
