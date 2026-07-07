@@ -29,11 +29,20 @@ export async function POST(request: NextRequest) {
   const manageConfig =
     process.env.STRIPE_PORTAL_MANAGE_CONFIG_ID || process.env.STRIPE_PORTAL_CONFIG_ID
 
-  const portalSession = await stripe.billingPortal.sessions.create({
-    customer: profile.stripe_customer_id,
-    return_url: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard`,
-    ...(manageConfig ? { configuration: manageConfig } : {}),
-  })
-
-  return NextResponse.json({ url: portalSession.url })
+  try {
+    const portalSession = await stripe.billingPortal.sessions.create({
+      customer: profile.stripe_customer_id,
+      return_url: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard`,
+      ...(manageConfig ? { configuration: manageConfig } : {}),
+    })
+    return NextResponse.json({ url: portalSession.url })
+  } catch (error) {
+    // A Stripe outage would otherwise throw an unhandled 500 with an HTML body,
+    // which the client can't parse — return structured JSON with friendly copy.
+    console.error('Portal error:', error instanceof Error ? error.message : error)
+    return NextResponse.json(
+      { error: "We couldn't open subscription management just now. Please try again, or email us at hello@tatforanimals.com." },
+      { status: 500 }
+    )
+  }
 }

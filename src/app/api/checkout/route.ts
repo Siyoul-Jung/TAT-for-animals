@@ -45,55 +45,66 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: ALREADY_SUBSCRIBED }, { status: 400 })
   }
 
-  let customerId = profile?.stripe_customer_id
+  // Everything below talks to Stripe. Wrap it so a Stripe outage returns
+  // structured JSON with friendly copy (nothing was charged) instead of an
+  // unhandled 500 with an HTML body the client can't parse.
+  try {
+    let customerId = profile?.stripe_customer_id
 
-  if (!customerId) {
-    // Check if a Stripe customer already exists for this email before creating a new one
-    const existing = await stripe.customers.list({ email: user.email!, limit: 1 })
-    if (existing.data.length > 0) {
-      customerId = existing.data[0].id
-    } else {
-      const customer = await stripe.customers.create({
-        email: user.email,
-        name: profile?.full_name ?? undefined,
-        metadata: { supabase_user_id: user.id },
-      })
-      customerId = customer.id
+    if (!customerId) {
+      // Check if a Stripe customer already exists for this email before creating a new one
+      const existing = await stripe.customers.list({ email: user.email!, limit: 1 })
+      if (existing.data.length > 0) {
+        customerId = existing.data[0].id
+      } else {
+        const customer = await stripe.customers.create({
+          email: user.email,
+          name: profile?.full_name ?? undefined,
+          metadata: { supabase_user_id: user.id },
+        })
+        customerId = customer.id
+      }
+
+      // Save to profiles
+      await supabase
+        .from('profiles')
+        .update({ stripe_customer_id: customerId })
+        .eq('id', user.id)
     }
 
-    // Save to profiles
-    await supabase
-      .from('profiles')
-      .update({ stripe_customer_id: customerId })
-      .eq('id', user.id)
-  }
+    // Defense in depth: the profile check above only sees what the webhook has
+    // recorded. Ask Stripe directly so a delayed or missed webhook can't let the
+    // same customer open a second subscription. Check all non-terminal statuses
+    // (not just 'active') so a trialing or past_due subscription also blocks.
+    const existingSubs = await stripe.subscriptions.list({ customer: customerId, status: 'all', limit: 10 })
+    if (existingSubs.data.some((s) => LIVE_SUB_STATUSES.has(s.status))) {
+      return NextResponse.json({ error: ALREADY_SUBSCRIBED }, { status: 400 })
+    }
 
-  // Defense in depth: the profile check above only sees what the webhook has
-  // recorded. Ask Stripe directly so a delayed or missed webhook can't let the
-  // same customer open a second subscription. Check all non-terminal statuses
-  // (not just 'active') so a trialing or past_due subscription also blocks.
-  const existingSubs = await stripe.subscriptions.list({ customer: customerId, status: 'all', limit: 10 })
-  if (existingSubs.data.some((s) => LIVE_SUB_STATUSES.has(s.status))) {
-    return NextResponse.json({ error: ALREADY_SUBSCRIBED }, { status: 400 })
-  }
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL!
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL!
-
-  const session = await stripe.checkout.sessions.create({
-    customer: customerId,
-    mode: 'subscription',
-    payment_method_types: ['card'],
-    line_items: [{ price: priceId, quantity: 1 }],
-    success_url: `${siteUrl}/thank-you?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${siteUrl}/membership`,
-    // Session-level metadata — read directly in checkout.session.completed event
-    metadata: { supabase_user_id: user.id },
-    subscription_data: {
-      // Subscription-level metadata — read in invoice events
+    const session = await stripe.checkout.sessions.create({
+      customer: customerId,
+      mode: 'subscription',
+      payment_method_types: ['card'],
+      line_items: [{ price: priceId, quantity: 1 }],
+      success_url: `${siteUrl}/thank-you?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${siteUrl}/membership`,
+      // Session-level metadata — read directly in checkout.session.completed event
       metadata: { supabase_user_id: user.id },
-    },
-    allow_promotion_codes: true,
-  })
+      subscription_data: {
+        // Subscription-level metadata — read in invoice events
+        metadata: { supabase_user_id: user.id },
+      },
+      allow_promotion_codes: true,
+    })
 
-  return NextResponse.json({ url: session.url })
+    return NextResponse.json({ url: session.url })
+  } catch (error) {
+    console.error('Checkout error:', error instanceof Error ? error.message : error)
+    return NextResponse.json(
+      { error: "We couldn't start checkout just now — nothing was charged. Please try again in a moment, or email us at hello@tatforanimals.com." },
+      { status: 500 }
+    )
+  }
 }

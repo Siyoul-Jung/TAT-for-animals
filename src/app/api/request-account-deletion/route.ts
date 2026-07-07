@@ -76,7 +76,11 @@ export async function POST() {
     )
   }
 
-  const confirmUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/api/confirm-account-deletion?token=${token}`
+  // Link to a confirmation PAGE, not the delete endpoint directly. Email link
+  // scanners / antivirus / SafeLinks issue GET prefetches on links, which would
+  // auto-confirm an irreversible deletion. The page only renders; the actual
+  // delete happens on an explicit button POST from the user.
+  const confirmUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/confirm-account-deletion?token=${token}`
   const { subject, html } = accountDeletionEmail(confirmUrl)
 
   try {
