@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { resend, FROM_EMAIL } from '@/lib/resend'
 import { webinarInviteEmail } from '@/lib/emails/webinar-invite'
+import { isAuthorizedSanityWebhook } from '@/lib/sanityWebhookAuth'
 
 export async function POST(request: NextRequest) {
-  const authHeader = request.headers.get('authorization')
-  if (authHeader !== `Bearer ${process.env.SANITY_WEBHOOK_SECRET}`) {
+  if (!isAuthorizedSanityWebhook(request.headers.get('authorization'))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
