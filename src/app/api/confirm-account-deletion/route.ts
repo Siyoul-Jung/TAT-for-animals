@@ -1,4 +1,5 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { reportOpsError } from '@/lib/alertOps'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
@@ -56,7 +57,9 @@ export async function GET(request: NextRequest) {
   )
 
   if (deleteError) {
-    console.error('Account deletion failed:', deleteError)
+    // Alert the team — a user asked to be deleted and it didn't happen; that's a
+    // compliance-sensitive failure that must not go unnoticed. (Also logs.)
+    await reportOpsError('account-deletion', deleteError, { userId: deletionRequest.user_id })
     await supabaseAdmin
       .from('account_deletion_requests')
       .update({ status: 'pending' })

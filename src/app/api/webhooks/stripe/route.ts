@@ -6,6 +6,7 @@ import { planChangeEmail } from '@/lib/emails/plan-change'
 import { sendWelcomeOnce } from '@/lib/sendWelcomeOnce'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { claimOnce, releaseOnce } from '@/lib/onceGuard'
+import { reportOpsError } from '@/lib/alertOps'
 import { PRICE_ROLE_MAP, getBillingInterval, getPeriodEndISO } from '@/lib/subscriptionAccess'
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
@@ -366,7 +367,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ received: true })
 
   } catch (error) {
-    console.error('Webhook error:', error)
+    // Alert the team — a failed payment webhook that nobody sees can mean a paid
+    // member never gets activated. (Also logs.)
+    await reportOpsError('stripe-webhook', error, { eventType: event.type, eventId: event.id })
     // Roll back the idempotency marker so Stripe's automatic retry can
     // reprocess this event — otherwise a transient failure would be
     // permanently swallowed as "already processed".
