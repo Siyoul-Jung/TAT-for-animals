@@ -10,13 +10,21 @@ jest.mock('@/lib/supabase/admin', () => {
   const single = jest.fn()
   const selectEq = jest.fn(() => ({ single }))
   const select = jest.fn(() => ({ eq: selectEq }))
-  const updateEq = jest.fn().mockResolvedValue({ error: null })
+  // update().eq() is used two ways in the route: awaited directly (the
+  // revert-to-pending path) and chained .eq('status','pending').select() (the
+  // atomic claim) — so it must be BOTH thenable and chainable.
+  const updateSelect = jest.fn().mockResolvedValue({ data: [{ user_id: 'u1' }] })
+  const updateEq2 = jest.fn(() => ({ select: updateSelect }))
+  const updateEq = jest.fn(() => ({
+    eq: updateEq2,
+    then: (resolve: (v: unknown) => void) => resolve({ error: null }),
+  }))
   const update = jest.fn(() => ({ eq: updateEq }))
   const deleteUser = jest.fn().mockResolvedValue({ error: null })
   const from = jest.fn(() => ({ select, update }))
   return {
     supabaseAdmin: { from, auth: { admin: { deleteUser } } },
-    __m: { single, update, updateEq, deleteUser },
+    __m: { single, update, updateEq, updateSelect, deleteUser },
   }
 })
 jest.mock('@/lib/alertOps', () => ({ reportOpsError: jest.fn().mockResolvedValue(undefined) }))
@@ -27,6 +35,7 @@ import { reportOpsError } from '@/lib/alertOps'
 const { __m } = jest.requireMock('@/lib/supabase/admin')
 const mockSingle = __m.single as jest.Mock
 const mockUpdate = __m.update as jest.Mock
+const mockUpdateSelect = __m.updateSelect as jest.Mock
 const mockDeleteUser = __m.deleteUser as jest.Mock
 const mockAlert = reportOpsError as jest.Mock
 
@@ -105,6 +114,20 @@ describe('confirm-account-deletion (POST)', () => {
     expect(res.status).toBe(200)
     expect((await res.json()).ok).toBe(true)
     expect(mockDeleteUser).toHaveBeenCalledWith('u1')
+  })
+
+  it('409 already-processed when a concurrent submit wins the claim (double-submit race)', async () => {
+    primeRequest(
+      { user_id: 'u1', expires_at: FUTURE, status: 'pending' },
+      { stripe_subscription_id: null, paypal_subscription_id: null }
+    )
+    // The other tab flipped pending→completed between our pending check and our
+    // claim — the conditional update matches zero rows.
+    mockUpdateSelect.mockResolvedValueOnce({ data: [] })
+    const res = await POST(makeReq({ token: 't' }))
+    expect(res.status).toBe(409)
+    expect((await res.json()).error).toBe('already-processed')
+    expect(mockDeleteUser).not.toHaveBeenCalled()
   })
 
   it('reverts to pending and alerts when the delete fails', async () => {

@@ -233,14 +233,18 @@ export default function Pricing({ showHeader = true, bg = 'bg-white', showBookin
 
                 {/* Annual reframe — the big yearly number shown as a per-month
                     equivalent (defuses sticker shock) plus the concrete saving
-                    (makes the discount tangible). Reserves its own height so the
-                    card doesn't jump when toggling. */}
-                {isAnnual && (
-                  <p className="mt-1.5 text-sm" style={{ color: '#467826' }}>
-                    ≈ ${(Number(tier.annual) / 12).toFixed(2)} / mo
-                    <span className="font-semibold"> · Save ${Number(tier.monthly) * 12 - Number(tier.annual)}</span>
-                  </p>
-                )}
+                    (makes the discount tangible). Always mounted with reserved
+                    height (transparent when monthly, same trick as the "Two
+                    months free" hint above) so the card doesn't jump when
+                    toggling. */}
+                <p
+                  className="mt-1.5 text-sm h-5"
+                  style={{ color: isAnnual ? '#467826' : 'transparent' }}
+                  aria-hidden={!isAnnual}
+                >
+                  ≈ ${(Number(tier.annual) / 12).toFixed(2)} / mo
+                  <span className="font-semibold"> · Save ${Number(tier.monthly) * 12 - Number(tier.annual)}</span>
+                </p>
               </div>
 
               {/* Description */}
