@@ -49,12 +49,22 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'cancel-subscription-first' }, { status: 400 })
   }
 
-  // Mark as completed before deletion to prevent race conditions (double
-  // submit). If the delete fails, revert to pending so it can be retried.
-  await supabaseAdmin
+  // Atomically CLAIM the request before deleting (double-submit guard): only
+  // the update that actually flips pending→completed proceeds. A plain update
+  // would let two near-simultaneous submits both pass the pending check above —
+  // the loser's deleteUser then fails and it would show "your account wasn't
+  // deleted" for an account that IS deleted. If the delete fails, we revert to
+  // pending so it can be retried.
+  const { data: claimed } = await supabaseAdmin
     .from('account_deletion_requests')
     .update({ status: 'completed' })
     .eq('token', token)
+    .eq('status', 'pending')
+    .select('user_id')
+
+  if (!claimed || claimed.length === 0) {
+    return NextResponse.json({ error: 'already-processed' }, { status: 409 })
+  }
 
   // Delete user — cascades to profiles via ON DELETE CASCADE
   const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(

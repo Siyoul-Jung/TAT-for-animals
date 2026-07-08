@@ -1,5 +1,6 @@
 import { stripe } from '@/lib/stripe'
 import { createClient } from '@/lib/supabase/server'
+import { checkRateLimit, RATE_LIMIT_MESSAGE } from '@/lib/rateLimit'
 import { NextRequest, NextResponse } from 'next/server'
 
 // Stripe Customer Portal — cancel subscription + manage payment method.
@@ -10,6 +11,12 @@ export async function POST(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  // Same bound as the other payment routes — each call creates a Stripe portal
+  // session (this was the one payment route without a limit).
+  if (!(await checkRateLimit('portal', user.id, 10, 300))) {
+    return NextResponse.json({ error: RATE_LIMIT_MESSAGE }, { status: 429 })
   }
 
   const { data: profile } = await supabase

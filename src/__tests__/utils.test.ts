@@ -1,18 +1,7 @@
-// Unit tests for utility functions
-
-function formatDuration(seconds: number | null): string | null {
-  if (!seconds) return null
-  const h = Math.floor(seconds / 3600)
-  const m = Math.floor((seconds % 3600) / 60)
-  const s = Math.floor(seconds % 60)
-  if (h > 0) return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
-  return `${m}:${String(s).padStart(2, '0')}`
-}
-
-function getVimeoId(url: string): string | null {
-  const match = url.match(/vimeo\.com\/(?:video\/)?(\d+)/)
-  return match?.[1] ?? null
-}
+// Tests the real video display helpers (src/lib/video.ts) — the previous
+// version of this file tested an inline copy, which stayed green even if the
+// real code regressed.
+import { parseVimeo, formatDuration } from '@/lib/video'
 
 describe('formatDuration', () => {
   it('returns null for null input', () => {
@@ -35,14 +24,20 @@ describe('formatDuration', () => {
   })
 })
 
-describe('getVimeoId', () => {
-  it('extracts ID from standard Vimeo URL', () => {
-    expect(getVimeoId('https://vimeo.com/1194441479')).toBe('1194441479')
+describe('parseVimeo', () => {
+  it('extracts ID from a public URL', () => {
+    expect(parseVimeo('https://vimeo.com/1194441479')).toEqual({ id: '1194441479', hash: null })
   })
-  it('handles video/ path in URL', () => {
-    expect(getVimeoId('https://vimeo.com/video/1194441479')).toBe('1194441479')
+  it('handles the video/ path form', () => {
+    expect(parseVimeo('https://vimeo.com/video/1194441479')).toEqual({ id: '1194441479', hash: null })
   })
-  it('returns null for invalid URL', () => {
-    expect(getVimeoId('https://youtube.com/watch?v=abc')).toBeNull()
+  it('captures the private-link hash in path form (dropping it breaks unlisted playback)', () => {
+    expect(parseVimeo('https://vimeo.com/1194441479/abc123def')).toEqual({ id: '1194441479', hash: 'abc123def' })
+  })
+  it('captures the private-link hash in ?h= query form', () => {
+    expect(parseVimeo('https://vimeo.com/1194441479?h=abc123def')).toEqual({ id: '1194441479', hash: 'abc123def' })
+  })
+  it('returns null for a non-Vimeo URL', () => {
+    expect(parseVimeo('https://youtube.com/watch?v=abc')).toBeNull()
   })
 })

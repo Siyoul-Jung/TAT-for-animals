@@ -49,7 +49,7 @@ function ConfirmDeletion() {
         </p>
         <Link
           href="/"
-          className="inline-flex items-center justify-center min-h-[52px] px-8 rounded-full font-semibold text-base text-cream transition-all hover:opacity-90"
+          className="inline-flex items-center justify-center min-h-[52px] px-8 rounded-full font-bold text-[19px] text-cream transition-all hover:opacity-90"
           style={{ backgroundColor: '#D4703A' }}
         >
           Return home
@@ -81,7 +81,7 @@ function ConfirmDeletion() {
 
       {error && (
         <div className="bg-red-50 border border-red-100 rounded-xl px-4 py-3 text-left">
-          <p className="text-sm text-red-600 leading-relaxed">{error}</p>
+          <p className="text-sm text-red-700 leading-relaxed">{error}</p>
         </div>
       )}
 

@@ -39,12 +39,17 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  // Bound repeated plan-change attempts (each hits Stripe/PayPal).
-  if (!(await checkRateLimit('change-plan', user.id, 10, 300))) {
+  const { targetTier, preview } = await request.json()
+
+  // Bound repeated plan-change attempts (each hits Stripe/PayPal). Previews get
+  // their own, looser bucket: opening/closing the confirm box a few times must
+  // never eat the budget for the actual change (a member could otherwise browse
+  // themselves into a 429 on the real click). Still bounded — a preview is a
+  // real Stripe invoice-preview call.
+  const rateScope = preview ? 'change-plan-preview' : 'change-plan'
+  if (!(await checkRateLimit(rateScope, user.id, preview ? 30 : 10, 300))) {
     return NextResponse.json({ error: RATE_LIMIT_MESSAGE }, { status: 429 })
   }
-
-  const { targetTier, preview } = await request.json()
   if (targetTier !== 'subscriber' && targetTier !== 'pro_subscriber') {
     return NextResponse.json({ error: 'Invalid plan' }, { status: 400 })
   }
