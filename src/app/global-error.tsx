@@ -46,7 +46,7 @@ export default function GlobalError({ reset }: { error: Error & { digest?: strin
             >
               We hit an unexpected problem. Please try again — if it keeps happening,
               email us at{' '}
-              <a href="mailto:hello@tatforanimals.com" style={{ color: '#467826' }}>
+              <a href="mailto:hello@tatforanimals.com" style={{ color: '#467826', textDecoration: 'underline' }}>
                 hello@tatforanimals.com
               </a>
               .
@@ -61,7 +61,9 @@ export default function GlobalError({ reset }: { error: Error & { digest?: strin
                 cursor: 'pointer',
                 fontFamily: "'Helvetica Neue', sans-serif",
                 fontWeight: 700,
-                fontSize: 18,
+                // 19px, not 18: WCAG "large text" (3:1 on the orange) starts at
+                // 14pt bold = 18.66px — the same rationale as the email button.
+                fontSize: 19,
                 color: '#FBF5F3',
                 background: '#D4703A',
               }}

@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react'
 
 // Vimeo's oEmbed endpoint needs no API key/auth — it's the same public URL shape
 // used for any embed. Passing the full videoUrl (unlisted videos included) keeps
-// this in sync with the hash-aware parsing already used for playback in
-// LibraryClient.tsx's parseVimeo().
+// this in sync with the hash-aware parsing already used for playback
+// (parseVimeo in src/lib/video.ts).
 function oEmbedUrl(videoUrl: string): string {
   return `https://vimeo.com/api/oembed.json?url=${encodeURIComponent(videoUrl)}`
 }

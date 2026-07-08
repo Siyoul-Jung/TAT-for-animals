@@ -11,8 +11,9 @@
 
 | 파일 | 내용 | 왜 필요 |
 |------|------|---------|
-| `supabase/migrations/20260706_profiles_billing_interval.sql` | `profiles.billing_interval` 컬럼 | 코드가 쓰지만 마이그레이션이 없었음(프로덕션엔 수동 추가돼 동작 중일 수 있음). 기록/재현용 |
-| `supabase/migrations/20260706_rate_limits.sql` | `rate_limits` 테이블 + `check_rate_limit()` 함수 | **신규** — 없으면 rate limiting이 무동작(fail-open, 깨지진 않음) |
+| `supabase/migrations/20260706_profiles_billing_interval.sql` | `profiles.billing_interval` 컬럼 | ✅ **프로덕션 확인 완료(2026-07-08)** — 컬럼 이미 존재. 기록/재현용 |
+| `supabase/migrations/20260706_rate_limits.sql` | `rate_limits` 테이블 + `check_rate_limit()` 함수 | ✅ **프로덕션 적용 완료(2026-07-08)** — 함수 동작·RLS 검증됨 |
+| `supabase/migrations/20260708_profiles_billing_interval_check.sql` | `billing_interval` CHECK 제약 (month/year/NULL) | 신규 — role/status와 동일한 값 집합 고정. 멱등 |
 
 **적용 방법 (둘 중 하나):**
 
@@ -26,9 +27,10 @@
   2. 위 두 파일 내용을 각각 붙여넣고 **Run**
   3. 완료 후 `Table Editor`에서 `rate_limits` 테이블이 보이는지 확인
 
-- [ ] `billing_interval` 마이그레이션 적용
-- [ ] `rate_limits` 마이그레이션 적용
-- [ ] `rate_limits` 테이블 + `check_rate_limit` 함수 생성 확인
+- [x] `billing_interval` 마이그레이션 적용 (컬럼 존재 확인, 2026-07-08)
+- [x] `rate_limits` 마이그레이션 적용 (2026-07-08)
+- [x] `rate_limits` 테이블 + `check_rate_limit` 함수 생성 확인 (2026-07-08)
+- [ ] `billing_interval` CHECK 제약 마이그레이션 적용 (20260708)
 
 > 참고: 그 외 오래된 마이그레이션들은 사이트가 이미 동작 중이므로 적용된 상태로 간주됩니다. CLI(`db push`)를 쓰면 안전하게 미적용분만 반영됩니다.
 
