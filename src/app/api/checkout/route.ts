@@ -1,6 +1,7 @@
 import { stripe } from '@/lib/stripe'
 import { createClient } from '@/lib/supabase/server'
 import { checkRateLimit, RATE_LIMIT_MESSAGE } from '@/lib/rateLimit'
+import { membershipHasLapsed } from '@/lib/access'
 import { NextRequest, NextResponse } from 'next/server'
 
 const PRICE_IDS: Record<string, string | undefined> = {
@@ -42,12 +43,18 @@ export async function POST(request: NextRequest) {
   // Look up existing Stripe customer ID or create a new one
   const { data: profile } = await supabase
     .from('profiles')
-    .select('stripe_customer_id, stripe_subscription_id, paypal_subscription_id, full_name')
+    .select('stripe_customer_id, stripe_subscription_id, paypal_subscription_id, cancel_at, full_name')
     .eq('id', user.id)
     .single()
 
-  // Block duplicate subscriptions — existing subscribers change tiers via /api/change-plan
-  if (profile?.stripe_subscription_id || profile?.paypal_subscription_id) {
+  // Block duplicate subscriptions — existing subscribers change tiers via /api/change-plan.
+  // A LAPSED membership (cancelled + paid period ended) doesn't count: PayPal leaves
+  // paypal_subscription_id set with no period-end event, so without this a lapsed
+  // PayPal member could never rejoin (checkout would keep rejecting them).
+  const hasLiveSubscription =
+    !membershipHasLapsed(profile?.cancel_at) &&
+    (profile?.stripe_subscription_id || profile?.paypal_subscription_id)
+  if (hasLiveSubscription) {
     return NextResponse.json({ error: ALREADY_SUBSCRIBED }, { status: 400 })
   }
 

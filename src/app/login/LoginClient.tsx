@@ -175,7 +175,7 @@ export default function LoginClient() {
                 <label htmlFor="password" className="text-sm font-medium text-charcoal">
                   Password
                 </label>
-                <a href="/reset-password" className="inline-flex items-center min-h-[44px] text-xs text-muted hover:text-green transition-colors">
+                <a href="/reset-password" className="inline-flex items-center min-h-[44px] text-sm text-muted hover:text-green transition-colors">
                   Forgot your password?
                 </a>
               </div>
@@ -241,7 +241,7 @@ export default function LoginClient() {
             >
               {magicLoading ? 'Sending…' : 'Email me a sign-in link instead'}
             </button>
-            <p className="text-xs text-muted text-center mt-3 leading-relaxed">
+            <p className="text-sm text-muted text-center mt-3 leading-relaxed">
               We&apos;ll send a link to your email — no password needed.
             </p>
           </div>

@@ -65,7 +65,7 @@ function ConfirmDeletion() {
         <p className="text-charcoal/65 text-base leading-relaxed">
           Please request account deletion again from your dashboard.
         </p>
-        <Link href="/dashboard" className="text-brand hover:underline font-medium">
+        <Link href="/dashboard" className="text-green hover:underline font-medium">
           Go to my account
         </Link>
       </Shell>

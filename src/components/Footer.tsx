@@ -111,7 +111,7 @@ export default function Footer() {
             <Link
               key={link.name}
               href={link.href}
-              className="text-sm font-light transition-colors"
+              className="text-sm font-light transition-colors py-1.5"
               style={{ color: 'rgba(250,246,241,0.60)' }}
               onMouseEnter={(e) => {
                 (e.currentTarget as HTMLElement).style.color = '#D4A843';
@@ -163,7 +163,7 @@ export default function Footer() {
             <Link
               key={link.name}
               href={link.href}
-              className="text-sm font-light transition-colors"
+              className="text-sm font-light transition-colors py-1.5"
               style={{ color: 'rgba(250,246,241,0.60)' }}
               onMouseEnter={(e) => {
                 (e.currentTarget as HTMLElement).style.color = 'rgba(250,246,241,0.9)';

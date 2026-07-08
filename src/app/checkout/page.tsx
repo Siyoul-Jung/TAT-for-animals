@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { Suspense } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
+import { membershipHasLapsed } from '@/lib/access';
 
 const PLANS: Record<string, { name: string; price: string; interval: 'month' | 'year' }> = {
   calm_library:        { name: 'The Calm Library', price: '27',  interval: 'month' },
@@ -60,14 +61,17 @@ function CheckoutContent() {
         if (!user) { if (activeReq) setStatus('ready'); return; }
         const { data: profile } = await supabase
           .from('profiles')
-          .select('stripe_subscription_id, paypal_subscription_id')
+          .select('stripe_subscription_id, paypal_subscription_id, cancel_at')
           .eq('id', user.id)
           .single();
         if (!activeReq) return;
-        // Same signal the checkout API uses to block a duplicate subscription.
-        setStatus(
-          profile?.stripe_subscription_id || profile?.paypal_subscription_id ? 'member' : 'ready'
-        );
+        // Same signal the checkout API uses to block a duplicate subscription — but
+        // a lapsed membership (cancelled + period ended) doesn't count, so a lapsed
+        // PayPal member (whose id is never cleared) can rejoin instead of looping.
+        const hasLiveSub =
+          !membershipHasLapsed(profile?.cancel_at) &&
+          (profile?.stripe_subscription_id || profile?.paypal_subscription_id);
+        setStatus(hasLiveSub ? 'member' : 'ready');
       } catch {
         // Never strand the visitor on a loader — fall through to the form; the
         // checkout API still blocks a duplicate subscription server-side.
