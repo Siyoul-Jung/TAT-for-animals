@@ -1,8 +1,12 @@
 import { resend, FROM_EMAIL } from '@/lib/resend'
 
-// Where operational failure alerts go. Falls back to the site owner if
+// Where operational failure alerts go. Comma-separated for multiple inboxes
+// (e.g. "dev@x.com, hello@tatforanimals.com"). Falls back to the site owner if
 // OPS_ALERT_EMAIL isn't set, so alerting works even before that env is added.
-const ALERT_TO = process.env.OPS_ALERT_EMAIL || 'philoleben@gmail.com'
+const ALERT_TO = (process.env.OPS_ALERT_EMAIL || 'philoleben@gmail.com')
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean)
 
 // Best-effort in-process throttle so a provider outage that fails many webhooks
 // at once doesn't send hundreds of emails. Keyed by scope, one alert per window

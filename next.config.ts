@@ -17,9 +17,12 @@ const nextConfig: NextConfig = {
   },
   async headers() {
     // Content-Security-Policy is shipped in REPORT-ONLY mode: it never blocks a
-    // request, it only reports violations to the browser console. This lets us
-    // observe what a real policy would break (Vimeo, Sanity Studio, Stripe,
-    // PayPal, Termageddon, Mailchimp) before switching to an enforcing policy.
+    // request, it only reports violations (browser console + POST to
+    // /api/csp-report → Vercel logs). This lets us observe what a real policy
+    // would break (Vimeo, Sanity Studio, Stripe, PayPal, Termageddon, Mailchimp)
+    // before switching to an enforcing policy. Before enforcing: click through
+    // Stripe checkout, PayPal checkout, video playback, and /studio, then
+    // confirm the csp-report logs stayed quiet.
     const cspReportOnly = [
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://www.paypal.com https://www.paypalobjects.com https://player.vimeo.com https://*.vimeocdn.com https://*.sanity.io https://app.termageddon.com https://*.mailchimp.com https://*.list-manage.com",
@@ -28,10 +31,16 @@ const nextConfig: NextConfig = {
       "font-src 'self' data:",
       "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.stripe.com https://*.sanity.io wss://*.sanity.io https://*.vimeo.com https://*.paypal.com",
       "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://player.vimeo.com https://www.paypal.com https://app.termageddon.com",
+      // Sanity Studio spawns blob: web workers; without worker-src they'd fall
+      // back to script-src (which has no blob:) once the policy is enforced.
+      "worker-src 'self' blob:",
       "frame-ancestors 'self'",
       "base-uri 'self'",
       "form-action 'self' https://www.paypal.com https://checkout.stripe.com",
       "object-src 'none'",
+      // Violations from real browsing land in /api/csp-report (Vercel logs) —
+      // the promotion-to-enforcing decision reads those, not someone's console.
+      "report-uri /api/csp-report",
     ].join("; ");
 
     return [
