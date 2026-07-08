@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { paypalRequest, getPayPalSubscription, PLAN_IDS } from '@/lib/paypal'
 import { checkRateLimit, RATE_LIMIT_MESSAGE } from '@/lib/rateLimit'
+import { membershipHasLapsed } from '@/lib/access'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
@@ -18,11 +19,17 @@ export async function POST(request: NextRequest) {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('stripe_subscription_id, paypal_subscription_id, paypal_pending_subscription_id')
+    .select('stripe_subscription_id, paypal_subscription_id, paypal_pending_subscription_id, cancel_at')
     .eq('id', user.id)
     .single()
 
-  if (profile?.stripe_subscription_id || profile?.paypal_subscription_id) {
+  // A lapsed membership (cancelled + paid period ended) must not block a rejoin.
+  // PayPal leaves paypal_subscription_id set with no period-end event, so without
+  // this a lapsed PayPal member could never subscribe again.
+  const hasLiveSubscription =
+    !membershipHasLapsed(profile?.cancel_at) &&
+    (profile?.stripe_subscription_id || profile?.paypal_subscription_id)
+  if (hasLiveSubscription) {
     return NextResponse.json(
       { error: 'You already have an active subscription.' },
       { status: 400 }

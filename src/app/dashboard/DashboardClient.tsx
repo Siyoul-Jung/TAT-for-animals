@@ -163,6 +163,14 @@ export default function DashboardClient({
     subscriptionStatus === 'active' && !isCancelling && !pendingPlan &&
     role !== 'pro_subscriber' && billingInterval !== 'year'
 
+  // An annual Library member in good standing DOES have a real reason to move to
+  // Circle — but self-serve targets the monthly price, so their upgrade is routed
+  // to support (contact) rather than hidden. Same conditions as canUpgrade, but
+  // annual instead of monthly.
+  const canUpgradeViaContact =
+    subscriptionStatus === 'active' && !isCancelling && !pendingPlan &&
+    role !== 'pro_subscriber' && billingInterval === 'year'
+
   const handleChangePlan = async (targetTier: 'subscriber' | 'pro_subscriber') => {
     setChangingPlan(true)
     setActionError(null)
@@ -367,7 +375,16 @@ export default function DashboardClient({
             {isPayPal ? (
               <p className="text-sm text-red-700 leading-relaxed">
                 Your access is paused until your payment goes through. Please update your
-                payment method in your PayPal account.{!isCancelling && ' You can also cancel your membership below.'}
+                payment method in your{' '}
+                <a
+                  href="https://www.paypal.com/myaccount/autopay/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-red-800 underline font-medium hover:text-red-900"
+                >
+                  PayPal account
+                </a>
+                .{!isCancelling && ' You can also cancel your membership below.'}
               </p>
             ) : (
               <>
@@ -513,6 +530,7 @@ export default function DashboardClient({
                 badge="The Calm Circle"
                 locked={role !== 'pro_subscriber'}
                 onClick={canUpgrade ? () => openUpgrade() : undefined}
+                contactToUpgrade={canUpgradeViaContact}
                 isLoading={false}
               />
             </div>
@@ -731,7 +749,7 @@ export default function DashboardClient({
                       <button
                         onClick={handleDeleteRequest}
                         disabled={deleting}
-                        className="min-h-[44px] flex items-center text-sm font-medium text-red-600 hover:text-red-700 transition-colors disabled:opacity-50"
+                        className="min-h-[44px] flex items-center text-sm font-medium text-red-700 hover:text-red-800 transition-colors disabled:opacity-50"
                       >
                         {deleting ? 'Sending…' : 'Yes, email me the link'}
                       </button>
@@ -792,6 +810,7 @@ function ContentCard({
   locked,
   onClick,
   isLoading,
+  contactToUpgrade,
 }: {
   title: string
   description: string
@@ -800,6 +819,7 @@ function ContentCard({
   locked?: boolean
   onClick?: () => void
   isLoading?: boolean
+  contactToUpgrade?: boolean
 }) {
   const cardClasses = `block p-5 rounded-xl border border-charcoal/10 transition-all`
 
@@ -853,6 +873,14 @@ function ContentCard({
           {title}
         </p>
         <p className="text-sm text-charcoal/65 leading-relaxed">{description}</p>
+        {contactToUpgrade && (
+          <Link
+            href="/contact"
+            className="mt-3 inline-flex items-center min-h-[44px] text-sm font-medium text-green hover:text-green transition-colors"
+          >
+            On an annual plan? Contact us to upgrade →
+          </Link>
+        )}
       </div>
     )
   }

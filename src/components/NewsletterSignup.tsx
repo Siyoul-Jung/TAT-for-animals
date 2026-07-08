@@ -116,7 +116,7 @@ export default function NewsletterSignup() {
               <button
                 type="submit"
                 disabled={status === 'loading'}
-                className="h-12 px-6 rounded-lg text-base font-bold text-cream transition-opacity hover:opacity-90 disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-offset-2 whitespace-nowrap"
+                className="h-12 px-6 rounded-lg text-[19px] font-bold text-cream transition-opacity hover:opacity-90 disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-offset-2 whitespace-nowrap"
                 style={{ backgroundColor: '#D4703A', ['--tw-ring-color' as string]: '#D4A843', ['--tw-ring-offset-color' as string]: '#1E3310' }}
               >
                 {status === 'loading' ? 'Subscribing…' : 'Subscribe'}

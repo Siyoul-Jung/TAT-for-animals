@@ -249,7 +249,7 @@ export default function SignupClient() {
               {loading ? 'Creating your account…' : 'Create account'}
             </Button>
 
-            <p className="text-xs text-muted text-center mt-4 leading-relaxed">
+            <p className="text-sm text-muted text-center mt-4 leading-relaxed">
               By creating an account, you agree to our{' '}
               <Link href="/terms" className="text-green hover:underline">Terms</Link>
               {' '}and{' '}

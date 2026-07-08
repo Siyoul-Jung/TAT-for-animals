@@ -208,7 +208,7 @@ function VideoRow({ video, progress, onProgressUpdate }: {
         <svg
           width="16" height="16" viewBox="0 0 16 16" fill="none"
           stroke="currentColor" strokeWidth={1.5}
-          className={`text-charcoal/30 shrink-0 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+          className={`text-charcoal/45 shrink-0 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
         >
           <path strokeLinecap="round" strokeLinejoin="round" d="M3 6l5 5 5-5" />
         </svg>
@@ -356,6 +356,7 @@ export default function LibraryClient({
   lockedRecordings,
   role,
   isPayPal,
+  billingInterval,
 }: {
   animalsVideos: Video[]
   recordings: WebinarRecording[]
@@ -363,7 +364,12 @@ export default function LibraryClient({
   lockedRecordings: RecordingPreview[]
   role: string
   isPayPal: boolean
+  billingInterval: string | null
 }) {
+  // Annual members can't self-serve upgrade (it targets the monthly price and
+  // would flip their cadence), so route them to support instead of the confirm
+  // flow — parity with the dashboard.
+  const isAnnual = billingInterval === 'year'
   const searchParams = useSearchParams()
   const tabParam = searchParams.get('tab')
 
@@ -609,7 +615,7 @@ export default function LibraryClient({
               </span>
               {tab.locked && (
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth={1.5}
-                  className="text-charcoal/30 shrink-0">
+                  className="text-charcoal/45 shrink-0">
                   <rect x="2" y="5" width="8" height="6" rx="1" />
                   <path strokeLinecap="round" d="M4 5V3.5a2 2 0 0 1 4 0V5" />
                 </svg>
@@ -887,12 +893,21 @@ export default function LibraryClient({
                           Sessions card. Green (#467826, ~5.3:1) is the AA-safe color
                           for small text links; orange would fail (globals.css:27). The
                           price isn't shown here — it appears in the confirm step. */}
-                      <button
-                        onClick={openUpgrade}
-                        className="inline-flex items-center min-h-[44px] text-sm font-medium text-green hover:text-green transition-colors"
-                      >
-                        Upgrade →
-                      </button>
+                      {isAnnual ? (
+                        <Link
+                          href="/contact"
+                          className="inline-flex items-center min-h-[44px] text-sm font-medium text-green hover:text-green transition-colors"
+                        >
+                          On an annual plan? Contact us to upgrade →
+                        </Link>
+                      ) : (
+                        <button
+                          onClick={openUpgrade}
+                          className="inline-flex items-center min-h-[44px] text-sm font-medium text-green hover:text-green transition-colors"
+                        >
+                          Upgrade →
+                        </button>
+                      )}
                     </>
                   )}
                 </div>
