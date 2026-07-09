@@ -25,12 +25,16 @@ const nextConfig: NextConfig = {
     // confirm the csp-report logs stayed quiet.
     const cspReportOnly = [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://www.paypal.com https://www.paypalobjects.com https://player.vimeo.com https://*.vimeocdn.com https://*.sanity.io https://app.termageddon.com https://*.mailchimp.com https://*.list-manage.com",
+      // Termageddon is wildcarded: the embed script loads from
+      // policies.termageddon.com and then fetches the policy body from
+      // embed.termageddon.com — the first real csp-report catch (2026-07-08,
+      // /privacy). The originally-listed app.termageddon.com is not used at all.
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://www.paypal.com https://www.paypalobjects.com https://player.vimeo.com https://*.vimeocdn.com https://*.sanity.io https://*.termageddon.com https://*.mailchimp.com https://*.list-manage.com",
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https:",
       "font-src 'self' data:",
-      "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.stripe.com https://*.sanity.io wss://*.sanity.io https://*.vimeo.com https://*.paypal.com",
-      "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://player.vimeo.com https://www.paypal.com https://app.termageddon.com",
+      "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.stripe.com https://*.sanity.io wss://*.sanity.io https://*.vimeo.com https://*.paypal.com https://*.termageddon.com",
+      "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://player.vimeo.com https://www.paypal.com https://*.termageddon.com",
       // Sanity Studio spawns blob: web workers; without worker-src they'd fall
       // back to script-src (which has no blob:) once the policy is enforced.
       "worker-src 'self' blob:",
