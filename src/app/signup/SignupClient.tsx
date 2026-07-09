@@ -18,6 +18,10 @@ export default function SignupClient() {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  // Set alongside the "already exists" errors so the error box can offer a
+  // clickable Sign-in link (with the chosen plan preserved) instead of only
+  // telling the member to go find one.
+  const [existingAccount, setExistingAccount] = useState(false)
   const [success, setSuccess] = useState(false)
   const [resending, setResending] = useState(false)
   const [resent, setResent] = useState(false)
@@ -42,6 +46,7 @@ export default function SignupClient() {
   async function handleSignup(e: React.FormEvent) {
     e.preventDefault()
     setError(null)
+    setExistingAccount(false)
 
     if (password !== confirmPassword) {
       setError("The passwords you entered don't match. Please try again.")
@@ -65,7 +70,8 @@ export default function SignupClient() {
 
     if (error) {
       if (error.message.includes('already registered')) {
-        setError('An account with this email already exists. Try signing in instead.')
+        setError('An account with this email already exists.')
+        setExistingAccount(true)
       } else {
         setError('Something went wrong. Please try again.')
       }
@@ -78,7 +84,8 @@ export default function SignupClient() {
     // it via an empty `identities` array. Detect that so we don't show a "check your
     // inbox" screen for a confirmation email that will never arrive.
     if (data.user && (data.user.identities?.length ?? 0) === 0) {
-      setError('An account with this email already exists. Try signing in, or reset your password if you’ve forgotten it.')
+      setError('An account with this email already exists.')
+      setExistingAccount(true)
       setLoading(false)
       return
     }
@@ -241,7 +248,23 @@ export default function SignupClient() {
             {/* Error */}
             {error && (
               <div className="bg-red-50 border border-red-100 rounded-xl px-4 py-3 mb-5">
-                <p className="text-sm text-red-600 leading-relaxed">{error}</p>
+                <p className="text-sm text-red-700 leading-relaxed">{error}</p>
+                {existingAccount && (
+                  <p className="text-sm leading-relaxed mt-2">
+                    <Link
+                      href={`/login?next=${encodeURIComponent(next)}`}
+                      className="inline-flex items-center min-h-[44px] font-medium text-green underline hover:opacity-70 transition-opacity"
+                    >
+                      Sign in to continue →
+                    </Link>
+                    <span className="block mt-1 text-charcoal/65">
+                      Forgot your password?{' '}
+                      <Link href="/reset-password" className="text-green underline hover:opacity-70 transition-opacity">
+                        Reset it here
+                      </Link>
+                    </span>
+                  </p>
+                )}
               </div>
             )}
 
