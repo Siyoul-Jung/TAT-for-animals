@@ -134,7 +134,11 @@ function VideoRow({ video, progress, onProgressUpdate }: {
     <div className="border-b border-charcoal/8 last:border-0">
       <button
         onClick={handleToggle}
-        className="w-full flex items-center gap-4 py-4 text-left group min-h-[64px]"
+        // Inset focus ring: the global :focus-visible outline sits 2px OUTSIDE
+        // the element, and this button is flush against the row above and the
+        // expanded player below — the ring visibly overlapped both. Drawing it
+        // inward keeps it fully inside the row.
+        className="w-full flex items-center gap-4 py-4 text-left group min-h-[64px] focus-visible:[outline-offset:-2px]"
       >
         <span className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-colors ${
           open ? 'bg-brand' : completed ? 'bg-brand/15' : 'bg-charcoal/8 group-hover:bg-brand/10'
