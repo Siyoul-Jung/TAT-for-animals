@@ -201,15 +201,16 @@ export default function AboutClient() {
               climbing trees, toys, and plenty of space to explore. A third room was home to
               elegant adult cats. Everywhere I looked, I saw healthy, well-loved felines.
             </p>
-            {/* Jez 2026-07-14: fade-edged version — edges melt into the white section,
-                so no crop/rounding/shadow (they would redraw the hard box the fade removes). */}
+            {/* Jez 2026-07-14: fade-edged version. The fade only melts the top/left into the
+                white section, so keep the rounded corners for the hard bottom edge but drop
+                the crop and shadow — both would redraw the box the fade removes. */}
             <Image
               src="/images/about/Photo9.jpg"
               alt="A cat and a dog nestled together in the grass"
               width={1579}
               height={899}
               sizes="(min-width: 768px) 720px, 100vw"
-              className="w-full"
+              className="w-full rounded-2xl"
             />
             <p>
               My client was Celeste Yarnall, who was writing a book on holistic cat care and was
