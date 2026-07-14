@@ -19,13 +19,26 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://tatforanimals.com"),
   title: "TAT® for Animals | Help Your Animal Feel Calm and at Ease",
   description: "Experience the calming power of TAT for your animals and yourself. Experience first, simplicity always.",
   // PRE-LAUNCH: keep the unfinished site out of Google. REMOVE this line at launch.
   robots: { index: false, follow: false },
+  // Social share card (link previews in Messages, Facebook, Slack, …).
+  openGraph: {
+    type: "website",
+    siteName: "TAT for Animals",
+    title: "TAT® for Animals | Help Your Animal Feel Calm and at Ease",
+    description: "Experience the calming power of TAT for your animals and yourself.",
+    images: [{ url: "/images/og.jpg", width: 1200, height: 630, alt: "A cat resting calmly under its person's gentle hand" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 import { Suspense } from "react";
+import { Analytics } from "@vercel/analytics/next";
 import Footer from "@/components/Footer";
 import MotionProvider from "@/components/MotionProvider";
 
@@ -53,6 +66,10 @@ export default function RootLayout({
           <Footer />
           <CookieBanner />
         </MotionProvider>
+        {/* Cookieless page-view analytics (same-origin script, so no CSP or
+            cookie-banner implications). Data appears once the Web Analytics
+            toggle is on in the Vercel dashboard. */}
+        <Analytics />
       </body>
     </html>
   );

@@ -96,6 +96,21 @@ Vercel → 프로젝트 → **Settings → Environment Variables → Production*
 
 ---
 
-## 3. 그 외 (참고 — 별도 항목)
-- PayPal Business 계정 활성 · Stripe Restricted Key 발급 · 도메인(tatforanimals.com) 연결
-- 연간·PayPal **샌드박스 실거래 테스트** → `docs/qa/annual-and-paypal-verification.md`
+## 3. 런칭 당일 전환 순서 (도메인 연결하는 날 위에서부터 차례로)
+
+1. [ ] **tatforanimals.com 재개 + Vercel 도메인 연결**
+2. [ ] `NEXT_PUBLIC_SITE_URL` → `https://tatforanimals.com` (결제 리다이렉트·이메일 링크·sitemap 전부 의존)
+3. [ ] **Supabase Auth → URL Configuration**에 새 도메인 추가 (Site URL + Redirect URLs) — 빠지면 이메일 인증/로그인 링크가 새 도메인에서 깨짐
+4. [ ] **실가 전환**: Stripe 가격 ID 4개 교체 + PayPal 실가 플랜 4개 생성·ID 교체 (QA $0.50/$1 → $27/$47/$270/$470)
+5. [ ] **Sanity 웹훅 URL 2개** → tatforanimals.com으로 되돌리기 (manage.sanity.io → API → Webhooks, 현재 .vercel.app 임시)
+6. [ ] **`layout.tsx`의 `robots: { index: false }` 줄 삭제** — 안 지우면 구글에 영원히 안 뜸 (주석에 표시돼 있음)
+7. [ ] **CSP Report-Only → 차단 모드** 전환 커밋 (`next.config.ts`, 위반 로그 깨끗한 것 확인됨 2026-07-09)
+8. [ ] 배포 후 **스모크 테스트**: 가입 → 이메일 인증 → 결제(카드·PayPal 각 1건, 실가) → 라이브러리 재생 → 환영 메일 도착
+9. [ ] **Google Search Console** 등록 + sitemap.xml 제출
+
+## 4. 그 외 (참고 — 별도 항목)
+- PayPal Business 계정 활성 · Stripe Restricted Key 사용 여부 확인(현재 키가 전체 권한이면 제한 키로 교체)
+- 연간·PayPal 실거래 검증 → `docs/qa/annual-and-paypal-verification.md` (8번 스모크와 병합 가능)
+- 업타임 모니터(UptimeRobot 등)에 `https://tatforanimals.com/api/health` 등록 (5분 간격, 이메일 알림)
+- Vercel Analytics 활성화 (대시보드 토글 — 코드는 이미 들어감)
+- Supabase 백업 정책 확인 (플랜별 보존 기간 — 결제·회원 데이터)
