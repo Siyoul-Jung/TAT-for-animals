@@ -18,6 +18,7 @@
     "@sanity/vision": "^5.23.0",
     "@supabase/ssr": "^0.10.2",
     "@supabase/supabase-js": "^2.103.2",
+    "@vercel/analytics": "^2.0.1",
     "@vimeo/player": "^2.30.4",
     "clsx": "^2.1.1",
     "framer-motion": "^12.38.0",
