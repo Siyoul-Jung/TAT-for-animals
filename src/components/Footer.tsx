@@ -107,11 +107,13 @@ export default function Footer() {
         <div className="flex flex-wrap gap-x-4 gap-y-1.5 py-3"
           style={{ borderBottom: '1px solid rgba(250,246,241,0.06)' }}
         >
+          {/* 19px — matched to the Subscribe button text (Jez, 2026-07-14) so the
+              primary footer menu reads comfortably; legal links below stay 14px. */}
           {navLinks.map((link) => (
             <Link
               key={link.name}
               href={link.href}
-              className="text-sm font-light transition-colors py-1.5"
+              className="text-[19px] font-light transition-colors py-1.5"
               style={{ color: 'rgba(250,246,241,0.60)' }}
               onMouseEnter={(e) => {
                 (e.currentTarget as HTMLElement).style.color = '#D4A843';
@@ -129,7 +131,7 @@ export default function Footer() {
             href={BOOKING_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm font-light transition-colors"
+            className="text-[19px] font-light transition-colors py-1.5"
             style={{ color: 'rgba(250,246,241,0.60)' }}
             onMouseEnter={(e) => {
               (e.currentTarget as HTMLElement).style.color = '#D4A843';
@@ -144,7 +146,7 @@ export default function Footer() {
             href="https://tatlife.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm font-light transition-colors"
+            className="text-[19px] font-light transition-colors py-1.5"
             style={{ color: 'rgba(250,246,241,0.60)' }}
             onMouseEnter={(e) => {
               (e.currentTarget as HTMLElement).style.color = '#D4A843';

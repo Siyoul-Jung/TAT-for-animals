@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import Image from 'next/image'
+import Link from 'next/link'
 import Pricing from '@/components/Pricing'
 import { BOOKING_URL } from '@/lib/links'
 
@@ -156,6 +157,18 @@ export default function AboutClient() {
             </p>
           </motion.div>
         </div>
+
+        {/* FAQ signpost — Jez's request (2026-07-14): a pointer between the founder
+            bio and the origin story, styled like the Book-a-session link below. */}
+        <motion.div {...fadeUp} className="max-w-6xl mx-auto mt-14 text-center">
+          <Link
+            href="/faq"
+            className="inline-flex items-center min-h-[44px] gap-1.5 text-base sm:text-lg font-semibold underline underline-offset-4 hover:opacity-70 transition-opacity"
+            style={{ color: '#467826' }}
+          >
+            Questions? Read more FAQs →
+          </Link>
+        </motion.div>
       </section>
 
       {/* 3. How TAT for Animals Began — Celeste Yarnall 스토리 (Tapas 원문 verbatim) */}
@@ -266,10 +279,10 @@ export default function AboutClient() {
               and their humans.
             </p>
             <Image
-              src="/images/about/Photo7.jpg"
-              alt="A cat and a dog resting calmly side by side"
-              width={1080}
-              height={720}
+              src="/images/about/Photo8.jpg"
+              alt="A corgi resting happily on its back"
+              width={986}
+              height={695}
               sizes="(min-width: 768px) 720px, 100vw"
               className="w-full aspect-[4/3] object-cover rounded-2xl"
               style={{ boxShadow: '0 8px 32px rgba(28,16,7,0.10)' }}
