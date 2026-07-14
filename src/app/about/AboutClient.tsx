@@ -201,14 +201,15 @@ export default function AboutClient() {
               climbing trees, toys, and plenty of space to explore. A third room was home to
               elegant adult cats. Everywhere I looked, I saw healthy, well-loved felines.
             </p>
+            {/* Jez 2026-07-14: fade-edged version — edges melt into the white section,
+                so no crop/rounding/shadow (they would redraw the hard box the fade removes). */}
             <Image
-              src="/images/about/Photo6.jpg"
+              src="/images/about/Photo9.jpg"
               alt="A cat and a dog nestled together in the grass"
-              width={1080}
-              height={635}
+              width={1579}
+              height={899}
               sizes="(min-width: 768px) 720px, 100vw"
-              className="w-full aspect-[4/3] object-cover rounded-2xl"
-              style={{ boxShadow: '0 8px 32px rgba(28,16,7,0.10)' }}
+              className="w-full"
             />
             <p>
               My client was Celeste Yarnall, who was writing a book on holistic cat care and was
@@ -255,10 +256,10 @@ export default function AboutClient() {
               That experience marked the beginning of my work with animals using TAT&reg;.
             </p>
             <Image
-              src="/images/about/Photo5.jpg"
-              alt="Two happy dogs walking side by side outdoors"
-              width={1080}
-              height={721}
+              src="/images/about/Photo10.jpg"
+              alt="Two happy dogs running toward the camera on a grassy path"
+              width={1580}
+              height={893}
               sizes="(min-width: 768px) 720px, 100vw"
               className="w-full aspect-[4/3] object-cover rounded-2xl"
               style={{ boxShadow: '0 8px 32px rgba(28,16,7,0.10)' }}
