@@ -8,6 +8,7 @@ import type { Video, WebinarRecording, WebinarSession, RecordingPreview } from '
 import { loadAllProgress, saveProgress, type ProgressMap } from '@/lib/videoProgress'
 import { parseVimeo, formatDuration } from '@/lib/video'
 import BackToTopButton from '@/components/BackToTopButton'
+import AskTapasForm from './AskTapasForm'
 
 // Display order for library shelves. Must stay identical to the category options
 // in sanity/schemaTypes/video.ts — see the note there. (Jez's names, 2026-06-26.)
@@ -714,6 +715,10 @@ export default function LibraryClient({
                   </div>
                 </div>
               )}
+
+              {/* 웨비나용 질문 보내기 — Upcoming 바로 아래(질문이 향하는 대상 옆).
+                  Circle 전용 탭 안이지만 API가 역할을 서버에서 재검증한다. */}
+              <AskTapasForm />
 
               <div className="space-y-4">
                 <h2 className="text-xs font-semibold uppercase tracking-widest text-green">
