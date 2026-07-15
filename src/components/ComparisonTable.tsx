@@ -81,7 +81,9 @@ export default function ComparisonTable() {
       >
         <div
           className="rounded-3xl bg-white overflow-hidden"
-          style={{ boxShadow: '0 8px 40px rgba(28,16,7,0.08), 0 0 0 1px rgba(28,16,7,0.14)' }}
+          // Real border, not a 1px shadow ring — hairline shadows can vanish
+          // after the reveal animation when the browser re-rasterizes the layer.
+          style={{ border: '1px solid rgba(28,16,7,0.14)', boxShadow: '0 8px 40px rgba(28,16,7,0.08)' }}
         >
           {/* Header row — feature column is empty; the two tier columns carry
               name + price. The Circle column is tinted the same green wash used
