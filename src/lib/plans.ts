@@ -4,8 +4,12 @@
 // DashboardClient keeps its own PLAN_INFO because it also carries prices.
 export type Plan = 'subscriber' | 'pro_subscriber';
 
+// "The Calm Library" → "The Calm Connection" (Tapas, 2026-07-14 — "Library
+// sounded too boring"). "Calm Library" lives on as the name of the content
+// space (e.g. the welcome email's "Access Your Calm Library" button), just
+// not as this tier's name.
 export const PLAN_NAMES: Record<Plan, string> = {
-  subscriber: 'The Calm Library',
+  subscriber: 'The Calm Connection',
   pro_subscriber: 'The Calm Circle',
 };
 

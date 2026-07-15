@@ -138,7 +138,7 @@ describe('Stripe webhook — signature verification', () => {
 })
 
 describe('Stripe webhook — checkout.session.completed', () => {
-  it('sets role to subscriber for Calm Library price', async () => {
+  it('sets role to subscriber for Calm Connection price', async () => {
     mockConstructEvent.mockReturnValue(makeCheckoutEvent())
     mockRetrieveSubscription.mockResolvedValue(
       makeSubscription({ items: { data: [{ price: { id: 'price_library' } }] } })

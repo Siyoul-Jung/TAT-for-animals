@@ -81,10 +81,10 @@ export default function MembershipClient() {
             viewport={{ once: true }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
-            {/* The Calm Library */}
+            {/* The Calm Connection */}
             <div className="rounded-3xl bg-cream border border-charcoal/8 p-6 sm:p-9 lg:p-10 mb-6">
               <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-6" style={{ color: '#467826' }}>
-                The Calm Library — $27 / mo
+                The Calm Connection — $27 / mo
               </p>
               <div className="max-w-xl">
                 {/* TAT for Animals */}
@@ -133,7 +133,7 @@ export default function MembershipClient() {
                   </p>
                 </div>
                 <h3 className="font-serif text-xl text-charcoal font-medium mb-4 leading-snug">
-                  Everything in The Calm Library, plus live time with Tapas.
+                  Everything in Calm Connection, plus live time with Tapas.
                 </h3>
                 <ul className="flex flex-col gap-2.5">
                   {[

@@ -38,8 +38,8 @@ type Props = {
 // monthly figure. Rows with no interval (every pre-annual member) fall back to
 // monthly — unchanged from before.
 const PLAN_INFO: Record<string, { name: string; month: string; year: string }> = {
-  subscriber:     { name: 'The Calm Library', month: '$27 / month', year: '$270 / year' },
-  pro_subscriber: { name: 'The Calm Circle',  month: '$47 / month', year: '$470 / year' },
+  subscriber:     { name: 'The Calm Connection', month: '$27 / month', year: '$270 / year' },
+  pro_subscriber: { name: 'The Calm Circle',     month: '$47 / month', year: '$470 / year' },
 }
 
 const STATUS_BADGE: Record<string, { label: string; classes: string }> = {
@@ -521,7 +521,7 @@ export default function DashboardClient({
                 title="Library"
                 description="TAT for Animals"
                 href="/library"
-                badge="The Calm Library"
+                badge="The Calm Connection"
               />
               <ContentCard
                 title="Live Webinars"
