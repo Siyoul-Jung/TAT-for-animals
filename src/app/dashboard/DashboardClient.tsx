@@ -364,12 +364,15 @@ export default function DashboardClient({
           </section>
         )}
 
-        {/* Cancelled with a 14-day refund — confirm both facts plainly. */}
-        {refunded && (
+        {/* Cancelled with a 14-day refund — confirm both facts plainly. Gated
+            on the guest role so a bookmarked ?refunded=1 URL can't replay the
+            banner after the member rejoins. The email isn't promised here —
+            its send can fail (ops follows up), so only the certain facts. */}
+        {refunded && role === 'guest' && (
           <section className="bg-green-50 border border-green-200 rounded-2xl px-6 py-4">
             <p className="text-base text-green-800 leading-relaxed">
               Your membership is cancelled and your full refund is on its way — it usually
-              arrives within 5&ndash;10 business days. We&apos;ve also sent you a confirmation email.
+              arrives within 5&ndash;10 business days.
             </p>
           </section>
         )}
@@ -578,6 +581,17 @@ export default function DashboardClient({
                 </div>
               )}
             </>
+          ) : refunded ? (
+            /* Right after a refund is the one moment NOT to sell (the refund
+               email skips its CTA for the same reason) — just leave the door
+               open quietly. */
+            <p className="text-charcoal/80 text-base leading-relaxed">
+              You&apos;re welcome back anytime — the{' '}
+              <Link href="/membership" className="text-green underline hover:opacity-70 transition-opacity">
+                plans
+              </Link>
+              {' '}will be here.
+            </p>
           ) : (
             <div className="space-y-4">
               <p className="text-charcoal/80 text-base leading-relaxed">

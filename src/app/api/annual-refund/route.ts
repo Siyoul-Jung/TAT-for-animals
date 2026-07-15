@@ -90,21 +90,35 @@ export async function POST() {
           { status: 400 },
         )
       }
-      if (!isWithinRefundWindow(sub.start_date * 1000)) {
+
+      const invoice = sub.latest_invoice as Stripe.Invoice | null
+      if (!invoice) {
+        await reportOpsError('annual-refund', new Error('Active annual subscription has no latest invoice'), {
+          userId: user.id, subscriptionId: stripeSubId,
+        })
+        return NextResponse.json({ error: REFUND_FAILED }, { status: 502 })
+      }
+
+      // The window is anchored to the LATEST annual charge (this invoice), not
+      // the subscription's original start: each yearly charge is a "purchase"
+      // with its own 14 days (matches the FAQ wording, and covers the most
+      // common refund case — a member who forgot to cancel before renewal).
+      // This also keeps the dashboard's period_end−1year estimate truthful
+      // after renewals, where start_date would drift a year+ behind.
+      if (!isWithinRefundWindow(invoice.created * 1000)) {
         return NextResponse.json({ error: WINDOW_CLOSED }, { status: 403 })
       }
 
-      const invoice = sub.latest_invoice as Stripe.Invoice | null
       // On this API version an invoice's money movement lives in
       // invoice.payments (invoice.payment_intent no longer exists).
-      const paidPayment = invoice?.payments?.data.find((p) => p.status === 'paid')
+      const paidPayment = invoice.payments?.data.find((p) => p.status === 'paid')
       const pi = paidPayment?.payment.payment_intent
       const paymentIntentId = typeof pi === 'string' ? pi : pi?.id
-      if (!invoice || !paymentIntentId || !invoice.amount_paid) {
+      if (!paymentIntentId || !invoice.amount_paid) {
         // Shouldn't happen for an active annual sub — surface to ops, keep the
         // member unblocked with the manual path.
         await reportOpsError('annual-refund', new Error('No refundable payment found on latest invoice'), {
-          userId: user.id, subscriptionId: stripeSubId, invoiceId: invoice?.id,
+          userId: user.id, subscriptionId: stripeSubId, invoiceId: invoice.id,
         })
         return NextResponse.json({ error: REFUND_FAILED }, { status: 502 })
       }
@@ -130,14 +144,12 @@ export async function POST() {
           { status: 400 },
         )
       }
-      if (!sub.start_time || !isWithinRefundWindow(new Date(sub.start_time).getTime())) {
-        return NextResponse.json({ error: WINDOW_CLOSED }, { status: 403 })
-      }
 
       // Find the completed capture for the annual charge so we can refund it.
+      const rangeStart = sub.start_time ?? new Date(Date.now() - 366 * 24 * 60 * 60 * 1000).toISOString()
       const txRes = await paypalRequest(
         `/v1/billing/subscriptions/${paypalSubId}/transactions` +
-          `?start_time=${encodeURIComponent(sub.start_time)}&end_time=${encodeURIComponent(new Date().toISOString())}`,
+          `?start_time=${encodeURIComponent(rangeStart)}&end_time=${encodeURIComponent(new Date().toISOString())}`,
         { method: 'GET' },
       )
       if (!txRes.ok) throw new Error(`PayPal transactions fetch failed: ${txRes.status}`)
@@ -157,6 +169,13 @@ export async function POST() {
           userId: user.id, subscriptionId: paypalSubId,
         })
         return NextResponse.json({ error: REFUND_FAILED }, { status: 502 })
+      }
+
+      // Window anchored to the latest annual charge, not the subscription
+      // start — same policy as the Stripe branch (each renewal is a purchase
+      // with its own 14 days).
+      if (!isWithinRefundWindow(new Date(capture.time).getTime())) {
+        return NextResponse.json({ error: WINDOW_CLOSED }, { status: 403 })
       }
 
       const gross = capture.amount_with_breakdown?.gross_amount?.value
@@ -218,7 +237,7 @@ export async function POST() {
 
     // ---- 5. Revoke access now (refunded = not paid) ------------------------
     // The webhooks will repeat this idempotently when they arrive.
-    await supabaseAdmin
+    const { error: revokeError } = await supabaseAdmin
       .from('profiles')
       .update({
         role: 'guest',
@@ -232,6 +251,14 @@ export async function POST() {
         cancel_at: null,
       })
       .eq('id', user.id)
+    if (revokeError) {
+      // Money is back but access wasn't revoked — the webhooks are the
+      // backstop, but ops should know in case they don't arrive either.
+      await reportOpsError('annual-refund', revokeError, {
+        userId: user.id, subscriptionId: subId, step: 'revoke',
+        note: 'Refund issued and provider cancel attempted, but the profile revoke failed.',
+      })
+    }
 
     // ---- 6. Confirm by email (once) ----------------------------------------
     if (user.email) {
@@ -242,7 +269,12 @@ export async function POST() {
           const { subject, html } = refundConfirmationEmail(profile.full_name ?? null, refundAmount)
           await resend.emails.send({ from: FROM_EMAIL, to: user.email, subject, html })
         } catch (emailError) {
-          console.error('Refund confirmation email failed:', emailError)
+          // The member was told a confirmation is coming — if it can't be
+          // sent, ops follows up by hand rather than leaving them wondering.
+          await reportOpsError('annual-refund', emailError, {
+            userId: user.id, subscriptionId: subId, step: 'email',
+            note: 'Refund processed but the confirmation email failed — send one manually.',
+          })
           await releaseOnce(emailKey)
         }
       }

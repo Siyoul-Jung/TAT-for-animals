@@ -71,7 +71,7 @@ const faqSections = [
       },
       {
         q: 'Can I get a refund?',
-        a: 'Monthly plans are cancel-anytime, so there\'s nothing to refund — you simply stop the next payment, and your access continues to the end of the month you\'ve paid for. For annual plans, if it isn\'t the right fit you can request a refund within 14 days of purchase. After 14 days, refunds aren\'t available except where required by law or in the case of a billing error, and your membership stays active through the year you\'ve already paid for. To cancel or ask about a refund, just get in touch — there\'s a link at the bottom of this page.',
+        a: 'Monthly plans are cancel-anytime, so there\'s nothing to refund — you simply stop the next payment, and your access continues to the end of the month you\'ve paid for. For annual plans, if it isn\'t the right fit you can cancel with a full refund within 14 days of purchase — right from your account page, no email needed. After 14 days, refunds aren\'t available except where required by law or in the case of a billing error, and your membership stays active through the year you\'ve already paid for. Questions? Just get in touch — there\'s a link at the bottom of this page.',
       },
     ],
   },

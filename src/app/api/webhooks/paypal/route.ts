@@ -223,10 +223,27 @@ export async function POST(request: NextRequest) {
         const userId = resource.custom_id
         if (!userId) break
 
-        // A cancel issued by the annual-refund route already revoked access
-        // and cleared the profile — re-granting a paid-through grace period
-        // here would hand a refunded member a year of free access.
-        if (resource.id && (await hasClaim(`refund-cancel-${resource.id}`))) break
+        // A cancel issued by the annual-refund route: no grace period — the
+        // member was refunded, so access ends now, not at period end. Repeat
+        // the route's revoke idempotently instead of skipping outright: if the
+        // route died between its refund and its own revoke (serverless
+        // timeout), this webhook is the backstop that still pulls access.
+        if (resource.id && (await hasClaim(`refund-cancel-${resource.id}`))) {
+          await supabaseAdmin
+            .from('profiles')
+            .update({
+              role: 'guest',
+              paypal_subscription_id: null,
+              paypal_pending_subscription_id: null,
+              subscription_status: 'inactive',
+              current_period_end: null,
+              pending_tier: null,
+              pending_tier_at: null,
+              cancel_at: null,
+            })
+            .eq('id', userId)
+          break
+        }
 
         const { data: profile } = await supabaseAdmin
           .from('profiles')
