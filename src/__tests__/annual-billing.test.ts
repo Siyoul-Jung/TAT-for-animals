@@ -25,7 +25,7 @@ describe('Stripe — annual price maps to the right tier', () => {
     expect(roleForSubscription(stripeSub('price_circle_annual', 'year'))).toBe('pro_subscriber')
   })
 
-  it('annual Calm Library grants subscriber', () => {
+  it('annual Calm Connection grants subscriber', () => {
     expect(PRICE_ROLE_MAP['price_library_annual']).toBe('subscriber')
     expect(roleForSubscription(stripeSub('price_library_annual', 'year'))).toBe('subscriber')
   })

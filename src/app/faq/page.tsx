@@ -67,7 +67,7 @@ const faqSections = [
     items: [
       {
         q: 'Can I change or cancel my membership?',
-        a: 'Yes, anytime — there\'s no long-term commitment. You can cancel whenever you like, and your access continues until the end of the period you\'ve already paid for — the rest of the month, or the rest of the year on an annual plan. To move up from The Calm Library to The Calm Circle on a monthly plan, just use the upgrade option in your account; it takes effect right away, and you only pay the prorated difference — never twice. For a smaller plan, or to change an annual plan, send us a quick note and we\'ll take care of it. Annual memberships are billed once a year (two months free compared with paying monthly) and renew automatically until you cancel.',
+        a: 'Yes, anytime — there\'s no long-term commitment. You can cancel whenever you like, and your access continues until the end of the period you\'ve already paid for — the rest of the month, or the rest of the year on an annual plan. To move up from The Calm Connection to The Calm Circle on a monthly plan, just use the upgrade option in your account; it takes effect right away, and you only pay the prorated difference — never twice. For a smaller plan, or to change an annual plan within 14 days of subscribing, send us a quick note and we\'ll take care of it. Annual memberships are billed once a year (two months free compared with paying monthly) and renew automatically until you cancel.',
       },
       {
         q: 'Can I get a refund?',

@@ -2,29 +2,27 @@
 'use client';
 
 import { motion, useInView, useReducedMotion } from 'framer-motion';
-import { Check } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { BOOKING_URL } from '@/lib/links';
 import { returnScrollKey } from '@/lib/scrollReturn';
-import { LIBRARY_VIDEO_COUNT_LABEL } from '@/lib/plans';
 
 // Annual = monthly × 10 (two months free), per Tapas's request.
+// Card copy is Tapas's spec verbatim (2026-07-14 "Homepage Tier Copy Spec"):
+// one description sentence per card, no feature bullets — the detail now
+// lives in the ComparisonTable directly below. The asymmetric CTA articles
+// ("Join Calm Connection" / "Join the Calm Circle") are the spec's own,
+// repeated consistently there — don't "fix" them.
 const tiers = [
   {
     plan: 'calm_library',
-    name: 'The Calm Library',
+    name: 'The Calm Connection',
     monthly: '27',
     annual: '270',
-    description: 'Everything you need to begin TAT for Animals — at your own pace, with new stories, videos, and tips added every month.',
-    features: [
-      `${LIBRARY_VIDEO_COUNT_LABEL} video recordings — the full TAT for Animals library`,
-      'Self-guided practice materials',
-      'Previous TAT for Cats and TAT for Dogs recordings',
-    ],
-    cta: 'Join The Calm Library',
+    description: 'Simple, essential TAT® tools to calm your animal — and yourself. Plus a growing library of monthly Calm Tips.',
+    cta: 'Join Calm Connection',
     popular: false,
   },
   {
@@ -32,15 +30,8 @@ const tiers = [
     name: 'The Calm Circle',
     monthly: '47',
     annual: '470',
-    description: 'Live connection with Tapas, plus everything in The Calm Library.',
-    features: [
-      'Everything in The Calm Library',
-      'Monthly live webinars with Tapas',
-      'Ask Tapas about your own animal',
-      'Guided group TAT for your animal, live',
-      'Full archive of all past recordings',
-    ],
-    cta: 'Join The Calm Circle',
+    description: 'Everything in Calm Connection, plus live monthly webinars, past recordings, and the chance to have your questions answered live.',
+    cta: 'Join the Calm Circle',
     popular: true,
   },
 ];
@@ -247,27 +238,13 @@ export default function Pricing({ showHeader = true, bg = 'bg-white', showBookin
                 </p>
               </div>
 
-              {/* Description */}
-              <p className="hidden sm:block text-sm leading-relaxed mb-4 text-charcoal/65">
+              {/* Description — the card's whole pitch now (no feature bullets,
+                  per the spec), so it stays visible on mobile too. grow keeps
+                  the two CTAs bottom-aligned when the descriptions wrap
+                  differently. */}
+              <p className="text-base leading-relaxed mb-5 grow text-charcoal/80">
                 {tier.description}
               </p>
-
-              {/* Features */}
-              <ul className="flex flex-col gap-2 mb-5 grow">
-                {tier.features.map((f) => (
-                  <li key={f} className="flex items-start gap-3">
-                    <span
-                      className="mt-0.5 w-4 h-4 rounded-full flex items-center justify-center shrink-0"
-                      style={{ backgroundColor: 'rgba(70,120,38,0.12)' }}
-                    >
-                      <Check size={10} style={{ color: '#467826' }} />
-                    </span>
-                    <span className="text-sm sm:text-base leading-snug text-charcoal/80">
-                      {f}
-                    </span>
-                  </li>
-                ))}
-              </ul>
 
               {/* CTA */}
               <button

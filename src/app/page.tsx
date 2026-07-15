@@ -6,6 +6,7 @@ import Hero from "@/components/Hero";
 import TrySession from "@/components/TrySession";
 import Testimonials from "@/components/Testimonials";
 import Pricing from "@/components/Pricing";
+import ComparisonTable from "@/components/ComparisonTable";
 import RecordingTestimonials from "@/components/RecordingTestimonials";
 
 function getHeroImages() {
@@ -28,6 +29,7 @@ export default function Home() {
       <TrySession />                      {/* 2. 즉각 증명 (끝에 About 링크) */}
       <Testimonials />                    {/* 3. 사회적 증명 */}
       <Pricing />                         {/* 4. 전환 */}
+      <ComparisonTable />                 {/* 4b. 미결정 방문자용 상세 비교 (Tapas 2026-07-14 스펙) */}
       <RecordingTestimonials />           {/* 5. 오퍼 직후 안심 — 녹화에 반응한 동물 후기 (Tapas 2026-06-27) */}
     </div>
   );

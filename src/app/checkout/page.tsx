@@ -8,10 +8,10 @@ import { createClient } from '@/lib/supabase/client';
 import { membershipHasLapsed } from '@/lib/access';
 
 const PLANS: Record<string, { name: string; price: string; interval: 'month' | 'year' }> = {
-  calm_library:        { name: 'The Calm Library', price: '27',  interval: 'month' },
-  calm_circle:         { name: 'The Calm Circle',  price: '47',  interval: 'month' },
-  calm_library_annual: { name: 'The Calm Library', price: '270', interval: 'year'  },
-  calm_circle_annual:  { name: 'The Calm Circle',  price: '470', interval: 'year'  },
+  calm_library:        { name: 'The Calm Connection', price: '27',  interval: 'month' },
+  calm_circle:         { name: 'The Calm Circle',     price: '47',  interval: 'month' },
+  calm_library_annual: { name: 'The Calm Connection', price: '270', interval: 'year'  },
+  calm_circle_annual:  { name: 'The Calm Circle',     price: '470', interval: 'year'  },
 };
 
 function CheckoutContent() {
