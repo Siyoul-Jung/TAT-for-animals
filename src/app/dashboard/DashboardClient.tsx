@@ -30,6 +30,10 @@ type Props = {
   errorParam: string | null
   planChanged: boolean
   planUnchanged: boolean
+  // Annual member still inside the 14-day full-refund window (UI gate only —
+  // the API re-checks against the provider's start date before refunding).
+  refundEligible: boolean
+  refunded: boolean
   upcoming: WebinarSession[]
 }
 
@@ -70,6 +74,8 @@ export default function DashboardClient({
   errorParam,
   planChanged,
   planUnchanged,
+  refundEligible,
+  refunded,
   upcoming,
 }: Props) {
   const [changingPlan, setChangingPlan] = useState(false)
@@ -89,6 +95,10 @@ export default function DashboardClient({
   const [actionError, setActionError] = useState<string | null>(null)
   // PayPal cancel uses an inline confirm step (no native window.confirm()).
   const [confirmingCancel, setConfirmingCancel] = useState(false)
+  // 14-day annual refund: same inline-confirm pattern — it moves money, so the
+  // first click must never fire the refund outright.
+  const [confirmingRefund, setConfirmingRefund] = useState(false)
+  const [refunding, setRefunding] = useState(false)
   // Password change: a logged-in user's email is already verified, so we skip the
   // re-entry form and send the reset link straight to it (mirrors the delete flow).
   const [sendingReset, setSendingReset] = useState(false)
@@ -103,12 +113,14 @@ export default function DashboardClient({
     setConfirmingUpgrade(false)
     setConfirmingDelete(false)
     setConfirmingCancel(false)
+    setConfirmingRefund(false)
   }, [pathname])
   useEffect(() => {
     const reset = () => {
       setConfirmingUpgrade(false)
       setConfirmingDelete(false)
       setConfirmingCancel(false)
+      setConfirmingRefund(false)
     }
     window.addEventListener('pageshow', reset)
     window.addEventListener('popstate', reset)
@@ -122,6 +134,24 @@ export default function DashboardClient({
   const handlePayPalCancel = () => {
     setActionError(null)
     setConfirmingCancel(true)
+  }
+
+  const confirmRefund = async () => {
+    setRefunding(true)
+    setActionError(null)
+    try {
+      const res = await fetch('/api/annual-refund', { method: 'POST' })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Could not process your refund.')
+      // Full reload so the server re-reads the (now guest) profile; the
+      // ?refunded=1 flag shows the confirmation banner.
+      window.location.href = '/dashboard?refunded=1'
+    } catch (err) {
+      console.error('Annual refund error:', err)
+      setActionError(err instanceof Error && err.message ? err.message : 'Something went wrong on our end. Please try again in a moment.')
+      setConfirmingRefund(false)
+      setRefunding(false)
+    }
   }
 
   const confirmPayPalCancel = async () => {
@@ -334,6 +364,16 @@ export default function DashboardClient({
           </section>
         )}
 
+        {/* Cancelled with a 14-day refund — confirm both facts plainly. */}
+        {refunded && (
+          <section className="bg-green-50 border border-green-200 rounded-2xl px-6 py-4">
+            <p className="text-base text-green-800 leading-relaxed">
+              Your membership is cancelled and your full refund is on its way — it usually
+              arrives within 5&ndash;10 business days. We&apos;ve also sent you a confirmation email.
+            </p>
+          </section>
+        )}
+
         {/* Plan change confirmed (redirected here from a PayPal plan switch) */}
         {planChanged && (
           <section className="bg-green-50 border border-green-200 rounded-2xl px-6 py-4">
@@ -472,6 +512,49 @@ export default function DashboardClient({
                   ) : (
                     /* Stripe: Manage stays so the member can resume before period end. */
                     <ManageSubscriptionButton />
+                  )}
+
+                  {/* 14-day annual refund — shown only while the window is open
+                      (server-computed). First click opens an inline confirm; the
+                      route re-verifies eligibility against the provider before
+                      moving any money. */}
+                  {refundEligible && subscriptionStatus === 'active' && !isCancelling && !pendingPlan && (
+                    confirmingRefund ? (
+                      <div className="rounded-xl border border-charcoal/10 bg-cream p-4 space-y-3">
+                        <p className="text-sm text-charcoal/80 leading-relaxed">
+                          Cancel your membership with a full refund? Your payment is returned in
+                          full (it usually arrives within 5&ndash;10 business days), and your
+                          access ends right away.
+                        </p>
+                        <div className="flex flex-wrap gap-3">
+                          <button
+                            onClick={confirmRefund}
+                            disabled={refunding}
+                            className="inline-flex items-center min-h-[44px] px-5 py-2 rounded-full bg-charcoal text-cream text-base font-semibold hover:opacity-90 transition-all disabled:opacity-50"
+                          >
+                            {refunding ? 'Processing your refund…' : 'Yes, cancel and refund me'}
+                          </button>
+                          <button
+                            onClick={() => setConfirmingRefund(false)}
+                            disabled={refunding}
+                            className="inline-flex items-center min-h-[44px] px-5 py-2 rounded-full border border-charcoal/20 text-charcoal text-base font-semibold hover:bg-charcoal/5 transition-all disabled:opacity-50"
+                          >
+                            Keep my membership
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-sm text-charcoal/65 leading-relaxed">
+                        Joined within the last 14 days? You can{' '}
+                        <button
+                          onClick={() => { setActionError(null); setConfirmingRefund(true) }}
+                          className="inline-flex items-center min-h-[44px] text-green underline font-medium hover:opacity-70 transition-opacity align-baseline"
+                        >
+                          cancel with a full refund
+                        </button>
+                        .
+                      </p>
+                    )
                   )}
 
                   {/* PayPal holds the card in the member's PayPal account, not

@@ -19,7 +19,8 @@ jest.mock('@supabase/supabase-js', () => {
   const mockDeleteEq = jest.fn().mockResolvedValue({ error: null })
   const mockDelete = jest.fn().mockReturnValue({ eq: mockDeleteEq })
   const mockSingle = jest.fn().mockResolvedValue({ data: null, error: null })
-  const mockSelectEq = jest.fn().mockReturnValue({ single: mockSingle })
+  const mockMaybeSingle = jest.fn().mockResolvedValue({ data: null, error: null })
+  const mockSelectEq = jest.fn().mockReturnValue({ single: mockSingle, maybeSingle: mockMaybeSingle })
   const mockSelect = jest.fn().mockReturnValue({ eq: mockSelectEq })
   const mockFrom = jest.fn().mockReturnValue({
     update: mockUpdate,

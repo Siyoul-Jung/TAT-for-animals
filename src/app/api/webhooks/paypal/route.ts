@@ -1,5 +1,5 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
-import { claimOnce, releaseOnce } from '@/lib/onceGuard'
+import { claimOnce, releaseOnce, hasClaim } from '@/lib/onceGuard'
 import { reportOpsError } from '@/lib/alertOps'
 import { paypalRequest, PLAN_ROLE_MAP, getPayPalSubscription, getPlanInterval, estimatePaidThrough, type PayPalWebhookEvent } from '@/lib/paypal'
 import { sendWelcomeOnce } from '@/lib/sendWelcomeOnce'
@@ -222,6 +222,11 @@ export async function POST(request: NextRequest) {
       case 'BILLING.SUBSCRIPTION.CANCELLED': {
         const userId = resource.custom_id
         if (!userId) break
+
+        // A cancel issued by the annual-refund route already revoked access
+        // and cleared the profile — re-granting a paid-through grace period
+        // here would hand a refunded member a year of free access.
+        if (resource.id && (await hasClaim(`refund-cancel-${resource.id}`))) break
 
         const { data: profile } = await supabaseAdmin
           .from('profiles')
