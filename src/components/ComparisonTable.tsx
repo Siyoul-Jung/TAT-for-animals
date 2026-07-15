@@ -81,7 +81,7 @@ export default function ComparisonTable() {
       >
         <div
           className="rounded-3xl bg-white overflow-hidden"
-          style={{ boxShadow: '0 8px 40px rgba(28,16,7,0.08), 0 0 0 1px rgba(28,16,7,0.06)' }}
+          style={{ boxShadow: '0 8px 40px rgba(28,16,7,0.08), 0 0 0 1px rgba(28,16,7,0.14)' }}
         >
           {/* Header row — feature column is empty; the two tier columns carry
               name + price. The Circle column is tinted the same green wash used
