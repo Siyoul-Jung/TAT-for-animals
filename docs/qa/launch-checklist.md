@@ -14,7 +14,7 @@
 | `supabase/migrations/20260706_profiles_billing_interval.sql` | `profiles.billing_interval` 컬럼 | ✅ **프로덕션 확인 완료(2026-07-08)** — 컬럼 이미 존재. 기록/재현용 |
 | `supabase/migrations/20260706_rate_limits.sql` | `rate_limits` 테이블 + `check_rate_limit()` 함수 | ✅ **프로덕션 적용 완료(2026-07-08)** — 함수 동작·RLS 검증됨 |
 | `supabase/migrations/20260708_profiles_billing_interval_check.sql` | `billing_interval` CHECK 제약 (month/year/NULL) | 신규 — role/status와 동일한 값 집합 고정. 멱등 |
-| `supabase/migrations/20260715_profiles_lock_privileged_columns.sql` | `profiles` UPDATE 컬럼 잠금 (role/구독 컬럼 self-grant 차단) | 🔴 **P0 보안 — 반드시 적용.** 미적용 시 로그인 유저가 자기 role을 pro로 바꿔 **유료 우회** 가능. 멱등 |
+| `supabase/migrations/20260715_profiles_lock_privileged_columns.sql` | `profiles` UPDATE 컬럼 잠금 (role/구독 컬럼 self-grant 차단) | ✅ **프로덕션 적용 완료(2026-07-16)** — 권한 재조회로 검증: anon 0컬럼 / authenticated는 full_name·avatar_url만 |
 
 **적용 방법 (둘 중 하나):**
 
@@ -32,8 +32,8 @@
 - [x] `rate_limits` 마이그레이션 적용 (2026-07-08)
 - [x] `rate_limits` 테이블 + `check_rate_limit` 함수 생성 확인 (2026-07-08)
 - [ ] `billing_interval` CHECK 제약 마이그레이션 적용 (20260708)
-- [ ] 🔴 **`profiles` 권한 잠금 마이그레이션 적용 (20260715) — P0 보안, 필수**
-- [ ] (적용 후 검증) 무료 계정 콘솔에서 `.from('profiles').update({role:'pro_subscriber'})` → **"permission denied for column role"** 확인
+- [x] 🔴 **`profiles` 권한 잠금 마이그레이션 적용 (20260715)** — 적용 완료(2026-07-16)
+- [x] (적용 후 검증) `information_schema.column_privileges` 재조회 — anon: UPDATE 권한 없음 / authenticated: `full_name`,`avatar_url`만 (2026-07-16)
 
 > 참고: 그 외 오래된 마이그레이션들은 사이트가 이미 동작 중이므로 적용된 상태로 간주됩니다. CLI(`db push`)를 쓰면 안전하게 미적용분만 반영됩니다.
 
