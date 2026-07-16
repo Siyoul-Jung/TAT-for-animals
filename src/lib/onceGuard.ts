@@ -30,3 +30,22 @@ export async function claimOnce(id: string): Promise<{ alreadyProcessed: boolean
 export async function releaseOnce(id: string): Promise<void> {
   await supabaseAdmin.from('processed_webhook_events').delete().eq('id', id)
 }
+
+// Read-only: was this id already claimed? Lets a webhook branch on whether
+// another flow owns an action (e.g. refund-cancel-<subId>: the annual-refund
+// route claims it before cancelling, so the cancellation webhooks know this
+// cancel came with a refund and skip their own member comms) WITHOUT claiming
+// the key itself. Fails closed to "not claimed" — the normal path.
+export async function hasClaim(id: string): Promise<boolean> {
+  try {
+    const { data } = await supabaseAdmin
+      .from('processed_webhook_events')
+      .select('id')
+      .eq('id', id)
+      .maybeSingle()
+    return !!data
+  } catch (e) {
+    console.error('hasClaim check failed (treating as not claimed):', e)
+    return false
+  }
+}

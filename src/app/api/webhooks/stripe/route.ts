@@ -5,7 +5,7 @@ import { cancellationScheduledEmail } from '@/lib/emails/cancellation-scheduled'
 import { planChangeEmail } from '@/lib/emails/plan-change'
 import { sendWelcomeOnce } from '@/lib/sendWelcomeOnce'
 import { supabaseAdmin } from '@/lib/supabase/admin'
-import { claimOnce, releaseOnce } from '@/lib/onceGuard'
+import { claimOnce, releaseOnce, hasClaim } from '@/lib/onceGuard'
 import { reportOpsError } from '@/lib/alertOps'
 import { PRICE_ROLE_MAP, getBillingInterval, getPeriodEndISO } from '@/lib/subscriptionAccess'
 import { NextRequest, NextResponse } from 'next/server'
@@ -344,7 +344,11 @@ export async function POST(request: NextRequest) {
           })
           .eq('id', userId)
 
-        // Send cancellation confirmation email
+        // Send cancellation confirmation email — unless this cancel came from
+        // the annual-refund route, which already sent its own confirmation.
+        // This email's "access until the end of your billing period" would be
+        // wrong for a refunded cancel (access ended immediately).
+        if (await hasClaim(`refund-cancel-${subscription.id}`)) break
         try {
           const customerId = subscription.customer as string
           const customer = await stripe.customers.retrieve(customerId)

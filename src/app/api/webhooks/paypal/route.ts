@@ -1,5 +1,5 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
-import { claimOnce, releaseOnce } from '@/lib/onceGuard'
+import { claimOnce, releaseOnce, hasClaim } from '@/lib/onceGuard'
 import { reportOpsError } from '@/lib/alertOps'
 import { paypalRequest, PLAN_ROLE_MAP, getPayPalSubscription, getPlanInterval, estimatePaidThrough, type PayPalWebhookEvent } from '@/lib/paypal'
 import { sendWelcomeOnce } from '@/lib/sendWelcomeOnce'
@@ -222,6 +222,28 @@ export async function POST(request: NextRequest) {
       case 'BILLING.SUBSCRIPTION.CANCELLED': {
         const userId = resource.custom_id
         if (!userId) break
+
+        // A cancel issued by the annual-refund route: no grace period — the
+        // member was refunded, so access ends now, not at period end. Repeat
+        // the route's revoke idempotently instead of skipping outright: if the
+        // route died between its refund and its own revoke (serverless
+        // timeout), this webhook is the backstop that still pulls access.
+        if (resource.id && (await hasClaim(`refund-cancel-${resource.id}`))) {
+          await supabaseAdmin
+            .from('profiles')
+            .update({
+              role: 'guest',
+              paypal_subscription_id: null,
+              paypal_pending_subscription_id: null,
+              subscription_status: 'inactive',
+              current_period_end: null,
+              pending_tier: null,
+              pending_tier_at: null,
+              cancel_at: null,
+            })
+            .eq('id', userId)
+          break
+        }
 
         const { data: profile } = await supabaseAdmin
           .from('profiles')

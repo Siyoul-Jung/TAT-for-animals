@@ -25,7 +25,7 @@ export function welcomeEmail(
   // the refund window. Kept readable (14px), not buried small print.
   const annualPrice = isCircle ? '470' : '270';
   const billingTerms = isAnnual
-    ? `Your membership is billed once a year at $${annualPrice} (two months free compared with paying monthly) and renews automatically each year until you cancel. We'll email a reminder before each renewal, and you can cancel anytime from your account settings. If it isn't the right fit, you can request a refund within 14 days of purchase.`
+    ? `Your membership is billed once a year at $${annualPrice} (two months free compared with paying monthly) and renews automatically each year until you cancel. We'll email a reminder before each renewal, and you can cancel anytime from your account settings. If it isn't the right fit, you can cancel with a full refund within 14 days of purchase, right from your account page.`
     : `Your membership renews automatically each month until you cancel — you can cancel anytime from your account settings.`;
 
   const content = `

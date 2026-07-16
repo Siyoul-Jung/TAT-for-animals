@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { membershipHasLapsed } from '@/lib/access'
+import { isWithinRefundWindow, annualStartFromPeriodEnd } from '@/lib/refundWindow'
 import { reconcileAccess } from '@/lib/reconcileAccess'
 import { redirect } from 'next/navigation'
 import type { Metadata } from 'next'
@@ -21,9 +22,9 @@ export const metadata: Metadata = {
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; plan?: string }>
+  searchParams: Promise<{ error?: string; plan?: string; refunded?: string }>
 }) {
-  const { error: errorParam, plan: planParam } = await searchParams
+  const { error: errorParam, plan: planParam, refunded } = await searchParams
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -67,6 +68,18 @@ export default async function DashboardPage({
   const lapsed = membershipHasLapsed(profile?.cancel_at)
   const effectiveRole = lapsed ? 'guest' : (profile?.role ?? 'guest')
 
+  // Offer the 14-day cancel-with-refund only to annual members whose estimated
+  // start (period end − 1 year) is still inside the window. UI gate only — the
+  // API route re-verifies against the provider's real start date.
+  const refundEligible =
+    !lapsed &&
+    profile?.billing_interval === 'year' &&
+    profile?.subscription_status === 'active' &&
+    !profile?.cancel_at &&
+    !!(profile?.stripe_subscription_id || profile?.paypal_subscription_id) &&
+    !!profile?.current_period_end &&
+    isWithinRefundWindow(annualStartFromPeriodEnd(profile.current_period_end))
+
   return (
     <DashboardClient
       email={user.email ?? ''}
@@ -83,6 +96,8 @@ export default async function DashboardPage({
       errorParam={errorParam ?? null}
       planChanged={planParam === 'changed'}
       planUnchanged={planParam === 'unchanged'}
+      refundEligible={refundEligible}
+      refunded={refunded === '1'}
       upcoming={upcoming}
     />
   )
