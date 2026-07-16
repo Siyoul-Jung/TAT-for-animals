@@ -13,9 +13,10 @@ jest.mock('next/image', () => ({
 }))
 
 const mockSignUp = jest.fn()
+const mockResend = jest.fn()
 jest.mock('@/lib/supabase/client', () => ({
   createClient: () => ({
-    auth: { signUp: mockSignUp },
+    auth: { signUp: mockSignUp, resend: mockResend },
   }),
 }))
 
@@ -150,6 +151,37 @@ describe('SignupClient — success screen', () => {
     await waitFor(() => {
       expect(screen.getByRole('link', { name: 'Sign in to continue' })).toBeInTheDocument()
     })
+  })
+})
+
+describe('SignupClient — resend confirmation email', () => {
+  async function reachSuccessScreen() {
+    mockSignUp.mockResolvedValueOnce({ data: { user: { identities: [{ id: '1' }] }, session: null }, error: null })
+    render(<SignupClient />)
+    await fillForm('newuser@test.com', 'password123', 'password123')
+    await waitFor(() => expect(screen.getByText("You're almost in")).toBeInTheDocument())
+  }
+
+  it('confirms "sent it again" when the resend succeeds', async () => {
+    mockResend.mockResolvedValueOnce({ error: null })
+    await reachSuccessScreen()
+    await userEvent.click(screen.getByRole('button', { name: 'Send the email again' }))
+    await waitFor(() => expect(screen.getByText(/sent it again/i)).toBeInTheDocument())
+  })
+
+  it('shows an error box — NOT a false "sent it again" — when the resend fails', async () => {
+    mockResend.mockResolvedValueOnce({ error: { message: 'Internal server error' } })
+    await reachSuccessScreen()
+    await userEvent.click(screen.getByRole('button', { name: 'Send the email again' }))
+    await waitFor(() => expect(screen.getByRole('alert')).toBeInTheDocument())
+    expect(screen.queryByText(/sent it again/i)).not.toBeInTheDocument()
+  })
+
+  it('gives a wait-a-minute message when the resend is rate limited', async () => {
+    mockResend.mockResolvedValueOnce({ error: { message: 'you can only request this after 60 seconds' } })
+    await reachSuccessScreen()
+    await userEvent.click(screen.getByRole('button', { name: 'Send the email again' }))
+    await waitFor(() => expect(screen.getByText(/wait a minute/i)).toBeInTheDocument())
   })
 })
 

@@ -44,7 +44,17 @@ async function verifyWebhook(request: NextRequest, body: string): Promise<boolea
 export async function POST(request: NextRequest) {
   const body = await request.text()
 
-  const isValid = await verifyWebhook(request, body)
+  // Verification calls PayPal's verify-webhook API, so it can itself fail on a
+  // network blip. Guard it: a thrown verify shouldn't bypass this handler's
+  // ops-alerting (the try below) and return a silent 500. Alert and 503 so PayPal
+  // retries. An actually-invalid signature is a clean 400 (no retry — it's junk).
+  let isValid: boolean
+  try {
+    isValid = await verifyWebhook(request, body)
+  } catch (error) {
+    await reportOpsError('paypal-webhook-verify', error)
+    return NextResponse.json({ error: 'Verification temporarily unavailable' }, { status: 503 })
+  }
   if (!isValid) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
   }

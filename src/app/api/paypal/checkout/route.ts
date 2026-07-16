@@ -106,23 +106,36 @@ export async function POST(request: NextRequest) {
   const bucket = Math.floor(Date.now() / (15 * 60 * 1000))
   const requestId = `tat-sub-${user.id}-${plan}-${bucket}`
 
-  const res = await paypalRequest('/v1/billing/subscriptions', {
-    method: 'POST',
-    headers: { 'PayPal-Request-Id': requestId },
-    body: JSON.stringify({
-      plan_id: planId,
-      custom_id: user.id,
-      subscriber: { email_address: user.email },
-      application_context: {
-        return_url: `${siteUrl}/api/paypal/success`,
-        cancel_url: `${siteUrl}/membership`,
-        user_action: 'SUBSCRIBE_NOW',
-        shipping_preference: 'NO_SHIPPING',
-      },
-    }),
-  })
+  // Wrap the create + parse: if PayPal auth/network throws, return the same
+  // friendly "nothing was charged" copy the no-approve-link path already uses,
+  // rather than letting it bubble to an unhandled 500 with an HTML body (which
+  // the client can only report as a vague connection error).
+  let data
+  try {
+    const res = await paypalRequest('/v1/billing/subscriptions', {
+      method: 'POST',
+      headers: { 'PayPal-Request-Id': requestId },
+      body: JSON.stringify({
+        plan_id: planId,
+        custom_id: user.id,
+        subscriber: { email_address: user.email },
+        application_context: {
+          return_url: `${siteUrl}/api/paypal/success`,
+          cancel_url: `${siteUrl}/membership`,
+          user_action: 'SUBSCRIBE_NOW',
+          shipping_preference: 'NO_SHIPPING',
+        },
+      }),
+    })
+    data = await res.json()
+  } catch (error) {
+    console.error('PayPal subscription create failed:', error)
+    return NextResponse.json(
+      { error: "We couldn't start your PayPal checkout — nothing was charged. Please try again in a moment, or pay with a card." },
+      { status: 502 }
+    )
+  }
 
-  const data = await res.json()
   const approveLink = data.links?.find((l: { rel: string }) => l.rel === 'approve')?.href
 
   if (!approveLink) {

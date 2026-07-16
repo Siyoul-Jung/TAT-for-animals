@@ -34,9 +34,14 @@ jest.mock('@/lib/onceGuard', () => ({
   claimOnce: jest.fn().mockResolvedValue({ alreadyProcessed: false }),
   releaseOnce: jest.fn().mockResolvedValue(undefined),
 }))
+jest.mock('@/lib/rateLimit', () => ({
+  checkRateLimit: jest.fn().mockResolvedValue(true),
+  RATE_LIMIT_MESSAGE: 'too many',
+}))
 
 import { POST } from '@/app/api/paypal/cancel/route'
 import { paypalRequest } from '@/lib/paypal'
+import { checkRateLimit } from '@/lib/rateLimit'
 
 const { __m } = jest.requireMock('@/lib/supabase/server')
 const { __a } = jest.requireMock('@/lib/supabase/admin')
@@ -44,6 +49,7 @@ const mockGetUser = __m.getUser as jest.Mock
 const mockSingle = __m.single as jest.Mock
 const mockAdminUpdate = __a.update as jest.Mock
 const mockPaypalRequest = paypalRequest as jest.Mock
+const mockRateLimit = checkRateLimit as jest.Mock
 
 beforeEach(() => {
   jest.clearAllMocks()
@@ -53,12 +59,21 @@ beforeEach(() => {
     data: { paypal_subscription_id: 'I-1', current_period_end: '2027-01-01T00:00:00Z', billing_interval: 'year', full_name: 'Test' },
   })
   mockPaypalRequest.mockResolvedValue({ status: 204, text: async () => '' })
+  mockRateLimit.mockResolvedValue(true)
 })
 
 describe('paypal/cancel', () => {
   it('401 when not signed in', async () => {
     mockGetUser.mockResolvedValueOnce({ data: { user: null } })
     expect((await POST()).status).toBe(401)
+  })
+
+  it('429 when rate limited — never calls PayPal', async () => {
+    mockRateLimit.mockResolvedValueOnce(false)
+    const res = await POST()
+    expect(res.status).toBe(429)
+    expect(mockPaypalRequest).not.toHaveBeenCalled()
+    expect(mockAdminUpdate).not.toHaveBeenCalled()
   })
 
   it('400 when the member has no PayPal subscription', async () => {
