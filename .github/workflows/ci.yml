@@ -1,9 +1,9 @@
 name: ci
 
-# Runs on every PR and every push to main. Unit tests and the production build
-# are REQUIRED (a red here should block merge). Lint is reported but NON-blocking
-# for now — the repo has pre-existing lint debt, and failing CI on it would block
-# unrelated PRs. Flip lint to blocking once that debt is cleared.
+# Runs on every PR and every push to main. Unit tests, the production build, and
+# lint are all REQUIRED — a red here should block merge. The lint debt has been
+# cleared (0 errors; remaining items are intentional warnings), so lint now fails
+# CI on any newly introduced error.
 
 on:
   push:
@@ -34,6 +34,5 @@ jobs:
       - name: Production build
         run: npm run build
 
-      - name: Lint (non-blocking — pre-existing debt)
+      - name: Lint
         run: npm run lint
-        continue-on-error: true
