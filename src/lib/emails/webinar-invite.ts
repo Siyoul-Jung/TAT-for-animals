@@ -1,4 +1,4 @@
-import { emailShell, emailButton } from './layout';
+import { emailShell, emailButton, escapeHtml } from './layout';
 
 type WebinarInviteData = {
   title: string;
@@ -55,7 +55,7 @@ export function webinarInviteEmail(
                 ${webinar.title}
               </h1>
               <p style="margin:0;font-size:17px;color:rgba(28,16,7,0.65);line-height:1.7;">
-                Hi ${firstName}, your next live webinar with Tapas is coming up.
+                Hi ${escapeHtml(firstName)}, your next live webinar with Tapas is coming up.
               </p>
 
               <!-- When -->

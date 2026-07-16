@@ -1,5 +1,6 @@
 import { stripe } from '@/lib/stripe'
 import { createClient } from '@/lib/supabase/server'
+import { supabaseAdmin } from '@/lib/supabase/admin'
 import { checkRateLimit, RATE_LIMIT_MESSAGE } from '@/lib/rateLimit'
 import { membershipHasLapsed } from '@/lib/access'
 import { NextRequest, NextResponse } from 'next/server'
@@ -78,8 +79,9 @@ export async function POST(request: NextRequest) {
         customerId = customer.id
       }
 
-      // Save to profiles
-      await supabase
+      // Save to profiles via the service role — the authenticated role can no
+      // longer UPDATE this column (locked down to prevent self-granting a role).
+      await supabaseAdmin
         .from('profiles')
         .update({ stripe_customer_id: customerId })
         .eq('id', user.id)
