@@ -25,6 +25,7 @@ export default function SignupClient() {
   const [success, setSuccess] = useState(false)
   const [resending, setResending] = useState(false)
   const [resent, setResent] = useState(false)
+  const [resendError, setResendError] = useState<string | null>(null)
 
   const supabase = createClient()
 
@@ -32,13 +33,26 @@ export default function SignupClient() {
   // email is never a dead end (mirrors the login magic-link "Try again" flow).
   async function handleResend() {
     setResending(true)
-    await supabase.auth.resend({
+    setResendError(null)
+    const { error } = await supabase.auth.resend({
       type: 'signup',
       email,
       options: {
         emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
       },
     })
+    // Never show "Done — we've sent it again" when the resend actually failed:
+    // that's a silent dead end (a senior member waits for mail that never comes).
+    // Supabase throttles rapid resends, so call that case out plainly.
+    if (error) {
+      setResendError(
+        /rate|too many|seconds/i.test(error.message)
+          ? 'Please wait a minute before asking for another email, then try again.'
+          : "We couldn't resend the email just now. Please try again in a moment — or if you already got the first one, just sign in below."
+      )
+      setResending(false)
+      return
+    }
     setResent(true)
     setResending(false)
   }
@@ -120,16 +134,23 @@ export default function SignupClient() {
                 Done — we&apos;ve sent it again. Give it a minute to arrive.
               </p>
             ) : (
-              <p className="text-sm text-muted mb-6">
-                Still nothing?{' '}
-                <button
-                  onClick={handleResend}
-                  disabled={resending}
-                  className="text-green hover:underline font-medium disabled:opacity-50"
-                >
-                  {resending ? 'Sending…' : 'Send the email again'}
-                </button>
-              </p>
+              <>
+                <p className="text-sm text-muted mb-6">
+                  Still nothing?{' '}
+                  <button
+                    onClick={handleResend}
+                    disabled={resending}
+                    className="text-green hover:underline font-medium disabled:opacity-50"
+                  >
+                    {resending ? 'Sending…' : 'Send the email again'}
+                  </button>
+                </p>
+                {resendError && (
+                  <div className="bg-red-50 border border-red-100 rounded-xl px-4 py-3 mb-6 text-left" role="alert">
+                    <p className="text-sm text-red-700 leading-relaxed">{resendError}</p>
+                  </div>
+                )}
+              </>
             )}
 
             <p className="text-sm text-muted border-t border-surface pt-6">

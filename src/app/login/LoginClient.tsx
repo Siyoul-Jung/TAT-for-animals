@@ -213,7 +213,7 @@ export default function LoginClient() {
             {/* Error */}
             {error && (
               <div className="bg-red-50 border border-red-100 rounded-xl px-4 py-3 mt-5">
-                <p className="text-sm text-red-600 leading-relaxed whitespace-pre-line">{error}</p>
+                <p className="text-sm text-red-700 leading-relaxed whitespace-pre-line">{error}</p>
               </div>
             )}
 
@@ -251,7 +251,10 @@ export default function LoginClient() {
         <div className="text-center mt-6">
           <p className="text-sm text-muted">
             Not a member yet?{' '}
-            <a href="/signup" className="text-green hover:underline font-medium">
+            <a
+              href={searchParams.get('next') ? `/signup?next=${encodeURIComponent(next)}` : '/signup'}
+              className="text-green hover:underline font-medium"
+            >
               Create an account
             </a>
           </p>

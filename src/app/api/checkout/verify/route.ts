@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { reconcileAccess } from '@/lib/reconcileAccess'
+import { checkRateLimit, RATE_LIMIT_MESSAGE } from '@/lib/rateLimit'
 import { NextResponse } from 'next/server'
 
 // Verify-on-return for the /thank-you page.
@@ -13,6 +14,13 @@ export async function POST() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  // The thank-you page calls this once per visit (then polls Supabase directly),
+  // so a generous per-user cap can't hit a legitimate member but stops a spammer
+  // from driving repeated reconcileAccess calls (each hits Stripe/PayPal).
+  if (!(await checkRateLimit('checkout-verify', user.id, 20, 300))) {
+    return NextResponse.json({ error: RATE_LIMIT_MESSAGE }, { status: 429 })
+  }
 
   const { data: profile } = await supabase
     .from('profiles')

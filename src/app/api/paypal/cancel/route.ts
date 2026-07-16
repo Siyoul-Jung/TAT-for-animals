@@ -4,6 +4,7 @@ import { paypalRequest, getPayPalSubscription, estimatePaidThrough } from '@/lib
 import { resend, FROM_EMAIL } from '@/lib/resend'
 import { cancellationScheduledEmail } from '@/lib/emails/cancellation-scheduled'
 import { claimOnce, releaseOnce } from '@/lib/onceGuard'
+import { checkRateLimit, RATE_LIMIT_MESSAGE } from '@/lib/rateLimit'
 import { NextResponse } from 'next/server'
 
 // Self-service cancellation for PayPal members. Stripe members cancel through
@@ -17,6 +18,12 @@ export async function POST() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  // Parity with the other self-service payment routes (annual-refund, checkout):
+  // bound repeated cancel calls, each of which hits PayPal's get + cancel API.
+  if (!(await checkRateLimit('paypal-cancel', user.id, 5, 3600))) {
+    return NextResponse.json({ error: RATE_LIMIT_MESSAGE }, { status: 429 })
   }
 
   const { data: profile } = await supabase
