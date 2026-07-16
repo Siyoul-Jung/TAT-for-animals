@@ -84,6 +84,9 @@ export default function Pricing({ showHeader = true, bg = 'bg-white', showBookin
     // (rather than the hero) if they hit Back from checkout/sign-up. ScrollToTop owns
     // all scroll-on-navigation, so restoration lives there — here we only record.
     try {
+      // Date.now()/window.scrollY are "impure", but this runs in an onClick
+      // handler (never during render), so react-hooks/purity's warning doesn't apply.
+      // eslint-disable-next-line react-hooks/purity
       sessionStorage.setItem(returnScrollKey(pathname), `${window.scrollY}:${Date.now()}`);
     } catch {
       // sessionStorage unavailable (private mode edge) — skip; navigation still works.
