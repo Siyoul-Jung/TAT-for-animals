@@ -59,9 +59,16 @@ export default function AskTapasForm() {
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
-          <label htmlFor="ask-tapas-question" className="block text-base text-charcoal/80 leading-relaxed">
-            Ask Tapas your question for an upcoming live webinar.
-          </label>
+          <div className="space-y-1.5">
+            <label htmlFor="ask-tapas-question" className="block text-base text-charcoal/80 leading-relaxed">
+              Ask Tapas your question for an upcoming live webinar.
+            </label>
+            {/* Set expectations up front (Tapas, 2026-07-16): don't imply every
+                question gets answered. */}
+            <p className="text-sm text-charcoal/65 leading-relaxed italic">
+              She reads every question and answers as many as she can — she may not be able to get to them all.
+            </p>
+          </div>
           <textarea
             id="ask-tapas-question"
             value={question}
