@@ -7,7 +7,7 @@ import { sendWelcomeOnce } from '@/lib/sendWelcomeOnce'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { claimOnce, releaseOnce, hasClaim } from '@/lib/onceGuard'
 import { reportOpsError } from '@/lib/alertOps'
-import { PRICE_ROLE_MAP, getBillingInterval, getPeriodEndISO } from '@/lib/subscriptionAccess'
+import { PRICE_ROLE_MAP, roleForSubscription, getBillingInterval, getPeriodEndISO } from '@/lib/subscriptionAccess'
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 
@@ -96,8 +96,7 @@ export async function POST(request: NextRequest) {
 
         const subscriptionId = session.subscription as string
         const subscription = await stripe.subscriptions.retrieve(subscriptionId)
-        const priceId = subscription.items.data[0]?.price?.id
-        const role = priceId ? (PRICE_ROLE_MAP[priceId] ?? 'subscriber') : 'subscriber'
+        const role = roleForSubscription(subscription)
 
         // Fallback: session metadata → subscription metadata
         const userId = session.metadata?.supabase_user_id
@@ -241,8 +240,7 @@ export async function POST(request: NextRequest) {
         // period end — reading those directly would throw or silently drop data.
         const subscription = await stripe.subscriptions.retrieve(eventSubscription.id)
 
-        const priceId = subscription.items.data[0]?.price?.id
-        const role = priceId ? (PRICE_ROLE_MAP[priceId] ?? 'subscriber') : 'subscriber'
+        const role = roleForSubscription(subscription)
 
         // The portal schedules downgrades at period end (decreasing_item_amount):
         // the subscription keeps its current price/role until the schedule

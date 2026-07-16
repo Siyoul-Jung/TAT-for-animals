@@ -12,7 +12,6 @@ import { cn } from '@/lib/utils';
 
 
 export default function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState('guest');
@@ -67,7 +66,6 @@ export default function Navbar() {
   useEffect(() => {
     const handleScroll = () => {
       const y = window.scrollY;
-      setIsScrolled(y > 20);
       if (y < 10) {
         setIsVisible(true);
       } else {
@@ -79,26 +77,19 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-// 다크 Hero가 있는 페이지 목록 — 상단 섹션이 어두운 배경이라 cream 텍스트가 필요
   const AUTH_PATHS = ['/login', '/signup', '/reset-password', '/update-password']
   if (AUTH_PATHS.includes(pathname)) return null;
 
-  const darkHeroPages: string[] = [];
-  const isDarkHero = darkHeroPages.includes(pathname);
   const isMember = userRole !== 'guest';
-  const navLinkClasses = cn(
-    'inline-flex items-center min-h-[44px] text-sm font-medium transition-colors whitespace-nowrap',
-    isScrolled || !isDarkHero ? 'text-charcoal/65 hover:text-green' : 'text-cream/70 hover:text-cream'
-  );
+  const navLinkClasses =
+    'inline-flex items-center min-h-[44px] text-sm font-medium transition-colors whitespace-nowrap text-charcoal/65 hover:text-green';
 
   // Current-page nav items are highlighted (green + underline) and non-interactive
   // ("you are here") — emphasis, not dimming, so the active page reads clearly as
   // current rather than disabled, and matches the green "active" cue used elsewhere
   // (library tabs). Green (#467826) on cream clears AA at this size.
-  const activeNavClasses = cn(
-    'inline-flex items-center min-h-[44px] text-sm font-semibold whitespace-nowrap cursor-default select-none underline underline-offset-[6px] decoration-2',
-    isScrolled || !isDarkHero ? 'text-green decoration-green' : 'text-cream decoration-cream'
-  );
+  const activeNavClasses =
+    'inline-flex items-center min-h-[44px] text-sm font-semibold whitespace-nowrap cursor-default select-none underline underline-offset-[6px] decoration-2 text-green decoration-green';
   const renderNavLink = (href: string, label: string) =>
     pathname === href ? (
       <span aria-current="page" className={activeNavClasses}>{label}</span>
@@ -135,10 +126,7 @@ export default function Navbar() {
               style={{ width: 'auto' }}
               priority
             />
-            <span className={cn(
-              'hidden sm:inline text-base sm:text-2xl font-semibold tracking-normal transition-colors duration-300 whitespace-nowrap font-serif',
-              isScrolled || !isDarkHero ? 'text-charcoal/65' : 'text-cream'
-            )}>
+            <span className="hidden sm:inline text-base sm:text-2xl font-semibold tracking-normal whitespace-nowrap font-serif text-charcoal/65">
               TAT<span className="text-green text-[11px] sm:text-sm align-super">®</span> for Animals
             </span>
           </Link>
@@ -152,17 +140,11 @@ export default function Navbar() {
             underline treatment without going below 14px. */}
         <div className="flex items-center justify-end gap-5 sm:gap-6">
           {pathname === '/about' ? (
-            <span aria-current="page" className={cn(
-              'inline-flex items-center min-h-[44px] text-sm font-semibold whitespace-nowrap cursor-default select-none underline underline-offset-4',
-              isScrolled || !isDarkHero ? 'text-green' : 'text-cream'
-            )}>
+            <span aria-current="page" className="inline-flex items-center min-h-[44px] text-sm font-semibold whitespace-nowrap cursor-default select-none underline underline-offset-4 text-green">
               About
             </span>
           ) : (
-            <Link href="/about" className={cn(
-              'inline-flex items-center min-h-[44px] text-sm font-medium transition-colors whitespace-nowrap',
-              isScrolled || !isDarkHero ? 'text-charcoal/65 hover:text-green' : 'text-cream/70 hover:text-cream'
-            )}>
+            <Link href="/about" className={navLinkClasses}>
               About
             </Link>
           )}
