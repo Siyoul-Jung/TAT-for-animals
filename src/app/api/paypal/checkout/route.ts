@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { supabaseAdmin } from '@/lib/supabase/admin'
 import { paypalRequest, getPayPalSubscription, PLAN_IDS } from '@/lib/paypal'
 import { checkRateLimit, RATE_LIMIT_MESSAGE } from '@/lib/rateLimit'
 import { membershipHasLapsed } from '@/lib/access'
@@ -83,7 +84,7 @@ export async function POST(request: NextRequest) {
     // for a DIFFERENT plan (the visitor changed their mind). Let them proceed: clear
     // the marker and fall through to create the plan they actually want now. The old
     // never-approved subscription is abandoned (PayPal expires it unused).
-    await supabase
+    await supabaseAdmin
       .from('profiles')
       .update({ paypal_pending_subscription_id: null })
       .eq('id', user.id)
@@ -138,7 +139,7 @@ export async function POST(request: NextRequest) {
   // a duplicate on the next attempt, so it must land before we hand back the link.
   if (data.id) {
     const store = () =>
-      supabase
+      supabaseAdmin
         .from('profiles')
         .update({ paypal_pending_subscription_id: data.id })
         .eq('id', user.id)

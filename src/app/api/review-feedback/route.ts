@@ -1,4 +1,5 @@
 import { resend, FROM_EMAIL } from '@/lib/resend'
+import { checkRateLimit, getClientIp, RATE_LIMIT_MESSAGE } from '@/lib/rateLimit'
 import { NextRequest, NextResponse } from 'next/server'
 
 // Receives content-review answers from the hosted review doc and emails them to
@@ -21,6 +22,12 @@ export async function POST(request: NextRequest) {
 
   if (payload.token !== REVIEW_TOKEN) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
+
+  // The token is a public speed-bump (visible in the review doc's source), so
+  // bound how much mail this route can push through Resend per IP.
+  if (!(await checkRateLimit('review-feedback', getClientIp(request), 10, 3600))) {
+    return NextResponse.json({ error: RATE_LIMIT_MESSAGE }, { status: 429 })
   }
 
   const reviewer = (payload.reviewer || '').toString().slice(0, 100) || 'a reviewer'

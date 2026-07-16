@@ -1,6 +1,7 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { resend, FROM_EMAIL } from '@/lib/resend'
 import { annualRenewalReminderEmail } from '@/lib/emails/annual-renewal-reminder'
+import { timingSafeEqual } from 'crypto'
 import { NextRequest, NextResponse } from 'next/server'
 
 // Daily cron: remind annual members ~30 days before their yearly charge.
@@ -22,7 +23,14 @@ const DAYS_BEFORE = 30
 function authorized(request: NextRequest): boolean {
   const secret = process.env.CRON_SECRET
   if (!secret) return false
-  return request.headers.get('authorization') === `Bearer ${secret}`
+  const provided = request.headers.get('authorization')
+  if (!provided) return false
+  // Constant-time compare (parity with sanityWebhookAuth) — avoids a timing
+  // side-channel on the secret.
+  const a = Buffer.from(provided)
+  const b = Buffer.from(`Bearer ${secret}`)
+  if (a.length !== b.length) return false
+  return timingSafeEqual(a, b)
 }
 
 function formatDate(iso: string): string {
