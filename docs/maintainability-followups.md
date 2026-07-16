@@ -17,18 +17,17 @@
 - **수정:** 인라인 hex를 토큰 클래스(`text-green`, `bg-brand` 등)로 교체. 진짜 일회성 값만 `style` 유지.
 - **주의:** 38파일 시각 회귀 위험 → 배포 직후 말고 여유 있을 때, 스크린샷 비교하며.
 
-### 2. Navbar 죽은 코드 삭제 (안전)
-- **현상:** `components/Navbar.tsx:86` `const darkHeroPages: string[] = []` 항상 빈 배열 →
-  `isDarkHero`(87) 항상 false → 91,100-101,140-141,158,164의 dark 분기 전부 도달 불가.
-- **왜:** 읽는 사람이 실행되지 않는 스크롤 인지 light/dark 로직을 추적해야 함. tatlife로 그대로 복사됨.
-- **수정:** dark 분기 삭제하고 삼항식 단순화. (다크 히어로 페이지가 실제 계획이면 `darkHeroPages` 배선.)
+### 2. Navbar 죽은 코드 삭제 (안전) — ✅ 완료 (2026-07-16)
+- **현상(이었음):** `components/Navbar.tsx` `darkHeroPages: string[] = []` 항상 빈 배열 →
+  `isDarkHero` 항상 false → dark 분기 전부 도달 불가. `isScrolled`도 그 삼항식에서만 쓰여 함께 죽은 상태.
+- **처리:** `darkHeroPages`·`isDarkHero`·`isScrolled`(상태+setter) 제거, 삼항식을 실제 실행되던
+  분기로 접음. 렌더 출력 동일(죽은 분기는 원래 실행 안 됨) — 시각 변화 없음. 테스트 134/134 통과.
 
-### 3. Stripe 웹훅의 role 매핑 중복 제거 (작음, critical path)
-- **현상:** `lib/subscriptionAccess.ts:20` `roleForSubscription()` 존재, `reconcileAccess.ts:52`는 사용.
-  그러나 `webhooks/stripe/route.ts:99-100`, `:244-245`가 동일 로직
-  `priceId ? (PRICE_ROLE_MAP[priceId] ?? 'subscriber') : 'subscriber'`을 손인라인.
-- **왜:** 가격→역할 규칙이 가장 안전 민감한 경로에 3곳. 헬퍼만 고치면 웹훅 2곳이 조용히 누락.
-- **수정:** 두 웹훅 분기에서 `roleForSubscription(subscription)` 호출.
+### 3. Stripe 웹훅의 role 매핑 중복 제거 (작음, critical path) — ✅ 완료 (2026-07-16)
+- **현상(이었음):** `webhooks/stripe/route.ts:99-100`, `:244-245`가 `roleForSubscription()`과 동일 로직
+  손인라인.
+- **처리:** 두 곳 모두 `roleForSubscription(subscription)` 호출로 교체. (`:183-184`의 `newRole`은
+  unknown→undefined 의미가 달라 의도적으로 유지.) 가격→역할 규칙 단일 소스화.
 
 ## 그 외 (선택 / 확인 필요)
 - **혼용 주석 언어:** 공유 인프라(`lib/`, `api/`)에 한/영 주석 혼재 70곳. 인수자가 비한국어 개발자면 마찰 →
