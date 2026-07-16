@@ -8,7 +8,11 @@ import { checkRateLimit, RATE_LIMIT_MESSAGE } from '@/lib/rateLimit'
 // this route re-checks the role server-side — a client-side gate alone isn't
 // access control. The member is signed in, so name/email come from the account
 // (one textarea to fill, nothing to retype).
-const TO_EMAIL = 'tapas@tatlife.com'
+// Questions go to Tapas at the tatforanimals.com domain (Tapas, 2026-07-16) so
+// he reads them "located" at this site rather than tatlife.com. The mailbox is
+// expected to be an alias forwarding to tapas@tatlife.com (set up on the domain
+// side by Jez); this route just needs the address to exist before real traffic.
+const TO_EMAIL = 'tapas@tatforanimals.com'
 
 const ESCAPE: Record<string, string> = {
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
