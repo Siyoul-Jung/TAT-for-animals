@@ -239,6 +239,18 @@ export async function POST(request: NextRequest) {
         // route died between its refund and its own revoke (serverless
         // timeout), this webhook is the backstop that still pulls access.
         if (resource.id && (await hasClaim(`refund-cancel-${resource.id}`))) {
+          // Stale-event guard (parity with the Stripe deleted handler): if the
+          // member already re-subscribed, the profile points at a NEWER
+          // subscription — this late CANCELLED for the refunded one must not
+          // wipe the new membership. A null stored id just means the route's
+          // own revoke already ran; repeating it below is harmless.
+          const { data: current } = await supabaseAdmin
+            .from('profiles')
+            .select('paypal_subscription_id')
+            .eq('id', userId)
+            .single()
+          if (current?.paypal_subscription_id && current.paypal_subscription_id !== resource.id) break
+
           await supabaseAdmin
             .from('profiles')
             .update({

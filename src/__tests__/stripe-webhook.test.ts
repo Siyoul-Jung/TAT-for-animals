@@ -30,7 +30,7 @@ jest.mock('@supabase/supabase-js', () => {
   })
   return {
     createClient: () => ({ from: mockFrom }),
-    __mocks: { mockEq, mockUpdate, mockInsert, mockDelete, mockDeleteEq, mockFrom, mockSingle },
+    __mocks: { mockEq, mockUpdate, mockInsert, mockDelete, mockDeleteEq, mockFrom, mockSingle, mockMaybeSingle },
   }
 })
 
@@ -69,6 +69,7 @@ const mockInsert: jest.Mock   = __mocks.mockInsert
 const mockDelete: jest.Mock   = __mocks.mockDelete
 const mockDeleteEq: jest.Mock = __mocks.mockDeleteEq
 const mockSingle: jest.Mock   = __mocks.mockSingle
+const mockMaybeSingle: jest.Mock = __mocks.mockMaybeSingle
 
 const mockConstructEvent      = stripe.webhooks.constructEvent as jest.Mock
 const mockRetrieveSubscription = stripe.subscriptions.retrieve as jest.Mock
@@ -380,6 +381,23 @@ describe('Stripe webhook — customer.subscription.deleted', () => {
     expect(mockSendEmail).toHaveBeenCalledWith(
       expect.objectContaining({ to: 'user@test.com' })
     )
+  })
+
+  it('suppresses the cancellation email when the annual-refund route owns this cancel — but still revokes', async () => {
+    mockConstructEvent.mockReturnValue({
+      type: 'customer.subscription.deleted',
+      data: { object: { id: 'sub_123', metadata: { supabase_user_id: 'user-123' }, customer: 'cus_123' } },
+    })
+    mockRetrieveCustomer.mockResolvedValue({ deleted: false, email: 'user@test.com', name: 'Test User' })
+    // hasClaim('refund-cancel-sub_123') finds the route's claim row
+    mockMaybeSingle.mockResolvedValueOnce({ data: { id: 'refund-cancel-sub_123' }, error: null })
+
+    await POST(makeRequest({}))
+
+    // access revoke still runs (it sits above the claim check)
+    expect(mockUpdate).toHaveBeenCalledWith(expect.objectContaining({ role: 'guest' }))
+    // ...but the wrong-copy "access until period end" email does not go out
+    expect(mockSendEmail).not.toHaveBeenCalled()
   })
 
   it('skips email when customer account is deleted in Stripe', async () => {

@@ -12,6 +12,9 @@ import { supabaseAdmin } from '@/lib/supabase/admin'
 //                                 webhook keys with the cancel_at timestamp so
 //                                 a re-cancel re-emails; PayPal cancel route
 //                                 keys on the subscription alone)
+//   refund-cancel-<subId>       — annual-refund route owns this cancel's
+//                                 member comms (webhooks branch on hasClaim)
+//   refund-email-<subId>        — refund confirmation email sent once
 // A cleanup job must therefore NOT purge "old" rows blindly — it would re-open
 // those guards (duplicate welcome emails, double reminders, reprocessed events).
 

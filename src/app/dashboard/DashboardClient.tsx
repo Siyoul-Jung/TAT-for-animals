@@ -330,7 +330,7 @@ export default function DashboardClient({
             <button
               onClick={() => setActionError(null)}
               aria-label="Dismiss"
-              className="shrink-0 -mr-1 -mt-1 w-9 h-9 flex items-center justify-center text-red-700/60 hover:text-red-700 transition-colors"
+              className="shrink-0 -mr-1 -mt-1 w-11 h-11 flex items-center justify-center text-red-700/60 hover:text-red-700 transition-colors"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -548,7 +548,12 @@ export default function DashboardClient({
                       </div>
                     ) : (
                       <p className="text-sm text-charcoal/65 leading-relaxed">
-                        Joined within the last 14 days? You can{' '}
+                        {/* "or renewed": the window applies to each annual
+                            charge, so a member 14 days past a RENEWAL is
+                            eligible too — "joined" alone would read as
+                            first-purchase-only to exactly the people who most
+                            often need this (forgot to cancel before renewal). */}
+                        Joined or renewed within the last 14 days? You can{' '}
                         <button
                           onClick={() => { setActionError(null); setConfirmingRefund(true) }}
                           className="inline-flex items-center min-h-[44px] text-green underline font-medium hover:opacity-70 transition-opacity align-baseline"

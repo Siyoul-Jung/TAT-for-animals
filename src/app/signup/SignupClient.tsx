@@ -268,7 +268,7 @@ export default function SignupClient() {
 
             {/* Error */}
             {error && (
-              <div className="bg-red-50 border border-red-100 rounded-xl px-4 py-3 mb-5">
+              <div role="alert" className="bg-red-50 border border-red-100 rounded-xl px-4 py-3 mb-5">
                 <p className="text-sm text-red-700 leading-relaxed">{error}</p>
                 {existingAccount && (
                   <p className="text-sm leading-relaxed mt-2">

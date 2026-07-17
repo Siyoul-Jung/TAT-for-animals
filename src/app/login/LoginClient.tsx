@@ -100,7 +100,7 @@ export default function LoginClient() {
               We sent a sign-in link to
             </p>
             <p className="text-base font-medium text-charcoal mb-8">{email}</p>
-            <p className="text-xs text-muted">
+            <p className="text-sm text-muted">
               Didn&apos;t receive it?{' '}
               <button onClick={() => setMagicSent(false)} className="text-green hover:underline">
                 Try again
@@ -212,7 +212,7 @@ export default function LoginClient() {
 
             {/* Error */}
             {error && (
-              <div className="bg-red-50 border border-red-100 rounded-xl px-4 py-3 mt-5">
+              <div role="alert" className="bg-red-50 border border-red-100 rounded-xl px-4 py-3 mt-5">
                 <p className="text-sm text-red-700 leading-relaxed whitespace-pre-line">{error}</p>
               </div>
             )}

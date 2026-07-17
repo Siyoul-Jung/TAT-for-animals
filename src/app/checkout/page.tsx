@@ -204,7 +204,7 @@ function CheckoutContent() {
 
         {/* Error */}
         {error && (
-          <div className="bg-red-50 border border-red-100 rounded-xl px-4 py-3 mb-4">
+          <div role="alert" className="bg-red-50 border border-red-100 rounded-xl px-4 py-3 mb-4">
             <p className="text-sm text-red-700 leading-relaxed">{error}</p>
             {error.includes('already have an active subscription') && (
               <Link

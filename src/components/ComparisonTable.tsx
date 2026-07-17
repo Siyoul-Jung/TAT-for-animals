@@ -125,16 +125,20 @@ export default function ComparisonTable() {
                 <div className="col-span-2 sm:col-span-1 px-5 sm:px-7 pt-4 pb-2 sm:py-4 text-base text-charcoal/80 leading-snug flex items-center border-t border-charcoal/6">
                   {row.label}
                 </div>
-                <div
-                  className="flex items-center justify-center py-3 sm:py-4 bg-charcoal/2 sm:border-t sm:border-l border-charcoal/6"
-                  aria-label={row.connection ? 'Included' : 'Not included'}
-                >
+                {/* Screen readers get the answer as sr-only text INSIDE each
+                    cell (with the plan name, since the visual column position
+                    is lost linearly) — not aria-label, which ARIA ignores on
+                    plain divs (role=generic can't be named). */}
+                <div className="flex items-center justify-center py-3 sm:py-4 bg-charcoal/2 sm:border-t sm:border-l border-charcoal/6">
+                  <span className="sr-only">
+                    {row.connection ? 'Included in The Calm Connection' : 'Not included in The Calm Connection'}
+                  </span>
                   {row.connection ? CHECK : <span className="text-charcoal/25" aria-hidden>—</span>}
                 </div>
-                <div
-                  className="flex items-center justify-center py-3 sm:py-4 bg-green/5 border-l sm:border-t border-charcoal/6"
-                  aria-label={row.circle ? 'Included' : 'Not included'}
-                >
+                <div className="flex items-center justify-center py-3 sm:py-4 bg-green/5 border-l sm:border-t border-charcoal/6">
+                  <span className="sr-only">
+                    {row.circle ? 'Included in The Calm Circle' : 'Not included in The Calm Circle'}
+                  </span>
                   {row.circle ? CHECK : <span className="text-charcoal/25" aria-hidden>—</span>}
                 </div>
               </div>
