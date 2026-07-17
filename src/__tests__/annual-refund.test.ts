@@ -33,7 +33,7 @@ jest.mock('@/lib/paypal', () => ({
   getPayPalSubscription: jest.fn(),
   getPlanInterval: jest.fn(() => 'year'),
 }))
-jest.mock('@/lib/resend', () => ({ resend: { emails: { send: jest.fn().mockResolvedValue({}) } }, FROM_EMAIL: 'x' }))
+jest.mock('@/lib/resend', () => ({ resend: { emails: { send: jest.fn().mockResolvedValue({ error: null }) } }, FROM_EMAIL: 'x' }))
 jest.mock('@/lib/emails/refund-confirmation', () => ({
   refundConfirmationEmail: jest.fn().mockReturnValue({ subject: 's', html: 'h' }),
 }))
@@ -49,8 +49,10 @@ jest.mock('@/lib/alertOps', () => ({ reportOpsError: jest.fn().mockResolvedValue
 
 import { POST } from '@/app/api/annual-refund/route'
 import { stripe } from '@/lib/stripe'
+import { resend } from '@/lib/resend'
 import { claimOnce, releaseOnce } from '@/lib/onceGuard'
 import { checkRateLimit } from '@/lib/rateLimit'
+import { reportOpsError } from '@/lib/alertOps'
 
 const { __m } = jest.requireMock('@/lib/supabase/server')
 const { __a } = jest.requireMock('@/lib/supabase/admin')
@@ -63,6 +65,8 @@ const mockRefund = stripe.refunds.create as jest.Mock
 const mockClaimOnce = claimOnce as jest.Mock
 const mockReleaseOnce = releaseOnce as jest.Mock
 const mockRateLimit = checkRateLimit as jest.Mock
+const mockSendEmail = resend.emails.send as jest.Mock
+const mockOps = reportOpsError as jest.Mock
 
 const nowSec = () => Math.floor(Date.now() / 1000)
 
@@ -75,6 +79,7 @@ function stripeSub(createdSec: number) {
       id: 'in_1',
       created: createdSec,
       amount_paid: 27000,
+      billing_reason: 'subscription_create',
       payments: { data: [{ status: 'paid', payment: { payment_intent: 'pi_1' } }] },
     },
   }
@@ -137,11 +142,25 @@ describe('annual-refund — money flow', () => {
     )
   })
 
-  it('does NOT refund twice — a claimed key short-circuits to success', async () => {
+  it('does NOT refund twice — a claimed key on a still-active sub is a stuck claim: ops alerted, no fake success', async () => {
     mockClaimOnce.mockResolvedValueOnce({ alreadyProcessed: true })
     const res = await POST()
-    expect(res.status).toBe(200)
-    expect((await res.json()).success).toBe(true)
+    // Echoing success here could tell the member "refunded" when a previous
+    // attempt died before moving any money — surface it instead.
+    expect(res.status).toBe(502)
+    expect(mockRefund).not.toHaveBeenCalled()
+    expect(mockCancel).not.toHaveBeenCalled()
+    expect(mockOps).toHaveBeenCalledWith(
+      'annual-refund', expect.anything(), expect.objectContaining({ step: 'stuck-claim' })
+    )
+  })
+
+  it('refuses to refund a non-charge invoice (e.g. proration after an admin plan change)', async () => {
+    const sub = stripeSub(nowSec())
+    sub.latest_invoice.billing_reason = 'subscription_update'
+    mockRetrieve.mockResolvedValueOnce(sub)
+    const res = await POST()
+    expect(res.status).toBe(502)
     expect(mockRefund).not.toHaveBeenCalled()
     expect(mockCancel).not.toHaveBeenCalled()
   })
@@ -153,5 +172,29 @@ describe('annual-refund — money flow', () => {
     expect(mockReleaseOnce).toHaveBeenCalledWith('refund-cancel-sub_1')
     expect(mockCancel).not.toHaveBeenCalled()
     expect(mockAdminUpdate).not.toHaveBeenCalled()
+  })
+
+  it('when cancel fails AFTER the refund: still succeeds, revokes access, and alerts ops to finish the cancel', async () => {
+    mockCancel.mockRejectedValueOnce(new Error('stripe cancel down'))
+    const res = await POST()
+    // The member got their money back — they must not see an error or retry.
+    expect(res.status).toBe(200)
+    expect((await res.json()).success).toBe(true)
+    expect(mockRefund).toHaveBeenCalled()
+    expect(mockAdminUpdate).toHaveBeenCalledWith(expect.objectContaining({ role: 'guest' }))
+    expect(mockOps).toHaveBeenCalledWith(
+      'annual-refund', expect.anything(),
+      expect.objectContaining({ step: 'cancel', note: expect.stringContaining('REFUND ALREADY ISSUED') })
+    )
+  })
+
+  it('when the confirmation email fails (resend returns error, never throws): ops alerted, email claim released', async () => {
+    mockSendEmail.mockResolvedValueOnce({ error: { message: 'smtp down' } })
+    const res = await POST()
+    expect(res.status).toBe(200) // refund + cancel + revoke all succeeded
+    expect(mockOps).toHaveBeenCalledWith(
+      'annual-refund', expect.anything(), expect.objectContaining({ step: 'email' })
+    )
+    expect(mockReleaseOnce).toHaveBeenCalledWith('refund-email-sub_1')
   })
 })

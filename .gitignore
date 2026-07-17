@@ -83,3 +83,6 @@ debug.log
 
 # local screenshot/preview artifacts
 .screenshots/
+
+# Raw client materials (photos, PDFs, embeds) staged for manual processing
+/public/images/incoming/

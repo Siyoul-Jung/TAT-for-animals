@@ -99,6 +99,17 @@ export async function POST() {
         return NextResponse.json({ error: REFUND_FAILED }, { status: 502 })
       }
 
+      // Only refund a real annual charge. After an admin plan change the
+      // latest invoice can be a proration adjustment — refunding it would
+      // return the wrong amount (and call it "full") while cancelling the
+      // whole membership. Those cases go to the manual path instead.
+      if (invoice.billing_reason !== 'subscription_create' && invoice.billing_reason !== 'subscription_cycle') {
+        await reportOpsError('annual-refund', new Error(`Latest invoice is not an annual charge (billing_reason: ${invoice.billing_reason})`), {
+          userId: user.id, subscriptionId: stripeSubId, invoiceId: invoice.id,
+        })
+        return NextResponse.json({ error: REFUND_FAILED }, { status: 502 })
+      }
+
       // The window is anchored to the LATEST annual charge (this invoice), not
       // the subscription's original start: each yearly charge is a "purchase"
       // with its own 14 days (matches the FAQ wording, and covers the most
@@ -205,11 +216,19 @@ export async function POST() {
     // ---- 2. Claim ownership of this cancel's member comms ------------------
     // Claimed BEFORE the refund: the cancellation webhooks check this key and
     // skip their own email / grace-period handling (their "access until period
-    // end" copy would be wrong for a refunded cancel). Already claimed means a
-    // double-click or retry after success — report success again, do nothing.
+    // end" copy would be wrong for a refunded cancel).
     const { alreadyProcessed } = await claimOnce(refundClaimKey)
     if (alreadyProcessed) {
-      return NextResponse.json({ success: true })
+      // The provider just told us this subscription is still active (checked
+      // above), yet the refund-cancel is already claimed: a previous attempt
+      // died mid-flight (or a parallel request is racing us). Echoing success
+      // here could tell the member "refunded" when nothing actually moved —
+      // hand it to ops and keep the member on the manual path instead.
+      await reportOpsError('annual-refund', new Error('Refund claim exists but the subscription is still active at the provider'), {
+        userId: user.id, subscriptionId: subId, step: 'stuck-claim',
+        note: 'Check the provider: if the refund/cancel never completed, finish it manually or release the refund-cancel claim.',
+      })
+      return NextResponse.json({ error: REFUND_FAILED }, { status: 502 })
     }
 
     // ---- 3. Refund first --------------------------------------------------
@@ -267,7 +286,10 @@ export async function POST() {
       if (!emailSent) {
         try {
           const { subject, html } = refundConfirmationEmail(profile.full_name ?? null, refundAmount)
-          await resend.emails.send({ from: FROM_EMAIL, to: user.email, subject, html })
+          const { error: sendError } = await resend.emails.send({ from: FROM_EMAIL, to: user.email, subject, html })
+          // resend reports failures in the returned `error` — it doesn't
+          // throw. Without this check a failed send would be silent.
+          if (sendError) throw new Error(`Resend: ${sendError.message}`)
         } catch (emailError) {
           // The member was told a confirmation is coming — if it can't be
           // sent, ops follows up by hand rather than leaving them wondering.

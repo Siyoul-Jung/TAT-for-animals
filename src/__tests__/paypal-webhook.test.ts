@@ -23,6 +23,7 @@ jest.mock('@/lib/supabase/admin', () => {
 jest.mock('@/lib/onceGuard', () => ({
   claimOnce: jest.fn().mockResolvedValue({ alreadyProcessed: false }),
   releaseOnce: jest.fn().mockResolvedValue(undefined),
+  hasClaim: jest.fn().mockResolvedValue(false),
 }))
 
 // Keep the real PLAN_ROLE_MAP / getPlanInterval / estimatePaidThrough; mock only
@@ -43,12 +44,13 @@ jest.mock('@/lib/emails/plan-change', () => ({
 
 import { POST } from '@/app/api/webhooks/paypal/route'
 import { paypalRequest, getPayPalSubscription } from '@/lib/paypal'
-import { claimOnce, releaseOnce } from '@/lib/onceGuard'
+import { claimOnce, releaseOnce, hasClaim } from '@/lib/onceGuard'
 
 const mockPaypalRequest = paypalRequest as jest.Mock
 const mockGetSub = getPayPalSubscription as jest.Mock
 const mockClaimOnce = claimOnce as jest.Mock
 const mockReleaseOnce = releaseOnce as jest.Mock
+const mockHasClaim = hasClaim as jest.Mock
 const { __m } = jest.requireMock('@/lib/supabase/admin')
 const mockUpdate = __m.update as jest.Mock
 const mockUpdateEq = __m.updateEq as jest.Mock
@@ -68,6 +70,7 @@ beforeEach(() => {
   // Defaults (re-applied each test since clearAllMocks wipes call state)
   mockPaypalRequest.mockResolvedValue({ json: async () => ({ verification_status: 'SUCCESS' }) })
   mockClaimOnce.mockResolvedValue({ alreadyProcessed: false })
+  mockHasClaim.mockResolvedValue(false)
   mockSingle.mockResolvedValue({ data: null })
   mockUpdateEq.mockResolvedValue({ error: null })
 })
@@ -138,13 +141,41 @@ describe('PayPal webhook — payment failure & termination', () => {
     mockSingle.mockResolvedValueOnce({ data: { current_period_end: '2026-09-01T00:00:00Z', cancel_at: null, billing_interval: 'month' } })
     await POST(makeReq({
       id: 'e5', event_type: 'BILLING.SUBSCRIPTION.CANCELLED',
-      resource: { custom_id: 'u5' },
+      resource: { id: 'I-5', custom_id: 'u5' },
     }))
     expect(mockUpdate).toHaveBeenCalledWith(
       expect.objectContaining({ cancel_at: '2026-09-01T00:00:00Z' })
     )
     // role is NOT dropped here — access persists until the lazy cutoff
     expect(mockUpdate).not.toHaveBeenCalledWith(expect.objectContaining({ role: 'guest' }))
+  })
+
+  it('CANCELLED with a refund claim: revokes NOW, no grace period (route-death backstop)', async () => {
+    mockHasClaim.mockResolvedValueOnce(true)
+    // stored sub matches the event → this cancel is the refunded one
+    mockSingle.mockResolvedValueOnce({ data: { paypal_subscription_id: 'I-8' } })
+    await POST(makeReq({
+      id: 'e8', event_type: 'BILLING.SUBSCRIPTION.CANCELLED',
+      resource: { id: 'I-8', custom_id: 'u8' },
+    }))
+    expect(mockHasClaim).toHaveBeenCalledWith('refund-cancel-I-8')
+    expect(mockUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({ role: 'guest', subscription_status: 'inactive', paypal_subscription_id: null })
+    )
+    expect(mockUpdateEq).toHaveBeenCalledWith('id', 'u8')
+    // and no grace-period path
+    expect(mockUpdate).not.toHaveBeenCalledWith(expect.objectContaining({ cancel_at: expect.any(String) }))
+  })
+
+  it('CANCELLED with a refund claim but a NEWER stored sub: does not touch the new membership', async () => {
+    mockHasClaim.mockResolvedValueOnce(true)
+    // the member re-subscribed after the refund — profile points at I-NEW
+    mockSingle.mockResolvedValueOnce({ data: { paypal_subscription_id: 'I-NEW' } })
+    await POST(makeReq({
+      id: 'e9', event_type: 'BILLING.SUBSCRIPTION.CANCELLED',
+      resource: { id: 'I-OLD', custom_id: 'u9' },
+    }))
+    expect(mockUpdate).not.toHaveBeenCalled()
   })
 })
 

@@ -43,6 +43,7 @@ export default function AskTapasForm() {
 
       {status === 'sent' ? (
         <div
+          role="status"
           className="rounded-xl p-5 space-y-3"
           style={{ backgroundColor: '#EBF5E1', border: '1px solid rgba(70,120,38,0.25)' }}
         >
@@ -82,6 +83,7 @@ export default function AskTapasForm() {
 
           {error && (
             <div
+              role="alert"
               className="rounded-xl p-4 text-base leading-relaxed text-red-700"
               style={{ backgroundColor: '#FEF2F2', border: '1px solid rgba(185,28,28,0.25)' }}
             >
