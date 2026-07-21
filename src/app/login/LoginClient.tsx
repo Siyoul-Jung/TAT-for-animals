@@ -25,8 +25,12 @@ export default function LoginClient() {
   const [loading, setLoading] = useState(false)
   const [magicLoading, setMagicLoading] = useState(false)
   const [error, setError] = useState<string | null>(
+    // The usual causes (link opened in a different browser than the one that
+    // signed up, or opened twice) fail only the sign-in handoff — the email
+    // itself is verified server-side the moment the link is first opened. So
+    // lead with "you're probably fine, just sign in" instead of "expired".
     authError
-      ? 'That sign-in link didn’t work — it may have expired.\nEnter your email below and we’ll send you a new one.'
+      ? 'That link couldn’t finish signing you in — this can happen when it opens in a different browser.\nGood news: your email is most likely already confirmed. Just sign in below.'
       : null
   )
   const [magicSent, setMagicSent] = useState(false)

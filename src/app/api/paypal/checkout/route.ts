@@ -120,6 +120,10 @@ export async function POST(request: NextRequest) {
         custom_id: user.id,
         subscriber: { email_address: user.email },
         application_context: {
+          // The PayPal Business account is shared with tatlife.com, so without
+          // this override the approval page says "TATLife" — members should see
+          // themselves subscribing to TAT for Animals.
+          brand_name: 'TAT for Animals',
           return_url: `${siteUrl}/api/paypal/success`,
           cancel_url: `${siteUrl}/membership`,
           user_action: 'SUBSCRIBE_NOW',
