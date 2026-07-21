@@ -179,6 +179,11 @@ export default function DashboardClient({
   const pendingDate = formatPeriodEnd(pendingTierAt)
   const isCancelling = !!cancelAt
   const cancelDate = formatPeriodEnd(cancelAt)
+  // The membership card's footnote zone — quiet reference lines that sit below
+  // the card's one action, behind a hairline divider. Both hide while the
+  // refund confirm is open (one thing on screen at a time).
+  const refundOfferVisible = refundEligible && subscriptionStatus === 'active' && !isCancelling && !pendingPlan
+  const paypalNoteVisible = isPayPal && subscriptionStatus === 'active' && !isCancelling
 
   // Upgrade is only offered to a Library member whose billing is in good standing.
   // past_due / cancelling / a pending plan change all have their own notice
@@ -521,66 +526,72 @@ export default function DashboardClient({
                       (server-computed). First click opens an inline confirm; the
                       route re-verifies eligibility against the provider before
                       moving any money. */}
-                  {refundEligible && subscriptionStatus === 'active' && !isCancelling && !pendingPlan && (
-                    confirmingRefund ? (
-                      <div className="rounded-xl border border-charcoal/10 bg-cream p-4 space-y-3">
-                        <p className="text-sm text-charcoal/80 leading-relaxed">
-                          Cancel your membership with a full refund? Your payment is returned in
-                          full (it usually arrives within 5&ndash;10 business days), and your
-                          access ends right away.
-                        </p>
-                        <div className="flex flex-wrap gap-3">
-                          <button
-                            onClick={confirmRefund}
-                            disabled={refunding}
-                            className="inline-flex items-center min-h-[44px] px-5 py-2 rounded-full bg-charcoal text-cream text-base font-semibold hover:opacity-90 transition-all disabled:opacity-50"
-                          >
-                            {refunding ? 'Processing your refund…' : 'Yes, cancel and refund me'}
-                          </button>
-                          <button
-                            onClick={() => setConfirmingRefund(false)}
-                            disabled={refunding}
-                            className="inline-flex items-center min-h-[44px] px-5 py-2 rounded-full border border-charcoal/20 text-charcoal text-base font-semibold hover:bg-charcoal/5 transition-all disabled:opacity-50"
-                          >
-                            Keep my membership
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <p className="text-sm text-charcoal/65 leading-relaxed">
-                        {/* "or renewed": the window applies to each annual
-                            charge, so a member 14 days past a RENEWAL is
-                            eligible too — "joined" alone would read as
-                            first-purchase-only to exactly the people who most
-                            often need this (forgot to cancel before renewal). */}
-                        Joined or renewed within the last 14 days? You can{' '}
-                        <button
-                          onClick={() => { setActionError(null); setConfirmingRefund(true) }}
-                          className="inline-flex items-center min-h-[44px] text-green underline font-medium hover:opacity-70 transition-opacity align-baseline"
-                        >
-                          cancel with a full refund
-                        </button>
-                        .
+                  {refundOfferVisible && confirmingRefund && (
+                    <div className="rounded-xl border border-charcoal/10 bg-cream p-4 space-y-3">
+                      <p className="text-sm text-charcoal/80 leading-relaxed">
+                        Cancel your membership with a full refund? Your payment is returned in
+                        full (it usually arrives within 5&ndash;10 business days), and your
+                        access ends right away.
                       </p>
-                    )
+                      <div className="flex flex-wrap gap-3">
+                        <button
+                          onClick={confirmRefund}
+                          disabled={refunding}
+                          className="inline-flex items-center min-h-[44px] px-5 py-2 rounded-full bg-brand text-cream text-base font-semibold hover:opacity-90 transition-all disabled:opacity-50"
+                        >
+                          {refunding ? 'Processing your refund…' : 'Cancel and refund'}
+                        </button>
+                        <button
+                          onClick={() => setConfirmingRefund(false)}
+                          disabled={refunding}
+                          className="inline-flex items-center min-h-[44px] px-5 py-2 rounded-full border border-charcoal/20 text-charcoal text-base font-semibold hover:bg-charcoal/5 transition-all disabled:opacity-50"
+                        >
+                          Keep my membership
+                        </button>
+                      </div>
+                    </div>
                   )}
 
-                  {/* PayPal holds the card in the member's PayPal account, not
-                      here — point them there so they don't cancel just to change
-                      a card. (Stripe members update it inside Manage Subscription.) */}
-                  {isPayPal && subscriptionStatus === 'active' && !isCancelling && (
-                    <p className="text-sm text-charcoal/65 leading-relaxed">
-                      To change your payment method, manage it in your{' '}
-                      <a
-                        href="https://www.paypal.com/myaccount/autopay/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-green hover:text-green underline"
-                      >
-                        PayPal account
-                      </a>
-                      .
-                    </p>
+                  {/* Footnote zone — the card's body ends at its one action
+                      button; these are reference lines behind a hairline
+                      divider, grouped tight so they read as one quiet block. */}
+                  {!confirmingRefund && (refundOfferVisible || paypalNoteVisible) && (
+                    <div className="!mt-5 pt-4 border-t border-charcoal/8 space-y-1.5">
+                      {refundOfferVisible && (
+                        <p className="text-sm text-charcoal/65 leading-relaxed">
+                          {/* "or renewed": the window applies to each annual
+                              charge, so a member 14 days past a RENEWAL is
+                              eligible too — "joined" alone would read as
+                              first-purchase-only to exactly the people who most
+                              often need this (forgot to cancel before renewal). */}
+                          Joined or renewed in the last 14 days?{' '}
+                          <button
+                            onClick={() => { setActionError(null); setConfirmingRefund(true) }}
+                            className="inline-flex items-center min-h-[44px] text-green underline font-medium hover:opacity-70 transition-opacity align-baseline"
+                          >
+                            Cancel with a full refund
+                          </button>
+                          .
+                        </p>
+                      )}
+                      {/* PayPal holds the card in the member's PayPal account, not
+                          here — point them there so they don't cancel just to change
+                          a card. (Stripe members update it inside Manage Subscription.) */}
+                      {paypalNoteVisible && (
+                        <p className="text-sm text-charcoal/65 leading-relaxed">
+                          Payment method? Manage it in your{' '}
+                          <a
+                            href="https://www.paypal.com/myaccount/autopay/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-green hover:text-green underline"
+                          >
+                            PayPal account
+                          </a>
+                          .
+                        </p>
+                      )}
+                    </div>
                   )}
 
                 </div>

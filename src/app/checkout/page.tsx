@@ -270,7 +270,10 @@ function CheckoutContent() {
         )}
 
         <p className="text-center text-sm mt-6" style={{ color: '#7A5F4F' }}>
-          Cancel anytime · Secure payment
+          Cancel anytime · Secure payment ·{' '}
+          <Link href="/terms" className="underline underline-offset-2 hover:text-charcoal transition-colors">Terms</Link>
+          {' '}·{' '}
+          <Link href="/privacy" className="underline underline-offset-2 hover:text-charcoal transition-colors">Privacy</Link>
         </p>
 
       </div>
