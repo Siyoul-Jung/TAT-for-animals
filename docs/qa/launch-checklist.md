@@ -31,7 +31,7 @@
 - [x] `billing_interval` 마이그레이션 적용 (컬럼 존재 확인, 2026-07-08)
 - [x] `rate_limits` 마이그레이션 적용 (2026-07-08)
 - [x] `rate_limits` 테이블 + `check_rate_limit` 함수 생성 확인 (2026-07-08)
-- [ ] `billing_interval` CHECK 제약 마이그레이션 적용 (20260708)
+- [x] `billing_interval` CHECK 제약 마이그레이션 적용 (20260708) — ✅ 적용·검증 완료(2026-07-22, pg_constraint 재조회로 확인)
 - [x] 🔴 **`profiles` 권한 잠금 마이그레이션 적용 (20260715)** — 적용 완료(2026-07-16)
 - [x] (적용 후 검증) `information_schema.column_privileges` 재조회 — anon: UPDATE 권한 없음 / authenticated: `full_name`,`avatar_url`만 (2026-07-16)
 
@@ -87,7 +87,7 @@ Vercel → 프로젝트 → **Settings → Environment Variables → Production*
 | 변수 | 무엇 / 어디서 | 노출 |
 |------|--------------|------|
 | `RESEND_API_KEY` | Resend API 키 (모든 이메일 발송) | 🔒 |
-| `OPS_ALERT_EMAIL` | 실패 알림 수신 주소 (미설정 시 사이트 오너로 발송) | 🔒 |
+| `OPS_ALERT_EMAIL` | 실패 알림 수신 주소, 쉼표로 여러 명 가능 (미설정 시 사이트 오너로 발송) — ✅ 값 재설정·확인 완료(2026-07-22, 다음 배포부터 적용) | 🔒 |
 | `NEXT_PUBLIC_SITE_URL` | **프로덕션 도메인** (예 `https://tatforanimals.com`). 모든 결제 리다이렉트·이메일 링크·로고가 의존 | 노출 |
 | `CRON_SECRET` | Vercel Cron 인증. **미설정 시 연간 갱신 사전고지 메일이 조용히 안 나감**(법정 고지) | 🔒 |
 
