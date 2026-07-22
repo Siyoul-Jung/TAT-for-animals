@@ -142,11 +142,20 @@ function CheckoutContent() {
   }
 
   const isAnnual = tier.interval === 'year';
-  // Shown before payment. Annual carries the full renewal + refund terms (a
-  // larger once-a-year charge); monthly is the lighter cancel-anytime version.
-  const disclosure = isAnnual
-    ? `Your ${tier.name} membership is $${tier.price}, billed today and once a year after that — two months free compared with paying monthly. It renews automatically each year unless you cancel, and we'll email a reminder before each renewal. Refunds are available within 14 days of purchase; after that, your membership stays active through the year you've paid for.`
-    : `Your ${tier.name} membership is $${tier.price} per month and renews automatically each month. Cancel anytime — your access continues through the month you've paid for.`;
+  // Shown before payment — §17602's required elements (amount, cadence,
+  // auto-renewal, cancel/refund policy), one per line. A scannable list, not a
+  // paragraph, but never hidden behind a scroll or collapse: the law wants
+  // these clear and conspicuous, so every line stays visible.
+  const disclosureLines = isAnnual
+    ? [
+        `$${tier.price} today, then once a year`,
+        `Renews automatically until you cancel — we email a reminder first`,
+        `Full refund within 14 days of purchase — after that, access continues through your paid year`,
+      ]
+    : [
+        `$${tier.price} per month — renews automatically until you cancel`,
+        `Cancel anytime — access continues through your paid month`,
+      ];
   const consentLabel = isAnnual
     ? 'I understand my annual membership renews automatically each year until I cancel, and that refunds are available only within 14 days of purchase.'
     : 'I understand my membership renews automatically each month until I cancel.';
@@ -218,10 +227,15 @@ function CheckoutContent() {
         )}
 
         {/* Billing terms — shown clearly before payment */}
-        <div className="rounded-xl px-4 py-3 mb-4 border" style={{ backgroundColor: 'rgba(70,120,38,0.05)', borderColor: 'rgba(70,120,38,0.18)' }}>
-          <p className="text-sm leading-relaxed" style={{ color: '#3F3128' }}>
-            {disclosure}
-          </p>
+        <div className="rounded-xl px-4 py-3.5 mb-4 border" style={{ backgroundColor: 'rgba(70,120,38,0.05)', borderColor: 'rgba(70,120,38,0.18)' }}>
+          <ul className="space-y-1.5">
+            {disclosureLines.map((line) => (
+              <li key={line} className="flex gap-2.5 text-sm leading-relaxed" style={{ color: '#3F3128' }}>
+                <span aria-hidden className="font-bold" style={{ color: '#467826' }}>·</span>
+                <span>{line}</span>
+              </li>
+            ))}
+          </ul>
         </div>
 
         {/* Affirmative consent — required before the Pay buttons enable */}
