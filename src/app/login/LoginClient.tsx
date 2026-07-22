@@ -28,9 +28,10 @@ export default function LoginClient() {
     // The usual causes (link opened in a different browser than the one that
     // signed up, or opened twice) fail only the sign-in handoff — the email
     // itself is verified server-side the moment the link is first opened. So
-    // lead with "you're probably fine, just sign in" instead of "expired".
+    // reassure + one action; no diagnostics. (Truly expired links are covered
+    // too: the magic-link button sits right below.)
     authError
-      ? 'That link couldn’t finish signing you in — this can happen when it opens in a different browser.\nGood news: your email is most likely already confirmed. Just sign in below.'
+      ? 'That link couldn’t sign you in — but your email is most likely already confirmed. Just sign in below.'
       : null
   )
   const [magicSent, setMagicSent] = useState(false)

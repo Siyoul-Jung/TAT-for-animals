@@ -529,9 +529,8 @@ export default function DashboardClient({
                   {refundOfferVisible && confirmingRefund && (
                     <div className="rounded-xl border border-charcoal/10 bg-cream p-4 space-y-3">
                       <p className="text-sm text-charcoal/80 leading-relaxed">
-                        Cancel your membership with a full refund? Your payment is returned in
-                        full (it usually arrives within 5&ndash;10 business days), and your
-                        access ends right away.
+                        Cancel with a full refund? It usually arrives within 5&ndash;10
+                        business days, and your access ends right away.
                       </p>
                       <div className="flex flex-wrap gap-3">
                         <button
