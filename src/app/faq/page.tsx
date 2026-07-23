@@ -144,7 +144,7 @@ export default function FAQ() {
             Your questions, answered.
           </h1>
           <p className="text-base sm:text-lg leading-relaxed text-charcoal/65">
-            Everything you're wondering about TAT for Animals — answered simply.
+            Everything you're wondering about TAT for Animals.
           </p>
         </div>
 
