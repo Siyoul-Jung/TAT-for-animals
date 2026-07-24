@@ -69,9 +69,9 @@ const faqSections = [
             <a href={BOOKING_URL} target="_blank" rel="noopener noreferrer" className="text-green underline underline-offset-2 hover:text-green transition-colors">
               additional help
             </a>{' '}
-            to become calm and happy.{' '}
+            to become calm and happy. Calm Circle members can{' '}
             <Link href="/library?tab=live" className="text-green underline underline-offset-2 hover:text-green transition-colors">
-              Please ask Tapas questions about your animal
+              ask Tapas questions about their animal
             </Link>{' '}
             to be answered during the monthly TAT for Animals webinar.
           </>
