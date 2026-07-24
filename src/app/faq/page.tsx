@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
+import { BOOKING_URL } from '@/lib/links';
 
 // FAQs grouped by topic so visitors can scan to the part they care about:
 // the technique itself vs. the practical side of membership. Add a new question
@@ -60,6 +61,22 @@ const faqSections = [
         q: 'What about me — does this affect the owner too?',
         a: 'Often, yes. You often feel what your animal feels, and your animal feels what you feel. When you clear your own stress and tension, your animal relaxes too. Many people find that doing TAT for their animal brings them a surprising sense of calm as well.',
       },
+      {
+        q: 'Does TAT work every time to help animals?',
+        a: (
+          <>
+            It works almost all the time, but not every time. Your animal may need to have several sessions about the same thing in order to help them feel better. And even after several sessions, your animal may still need{' '}
+            <a href={BOOKING_URL} target="_blank" rel="noopener noreferrer" className="text-green underline underline-offset-2 hover:text-green transition-colors">
+              additional help
+            </a>{' '}
+            to become calm and happy.{' '}
+            <Link href="/library?tab=live" className="text-green underline underline-offset-2 hover:text-green transition-colors">
+              Please ask Tapas questions about your animal
+            </Link>{' '}
+            to be answered during the monthly TAT for Animals webinar.
+          </>
+        ),
+      },
     ],
   },
   {
@@ -77,7 +94,7 @@ const faqSections = [
   },
 ];
 
-function FAQItem({ q, a }: { q: string; a: string }) {
+function FAQItem({ q, a }: { q: string; a: ReactNode }) {
   const [open, setOpen] = useState(false);
 
   return (
