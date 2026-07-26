@@ -28,7 +28,14 @@ export default async function DashboardPage({
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login?next=/dashboard')
+  if (!user) {
+    const qs = new URLSearchParams(
+      Object.entries({ error: errorParam, plan: planParam, refunded }).filter(
+        (entry): entry is [string, string] => entry[1] !== undefined
+      )
+    ).toString()
+    redirect(`/login?next=${encodeURIComponent(qs ? `/dashboard?${qs}` : '/dashboard')}`)
+  }
 
   const { data: profileRow } = await supabase
     .from('profiles')
