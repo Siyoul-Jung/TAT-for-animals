@@ -47,10 +47,15 @@ export type RecordingPreview = {
   date: string
 }
 
-export default async function LibraryPage() {
+export default async function LibraryPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ tab?: string }>
+}) {
+  const { tab } = await searchParams
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login?next=/library')
+  if (!user) redirect(`/login?next=${encodeURIComponent(tab ? `/library?tab=${tab}` : '/library')}`)
 
   const { data: profile } = await supabase
     .from('profiles')
