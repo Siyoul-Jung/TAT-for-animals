@@ -118,15 +118,22 @@ function VideoRow({ video, progress, onProgressUpdate }: {
   }, [open, vimeoId, vimeoHash])
 
   const handleToggle = () => {
+    // Closing must never get stuck open just because saving progress or tearing
+    // down the Vimeo player throws (e.g. destroy() on a player that hasn't
+    // finished initializing) — the row has to close either way.
     if (open) {
-      const pos = currentPositionRef.current
-      if (pos >= 1) {
-        const done = completed || reachedEnd(pos)
-        if (done) setCompleted(true)
-        saveProgress(video._id, pos, done)
-        onProgressUpdate(video._id, pos, done)
+      try {
+        const pos = currentPositionRef.current
+        if (pos >= 1) {
+          const done = completed || reachedEnd(pos)
+          if (done) setCompleted(true)
+          saveProgress(video._id, pos, done)
+          onProgressUpdate(video._id, pos, done)
+        }
+        cleanup()
+      } catch {
+        // Best-effort save/teardown — closing the row still has to happen below.
       }
-      cleanup()
     }
     setOpen((o) => !o)
   }
