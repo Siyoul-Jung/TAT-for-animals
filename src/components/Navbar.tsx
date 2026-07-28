@@ -150,7 +150,7 @@ export default function Navbar() {
           )}
           {isLoggedIn ? (
             <>
-              {renderNavLink(isMember ? '/library' : '/membership', isMember ? 'Calm Space' : 'Pricing')}
+              {renderNavLink(isMember ? '/library' : '/membership', isMember ? 'Collection' : 'Pricing')}
               {renderNavLink('/dashboard', 'Dashboard')}
             </>
           ) : (
