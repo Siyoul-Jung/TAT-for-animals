@@ -630,7 +630,7 @@ export default function DashboardClient({
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <ContentCard
-                title="Library"
+                title="Calm Space"
                 description="TAT for Animals"
                 href="/library"
                 badge="The Calm Connection"
