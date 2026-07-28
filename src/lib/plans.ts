@@ -5,9 +5,11 @@
 export type Plan = 'subscriber' | 'pro_subscriber';
 
 // "The Calm Library" → "The Calm Connection" (Tapas, 2026-07-14 — "Library
-// sounded too boring"). The content space itself was later renamed too, from
-// "Library" to "Your Calm Space" (Tapas, 2026-07-27 — same complaint about
-// "Library" repeating through the flow).
+// sounded too boring"). The content space itself was renamed too: "Library" →
+// briefly "Your Calm Space" → "Calm Collection" (Tapas/Jez, 2026-07-28). The
+// warm phrase "Calm Space" now lives only in the welcome email's greeting
+// ("Welcome to your Calm Space"); everywhere the space is named it's the
+// "Calm Collection" (menu label kept short as "Collection").
 export const PLAN_NAMES: Record<Plan, string> = {
   subscriber: 'The Calm Connection',
   pro_subscriber: 'The Calm Circle',

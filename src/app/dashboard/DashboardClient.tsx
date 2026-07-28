@@ -610,7 +610,7 @@ export default function DashboardClient({
           ) : (
             <div className="space-y-4">
               <p className="text-charcoal/80 text-base leading-relaxed">
-                Ready to begin? Choose a plan to open the library.
+                Ready to begin? Choose a plan to open your Calm Collection.
               </p>
               <Link
                 href="/membership"
@@ -630,7 +630,7 @@ export default function DashboardClient({
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <ContentCard
-                title="Calm Space"
+                title="Calm Collection"
                 description="TAT for Animals"
                 href="/library"
                 badge="The Calm Connection"
