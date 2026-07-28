@@ -38,7 +38,7 @@ export function welcomeEmail(
               <p style="margin:0;font-size:17px;color:rgba(28,16,7,0.65);line-height:1.7;">
                 ${summary}
               </p>
-              ${emailButton(LIBRARY_URL, isCircle ? 'Access Your Calm Circle Resources &rarr;' : 'Access Your Calm Library &rarr;')}
+              ${emailButton(LIBRARY_URL, 'Access Your Calm Space &rarr;')}
               <p style="margin:28px 0 0;font-size:14px;color:rgba(28,16,7,0.6);line-height:1.7;">
                 ${billingTerms}
               </p>`;

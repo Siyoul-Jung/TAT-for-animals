@@ -7,7 +7,7 @@ import { sanityClient } from '@/lib/sanity'
 import LibraryClient from './LibraryClient'
 
 export const metadata: Metadata = {
-  title: 'Library | TAT for Animals',
+  title: 'Your Calm Space | TAT for Animals',
 }
 
 export type Video = {

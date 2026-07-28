@@ -577,10 +577,13 @@ export default function LibraryClient({
           Dashboard
         </Link>
 
-        <h1 className="font-serif text-3xl text-charcoal mb-6">Library</h1>
+        <h1 className="font-serif text-3xl text-charcoal mb-2">Your Calm Space</h1>
+        <p className="text-base text-charcoal/65 leading-relaxed mb-6">
+          Watch and practice anytime: your TAT videos, live webinars, and the full recording archive, all in one place.
+        </p>
 
         {/* 탭 */}
-        <div role="tablist" aria-label="Library sections" className="flex gap-1 p-1 bg-charcoal/6 rounded-2xl mb-8">
+        <div role="tablist" aria-label="Calm Space sections" className="flex gap-1 p-1 bg-charcoal/6 rounded-2xl mb-8">
           {tabs.map((tab) => (
             <button
               key={tab.id}
