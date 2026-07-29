@@ -89,7 +89,8 @@ Vercel → 프로젝트 → **Settings → Environment Variables → Production*
 | `RESEND_API_KEY` | Resend API 키 (모든 이메일 발송) | 🔒 |
 | `OPS_ALERT_EMAIL` | 실패 알림 수신 주소, 쉼표로 여러 명 가능 (미설정 시 사이트 오너로 발송) — ✅ 값 재설정·확인 완료(2026-07-22, 다음 배포부터 적용) | 🔒 |
 | `NEXT_PUBLIC_SITE_URL` | **프로덕션 도메인** (예 `https://tatforanimals.com`). 모든 결제 리다이렉트·이메일 링크·로고가 의존 | 노출 |
-| `CRON_SECRET` | Vercel Cron 인증. **미설정 시 연간 갱신 사전고지 메일이 조용히 안 나감**(법정 고지) | 🔒 |
+| `CRON_SECRET` | Vercel Cron 인증. **미설정 시 연간 갱신 사전고지 메일도, 회원명단 CSV도 조용히 안 나감**(법정 고지 + Jan 정산용) | 🔒 |
+| `MEMBER_EXPORT_EMAIL` | Jan/Jez용 회원명단 CSV(이름/이메일/티어/상태) 수신 주소, 쉼표로 여러 명 가능. **미설정 시 발송 자체를 건너뜀**(fail-closed — OPS_ALERT_EMAIL과 달리 사이트 오너로의 폴백 없음, 회원 이메일이 담긴 파일이라 의도치 않은 수신자로 새는 것보다 안전) — 주기(현재 1일·15일)·수신자는 Jez 확인 후 확정 필요, 아직 미확정 | 🔒 |
 
 **체크 요령:**
 - [ ] 위 변수가 **Production 환경**에 전부 존재 (Preview에도 필요하면 별도 체크)
