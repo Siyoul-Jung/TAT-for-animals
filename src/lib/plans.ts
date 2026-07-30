@@ -5,11 +5,12 @@
 export type Plan = 'subscriber' | 'pro_subscriber';
 
 // "The Calm Library" → "The Calm Connection" (Tapas, 2026-07-14 — "Library
-// sounded too boring"). The content space itself was renamed too: "Library" →
-// briefly "Your Calm Space" → "Calm Collection" (Tapas/Jez, 2026-07-28). The
-// warm phrase "Calm Space" now lives only in the welcome email's greeting
-// ("Welcome to your Calm Space"); everywhere the space is named it's the
-// "Calm Collection" (menu label kept short as "Collection").
+// sounded too boring"). The content space itself went through several names:
+// "Library" → "Your Calm Space" → "Calm Collection" (2026-07-28) → settled on
+// "Video Library" (Tapas/Jez, 2026-07-30 — "Calm Collection" read too close to
+// the tier name "The Calm Connection"). "Calm Space" survives only as the warm
+// greeting on the library page and in the welcome email ("Welcome to your Calm
+// Space, [name]"); everywhere the space itself is named it's "Video Library".
 export const PLAN_NAMES: Record<Plan, string> = {
   subscriber: 'The Calm Connection',
   pro_subscriber: 'The Calm Circle',

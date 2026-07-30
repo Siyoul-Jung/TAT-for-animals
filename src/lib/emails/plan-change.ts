@@ -12,8 +12,8 @@ export function planChangeEmail(
   const subject = `You're now on ${planName}`;
 
   const summary = newPlan === 'pro_subscriber'
-    ? "You now have full access to your Calm Collection, plus this month's live webinar with Tapas and the full recording archive."
-    : "You now have full access to your Calm Collection.";
+    ? "You now have full access to your Video Library, plus this month's live webinar with Tapas and the full recording archive."
+    : "You now have full access to your Video Library.";
 
   const content = `
               <h1 class="email-h1" style="margin:0 0 16px;font-family:'Georgia',serif;font-size:30px;font-weight:500;color:#1C1007;line-height:1.3;">
@@ -25,7 +25,7 @@ export function planChangeEmail(
               <p style="margin:0;font-size:17px;color:rgba(28,16,7,0.65);line-height:1.7;">
                 ${summary}
               </p>
-              ${emailButton(LIBRARY_URL, 'Go to your Calm Collection &rarr;')}`;
+              ${emailButton(LIBRARY_URL, 'Go to your Video Library &rarr;')}`;
 
   const html = emailShell({
     title: subject,

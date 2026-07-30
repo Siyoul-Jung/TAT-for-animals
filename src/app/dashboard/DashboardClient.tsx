@@ -6,6 +6,7 @@ import Link from 'next/link'
 import ManageSubscriptionButton from './ManageSubscriptionButton'
 import { BOOKING_URL } from '@/lib/links'
 import { createClient } from '@/lib/supabase/client'
+import { displayFirstName } from '@/lib/utils'
 
 type WebinarSession = {
   _id: string
@@ -171,7 +172,7 @@ export default function DashboardClient({
   }
 
   const nextChargeDate = formatPeriodEnd(currentPeriodEnd)
-  const displayName = fullName ? fullName.trim().split(/\s+/)[0] : null
+  const displayName = displayFirstName(fullName)
   const plan = PLAN_INFO[role]
   const planPrice = plan ? (billingInterval === 'year' ? plan.year : plan.month) : ''
   const badge = STATUS_BADGE[subscriptionStatus] ?? STATUS_BADGE.inactive
@@ -446,6 +447,121 @@ export default function DashboardClient({
           </section>
         )}
 
+        {/* Content (subscribers only) — moved above Your Membership so a member
+            lands on what they get before the billing details (Jez, 2026-07-30). */}
+        {plan && (
+          <section className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm space-y-5">
+            <h2 className="text-xs font-semibold uppercase tracking-widest text-green">
+              Your Content
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <ContentCard
+                title="Video Library"
+                description="TAT for Animals"
+                href="/library"
+                badge="The Calm Connection"
+              />
+              <ContentCard
+                title="Live Webinars"
+                description={role === 'pro_subscriber' ? 'Monthly webinars with Tapas · Past recordings included' : 'Connect live with Tapas every month for your animal—and for you'}
+                href={role === 'pro_subscriber' ? '/library?tab=live' : ''}
+                badge="The Calm Circle"
+                locked={role !== 'pro_subscriber'}
+                onClick={canUpgrade ? () => openUpgrade() : undefined}
+                contactToUpgrade={canUpgradeViaContact}
+                isLoading={false}
+              />
+            </div>
+
+            {/* Upgrade confirm — opens inline right under the Live Webinars card
+                (the single upgrade entry point). The change is immediate and
+                charges a prorated amount, so we say so before doing it. Guarded
+                on the same conditions as the card's Upgrade action. */}
+            {confirmingUpgrade && canUpgrade && (
+              !isPayPal && previewLoading ? (
+                /* Work out the amount first, then reveal the full card — so it never
+                   shows with a placeholder price or shifts as the number lands. */
+                <div
+                  role="status"
+                  className="rounded-2xl border p-5 flex items-center gap-3"
+                  style={{ backgroundColor: 'rgba(212,112,58,0.05)', borderColor: 'rgba(212,112,58,0.20)' }}
+                >
+                  <svg className="w-5 h-5 animate-spin text-brand shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" className="opacity-25" />
+                    <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                  </svg>
+                  <p className="text-sm text-charcoal/70">One moment…</p>
+                </div>
+              ) : (
+                <div
+                  className="rounded-2xl border p-5 space-y-4"
+                  style={{ backgroundColor: 'rgba(212,112,58,0.05)', borderColor: 'rgba(212,112,58,0.20)' }}
+                >
+                  <div className="space-y-3">
+                    <div className="space-y-1">
+                      <p className="font-serif text-lg text-charcoal leading-snug">
+                        Move up to The Calm Circle
+                      </p>
+                      <p className="text-sm text-charcoal/70 leading-relaxed">
+                        {isPayPal
+                          ? 'Live webinars with Tapas. You’ll confirm the new price with PayPal on the next screen.'
+                          : 'Live webinars with Tapas, starting today.'}
+                      </p>
+                    </div>
+                    <dl className="text-sm space-y-1.5">
+                      {/* Today's prorated charge — shown only once computed. PayPal
+                          can't be previewed; only the ongoing price is shown. */}
+                      {!isPayPal && previewAmount && (
+                        <div className="flex gap-4">
+                          <dt className="w-16 shrink-0 text-charcoal/60">Today</dt>
+                          <dd className="font-medium text-charcoal">{previewAmount}</dd>
+                        </div>
+                      )}
+                      <div className="flex gap-4">
+                        <dt className="w-16 shrink-0 text-charcoal/60">Monthly</dt>
+                        <dd className="font-medium text-charcoal">$47</dd>
+                      </div>
+                    </dl>
+                  </div>
+                  <div className="flex items-center gap-5 pt-2 border-t border-charcoal/8">
+                    <button
+                      onClick={() => handleChangePlan('pro_subscriber')}
+                      disabled={changingPlan}
+                      className="inline-flex items-center min-h-[44px] text-[19px] font-bold text-brand underline underline-offset-[5px] decoration-2 hover:opacity-70 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {changingPlan ? 'Upgrading…' : 'Confirm'}
+                    </button>
+                    <button
+                      onClick={() => setConfirmingUpgrade(false)}
+                      disabled={changingPlan}
+                      className="min-h-[44px] flex items-center text-sm text-charcoal/60 hover:text-charcoal/90 transition-colors disabled:opacity-50"
+                    >
+                      Not now
+                    </button>
+                  </div>
+                </div>
+              )
+            )}
+            {/* Quiet 1:1 booking entry for members — the warmest audience for a private
+                session, placed gently (no payment pressure). Green is AA-legible here.
+                Copy per Tapas's review; URL shared via lib/links. */}
+            <div className="pt-1">
+              <a
+                href={BOOKING_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block font-medium underline underline-offset-2 hover:opacity-70 transition-opacity"
+                style={{ color: '#467826' }}
+              >
+                Book a private session with <span className="whitespace-nowrap">Tapas ↗</span>
+              </a>
+              <p className="text-sm text-charcoal/65 leading-relaxed mt-1">
+                Personalized support for your animal&rsquo;s calm and well-being.
+              </p>
+            </div>
+          </section>
+        )}
+
         {/* Membership card */}
         <section id="your-membership" className="scroll-mt-24 bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm space-y-5">
           <h2 className="text-xs font-semibold uppercase tracking-widest text-green">
@@ -610,7 +726,7 @@ export default function DashboardClient({
           ) : (
             <div className="space-y-4">
               <p className="text-charcoal/80 text-base leading-relaxed">
-                Ready to begin? Choose a plan to open your Calm Collection.
+                Ready to begin? Choose a plan to open your Video Library.
               </p>
               <Link
                 href="/membership"
@@ -621,120 +737,6 @@ export default function DashboardClient({
             </div>
           )}
         </section>
-
-        {/* Content (subscribers only) */}
-        {plan && (
-          <section className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm space-y-5">
-            <h2 className="text-xs font-semibold uppercase tracking-widest text-green">
-              Your Content
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <ContentCard
-                title="Calm Collection"
-                description="TAT for Animals"
-                href="/library"
-                badge="The Calm Connection"
-              />
-              <ContentCard
-                title="Live Webinars"
-                description={role === 'pro_subscriber' ? 'Monthly webinars with Tapas · Past recordings included' : 'Connect live with Tapas every month for your animal—and for you'}
-                href={role === 'pro_subscriber' ? '/library?tab=live' : ''}
-                badge="The Calm Circle"
-                locked={role !== 'pro_subscriber'}
-                onClick={canUpgrade ? () => openUpgrade() : undefined}
-                contactToUpgrade={canUpgradeViaContact}
-                isLoading={false}
-              />
-            </div>
-
-            {/* Upgrade confirm — opens inline right under the Live Webinars card
-                (the single upgrade entry point). The change is immediate and
-                charges a prorated amount, so we say so before doing it. Guarded
-                on the same conditions as the card's Upgrade action. */}
-            {confirmingUpgrade && canUpgrade && (
-              !isPayPal && previewLoading ? (
-                /* Work out the amount first, then reveal the full card — so it never
-                   shows with a placeholder price or shifts as the number lands. */
-                <div
-                  role="status"
-                  className="rounded-2xl border p-5 flex items-center gap-3"
-                  style={{ backgroundColor: 'rgba(212,112,58,0.05)', borderColor: 'rgba(212,112,58,0.20)' }}
-                >
-                  <svg className="w-5 h-5 animate-spin text-brand shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" className="opacity-25" />
-                    <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-                  </svg>
-                  <p className="text-sm text-charcoal/70">One moment…</p>
-                </div>
-              ) : (
-                <div
-                  className="rounded-2xl border p-5 space-y-4"
-                  style={{ backgroundColor: 'rgba(212,112,58,0.05)', borderColor: 'rgba(212,112,58,0.20)' }}
-                >
-                  <div className="space-y-3">
-                    <div className="space-y-1">
-                      <p className="font-serif text-lg text-charcoal leading-snug">
-                        Move up to The Calm Circle
-                      </p>
-                      <p className="text-sm text-charcoal/70 leading-relaxed">
-                        {isPayPal
-                          ? 'Live webinars with Tapas. You’ll confirm the new price with PayPal on the next screen.'
-                          : 'Live webinars with Tapas, starting today.'}
-                      </p>
-                    </div>
-                    <dl className="text-sm space-y-1.5">
-                      {/* Today's prorated charge — shown only once computed. PayPal
-                          can't be previewed; only the ongoing price is shown. */}
-                      {!isPayPal && previewAmount && (
-                        <div className="flex gap-4">
-                          <dt className="w-16 shrink-0 text-charcoal/60">Today</dt>
-                          <dd className="font-medium text-charcoal">{previewAmount}</dd>
-                        </div>
-                      )}
-                      <div className="flex gap-4">
-                        <dt className="w-16 shrink-0 text-charcoal/60">Monthly</dt>
-                        <dd className="font-medium text-charcoal">$47</dd>
-                      </div>
-                    </dl>
-                  </div>
-                  <div className="flex items-center gap-5 pt-2 border-t border-charcoal/8">
-                    <button
-                      onClick={() => handleChangePlan('pro_subscriber')}
-                      disabled={changingPlan}
-                      className="inline-flex items-center min-h-[44px] text-[19px] font-bold text-brand underline underline-offset-[5px] decoration-2 hover:opacity-70 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {changingPlan ? 'Upgrading…' : 'Confirm'}
-                    </button>
-                    <button
-                      onClick={() => setConfirmingUpgrade(false)}
-                      disabled={changingPlan}
-                      className="min-h-[44px] flex items-center text-sm text-charcoal/60 hover:text-charcoal/90 transition-colors disabled:opacity-50"
-                    >
-                      Not now
-                    </button>
-                  </div>
-                </div>
-              )
-            )}
-            {/* Quiet 1:1 booking entry for members — the warmest audience for a private
-                session, placed gently (no payment pressure). Green is AA-legible here.
-                Copy per Tapas's review; URL shared via lib/links. */}
-            <div className="pt-1">
-              <a
-                href={BOOKING_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block font-medium underline underline-offset-2 hover:opacity-70 transition-opacity"
-                style={{ color: '#467826' }}
-              >
-                Book a private session with <span className="whitespace-nowrap">Tapas ↗</span>
-              </a>
-              <p className="text-sm text-charcoal/65 leading-relaxed mt-1">
-                Personalized support for your animal&rsquo;s calm and well-being.
-              </p>
-            </div>
-          </section>
-        )}
 
         {/* Account */}
         <section className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm space-y-1">

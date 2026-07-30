@@ -7,7 +7,7 @@ import { sanityClient } from '@/lib/sanity'
 import LibraryClient from './LibraryClient'
 
 export const metadata: Metadata = {
-  title: 'Your Calm Collection | TAT for Animals',
+  title: 'Your Video Library | TAT for Animals',
 }
 
 export type Video = {
@@ -59,7 +59,7 @@ export default async function LibraryPage({
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('role, subscription_status, cancel_at, paypal_subscription_id, billing_interval')
+    .select('role, full_name, subscription_status, cancel_at, paypal_subscription_id, billing_interval')
     .eq('id', user.id)
     .single()
 
@@ -125,6 +125,7 @@ export default async function LibraryPage({
         upcoming={upcoming}
         lockedRecordings={lockedRecordings}
         role={role}
+        fullName={profile?.full_name ?? null}
         isPayPal={!!profile?.paypal_subscription_id}
         billingInterval={profile?.billing_interval ?? null}
       />
