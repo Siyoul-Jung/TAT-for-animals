@@ -51,7 +51,10 @@ function VideoCard({ video, progress, onOpen }: {
   onOpen: (v: Video) => void
 }) {
   const duration = formatDuration(video.duration)
-  const hasProgress = !progress?.completed && progress?.lastPosition && progress.lastPosition > 5 && video.duration
+  // Boolean(...) matters here, not just style: without it, a lastPosition of
+  // exactly 0 short-circuits the && chain to the number 0 — and {0 && <div/>}
+  // renders the literal text "0" in JSX, unlike {false && <div/>} or {null && <div/>}.
+  const hasProgress = Boolean(!progress?.completed && progress?.lastPosition && progress.lastPosition > 5 && video.duration)
   return (
     <button
       onClick={() => onOpen(video)}
