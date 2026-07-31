@@ -4,6 +4,7 @@ import { membershipHasLapsed } from '@/lib/access'
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import { sanityClient } from '@/lib/sanity'
+import { fetchVimeoThumbnail } from '@/lib/video'
 import LibraryClient from './LibraryClient'
 
 export const metadata: Metadata = {
@@ -20,6 +21,7 @@ export type Video = {
   topicTags: string[] | null
   keywords: string | null
   dateRecorded: string | null
+  thumbnailUrl: string | null
 }
 
 export type WebinarRecording = {
@@ -81,12 +83,13 @@ export default async function LibraryPage({
   let upcoming: WebinarSession[] = []
   let lockedRecordings: RecordingPreview[] = []
   try {
-    [animalsVideos, recordings, upcoming, lockedRecordings] = await Promise.all([
-      // Only "TAT for Animals" videos surface here. "Healing ACEs Plus" is a separate
-      // program that lives solely on tatlife.com (it's for healing people, not animals),
-      // so it is intentionally NOT queried or shown on this site (Tapas, 2026-06-25).
-      // The library option still exists in the Sanity schema to keep Jez's data intact.
-      sanityClient.fetch<Video[]>(
+    let rawVideos: Omit<Video, 'thumbnailUrl'>[]
+    // Only "TAT for Animals" videos surface here. "Healing ACEs Plus" is a separate
+    // program that lives solely on tatlife.com (it's for healing people, not animals),
+    // so it is intentionally NOT queried or shown on this site (Tapas, 2026-06-25).
+    // The library option still exists in the Sanity schema to keep Jez's data intact.
+    [rawVideos, recordings, upcoming, lockedRecordings] = await Promise.all([
+      sanityClient.fetch<Omit<Video, 'thumbnailUrl'>[]>(
         `*[_type == "video" && status == "published" && library == "TAT for Animals"] | order(category asc, dateRecorded asc) {
           _id, title, category, duration, summary, videoUrl, topicTags, keywords, dateRecorded
         }`
@@ -113,6 +116,11 @@ export default async function LibraryPage({
           )
         : Promise.resolve([]),
     ])
+    // Fetched separately (not blocked on the query above finishing render) —
+    // a thumbnail fetch failing must never take the video list down with it;
+    // fetchVimeoThumbnail already swallows its own errors and returns null.
+    const thumbnails = await Promise.all(rawVideos.map((v) => fetchVimeoThumbnail(v.videoUrl)))
+    animalsVideos = rawVideos.map((v, i) => ({ ...v, thumbnailUrl: thumbnails[i] }))
   } catch (e) {
     console.error('Library: Sanity fetch failed, showing empty library:', e)
   }

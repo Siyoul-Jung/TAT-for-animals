@@ -19,3 +19,26 @@ export function formatDuration(seconds: number | null): string | null {
   if (h > 0) return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
   return `${m}:${String(s).padStart(2, '0')}`
 }
+
+// oEmbed needs the full unlisted URL (id + hash) — a bare id 404s. Non-public
+// videos also only return a thumbnail if the request's referrer matches an
+// allowed embed domain — the Vimeo embed setting here is already "Anywhere",
+// same as the player itself.
+export async function fetchVimeoThumbnail(videoUrl: string): Promise<string | null> {
+  const vimeo = parseVimeo(videoUrl)
+  if (!vimeo) return null
+  const fullUrl = vimeo.hash
+    ? `https://vimeo.com/${vimeo.id}/${vimeo.hash}`
+    : `https://vimeo.com/${vimeo.id}`
+  try {
+    const res = await fetch(
+      `https://vimeo.com/api/oembed.json?url=${encodeURIComponent(fullUrl)}&width=400`,
+      { next: { revalidate: 3600 } }
+    )
+    if (!res.ok) return null
+    const data = await res.json()
+    return typeof data.thumbnail_url === 'string' ? data.thumbnail_url : null
+  } catch {
+    return null
+  }
+}
