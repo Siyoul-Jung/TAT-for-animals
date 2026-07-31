@@ -17,8 +17,8 @@ export function welcomeEmail(
 
   // What they get — one calm line, adapts to the tier (no decorative list).
   const summary = isCircle
-    ? 'Your full Calm Collection and monthly live webinars with Tapas are ready whenever you are.'
-    : 'Your full Calm Collection is ready whenever you are.';
+    ? 'Your full Video Library and monthly live webinars with Tapas are ready whenever you are.'
+    : 'Your full Video Library is ready whenever you are.';
 
   // Billing terms restated in the welcome — California's auto-renewal law asks
   // the confirmation to state the renewal terms, how to cancel, and (for annual)
@@ -38,7 +38,7 @@ export function welcomeEmail(
               <p style="margin:0;font-size:17px;color:rgba(28,16,7,0.65);line-height:1.7;">
                 ${summary}
               </p>
-              ${emailButton(LIBRARY_URL, 'Access your Calm Collection &rarr;')}
+              ${emailButton(LIBRARY_URL, 'Access your Video Library &rarr;')}
               <p style="margin:28px 0 0;font-size:14px;color:rgba(28,16,7,0.6);line-height:1.7;">
                 ${billingTerms}
               </p>`;

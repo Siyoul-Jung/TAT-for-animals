@@ -7,6 +7,7 @@ import Player from '@vimeo/player'
 import type { Video, WebinarRecording, WebinarSession, RecordingPreview } from './page'
 import { loadAllProgress, saveProgress, type ProgressMap } from '@/lib/videoProgress'
 import { parseVimeo, formatDuration } from '@/lib/video'
+import { displayFirstName } from '@/lib/utils'
 import BackToTopButton from '@/components/BackToTopButton'
 import AskTapasForm from './AskTapasForm'
 
@@ -350,6 +351,7 @@ export default function LibraryClient({
   upcoming,
   lockedRecordings,
   role,
+  fullName,
   isPayPal,
   billingInterval,
 }: {
@@ -358,6 +360,7 @@ export default function LibraryClient({
   upcoming: WebinarSession[]
   lockedRecordings: RecordingPreview[]
   role: string
+  fullName: string | null
   isPayPal: boolean
   billingInterval: string | null
 }) {
@@ -365,6 +368,7 @@ export default function LibraryClient({
   // would flip their cadence), so route them to support instead of the confirm
   // flow — parity with the dashboard.
   const isAnnual = billingInterval === 'year'
+  const firstName = displayFirstName(fullName)
   const searchParams = useSearchParams()
   const tabParam = searchParams.get('tab')
 
@@ -573,24 +577,20 @@ export default function LibraryClient({
     <main className="min-h-screen bg-cream pt-20 pb-16 px-6">
       <div className="max-w-3xl mx-auto">
 
-        {/* 뒤로가기 */}
-        <Link
-          href="/dashboard"
-          className="inline-flex items-center gap-2 text-sm text-charcoal/65 hover:text-charcoal transition-colors min-h-[44px] mb-2"
-        >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={1.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M10 12L6 8l4-4" />
-          </svg>
-          Dashboard
-        </Link>
+        {/* 인사말 — 이전 "< Dashboard" 뒤로가기 링크 자리, 같은 크기(text-sm)로
+            교체 (Jez, 2026-07-30). 뒤로가기는 대시보드에서 넘어오지 않아도
+            도착하는 첫 페이지라 필요 없다는 판단. */}
+        <p className="text-sm text-charcoal/65 mb-2">
+          {firstName ? <>Welcome to Your Calm Space, {firstName}.</> : 'Welcome to Your Calm Space.'}
+        </p>
 
-        <h1 className="font-serif text-3xl text-charcoal mb-2">Your Calm Collection</h1>
+        <h1 className="font-serif text-3xl text-charcoal mb-2">Your Video Library</h1>
         <p className="text-base text-charcoal/65 leading-relaxed mb-6">
           Watch and practice anytime: your TAT videos, live webinars, and the full recording archive, all in one place.
         </p>
 
         {/* 탭 */}
-        <div role="tablist" aria-label="Calm Collection sections" className="flex gap-1 p-1 bg-charcoal/6 rounded-2xl mb-8">
+        <div role="tablist" aria-label="Video Library sections" className="flex gap-1 p-1 bg-charcoal/6 rounded-2xl mb-8">
           {tabs.map((tab) => (
             <button
               key={tab.id}
