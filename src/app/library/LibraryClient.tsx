@@ -34,22 +34,103 @@ function videoMatchesSearch(video: Video, query: string): boolean {
   return false
 }
 
-function VideoRow({ video, progress, onProgressUpdate }: {
+function WatchedBadge() {
+  return (
+    <span className="inline-flex items-center gap-1 text-xs font-medium" style={{ color: '#467826' }}>
+      <svg width="11" height="11" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M2 7l3.5 3.5L11 3" />
+      </svg>
+      Watched
+    </span>
+  )
+}
+
+function VideoCard({ video, progress, onOpen }: {
   video: Video
   progress: { lastPosition: number; completed: boolean } | undefined
+  onOpen: (v: Video) => void
+}) {
+  const duration = formatDuration(video.duration)
+  const hasProgress = !progress?.completed && progress?.lastPosition && progress.lastPosition > 5 && video.duration
+  return (
+    <button
+      onClick={() => onOpen(video)}
+      className="text-left rounded-2xl border border-charcoal/10 bg-white overflow-hidden shadow-sm hover:shadow-md hover:border-brand/30 transition-all focus-visible:[outline-offset:-2px]"
+    >
+      <div className="aspect-video bg-charcoal/10 relative">
+        {video.thumbnailUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element -- external Vimeo CDN thumbnail, not a static/optimizable local asset
+          <img src={video.thumbnailUrl} alt="" loading="lazy" className="w-full h-full object-cover" />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-charcoal/30 text-sm">No preview</div>
+        )}
+        {hasProgress && (
+          <div className="absolute bottom-0 inset-x-0 h-1 bg-black/20">
+            <div
+              className="h-full"
+              style={{ width: `${Math.min((progress!.lastPosition / video.duration!) * 100, 100)}%`, backgroundColor: '#D4703A' }}
+            />
+          </div>
+        )}
+      </div>
+      <div className="p-4">
+        <p className="font-medium text-base text-charcoal leading-snug line-clamp-2">{video.title}</p>
+        {video.summary && (
+          <p className="text-sm text-charcoal/65 leading-relaxed mt-1 line-clamp-3">{video.summary}</p>
+        )}
+        <div className="flex items-center gap-2 mt-2">
+          {duration && <p className="text-xs text-charcoal/45">{duration}</p>}
+          {progress?.completed && <WatchedBadge />}
+        </div>
+      </div>
+    </button>
+  )
+}
+
+// Mobile: a full-width grid card forces a huge 16:9 thumbnail at phone width
+// (~390px → ~220px tall just for the image), so under sm: this small
+// fixed-size thumbnail + text row keeps the "visual, not bare text" upgrade
+// without the height cost (live-checked on a 390px viewport, 2026-07-30).
+function MobileVideoRow({ video, progress, onOpen }: {
+  video: Video
+  progress: { lastPosition: number; completed: boolean } | undefined
+  onOpen: (v: Video) => void
+}) {
+  return (
+    <button
+      onClick={() => onOpen(video)}
+      className="w-full flex items-center gap-3 py-3 text-left border-b border-charcoal/8 last:border-0 min-h-[64px] focus-visible:[outline-offset:-2px]"
+    >
+      <div className="w-20 h-14 rounded-lg bg-charcoal/10 overflow-hidden shrink-0">
+        {video.thumbnailUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element -- external Vimeo CDN thumbnail
+          <img src={video.thumbnailUrl} alt="" loading="lazy" className="w-full h-full object-cover" />
+        ) : null}
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="font-medium text-base text-charcoal leading-snug line-clamp-1">{video.title}</p>
+        {progress?.completed ? (
+          <WatchedBadge />
+        ) : video.summary ? (
+          <p className="text-sm text-charcoal/65 leading-snug mt-0.5 line-clamp-1">{video.summary}</p>
+        ) : null}
+      </div>
+    </button>
+  )
+}
+
+function VideoPlayerModal({ video, progress, onClose, onProgressUpdate }: {
+  video: Video
+  progress: { lastPosition: number; completed: boolean } | undefined
+  onClose: () => void
   onProgressUpdate: (contentId: string, lastPosition: number, completed: boolean) => void
 }) {
-  const [open, setOpen] = useState(false)
-  const [completed, setCompleted] = useState(progress?.completed ?? false)
+  const vimeo = parseVimeo(video.videoUrl)
   const [playerError, setPlayerError] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const playerRef = useRef<Player | null>(null)
   const saveTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const currentPositionRef = useRef(0)
-  const vimeo = parseVimeo(video.videoUrl)
-  const vimeoId = vimeo?.id ?? null
-  const vimeoHash = vimeo?.hash ?? null
-  const duration = formatDuration(video.duration)
 
   // Treat "watched to the end" generously: most people stop a few seconds short
   // of the literal end, so ≥95% counts as complete (the natural 'ended' event
@@ -65,16 +146,16 @@ function VideoRow({ video, progress, onProgressUpdate }: {
   }, [])
 
   useEffect(() => {
-    if (!open || !vimeoId || !containerRef.current) return
+    if (!vimeo?.id || !containerRef.current) return
 
     setPlayerError(false)
 
     const player = new Player(containerRef.current, {
       // Pass the full URL (with the unlisted hash) rather than the bare id — the
       // hash is required for private videos or the player shows "not available".
-      url: vimeoHash
-        ? `https://player.vimeo.com/video/${vimeoId}?h=${vimeoHash}`
-        : `https://player.vimeo.com/video/${vimeoId}`,
+      url: vimeo.hash
+        ? `https://player.vimeo.com/video/${vimeo.id}?h=${vimeo.hash}`
+        : `https://player.vimeo.com/video/${vimeo.id}`,
       autoplay: true,
       responsive: true,
       title: false,
@@ -98,7 +179,6 @@ function VideoRow({ video, progress, onProgressUpdate }: {
     })
 
     player.on('ended', () => {
-      setCompleted(true)
       onProgressUpdate(video._id, currentPositionRef.current, true)
       saveProgress(video._id, currentPositionRef.current, true)
     })
@@ -109,137 +189,78 @@ function VideoRow({ video, progress, onProgressUpdate }: {
       // noise row with no visible progress.
       if (pos >= 1) {
         const done = reachedEnd(pos)
-        if (done) setCompleted(true)
         onProgressUpdate(video._id, pos, done)
         saveProgress(video._id, pos, done)
       }
     }, 30000)
 
     return cleanup
-  }, [open, vimeoId, vimeoHash])
+  }, [vimeo?.id, vimeo?.hash])
 
-  const handleToggle = () => {
-    // Closing must never get stuck open just because saving progress or tearing
-    // down the Vimeo player throws (e.g. destroy() on a player that hasn't
-    // finished initializing) — the row has to close either way.
-    if (open) {
-      try {
-        const pos = currentPositionRef.current
-        if (pos >= 1) {
-          const done = completed || reachedEnd(pos)
-          if (done) setCompleted(true)
-          saveProgress(video._id, pos, done)
-          onProgressUpdate(video._id, pos, done)
-        }
-        cleanup()
-      } catch {
-        // Best-effort save/teardown — closing the row still has to happen below.
+  const handleClose = () => {
+    // Closing must never get stuck just because saving progress or tearing down
+    // the Vimeo player throws (e.g. destroy() on a player that hasn't finished
+    // initializing) — the modal has to close either way.
+    try {
+      const pos = currentPositionRef.current
+      if (pos >= 1) {
+        const done = reachedEnd(pos)
+        saveProgress(video._id, pos, done)
+        onProgressUpdate(video._id, pos, done)
       }
+      cleanup()
+    } catch {
+      // Best-effort save/teardown — closing still has to happen below.
     }
-    setOpen((o) => !o)
+    onClose()
   }
 
-  return (
-    <div className="border-b border-charcoal/8 last:border-0">
-      <button
-        onClick={handleToggle}
-        // Inset focus ring: the global :focus-visible outline sits 2px OUTSIDE
-        // the element, and this button is flush against the row above and the
-        // expanded player below — the ring visibly overlapped both. Drawing it
-        // inward keeps it fully inside the row.
-        className="w-full flex items-center gap-4 py-4 text-left group min-h-[64px] focus-visible:[outline-offset:-2px]"
-      >
-        <span className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-colors ${
-          open ? 'bg-brand' : completed ? 'bg-brand/15' : 'bg-charcoal/8 group-hover:bg-brand/10'
-        }`}>
-          {completed ? (
-            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth={2}
-              className={open ? 'text-cream' : 'text-green'}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M2 7l3.5 3.5L11 3" />
-            </svg>
-          ) : (
-            <svg width="13" height="13" viewBox="0 0 13 13" fill="currentColor"
-              className={`ml-0.5 transition-colors ${open ? 'text-cream' : 'text-charcoal/65'}`}>
-              <path d="M2 1.5l9 5-9 5V1.5z" />
-            </svg>
-          )}
-        </span>
-        <div className="flex-1 min-w-0">
-          <p className={`font-medium text-base leading-snug transition-colors ${
-            open ? 'text-green' : 'text-charcoal group-hover:text-green'
-          }`}>
-            {video.title}
-          </p>
-          <p className="text-sm text-charcoal/65 mt-0.5">
-            {completed
-              ? <span style={{ color: '#467826' }}>Watched</span>
-              : progress?.lastPosition && progress.lastPosition > 5 && video.duration
-              ? formatDuration(Math.max(video.duration - progress.lastPosition, 0))
-              : duration}
-          </p>
-          {/* 진행도 바 */}
-          {(completed || (progress?.lastPosition && progress.lastPosition > 5 && video.duration)) && (
-            <div
-              className="mt-2 h-1 rounded-full bg-charcoal/10 overflow-hidden"
-              role="progressbar"
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-valuenow={completed
-                ? 100
-                : Math.round(Math.min((progress!.lastPosition / video.duration!) * 100, 100))}
-              aria-label={`${video.title} — viewing progress`}
-            >
-              <div
-                className="h-full rounded-full transition-all"
-                style={{
-                  width: completed
-                    ? '100%'
-                    : `${Math.min((progress!.lastPosition / video.duration!) * 100, 100)}%`,
-                  backgroundColor: completed ? '#467826' : '#D4703A',
-                }}
-              />
-            </div>
-          )}
-        </div>
-        <svg
-          width="16" height="16" viewBox="0 0 16 16" fill="none"
-          stroke="currentColor" strokeWidth={1.5}
-          className={`text-charcoal/45 shrink-0 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M3 6l5 5 5-5" />
-        </svg>
-      </button>
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') handleClose()
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
-      {open && (
-        <div className="pb-5">
-          {vimeoId && !playerError ? (
-            <div className="rounded-xl overflow-hidden" style={{ background: '#000', position: 'relative', paddingBottom: '56.25%', height: 0 }}>
-              <div ref={containerRef} style={{ position: 'absolute', inset: 0 }} />
-            </div>
-          ) : (
-            <div className="rounded-xl bg-charcoal/6 aspect-video flex items-center justify-center">
-              <p className="text-sm text-charcoal/65">Video not available.</p>
-            </div>
-          )}
-          {video.summary && (
-            <p className="text-sm text-charcoal/65 leading-relaxed mt-3">{video.summary}</p>
-          )}
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={video.title}
+      className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+      onClick={handleClose}
+    >
+      <div className="max-w-3xl w-full" onClick={(e) => e.stopPropagation()}>
+        <div className="flex justify-end mb-2">
+          <button onClick={handleClose} className="text-white text-sm min-h-[44px] px-3">Close ✕</button>
         </div>
-      )}
+        {vimeo?.id && !playerError ? (
+          <div className="rounded-xl overflow-hidden" style={{ background: '#000', position: 'relative', paddingBottom: '56.25%', height: 0 }}>
+            <div ref={containerRef} style={{ position: 'absolute', inset: 0 }} />
+          </div>
+        ) : (
+          <div className="rounded-xl bg-charcoal/6 aspect-video flex items-center justify-center">
+            <p className="text-sm text-charcoal/65">Video not available.</p>
+          </div>
+        )}
+        <p className="text-white mt-3 font-medium">{video.title}</p>
+        {video.summary && <p className="text-white/70 text-sm mt-1 leading-relaxed">{video.summary}</p>}
+      </div>
     </div>
   )
 }
 
-function VideoTab({ videos, progressMap, onProgressUpdate }: {
+function VideoTab({ videos, progressMap, onOpen }: {
   videos: Video[]
   progressMap: ProgressMap
-  onProgressUpdate: (contentId: string, lastPosition: number, completed: boolean) => void
+  onOpen: (v: Video) => void
 }) {
   const categorized = CATEGORY_ORDER.filter((cat) => videos.some((v) => v.category === cat))
   const uncategorized = videos.filter((v) => !CATEGORY_ORDER.includes(v.category))
-  // A category tab already labels the shelf being shown, so the in-card header
-  // pill would just repeat it — only show the pill when more than one group is
-  // present (e.g. search results spanning categories).
+  // A category tab already labels the shelf being shown, so the header would
+  // just repeat it — only show it when more than one group is present (e.g.
+  // "All", or search results spanning categories).
   const showHeaders = categorized.length + (uncategorized.length > 0 ? 1 : 0) > 1
 
   if (videos.length === 0) {
@@ -250,34 +271,41 @@ function VideoTab({ videos, progressMap, onProgressUpdate }: {
     )
   }
 
+  function renderGroup(groupVideos: Video[]) {
+    return (
+      <>
+        {/* Phone: compact rows (small thumbnail, no huge 16:9 image).
+            Tablet/desktop: the thumbnail grid. */}
+        <div className="sm:hidden bg-white rounded-2xl border border-charcoal/10 shadow-sm px-5">
+          {groupVideos.map((video) => (
+            <MobileVideoRow key={video._id} video={video} progress={progressMap[video._id]} onOpen={onOpen} />
+          ))}
+        </div>
+        <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {groupVideos.map((video) => (
+            <VideoCard key={video._id} video={video} progress={progressMap[video._id]} onOpen={onOpen} />
+          ))}
+        </div>
+      </>
+    )
+  }
+
   return (
-    <div className="space-y-3">
+    <div className="space-y-6">
       {categorized.map((cat) => (
-        <div key={cat} className="bg-white rounded-2xl border border-charcoal/10 shadow-sm overflow-hidden">
+        <div key={cat}>
           {showHeaders && (
-            <div className="px-6 pt-5 pb-3 border-b border-charcoal/6">
-              <p className="text-xs font-semibold uppercase tracking-widest text-green">{cat}</p>
-            </div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-green mb-3">{cat}</p>
           )}
-          <div className={showHeaders ? 'px-6' : 'px-6 pt-2'}>
-            {videos.filter((v) => v.category === cat).map((video) => (
-              <VideoRow key={video._id} video={video} progress={progressMap[video._id]} onProgressUpdate={onProgressUpdate} />
-            ))}
-          </div>
+          {renderGroup(videos.filter((v) => v.category === cat))}
         </div>
       ))}
       {uncategorized.length > 0 && (
-        <div className="bg-white rounded-2xl border border-charcoal/10 shadow-sm overflow-hidden">
+        <div>
           {showHeaders && (
-            <div className="px-6 pt-5 pb-3 border-b border-charcoal/6">
-              <p className="text-xs font-semibold uppercase tracking-widest text-green">Videos</p>
-            </div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-green mb-3">Videos</p>
           )}
-          <div className={showHeaders ? 'px-6' : 'px-6 pt-2'}>
-            {uncategorized.map((video) => (
-              <VideoRow key={video._id} video={video} progress={progressMap[video._id]} onProgressUpdate={onProgressUpdate} />
-            ))}
-          </div>
+          {renderGroup(uncategorized)}
         </div>
       )}
     </div>
@@ -379,6 +407,7 @@ export default function LibraryClient({
 
   const [activeTab, setActiveTab] = useState<Tab>(() => resolveTab(tabParam))
   const [progressMap, setProgressMap] = useState<ProgressMap>({})
+  const [openVideo, setOpenVideo] = useState<Video | null>(null)
   const [upgrading, setUpgrading] = useState(false)
   const [upgradeError, setUpgradeError] = useState<string | null>(null)
   const [confirmingUpgrade, setConfirmingUpgrade] = useState(false)
@@ -687,7 +716,7 @@ export default function LibraryClient({
               </div>
             ) : (
               <div role="tabpanel" id="panel-category" aria-label={isSearching ? 'Search results' : activeCategory ?? ''} tabIndex={0}>
-                <VideoTab videos={displayedAnimalsVideos} progressMap={progressMap} onProgressUpdate={handleProgressUpdate} />
+                <VideoTab videos={displayedAnimalsVideos} progressMap={progressMap} onOpen={setOpenVideo} />
               </div>
             )}
           </div>
@@ -920,6 +949,15 @@ export default function LibraryClient({
         )}
 
       </div>
+
+      {openVideo && (
+        <VideoPlayerModal
+          video={openVideo}
+          progress={progressMap[openVideo._id]}
+          onClose={() => setOpenVideo(null)}
+          onProgressUpdate={handleProgressUpdate}
+        />
+      )}
 
       <BackToTopButton />
     </main>
