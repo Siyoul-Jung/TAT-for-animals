@@ -38,6 +38,7 @@ export type WebinarSession = {
   date: string
   description: string | null
   meetingUrl: string | null
+  imageUrl: string | null
 }
 
 // A locked teaser of the recording archive for non-Pro members — real titles
@@ -103,7 +104,7 @@ export default async function LibraryPage({
         : Promise.resolve([]),
       sanityClient.fetch<WebinarSession[]>(
         `*[_type == "webinarSchedule" && date > now()] | order(date asc) [0..1] {
-          _id, title, date, description, meetingUrl
+          _id, title, date, description, meetingUrl, imageUrl
         }`
       ),
       // Locked archive teaser — only for non-Pro members, and only metadata

@@ -75,12 +75,18 @@ export default function NewsletterSignup() {
 
   return (
     <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between lg:gap-10">
-      {/* Lead-in */}
-      <div className="max-w-md">
-        <p className="font-serif text-lg text-cream/90">Stay close to the stories.</p>
-        <p className="text-sm font-light leading-relaxed mt-1" style={{ color: 'rgba(250,246,241,0.65)' }}>
-          Uplifting animal stories and the occasional special offer, straight to your inbox.
-        </p>
+      {/* Lead-in — Tapas's photo slot (Jez, 2026-07-31): awaiting the actual
+          photo file from Jez/Tapas before this renders; the layout is ready. */}
+      <div className="flex items-center gap-5 max-w-md">
+        {/* {tapasPhotoUrl && (
+          <img src={tapasPhotoUrl} alt="Tapas Fleming" className="w-20 h-20 rounded-full object-cover shrink-0" />
+        )} */}
+        <div>
+          <p className="font-serif text-[40px] leading-tight text-cream/90">Stay close to the stories.</p>
+          <p className="text-[22px] font-light leading-relaxed mt-1" style={{ color: 'rgba(250,246,241,0.65)' }}>
+            Uplifting animal stories and the occasional special offer, straight to your inbox.
+          </p>
+        </div>
       </div>
 
       {/* Form / confirmation */}

@@ -40,6 +40,12 @@ export const webinarScheduleType = defineType({
       type: 'url',
       description: 'Paste the Zoom join link here',
     }),
+    defineField({
+      name: 'imageUrl',
+      title: 'Session Image URL',
+      type: 'url',
+      description: 'Optional. Paste an image link to show next to this session on the Upcoming Live Webinars tab.',
+    }),
   ],
   preview: {
     select: {

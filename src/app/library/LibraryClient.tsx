@@ -587,8 +587,8 @@ export default function LibraryClient({
   }, [])
 
   const tabs: { id: Tab; label: string; locked?: boolean }[] = [
-    { id: 'animals', label: 'TAT for Animals' },
-    { id: 'live', label: 'Live Webinars', locked: role !== 'pro_subscriber' },
+    { id: 'animals', label: 'Your Video Library' },
+    { id: 'live', label: 'Upcoming Live Webinars', locked: role !== 'pro_subscriber' },
   ]
 
   // Roving keyboard navigation across the tabs (WCAG tab pattern): arrow keys move
@@ -613,16 +613,13 @@ export default function LibraryClient({
     <main className="min-h-screen bg-cream pt-20 pb-16 px-6">
       <div className="max-w-3xl mx-auto">
 
-        {/* 인사말 — 이전 "< Dashboard" 뒤로가기 링크 자리, 같은 크기(text-sm)로
-            교체 (Jez, 2026-07-30). 뒤로가기는 대시보드에서 넘어오지 않아도
-            도착하는 첫 페이지라 필요 없다는 판단. */}
-        <p className="text-sm text-charcoal/65 mb-2">
+        {/* 인사말이 캡션에서 페이지 제목(H1)으로 승격 — "Your Video Library"는
+            첫 탭 이름으로 이동 (Jez, 2026-07-31). */}
+        <h1 className="font-serif text-3xl text-charcoal mb-2">
           {firstName ? <>Welcome to Your Calm Space, {firstName}.</> : 'Welcome to Your Calm Space.'}
-        </p>
-
-        <h1 className="font-serif text-3xl text-charcoal mb-2">Your Video Library</h1>
+        </h1>
         <p className="text-base text-charcoal/65 leading-relaxed mb-6">
-          Watch and practice anytime: your TAT videos, live webinars, and the full recording archive, all in one place.
+          Watch and learn. Practice TAT anytime. Stay tuned for upcoming live webinars. All in one place.
         </p>
 
         {/* 탭 */}
@@ -645,7 +642,7 @@ export default function LibraryClient({
             >
               <span className="hidden sm:inline">{tab.label}</span>
               <span className="sm:hidden">
-                {tab.id === 'animals' ? 'Animals' : 'Live'}
+                {tab.id === 'animals' ? 'Library' : 'Upcoming'}
               </span>
               {tab.locked && (
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth={1.5}
@@ -736,26 +733,36 @@ export default function LibraryClient({
               {upcoming.length > 0 && (
                 <div className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm space-y-4">
                   <h2 className="text-xs font-semibold uppercase tracking-widest text-green">
-                    Upcoming
+                    Mark Your Calendar
                   </h2>
                   <div className="divide-y divide-charcoal/8">
                     {upcoming.map((session) => (
-                      <div key={session._id} className="py-4 first:pt-0 last:pb-0">
-                        <p className="text-sm text-charcoal/65 mb-0.5">{formatDateTime(session.date)}</p>
-                        <p className="font-semibold text-charcoal text-base">{session.title}</p>
-                        {session.description && (
-                          <p className="text-sm text-charcoal/65 mt-1 leading-relaxed">{session.description}</p>
+                      <div key={session._id} className="py-4 first:pt-0 last:pb-0 flex gap-4">
+                        {session.imageUrl && (
+                          // eslint-disable-next-line @next/next/no-img-element -- admin-pasted external URL, not a static/optimizable local asset
+                          <img
+                            src={session.imageUrl}
+                            alt=""
+                            className="w-20 h-20 rounded-xl object-cover shrink-0"
+                          />
                         )}
-                        {session.meetingUrl && (
-                          <a
-                            href={session.meetingUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 mt-3 min-h-[44px] px-5 py-2.5 rounded-full bg-brand text-white text-[19px] font-bold hover:opacity-90 transition-all whitespace-nowrap"
-                          >
-                            Join on Zoom →
-                          </a>
-                        )}
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm text-charcoal/65 mb-0.5">{formatDateTime(session.date)}</p>
+                          <p className="font-semibold text-charcoal text-base">{session.title}</p>
+                          {session.description && (
+                            <p className="text-sm text-charcoal/65 mt-1 leading-relaxed">{session.description}</p>
+                          )}
+                          {session.meetingUrl && (
+                            <a
+                              href={session.meetingUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1.5 mt-3 min-h-[44px] px-5 py-2.5 rounded-full bg-brand text-white text-[19px] font-bold hover:opacity-90 transition-all whitespace-nowrap"
+                            >
+                              Join on Zoom →
+                            </a>
+                          )}
+                        </div>
                       </div>
                     ))}
                   </div>

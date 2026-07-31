@@ -44,9 +44,16 @@ const socials = [
 export default function Footer() {
   return (
     <footer
-      className="px-6 pt-6 pb-8"
+      className="relative px-6 pt-6 pb-8"
       style={{ backgroundColor: '#1E3310' }}
     >
+      {/* 브랜드 그라디언트 바 — Navbar 하단과 동일한 밴드 (Jez, 2026-07-31) */}
+      <div
+        className="absolute top-0 left-0 right-0 h-[20px]"
+        style={{
+          background: 'linear-gradient(to right, #b0aec8, #e8a0a0, #8fba7a, #e8a890)',
+        }}
+      />
       <div className="max-w-6xl mx-auto">
 
         {/* Newsletter signup — posts to Mailchimp (Stories and Special Offers audience).
@@ -69,8 +76,8 @@ export default function Footer() {
               className="h-7 w-auto object-contain"
               style={{ width: 'auto' }}
             />
-            <span className="text-base font-semibold font-serif text-cream/80">
-              TAT<span className="text-cream/70 text-[11px] align-super">®</span> for Animals
+            <span className="text-[24px] font-semibold font-serif text-cream/80">
+              TAT<span className="text-cream/70 text-sm align-super">®</span> for Animals
             </span>
           </div>
 
