@@ -60,8 +60,12 @@ function VideoCard({ video, progress, onOpen }: {
       onClick={() => onOpen(video)}
       className="text-left rounded-2xl border border-charcoal/10 bg-white overflow-hidden shadow-sm hover:shadow-md hover:border-brand/30 transition-all focus-visible:[outline-offset:-2px]"
     >
-      <div className="aspect-video bg-charcoal/10 relative">
+      <div className="aspect-video bg-charcoal/10 relative border-b border-charcoal/8">
         {video.thumbnailUrl ? (
+          // Most of these are auto-generated title-card graphics (mostly white
+          // space, not a photo), which reads as "broken/empty" without a visible
+          // frame edge — the border-b above gives the image its own boundary
+          // instead of bleeding into the white card body below it.
           // eslint-disable-next-line @next/next/no-img-element -- external Vimeo CDN thumbnail, not a static/optimizable local asset
           <img src={video.thumbnailUrl} alt="" loading="lazy" className="w-full h-full object-cover" />
         ) : (
@@ -298,7 +302,7 @@ function VideoTab({ videos, progressMap, onOpen }: {
       {categorized.map((cat) => (
         <div key={cat}>
           {showHeaders && (
-            <p className="text-xs font-semibold uppercase tracking-widest text-green mb-3">{cat}</p>
+            <p className="text-sm font-bold uppercase tracking-wide text-green mb-4 pb-2 border-b border-green/15">{cat}</p>
           )}
           {renderGroup(videos.filter((v) => v.category === cat))}
         </div>
@@ -306,7 +310,7 @@ function VideoTab({ videos, progressMap, onOpen }: {
       {uncategorized.length > 0 && (
         <div>
           {showHeaders && (
-            <p className="text-xs font-semibold uppercase tracking-widest text-green mb-3">Videos</p>
+            <p className="text-sm font-bold uppercase tracking-wide text-green mb-4 pb-2 border-b border-green/15">Videos</p>
           )}
           {renderGroup(uncategorized)}
         </div>
