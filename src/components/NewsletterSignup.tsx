@@ -82,8 +82,12 @@ export default function NewsletterSignup() {
           <img src={tapasPhotoUrl} alt="Tapas Fleming" className="w-20 h-20 rounded-full object-cover shrink-0" />
         )} */}
         <div>
-          <p className="font-serif text-[40px] leading-tight text-cream/90">Stay close to the stories.</p>
-          <p className="text-[22px] font-light leading-relaxed mt-1" style={{ color: 'rgba(250,246,241,0.65)' }}>
+          {/* 40px/22px는 Jez가 지정한 데스크톱 기준값 — 좁은 화면 그대로 적용하면
+              헤딩만으로 화면 절반을 차지해 Footer의 조용한 존재감이 깨짐
+              (2026-07-31 라이브 확인). 모바일은 비율 맞춰 축소, sm: 이상에서
+              지정값 그대로. */}
+          <p className="font-serif text-[26px] sm:text-[40px] leading-tight text-cream/90">Stay close to the stories.</p>
+          <p className="text-base sm:text-[22px] font-light leading-relaxed mt-1" style={{ color: 'rgba(250,246,241,0.65)' }}>
             Uplifting animal stories and the occasional special offer, straight to your inbox.
           </p>
         </div>
