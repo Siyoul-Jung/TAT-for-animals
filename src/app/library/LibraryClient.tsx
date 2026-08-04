@@ -610,15 +610,17 @@ export default function LibraryClient({
   }
 
   return (
-    <main className="min-h-screen bg-cream pt-20 pb-16 px-6">
+    <main className="min-h-screen bg-cream pt-24 sm:pt-28 pb-16 px-6">
       <div className="max-w-3xl mx-auto">
 
         {/* 인사말이 캡션에서 페이지 제목(H1)으로 승격 — "Your Video Library"는
-            첫 탭 이름으로 이동 (Jez, 2026-07-31). */}
+            첫 탭 이름으로 이동 (Jez, 2026-07-31). Tapas 요청(2026-08-02): 인사말
+            위/탭 사이 여백을 넓혀 더 차분한 느낌으로 — main 상단 padding과
+            설명문 아래 margin을 늘림. */}
         <h1 className="font-serif text-3xl text-charcoal mb-2">
           {firstName ? <>Welcome to Your Calm Space, {firstName}.</> : 'Welcome to Your Calm Space.'}
         </h1>
-        <p className="text-base text-charcoal/65 leading-relaxed mb-6">
+        <p className="text-base text-charcoal/65 leading-relaxed mb-8 sm:mb-12">
           Watch and learn. Practice TAT anytime. Stay tuned for upcoming live webinars. All in one place.
         </p>
 
@@ -658,7 +660,7 @@ export default function LibraryClient({
         {/* 탭 컨텐츠 */}
         {activeTab === 'animals' && (
           <div role="tabpanel" id="panel-animals" aria-labelledby="tab-animals" tabIndex={0}>
-            <div className="mb-5">
+            <div className="mb-6">
               <label htmlFor="library-search" className="sr-only">
                 Search videos by topic, keyword, or year
               </label>
@@ -682,7 +684,7 @@ export default function LibraryClient({
                 again to clear it" toggle — recognition over recall. Hidden
                 while searching, since a result can span every category. */}
             {!isSearching && categoryTabs.length > 1 && (
-              <div role="tablist" aria-label="Video categories" aria-orientation="vertical" className="flex flex-col gap-2 mb-5">
+              <div role="tablist" aria-label="Video categories" aria-orientation="vertical" className="flex flex-col gap-2 mb-6">
                 {categoryTabs.map((cat) => (
                   <button
                     key={cat}
@@ -729,7 +731,7 @@ export default function LibraryClient({
         {activeTab === 'live' && (
           <div role="tabpanel" id="panel-live" aria-labelledby="tab-live" tabIndex={0}>
           {role === 'pro_subscriber' ? (
-            <div className="space-y-6">
+            <div className="space-y-8">
               {upcoming.length > 0 && (
                 <div className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm space-y-4">
                   <h2 className="text-xs font-semibold uppercase tracking-widest text-green">
@@ -806,7 +808,7 @@ export default function LibraryClient({
               </div>
             </div>
           ) : (
-            <div className="space-y-6">
+            <div className="space-y-8">
               {/* 다가오는 세션 — 실제 일정을 히어로로 (있을 때만). 잠금 뱃지를
                   카드 위에 둬, Library 회원이 "참여 가능한 콘텐츠"로 오해하지 않게.
                   뱃지 표현은 대시보드 ContentCard의 잠금 뱃지와 통일. */}
