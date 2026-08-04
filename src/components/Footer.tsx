@@ -43,10 +43,7 @@ const socials = [
 
 export default function Footer() {
   return (
-    <footer
-      className="relative px-6 pt-6 pb-8"
-      style={{ backgroundColor: '#1E3310' }}
-    >
+    <footer className="relative">
       {/* 브랜드 그라디언트 바 — Navbar 하단과 동일한 밴드 (Jez, 2026-07-31) */}
       <div
         className="absolute top-0 left-0 right-0 h-[20px]"
@@ -54,13 +51,18 @@ export default function Footer() {
           background: 'linear-gradient(to right, #b0aec8, #e8a0a0, #8fba7a, #e8a890)',
         }}
       />
-      <div className="max-w-6xl mx-auto">
 
-        {/* Newsletter signup — posts to Mailchimp (Stories and Special Offers audience).
-            Sits at the top of the footer, set off by a divider from the links below. */}
-        <div className="pb-6 mb-3" style={{ borderBottom: '1px solid rgba(250,246,241,0.08)' }}>
+      {/* Newsletter invite — its own lighter green band, set apart from the darker
+          footer below (Tapas, 2026-08-02: "one of the most important communications
+          of the website, it needs to stand out"). Color from Jez, 2026-08-03. */}
+      <div className="px-6 pt-8 pb-6" style={{ backgroundColor: '#597e48' }}>
+        <div className="max-w-6xl mx-auto">
           <NewsletterSignup />
         </div>
+      </div>
+
+      <div className="px-6 pt-6 pb-8" style={{ backgroundColor: '#1E3310' }}>
+      <div className="max-w-6xl mx-auto">
 
         {/* Top row — logo + socials */}
         <div className="flex items-center justify-between pb-3"
@@ -199,6 +201,7 @@ export default function Footer() {
           are registered trademarks of TATLife®, Inc. and may only be used with permission.
         </p>
 
+      </div>
       </div>
     </footer>
   );
