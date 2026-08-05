@@ -34,17 +34,6 @@ function videoMatchesSearch(video: Video, query: string): boolean {
   return false
 }
 
-function WatchedBadge() {
-  return (
-    <span className="inline-flex items-center gap-1 text-xs font-medium" style={{ color: '#467826' }}>
-      <svg width="11" height="11" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M2 7l3.5 3.5L11 3" />
-      </svg>
-      Watched
-    </span>
-  )
-}
-
 function VideoCard({ video, progress, onOpen }: {
   video: Video
   progress: { lastPosition: number; completed: boolean } | undefined
@@ -54,7 +43,7 @@ function VideoCard({ video, progress, onOpen }: {
   // Boolean(...) matters here, not just style: without it, a lastPosition of
   // exactly 0 short-circuits the && chain to the number 0 — and {0 && <div/>}
   // renders the literal text "0" in JSX, unlike {false && <div/>} or {null && <div/>}.
-  const hasProgress = Boolean(!progress?.completed && progress?.lastPosition && progress.lastPosition > 5 && video.duration)
+  const hasProgress = Boolean(progress?.lastPosition && progress.lastPosition > 5 && video.duration)
   return (
     <button
       onClick={() => onOpen(video)}
@@ -87,7 +76,6 @@ function VideoCard({ video, progress, onOpen }: {
         )}
         <div className="flex items-center gap-2 mt-2">
           {duration && <p className="text-xs text-charcoal/45">{duration}</p>}
-          {progress?.completed && <WatchedBadge />}
         </div>
       </div>
     </button>
@@ -98,9 +86,8 @@ function VideoCard({ video, progress, onOpen }: {
 // (~390px → ~220px tall just for the image), so under sm: this small
 // fixed-size thumbnail + text row keeps the "visual, not bare text" upgrade
 // without the height cost (live-checked on a 390px viewport, 2026-07-30).
-function MobileVideoRow({ video, progress, onOpen }: {
+function MobileVideoRow({ video, onOpen }: {
   video: Video
-  progress: { lastPosition: number; completed: boolean } | undefined
   onOpen: (v: Video) => void
 }) {
   return (
@@ -116,11 +103,9 @@ function MobileVideoRow({ video, progress, onOpen }: {
       </div>
       <div className="min-w-0 flex-1">
         <p className="font-medium text-base text-charcoal leading-snug line-clamp-1">{video.title}</p>
-        {progress?.completed ? (
-          <WatchedBadge />
-        ) : video.summary ? (
+        {video.summary && (
           <p className="text-sm text-charcoal/65 leading-snug mt-0.5 line-clamp-1">{video.summary}</p>
-        ) : null}
+        )}
       </div>
     </button>
   )
@@ -134,6 +119,7 @@ function VideoPlayerModal({ video, progress, onClose, onProgressUpdate }: {
 }) {
   const vimeo = parseVimeo(video.videoUrl)
   const [playerError, setPlayerError] = useState(false)
+  const [isPlaying, setIsPlaying] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const playerRef = useRef<Player | null>(null)
   const saveTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -171,7 +157,9 @@ function VideoPlayerModal({ video, progress, onClose, onProgressUpdate }: {
     })
     playerRef.current = player
 
-    const lastPosition = progress?.lastPosition ?? 0
+    // A video already marked complete resumes from the start, not from its
+    // saved (near-the-end) position — otherwise a rewatch ends within seconds.
+    const lastPosition = progress?.completed ? 0 : progress?.lastPosition ?? 0
 
     player.ready()
       .then(() => {
@@ -185,7 +173,11 @@ function VideoPlayerModal({ video, progress, onClose, onProgressUpdate }: {
       currentPositionRef.current = seconds
     })
 
+    player.on('play', () => setIsPlaying(true))
+    player.on('pause', () => setIsPlaying(false))
+
     player.on('ended', () => {
+      setIsPlaying(false)
       onProgressUpdate(video._id, currentPositionRef.current, true)
       saveProgress(video._id, currentPositionRef.current, true)
     })
@@ -252,7 +244,9 @@ function VideoPlayerModal({ video, progress, onClose, onProgressUpdate }: {
           </div>
         )}
         <p className="text-white mt-3 font-medium">{video.title}</p>
-        {video.summary && <p className="text-white/70 text-sm mt-1 leading-relaxed">{video.summary}</p>}
+        {!isPlaying && video.summary && (
+          <p className="text-white/70 text-sm mt-1 leading-relaxed">{video.summary}</p>
+        )}
       </div>
     </div>
   )
@@ -285,7 +279,7 @@ function VideoTab({ videos, progressMap, onOpen }: {
             Tablet/desktop: the thumbnail grid. */}
         <div className="sm:hidden bg-white rounded-2xl border border-charcoal/10 shadow-sm px-5">
           {groupVideos.map((video) => (
-            <MobileVideoRow key={video._id} video={video} progress={progressMap[video._id]} onOpen={onOpen} />
+            <MobileVideoRow key={video._id} video={video} onOpen={onOpen} />
           ))}
         </div>
         <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
