@@ -33,7 +33,9 @@ export function escapeHtml(s: string): string {
 // a subject line is plain text, and "O&#39;Brien" there would be worse than
 // the problem being solved.
 export function firstNameOf(name: string | null | undefined): string {
-  return name?.trim().split(/\s+/)[0] || 'there';
+  const first = name?.trim().split(/\s+/)[0];
+  if (!first) return 'there';
+  return first[0].toUpperCase() + first.slice(1).toLowerCase();
 }
 
 type ShellOptions = {
