@@ -615,12 +615,12 @@ export default function LibraryClient({
 
         {/* 인사말이 캡션에서 페이지 제목(H1)으로 승격 — "Your Video Library"는
             첫 탭 이름으로 이동 (Jez, 2026-07-31). Tapas 요청(2026-08-02): 인사말
-            위에 여백을 더 줘 차분한 느낌으로. Jez 지정값(2026-08-03):
-            line-height 2.5em + padding-top 20px — em 단위라 모바일에도 안전. */}
-        <h1 className="font-serif text-3xl text-charcoal mb-2 leading-[2.5em] pt-[20px]">
+            위에 여백을 더 줘 차분한 느낌으로. Jez 목업 2차 스펙(2026-08-04):
+            padding-top 40px + 가운데 정렬로 갱신. */}
+        <h1 className="font-serif text-3xl text-charcoal mb-2 leading-[2.5em] pt-[40px] text-center">
           {firstName ? <>Welcome to Your Calm Space, {firstName}.</> : 'Welcome to Your Calm Space.'}
         </h1>
-        <p className="text-base text-charcoal/65 leading-relaxed mb-8 sm:mb-12">
+        <p className="text-base text-charcoal/65 text-center leading-[40px] mb-[30px]">
           Watch and learn. Practice TAT anytime. Stay tuned for upcoming live webinars. All in one place.
         </p>
 

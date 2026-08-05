@@ -61,7 +61,11 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="px-6 pt-6 pb-8" style={{ backgroundColor: '#1E3310' }}>
+      {/* Jez 목업(2026-08-04): 배경을 테라코타(#af4d2c)로 변경 — Bruce의 추가 밴드
+          제안 대기 중, 이건 잠정 색상. 배경이 이전(#1E3310, 거의 검정)보다 훨씬
+          밝아져서 기존 0.60 불투명도 크림 텍스트/골드 호버로는 AA 4.5:1을 못
+          맞춤(계산상 ~2.6–2.8:1) — 흰색 계열로 바꾸고 불투명도를 올려서 맞춤. */}
+      <div className="px-6 pt-6 pb-8" style={{ backgroundColor: '#af4d2c' }}>
       <div className="max-w-6xl mx-auto">
 
         {/* Top row — logo + socials */}
@@ -94,16 +98,16 @@ export default function Footer() {
                 aria-label={s.label}
                 className="w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110"
                 style={{
-                  color: 'rgba(250,246,241,0.55)',
-                  border: '1px solid rgba(250,246,241,0.10)',
+                  color: 'rgba(255,255,255,0.85)',
+                  border: '1px solid rgba(255,255,255,0.25)',
                 }}
                 onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.color = '#D4A843';
-                  (e.currentTarget as HTMLElement).style.borderColor = 'rgba(212,168,67,0.40)';
+                  (e.currentTarget as HTMLElement).style.color = '#FFFFFF';
+                  (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.60)';
                 }}
                 onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.color = 'rgba(250,246,241,0.55)';
-                  (e.currentTarget as HTMLElement).style.borderColor = 'rgba(250,246,241,0.10)';
+                  (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.85)';
+                  (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.25)';
                 }}
               >
                 {s.icon}
@@ -123,30 +127,30 @@ export default function Footer() {
               key={link.name}
               href={link.href}
               className="text-[19px] font-light transition-colors py-1.5"
-              style={{ color: 'rgba(250,246,241,0.60)' }}
+              style={{ color: 'rgba(255,255,255,0.88)' }}
               onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.color = '#D4A843';
+                (e.currentTarget as HTMLElement).style.color = '#FFFFFF';
               }}
               onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.color = 'rgba(250,246,241,0.60)';
+                (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.88)';
               }}
             >
               {link.name}
             </Link>
           ))}
           {/* Quiet booking entry — opens the TATLife (Amelia) session page. Placeholder copy
-              pending Tapas's wording. Cream (not green) so it stays AA-legible on the dark footer. */}
+              pending Tapas's wording. 흰색 0.88 불투명도 — 테라코타 배경에서 AA 확보. */}
           <a
             href={BOOKING_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="text-[19px] font-light transition-colors py-1.5"
-            style={{ color: 'rgba(250,246,241,0.60)' }}
+            style={{ color: 'rgba(255,255,255,0.88)' }}
             onMouseEnter={(e) => {
-              (e.currentTarget as HTMLElement).style.color = '#D4A843';
+              (e.currentTarget as HTMLElement).style.color = '#FFFFFF';
             }}
             onMouseLeave={(e) => {
-              (e.currentTarget as HTMLElement).style.color = 'rgba(250,246,241,0.60)';
+              (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.88)';
             }}
           >
             Book a session ↗
@@ -156,12 +160,12 @@ export default function Footer() {
             target="_blank"
             rel="noopener noreferrer"
             className="text-[19px] font-light transition-colors py-1.5"
-            style={{ color: 'rgba(250,246,241,0.60)' }}
+            style={{ color: 'rgba(255,255,255,0.88)' }}
             onMouseEnter={(e) => {
-              (e.currentTarget as HTMLElement).style.color = '#D4A843';
+              (e.currentTarget as HTMLElement).style.color = '#FFFFFF';
             }}
             onMouseLeave={(e) => {
-              (e.currentTarget as HTMLElement).style.color = 'rgba(250,246,241,0.60)';
+              (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.88)';
             }}
           >
             TATLife.com ↗
@@ -175,12 +179,12 @@ export default function Footer() {
               key={link.name}
               href={link.href}
               className="text-sm font-light transition-colors py-1.5"
-              style={{ color: 'rgba(250,246,241,0.60)' }}
+              style={{ color: 'rgba(255,255,255,0.85)' }}
               onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.color = 'rgba(250,246,241,0.9)';
+                (e.currentTarget as HTMLElement).style.color = '#FFFFFF';
               }}
               onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.color = 'rgba(250,246,241,0.60)';
+                (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.85)';
               }}
             >
               <span className="sm:hidden">{link.short}</span>
@@ -189,11 +193,12 @@ export default function Footer() {
           ))}
         </div>
 
-        {/* Full copyright + trademark notice (Jez, 2026-06-25). 0.60 cream on the
-            deep-green footer clears AA. */}
+        {/* Full copyright + trademark notice (Jez, 2026-06-25). 테라코타 배경(2026-08-04)에서
+            AA 확보하려면 흰색 0.85 이상 필요 — 계산상 최대 ~5.35:1(순백 100%)이라 여유가
+            크지 않음, 향후 배경색이 더 바뀌면 재검증 필요. */}
         <p
           className="text-sm font-light leading-relaxed mt-3 max-w-4xl"
-          style={{ color: 'rgba(250,246,241,0.60)' }}
+          style={{ color: 'rgba(255,255,255,0.85)' }}
         >
           © 2005–2026 TATLife®, Inc. All rights reserved. No portion of this web site may be
           copied, retransmitted, reposted, duplicated or otherwise used without the express

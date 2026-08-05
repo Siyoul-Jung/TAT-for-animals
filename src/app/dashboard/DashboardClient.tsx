@@ -319,7 +319,8 @@ export default function DashboardClient({
           <p className="text-sm font-medium text-green uppercase tracking-widest mb-1">
             Dashboard
           </p>
-          <h1 className="text-2xl sm:text-3xl text-charcoal font-medium tracking-tight">
+          {/* Jez 목업(2026-08-04): 세리프 폰트 + 가운데 정렬로 Library 헤더와 톤 통일 */}
+          <h1 className="text-2xl sm:text-3xl text-charcoal font-medium tracking-tight font-serif leading-[2em] pt-[30px] pb-[30px] text-center">
             {displayName ? (
               <>Good to see you, <span className="font-semibold">{displayName}</span>.</>
             ) : (
