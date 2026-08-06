@@ -222,7 +222,7 @@ function VideoPlayerModal({ video, progress, onClose, onProgressUpdate }: {
       role="dialog"
       aria-modal="true"
       aria-label={video.title}
-      className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 bg-black flex items-center justify-center p-4"
       onClick={handleClose}
     >
       <div className="max-w-3xl w-full" onClick={(e) => e.stopPropagation()}>

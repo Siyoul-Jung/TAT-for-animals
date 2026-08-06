@@ -78,7 +78,7 @@ export default function NewsletterSignup() {
     <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between lg:gap-10">
       {/* Lead-in — Tapas's photo slot (Jez, 2026-07-31): the funny card photo
           Tapas approved (2026-08-03: "the very funny pic of me with the card"). */}
-      <div className="flex items-center gap-5 max-w-md">
+      <div className="flex items-center gap-5 max-w-2xl">
         <Image
           src="/images/tapas-newsletter-photo.jpg"
           alt="Tapas Fleming"
