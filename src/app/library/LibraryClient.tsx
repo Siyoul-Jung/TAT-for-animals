@@ -140,6 +140,11 @@ function VideoPlayerModal({ video, progress, onClose, onProgressUpdate }: {
   useEffect(() => {
     if (!vimeo?.id || !containerRef.current) return
 
+    // Once this player is torn down (close / remount), its in-flight Vimeo
+    // callbacks must go quiet — a late ready()-rejection or 'error' event from a
+    // superseded player used to flip the UI to "Video not available", which is
+    // what made replay show blank sometimes.
+    let cancelled = false
     setPlayerError(false)
 
     const player = new Player(containerRef.current, {
@@ -162,11 +167,16 @@ function VideoPlayerModal({ video, progress, onClose, onProgressUpdate }: {
 
     player.ready()
       .then(() => {
+        if (cancelled) return
         if (lastPosition > 30) player.setCurrentTime(lastPosition)
       })
-      .catch(() => setPlayerError(true))
+      .catch(() => {
+        if (!cancelled) setPlayerError(true)
+      })
 
-    player.on('error', () => setPlayerError(true))
+    player.on('error', () => {
+      if (!cancelled) setPlayerError(true)
+    })
 
     player.on('timeupdate', ({ seconds }: { seconds: number }) => {
       currentPositionRef.current = seconds
@@ -188,7 +198,10 @@ function VideoPlayerModal({ video, progress, onClose, onProgressUpdate }: {
       }
     }, 30000)
 
-    return cleanup
+    return () => {
+      cancelled = true
+      cleanup()
+    }
   }, [vimeo?.id, vimeo?.hash])
 
   const handleClose = () => {
@@ -970,6 +983,10 @@ export default function LibraryClient({
 
       {openVideo && (
         <VideoPlayerModal
+          // Key on the video id so reopening (or switching) a recording always
+          // mounts a fresh player in a clean container — never reuses a stale
+          // instance, which is what made replay intermittently blank.
+          key={openVideo._id}
           video={openVideo}
           progress={progressMap[openVideo._id]}
           onClose={() => setOpenVideo(null)}
