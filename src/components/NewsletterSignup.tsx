@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 
 // Mailchimp embedded-form endpoint (Jez, 2026-06-26). Posting our own on-brand form
 // straight to list-manage needs no API key. We use the post-json variant + JSONP so
@@ -75,12 +76,16 @@ export default function NewsletterSignup() {
 
   return (
     <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between lg:gap-10">
-      {/* Lead-in — Tapas's photo slot (Jez, 2026-07-31): awaiting the actual
-          photo file from Jez/Tapas before this renders; the layout is ready. */}
+      {/* Lead-in — Tapas's photo slot (Jez, 2026-07-31): the funny card photo
+          Tapas approved (2026-08-03: "the very funny pic of me with the card"). */}
       <div className="flex items-center gap-5 max-w-md">
-        {/* {tapasPhotoUrl && (
-          <img src={tapasPhotoUrl} alt="Tapas Fleming" className="w-20 h-20 rounded-full object-cover shrink-0" />
-        )} */}
+        <Image
+          src="/images/tapas-newsletter-photo.jpg"
+          alt="Tapas Fleming"
+          width={80}
+          height={80}
+          className="w-20 h-20 rounded-full object-cover shrink-0"
+        />
         <div>
           {/* 40px/22px는 Jez가 지정한 데스크톱 기준값 — 좁은 화면 그대로 적용하면
               헤딩만으로 화면 절반을 차지해 Footer의 조용한 존재감이 깨짐
