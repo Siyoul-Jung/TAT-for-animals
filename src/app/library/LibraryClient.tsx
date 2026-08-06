@@ -72,7 +72,7 @@ function VideoCard({ video, progress, onOpen }: {
       <div className="p-4">
         <p className="font-medium text-base text-charcoal leading-snug line-clamp-2">{video.title}</p>
         {video.summary && (
-          <p className="text-sm text-charcoal/65 leading-relaxed mt-1 line-clamp-3">{video.summary}</p>
+          <p className="text-sm text-charcoal/65 leading-relaxed mt-1 line-clamp-4">{video.summary}</p>
         )}
         <div className="flex items-center gap-2 mt-2">
           {duration && <p className="text-xs text-charcoal/45">{duration}</p>}
@@ -104,7 +104,7 @@ function MobileVideoRow({ video, onOpen }: {
       <div className="min-w-0 flex-1">
         <p className="font-medium text-base text-charcoal leading-snug line-clamp-1">{video.title}</p>
         {video.summary && (
-          <p className="text-sm text-charcoal/65 leading-snug mt-0.5 line-clamp-1">{video.summary}</p>
+          <p className="text-sm text-charcoal/65 leading-snug mt-0.5 line-clamp-2">{video.summary}</p>
         )}
       </div>
     </button>
@@ -119,7 +119,6 @@ function VideoPlayerModal({ video, progress, onClose, onProgressUpdate }: {
 }) {
   const vimeo = parseVimeo(video.videoUrl)
   const [playerError, setPlayerError] = useState(false)
-  const [isPlaying, setIsPlaying] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const playerRef = useRef<Player | null>(null)
   const saveTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -173,11 +172,7 @@ function VideoPlayerModal({ video, progress, onClose, onProgressUpdate }: {
       currentPositionRef.current = seconds
     })
 
-    player.on('play', () => setIsPlaying(true))
-    player.on('pause', () => setIsPlaying(false))
-
     player.on('ended', () => {
-      setIsPlaying(false)
       onProgressUpdate(video._id, currentPositionRef.current, true)
       saveProgress(video._id, currentPositionRef.current, true)
     })
@@ -243,10 +238,9 @@ function VideoPlayerModal({ video, progress, onClose, onProgressUpdate }: {
             <p className="text-sm text-charcoal/65">Video not available.</p>
           </div>
         )}
+        {/* Summary intentionally omitted here — Tapas, 2026-08-05: it shouldn't be
+            visible at all once someone has clicked in to watch the recording. */}
         <p className="text-white mt-3 font-medium">{video.title}</p>
-        {!isPlaying && video.summary && (
-          <p className="text-white/70 text-sm mt-1 leading-relaxed">{video.summary}</p>
-        )}
       </div>
     </div>
   )
@@ -605,7 +599,12 @@ export default function LibraryClient({
 
   return (
     <main className="min-h-screen bg-cream pt-20 pb-16 px-6">
-      <div className="max-w-3xl mx-auto">
+      {/* Grid needs more room than reading text does — the video grid below
+          gets the full width of this wider container, while prose (greeting,
+          tabs, search, category list) stays inside its own narrower
+          max-w-3xl so line lengths don't get uncomfortably wide. */}
+      <div className="max-w-6xl mx-auto">
+        <div className="max-w-3xl mx-auto">
 
         {/* 인사말이 캡션에서 페이지 제목(H1)으로 승격 — "Your Video Library"는
             첫 탭 이름으로 이동 (Jez, 2026-07-31). Tapas 요청(2026-08-02): 인사말
@@ -650,10 +649,12 @@ export default function LibraryClient({
             </button>
           ))}
         </div>
+        </div>
 
         {/* 탭 컨텐츠 */}
         {activeTab === 'animals' && (
           <div role="tabpanel" id="panel-animals" aria-labelledby="tab-animals" tabIndex={0}>
+            <div className="max-w-3xl mx-auto">
             <div className="mb-6">
               <label htmlFor="library-search" className="sr-only">
                 Search videos by topic, keyword, or year
@@ -702,19 +703,26 @@ export default function LibraryClient({
               </div>
             )}
 
-            {isSearching && search.trim() && filteredAnimalsVideos.length === 0 ? (
+            {isSearching && search.trim() && filteredAnimalsVideos.length === 0 && (
               <div className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm">
                 <p className="text-charcoal/65 text-base">
                   No videos found for &ldquo;{search.trim()}&rdquo;. Try a different word.
                 </p>
               </div>
-            ) : !isSearching && activeCategory === null ? (
+            )}
+            {!isSearching && activeCategory === null && (
               <div role="tabpanel" id="panel-category" aria-label="No category selected" tabIndex={0} className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm">
                 <p className="text-charcoal/65 text-base">
                   Choose a category above to see its videos — or select All to browse everything.
                 </p>
               </div>
-            ) : (
+            )}
+            </div>
+
+            {/* VideoTab intentionally sits outside the max-w-3xl wrapper above —
+                the grid gets the full max-w-6xl width from the page container. */}
+            {!(isSearching && search.trim() && filteredAnimalsVideos.length === 0) &&
+              !(!isSearching && activeCategory === null) && (
               <div role="tabpanel" id="panel-category" aria-label={isSearching ? 'Search results' : activeCategory ?? ''} tabIndex={0}>
                 <VideoTab videos={displayedAnimalsVideos} progressMap={progressMap} onOpen={setOpenVideo} />
               </div>
@@ -723,7 +731,7 @@ export default function LibraryClient({
         )}
 
         {activeTab === 'live' && (
-          <div role="tabpanel" id="panel-live" aria-labelledby="tab-live" tabIndex={0}>
+          <div role="tabpanel" id="panel-live" aria-labelledby="tab-live" tabIndex={0} className="max-w-3xl mx-auto">
           {role === 'pro_subscriber' ? (
             <div className="space-y-8">
               {upcoming.length > 0 && (
