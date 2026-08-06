@@ -316,10 +316,9 @@ export default function DashboardClient({
 
         {/* Header */}
         <div>
-          <p className="text-sm font-medium text-green uppercase tracking-widest mb-1">
-            Dashboard
-          </p>
-          {/* Jez 목업(2026-08-04): 세리프 폰트 + 가운데 정렬로 Library 헤더와 톤 통일 */}
+          {/* "DASHBOARD" eyebrow label removed per Jez, 2026-08-05 — looked
+              off-center once the heading below it was centered.
+              Jez 목업(2026-08-04): 세리프 폰트 + 가운데 정렬로 Library 헤더와 톤 통일 */}
           <h1 className="text-2xl sm:text-3xl text-charcoal font-medium tracking-tight font-serif leading-[2em] pt-[30px] pb-[30px] text-center">
             {displayName ? (
               <>Good to see you, <span className="font-semibold">{displayName}</span>.</>
