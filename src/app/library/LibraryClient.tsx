@@ -34,17 +34,6 @@ function videoMatchesSearch(video: Video, query: string): boolean {
   return false
 }
 
-function WatchedBadge() {
-  return (
-    <span className="inline-flex items-center gap-1 text-xs font-medium" style={{ color: '#467826' }}>
-      <svg width="11" height="11" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M2 7l3.5 3.5L11 3" />
-      </svg>
-      Watched
-    </span>
-  )
-}
-
 function VideoCard({ video, progress, onOpen }: {
   video: Video
   progress: { lastPosition: number; completed: boolean } | undefined
@@ -54,7 +43,7 @@ function VideoCard({ video, progress, onOpen }: {
   // Boolean(...) matters here, not just style: without it, a lastPosition of
   // exactly 0 short-circuits the && chain to the number 0 — and {0 && <div/>}
   // renders the literal text "0" in JSX, unlike {false && <div/>} or {null && <div/>}.
-  const hasProgress = Boolean(!progress?.completed && progress?.lastPosition && progress.lastPosition > 5 && video.duration)
+  const hasProgress = Boolean(progress?.lastPosition && progress.lastPosition > 5 && video.duration)
   return (
     <button
       onClick={() => onOpen(video)}
@@ -83,11 +72,10 @@ function VideoCard({ video, progress, onOpen }: {
       <div className="p-4">
         <p className="font-medium text-base text-charcoal leading-snug line-clamp-2">{video.title}</p>
         {video.summary && (
-          <p className="text-sm text-charcoal/65 leading-relaxed mt-1 line-clamp-3">{video.summary}</p>
+          <p className="text-sm text-charcoal/65 leading-relaxed mt-1 line-clamp-4">{video.summary}</p>
         )}
         <div className="flex items-center gap-2 mt-2">
           {duration && <p className="text-xs text-charcoal/45">{duration}</p>}
-          {progress?.completed && <WatchedBadge />}
         </div>
       </div>
     </button>
@@ -98,9 +86,8 @@ function VideoCard({ video, progress, onOpen }: {
 // (~390px → ~220px tall just for the image), so under sm: this small
 // fixed-size thumbnail + text row keeps the "visual, not bare text" upgrade
 // without the height cost (live-checked on a 390px viewport, 2026-07-30).
-function MobileVideoRow({ video, progress, onOpen }: {
+function MobileVideoRow({ video, onOpen }: {
   video: Video
-  progress: { lastPosition: number; completed: boolean } | undefined
   onOpen: (v: Video) => void
 }) {
   return (
@@ -116,11 +103,9 @@ function MobileVideoRow({ video, progress, onOpen }: {
       </div>
       <div className="min-w-0 flex-1">
         <p className="font-medium text-base text-charcoal leading-snug line-clamp-1">{video.title}</p>
-        {progress?.completed ? (
-          <WatchedBadge />
-        ) : video.summary ? (
-          <p className="text-sm text-charcoal/65 leading-snug mt-0.5 line-clamp-1">{video.summary}</p>
-        ) : null}
+        {video.summary && (
+          <p className="text-sm text-charcoal/65 leading-snug mt-0.5 line-clamp-2">{video.summary}</p>
+        )}
       </div>
     </button>
   )
@@ -171,7 +156,9 @@ function VideoPlayerModal({ video, progress, onClose, onProgressUpdate }: {
     })
     playerRef.current = player
 
-    const lastPosition = progress?.lastPosition ?? 0
+    // A video already marked complete resumes from the start, not from its
+    // saved (near-the-end) position — otherwise a rewatch ends within seconds.
+    const lastPosition = progress?.completed ? 0 : progress?.lastPosition ?? 0
 
     player.ready()
       .then(() => {
@@ -251,8 +238,9 @@ function VideoPlayerModal({ video, progress, onClose, onProgressUpdate }: {
             <p className="text-sm text-charcoal/65">Video not available.</p>
           </div>
         )}
+        {/* Summary intentionally omitted here — Tapas, 2026-08-05: it shouldn't be
+            visible at all once someone has clicked in to watch the recording. */}
         <p className="text-white mt-3 font-medium">{video.title}</p>
-        {video.summary && <p className="text-white/70 text-sm mt-1 leading-relaxed">{video.summary}</p>}
       </div>
     </div>
   )
@@ -285,7 +273,7 @@ function VideoTab({ videos, progressMap, onOpen }: {
             Tablet/desktop: the thumbnail grid. */}
         <div className="sm:hidden bg-white rounded-2xl border border-charcoal/10 shadow-sm px-5">
           {groupVideos.map((video) => (
-            <MobileVideoRow key={video._id} video={video} progress={progressMap[video._id]} onOpen={onOpen} />
+            <MobileVideoRow key={video._id} video={video} onOpen={onOpen} />
           ))}
         </div>
         <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -611,7 +599,12 @@ export default function LibraryClient({
 
   return (
     <main className="min-h-screen bg-cream pt-20 pb-16 px-6">
-      <div className="max-w-3xl mx-auto">
+      {/* Grid needs more room than reading text does — the video grid below
+          gets the full width of this wider container, while prose (greeting,
+          tabs, search, category list) stays inside its own narrower
+          max-w-3xl so line lengths don't get uncomfortably wide. */}
+      <div className="max-w-6xl mx-auto">
+        <div className="max-w-3xl mx-auto">
 
         {/* 인사말이 캡션에서 페이지 제목(H1)으로 승격 — "Your Video Library"는
             첫 탭 이름으로 이동 (Jez, 2026-07-31). Tapas 요청(2026-08-02): 인사말
@@ -656,10 +649,12 @@ export default function LibraryClient({
             </button>
           ))}
         </div>
+        </div>
 
         {/* 탭 컨텐츠 */}
         {activeTab === 'animals' && (
           <div role="tabpanel" id="panel-animals" aria-labelledby="tab-animals" tabIndex={0}>
+            <div className="max-w-3xl mx-auto">
             <div className="mb-6">
               <label htmlFor="library-search" className="sr-only">
                 Search videos by topic, keyword, or year
@@ -708,19 +703,26 @@ export default function LibraryClient({
               </div>
             )}
 
-            {isSearching && search.trim() && filteredAnimalsVideos.length === 0 ? (
+            {isSearching && search.trim() && filteredAnimalsVideos.length === 0 && (
               <div className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm">
                 <p className="text-charcoal/65 text-base">
                   No videos found for &ldquo;{search.trim()}&rdquo;. Try a different word.
                 </p>
               </div>
-            ) : !isSearching && activeCategory === null ? (
+            )}
+            {!isSearching && activeCategory === null && (
               <div role="tabpanel" id="panel-category" aria-label="No category selected" tabIndex={0} className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm">
                 <p className="text-charcoal/65 text-base">
                   Choose a category above to see its videos — or select All to browse everything.
                 </p>
               </div>
-            ) : (
+            )}
+            </div>
+
+            {/* VideoTab intentionally sits outside the max-w-3xl wrapper above —
+                the grid gets the full max-w-6xl width from the page container. */}
+            {!(isSearching && search.trim() && filteredAnimalsVideos.length === 0) &&
+              !(!isSearching && activeCategory === null) && (
               <div role="tabpanel" id="panel-category" aria-label={isSearching ? 'Search results' : activeCategory ?? ''} tabIndex={0}>
                 <VideoTab videos={displayedAnimalsVideos} progressMap={progressMap} onOpen={setOpenVideo} />
               </div>
@@ -729,7 +731,7 @@ export default function LibraryClient({
         )}
 
         {activeTab === 'live' && (
-          <div role="tabpanel" id="panel-live" aria-labelledby="tab-live" tabIndex={0}>
+          <div role="tabpanel" id="panel-live" aria-labelledby="tab-live" tabIndex={0} className="max-w-3xl mx-auto">
           {role === 'pro_subscriber' ? (
             <div className="space-y-8">
               {upcoming.length > 0 && (
