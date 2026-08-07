@@ -83,7 +83,7 @@ export default function Footer() {
               style={{ width: 'auto' }}
             />
             <span className="text-[24px] font-semibold font-serif text-cream/80">
-              TAT<span className="text-cream/70 text-sm align-super">®</span> for Animals
+              TAT<span className="text-cream/95 text-sm align-super">®</span> for Animals
             </span>
           </div>
 
@@ -179,12 +179,12 @@ export default function Footer() {
               key={link.name}
               href={link.href}
               className="text-sm font-light transition-colors py-1.5"
-              style={{ color: 'rgba(255,255,255,0.85)' }}
+              style={{ color: 'rgba(255,255,255,0.90)' }}
               onMouseEnter={(e) => {
                 (e.currentTarget as HTMLElement).style.color = '#FFFFFF';
               }}
               onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.85)';
+                (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.90)';
               }}
             >
               <span className="sm:hidden">{link.short}</span>
@@ -194,11 +194,11 @@ export default function Footer() {
         </div>
 
         {/* Full copyright + trademark notice (Jez, 2026-06-25). 테라코타 배경(2026-08-04)에서
-            AA 확보하려면 흰색 0.85 이상 필요 — 계산상 최대 ~5.35:1(순백 100%)이라 여유가
-            크지 않음, 향후 배경색이 더 바뀌면 재검증 필요. */}
+            AA 확보하려면 흰색 0.90 이상 필요(0.85는 4.34:1로 미달, 2026-08-07 감사에서 발견) —
+            계산상 최대 ~5.35:1(순백 100%)이라 여유가 크지 않음, 향후 배경색이 더 바뀌면 재검증 필요. */}
         <p
           className="text-sm font-light leading-relaxed mt-3 max-w-4xl"
-          style={{ color: 'rgba(255,255,255,0.85)' }}
+          style={{ color: 'rgba(255,255,255,0.90)' }}
         >
           © 2005–2026 TATLife®, Inc. All rights reserved. No portion of this web site may be
           copied, retransmitted, reposted, duplicated or otherwise used without the express
