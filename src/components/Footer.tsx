@@ -127,30 +127,31 @@ export default function Footer() {
               key={link.name}
               href={link.href}
               className="text-[19px] font-light transition-colors py-1.5"
-              style={{ color: 'rgba(255,255,255,0.88)' }}
+              style={{ color: 'rgba(255,255,255,0.90)' }}
               onMouseEnter={(e) => {
                 (e.currentTarget as HTMLElement).style.color = '#FFFFFF';
               }}
               onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.88)';
+                (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.90)';
               }}
             >
               {link.name}
             </Link>
           ))}
           {/* Quiet booking entry — opens the TATLife (Amelia) session page. Placeholder copy
-              pending Tapas's wording. 흰색 0.88 불투명도 — 테라코타 배경에서 AA 확보. */}
+              pending Tapas's wording. 흰색 0.90 불투명도 — 테라코타 배경에서 AA 확보(0.88은
+              4.53:1로 여유 없이 통과, 2026-08-07 감사에서 0.90으로 상향). */}
           <a
             href={BOOKING_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="text-[19px] font-light transition-colors py-1.5"
-            style={{ color: 'rgba(255,255,255,0.88)' }}
+            style={{ color: 'rgba(255,255,255,0.90)' }}
             onMouseEnter={(e) => {
               (e.currentTarget as HTMLElement).style.color = '#FFFFFF';
             }}
             onMouseLeave={(e) => {
-              (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.88)';
+              (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.90)';
             }}
           >
             Book a session ↗
@@ -160,12 +161,12 @@ export default function Footer() {
             target="_blank"
             rel="noopener noreferrer"
             className="text-[19px] font-light transition-colors py-1.5"
-            style={{ color: 'rgba(255,255,255,0.88)' }}
+            style={{ color: 'rgba(255,255,255,0.90)' }}
             onMouseEnter={(e) => {
               (e.currentTarget as HTMLElement).style.color = '#FFFFFF';
             }}
             onMouseLeave={(e) => {
-              (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.88)';
+              (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.90)';
             }}
           >
             TATLife.com ↗
