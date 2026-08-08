@@ -93,7 +93,7 @@ export default function NewsletterSignup() {
               지정값 그대로. line-height: 2.5em은 Jez 지정값(2026-08-03) — em
               단위라 폰트 크기 비율대로 커져 모바일에서도 그대로 안전. */}
           <p className="font-serif text-[26px] sm:text-[40px] leading-[2.5em] text-cream/90">Stay close to the stories.</p>
-          <p className="text-base sm:text-[22px] font-light leading-relaxed mt-1" style={{ color: 'rgba(250,246,241,0.65)' }}>
+          <p className="text-base sm:text-[22px] font-light leading-relaxed mt-1" style={{ color: '#FFFFFF' }}>
             Uplifting animal stories and the occasional special offer, straight to your inbox.
           </p>
         </div>
@@ -105,7 +105,7 @@ export default function NewsletterSignup() {
           <p
             role="status"
             className="flex items-center gap-2 text-sm font-medium py-3"
-            style={{ color: '#D4A843' }}
+            style={{ color: '#FFFFFF' }}
           >
             <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -126,21 +126,21 @@ export default function NewsletterSignup() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 autoComplete="email"
-                className="h-12 px-4 rounded-lg w-full sm:w-72 text-base text-charcoal bg-cream placeholder:text-charcoal/45 focus:outline-none focus:ring-2 focus:ring-offset-2"
-                style={{ ['--tw-ring-color' as string]: '#D4A843', ['--tw-ring-offset-color' as string]: '#1E3310' }}
+                className="h-12 px-4 rounded-lg w-full sm:w-72 text-base text-charcoal bg-cream placeholder:text-charcoal/60 focus:outline-none focus:ring-2 focus:ring-offset-2"
+                style={{ ['--tw-ring-color' as string]: '#FFFFFF', ['--tw-ring-offset-color' as string]: '#597e48' }}
               />
               <button
                 type="submit"
                 disabled={status === 'loading'}
                 className="h-12 px-6 rounded-lg text-[19px] font-bold text-cream transition-opacity hover:opacity-90 disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-offset-2 whitespace-nowrap"
-                style={{ backgroundColor: '#D4703A', ['--tw-ring-color' as string]: '#D4A843', ['--tw-ring-offset-color' as string]: '#1E3310' }}
+                style={{ backgroundColor: '#D4703A', ['--tw-ring-color' as string]: '#FFFFFF', ['--tw-ring-offset-color' as string]: '#597e48' }}
               >
                 {status === 'loading' ? 'Subscribing…' : 'Subscribe'}
               </button>
             </form>
 
             {status === 'error' && (
-              <p role="alert" className="text-sm mt-2 leading-relaxed" style={{ color: '#F0B58A' }}>
+              <p role="alert" className="text-sm mt-2 leading-relaxed" style={{ color: '#FFFFFF' }}>
                 {message}
               </p>
             )}

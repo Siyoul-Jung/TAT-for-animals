@@ -78,7 +78,7 @@ export default function AskTapasForm() {
             maxLength={3000}
             rows={4}
             placeholder="Write your question here…"
-            className="w-full rounded-xl border border-charcoal/15 bg-white px-4 py-3 text-base text-charcoal leading-relaxed placeholder:text-charcoal/40 focus:outline-none focus:ring-2 focus:ring-green focus:border-transparent resize-y"
+            className="w-full rounded-xl border border-charcoal/15 bg-white px-4 py-3 text-base text-charcoal leading-relaxed placeholder:text-charcoal/60 focus:outline-none focus:ring-2 focus:ring-green focus:border-transparent resize-y"
           />
 
           {error && (

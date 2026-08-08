@@ -127,7 +127,7 @@ export default function Navbar() {
               priority
             />
             <span className="hidden sm:inline text-base sm:text-2xl font-semibold tracking-normal whitespace-nowrap font-serif text-charcoal/65">
-              TAT<span className="text-green text-[11px] sm:text-sm align-super">®</span> for Animals
+              TAT<span className="text-green text-xs sm:text-sm align-super">®</span> for Animals
             </span>
           </Link>
         </div>

@@ -847,7 +847,7 @@ export default function DashboardClient({
                     <button
                       onClick={() => setConfirmingDelete(false)}
                       aria-label="Dismiss"
-                      className="shrink-0 -mr-1 -mt-1 w-11 h-11 flex items-center justify-center text-charcoal/40 hover:text-charcoal/70 transition-colors"
+                      className="shrink-0 -mr-1 -mt-1 w-11 h-11 flex items-center justify-center text-charcoal/60 hover:text-charcoal/70 transition-colors"
                     >
                       <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
