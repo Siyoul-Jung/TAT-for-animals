@@ -180,7 +180,7 @@ export default function SignupClient() {
             style={{ width: 'auto' }}
           />
           <span className="font-serif text-xl text-charcoal/65 group-hover:text-green transition-colors">
-            TAT<span className="text-green text-[11px] align-super">®</span> for Animals
+            TAT<span className="text-green text-xs align-super">®</span> for Animals
           </span>
         </Link>
 
@@ -209,7 +209,7 @@ export default function SignupClient() {
                 required
                 autoComplete="email"
                 placeholder="your@email.com"
-                className="w-full px-4 py-4 rounded-xl border border-surface bg-cream text-charcoal text-base placeholder:text-muted/40 focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand/50 transition-all"
+                className="w-full px-4 py-4 rounded-xl border border-surface bg-cream text-charcoal text-base placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand/50 transition-all"
               />
             </div>
 
@@ -227,7 +227,7 @@ export default function SignupClient() {
                   required
                   autoComplete="new-password"
                   placeholder="At least 8 characters"
-                  className="w-full px-4 py-4 rounded-xl border border-surface bg-cream text-charcoal text-base placeholder:text-muted/40 focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand/50 transition-all pr-12"
+                  className="w-full px-4 py-4 rounded-xl border border-surface bg-cream text-charcoal text-base placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand/50 transition-all pr-12"
                 />
                 <button
                   type="button"
@@ -262,7 +262,7 @@ export default function SignupClient() {
                 required
                 autoComplete="new-password"
                 placeholder="Re-enter your password"
-                className="w-full px-4 py-4 rounded-xl border border-surface bg-cream text-charcoal text-base placeholder:text-muted/40 focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand/50 transition-all"
+                className="w-full px-4 py-4 rounded-xl border border-surface bg-cream text-charcoal text-base placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand/50 transition-all"
               />
             </div>
 

@@ -75,7 +75,7 @@ function VideoCard({ video, progress, onOpen }: {
           <p className="text-sm text-charcoal/65 leading-relaxed mt-1 line-clamp-4">{video.summary}</p>
         )}
         <div className="flex items-center gap-2 mt-2">
-          {duration && <p className="text-xs text-charcoal/45">{duration}</p>}
+          {duration && <p className="text-xs text-charcoal/60">{duration}</p>}
         </div>
       </div>
     </button>
@@ -654,7 +654,7 @@ export default function LibraryClient({
               </span>
               {tab.locked && (
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth={1.5}
-                  className="text-charcoal/45 shrink-0">
+                  className="text-charcoal/60 shrink-0">
                   <rect x="2" y="5" width="8" height="6" rx="1" />
                   <path strokeLinecap="round" d="M4 5V3.5a2 2 0 0 1 4 0V5" />
                 </svg>
@@ -866,7 +866,7 @@ export default function LibraryClient({
                         >
                           <span className="w-9 h-9 rounded-full bg-charcoal/8 flex items-center justify-center shrink-0">
                             <svg width="13" height="13" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth={1.5}
-                              className="text-charcoal/40">
+                              className="text-charcoal/60">
                               <rect x="2" y="5" width="8" height="6" rx="1" />
                               <path strokeLinecap="round" d="M4 5V3.5a2 2 0 0 1 4 0V5" />
                             </svg>
