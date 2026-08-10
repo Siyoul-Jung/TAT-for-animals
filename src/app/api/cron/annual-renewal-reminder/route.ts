@@ -1,7 +1,7 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { resend, FROM_EMAIL } from '@/lib/resend'
 import { annualRenewalReminderEmail } from '@/lib/emails/annual-renewal-reminder'
-import { timingSafeEqual } from 'crypto'
+import { isAuthorizedCronRequest } from '@/lib/cronAuth'
 import { NextRequest, NextResponse } from 'next/server'
 
 // Daily cron: remind annual members ~30 days before their yearly charge.
@@ -17,28 +17,12 @@ import { NextRequest, NextResponse } from 'next/server'
 
 const DAYS_BEFORE = 30
 
-// Vercel attaches `Authorization: Bearer <CRON_SECRET>` to cron requests when
-// CRON_SECRET is set. Reject anything else so the endpoint can't be triggered
-// by the public.
-function authorized(request: NextRequest): boolean {
-  const secret = process.env.CRON_SECRET
-  if (!secret) return false
-  const provided = request.headers.get('authorization')
-  if (!provided) return false
-  // Constant-time compare (parity with sanityWebhookAuth) — avoids a timing
-  // side-channel on the secret.
-  const a = Buffer.from(provided)
-  const b = Buffer.from(`Bearer ${secret}`)
-  if (a.length !== b.length) return false
-  return timingSafeEqual(a, b)
-}
-
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
 }
 
 export async function GET(request: NextRequest) {
-  if (!authorized(request)) {
+  if (!isAuthorizedCronRequest(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
