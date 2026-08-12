@@ -44,50 +44,80 @@ function VideoCard({ video, progress, onOpen }: {
   // exactly 0 short-circuits the && chain to the number 0 — and {0 && <div/>}
   // renders the literal text "0" in JSX, unlike {false && <div/>} or {null && <div/>}.
   const hasProgress = Boolean(progress?.lastPosition && progress.lastPosition > 5 && video.duration)
+  // Jez's checklist item 2: description starts collapsed, with a circled
+  // arrow to expand it — a per-card disclosure rather than the always-hidden
+  // accordion pattern the project otherwise avoids, since the summary is
+  // still visible (just truncated) before it's opened.
+  const [expanded, setExpanded] = useState(false)
   return (
-    <button
-      onClick={() => onOpen(video)}
-      className="group text-left rounded-2xl border border-charcoal/10 bg-white overflow-hidden shadow-sm hover:shadow-md hover:border-brand/30 hover:scale-[1.02] transition-all focus-visible:[outline-offset:-2px]"
-    >
-      <div className="aspect-video bg-charcoal/10 relative border-b border-charcoal/8">
-        {video.thumbnailUrl ? (
-          // Most of these are auto-generated title-card graphics (mostly white
-          // space, not a photo), which reads as "broken/empty" without a visible
-          // frame edge — the border-b above gives the image its own boundary
-          // instead of bleeding into the white card body below it.
-          // eslint-disable-next-line @next/next/no-img-element -- external Vimeo CDN thumbnail, not a static/optimizable local asset
-          <img src={video.thumbnailUrl} alt="" loading="lazy" className="w-full h-full object-cover" />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-charcoal/30 text-sm">No preview</div>
-        )}
-        {/* Play affordance on hover — mouse-only by nature (group-hover), same
-            as the card scale-up above; touch users just tap the card. */}
-        <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/10 transition-colors pointer-events-none">
-          <span className="w-11 h-11 rounded-full bg-white/90 opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 transition-all flex items-center justify-center shadow-md">
-            <svg width="16" height="16" viewBox="0 0 18 18" fill="currentColor" className="text-charcoal ml-0.5">
-              <path d="M3 2.5l13 6.5-13 6.5V2.5z" />
-            </svg>
-          </span>
-        </div>
-        {hasProgress && (
-          <div className="absolute bottom-0 inset-x-0 h-1 bg-black/20">
-            <div
-              className="h-full"
-              style={{ width: `${Math.min((progress!.lastPosition / video.duration!) * 100, 100)}%`, backgroundColor: '#D4703A' }}
-            />
+    // Not a single <button> anymore — the expand toggle below is its own
+    // interactive control, and a <button> can't contain another <button>.
+    <div className="group text-left rounded-2xl border border-charcoal/10 bg-white overflow-hidden shadow-sm hover:shadow-md hover:border-brand/30 hover:scale-[1.02] transition-all">
+      <button
+        onClick={() => onOpen(video)}
+        aria-label={`Play ${video.title}`}
+        className="block w-full focus-visible:[outline-offset:-2px]"
+      >
+        <div className="aspect-video bg-charcoal/10 relative border-b border-charcoal/8">
+          {video.thumbnailUrl ? (
+            // Most of these are auto-generated title-card graphics (mostly white
+            // space, not a photo), which reads as "broken/empty" without a visible
+            // frame edge — the border-b above gives the image its own boundary
+            // instead of bleeding into the white card body below it.
+            // eslint-disable-next-line @next/next/no-img-element -- external Vimeo CDN thumbnail, not a static/optimizable local asset
+            <img src={video.thumbnailUrl} alt="" loading="lazy" className="w-full h-full object-cover" />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-charcoal/30 text-sm">No preview</div>
+          )}
+          {/* Play affordance on hover — mouse-only by nature (group-hover), same
+              as the card scale-up above; touch users just tap the card. */}
+          <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/10 transition-colors pointer-events-none">
+            <span className="w-11 h-11 rounded-full bg-white/90 opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 transition-all flex items-center justify-center shadow-md">
+              <svg width="16" height="16" viewBox="0 0 18 18" fill="currentColor" className="text-charcoal ml-0.5">
+                <path d="M3 2.5l13 6.5-13 6.5V2.5z" />
+              </svg>
+            </span>
           </div>
-        )}
-      </div>
-      <div className="p-4">
-        <p className="font-medium text-base text-charcoal leading-snug line-clamp-2">{video.title}</p>
+          {hasProgress && (
+            <div className="absolute bottom-0 inset-x-0 h-1 bg-black/20">
+              <div
+                className="h-full"
+                style={{ width: `${Math.min((progress!.lastPosition / video.duration!) * 100, 100)}%`, backgroundColor: '#D4703A' }}
+              />
+            </div>
+          )}
+        </div>
+        <div className="px-4 pt-4">
+          <p className="font-medium text-base text-charcoal leading-snug line-clamp-2 text-left">{video.title}</p>
+        </div>
+      </button>
+      <div className="px-4 pb-4">
         {video.summary && (
-          <p className="text-sm text-charcoal/65 leading-relaxed mt-1 line-clamp-4">{video.summary}</p>
+          <div className="mt-1 flex items-start gap-2">
+            <p className={`text-sm text-charcoal/65 leading-relaxed flex-1 ${expanded ? '' : 'line-clamp-2'}`}>
+              {video.summary}
+            </p>
+            <button
+              onClick={() => setExpanded((v) => !v)}
+              aria-expanded={expanded}
+              aria-label={expanded ? 'Show less' : 'Show more'}
+              className="shrink-0 mt-0.5 w-6 h-6 rounded-full border border-charcoal/15 flex items-center justify-center text-charcoal/60 hover:text-charcoal hover:border-charcoal/30 transition-colors focus-visible:[outline-offset:2px]"
+            >
+              <svg
+                width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth={1.5}
+                className={`transition-transform ${expanded ? 'rotate-180' : ''}`}
+                aria-hidden="true"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M1.5 3.5L5 7l3.5-3.5" />
+              </svg>
+            </button>
+          </div>
         )}
         <div className="flex items-center gap-2 mt-2">
           {duration && <p className="text-xs text-charcoal/60">{duration}</p>}
         </div>
       </div>
-    </button>
+    </div>
   )
 }
 
