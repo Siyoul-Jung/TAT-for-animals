@@ -128,6 +128,9 @@ function VideoPlayerModal({ video, progress, onClose, onProgressUpdate }: {
 }) {
   const vimeo = parseVimeo(video.videoUrl)
   const [playerError, setPlayerError] = useState(false)
+  // Jez's spec (2026-08-08): the modal opens paused on the thumbnail, not
+  // autoplaying — playback only starts once the member presses Play.
+  const [started, setStarted] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const playerRef = useRef<Player | null>(null)
   const saveTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -147,7 +150,7 @@ function VideoPlayerModal({ video, progress, onClose, onProgressUpdate }: {
   }, [])
 
   useEffect(() => {
-    if (!vimeo?.id || !containerRef.current) return
+    if (!started || !vimeo?.id || !containerRef.current) return
 
     // Once this player is torn down (close / remount), its in-flight Vimeo
     // callbacks must go quiet — a late ready()-rejection or 'error' event from a
@@ -211,7 +214,23 @@ function VideoPlayerModal({ video, progress, onClose, onProgressUpdate }: {
       cancelled = true
       cleanup()
     }
-  }, [vimeo?.id, vimeo?.hash])
+  }, [started, vimeo?.id, vimeo?.hash])
+
+  // "Back" steps out of playback to the paused thumbnail, without closing the
+  // modal — distinct from Close, which exits back to the library grid.
+  const handleBack = () => {
+    try {
+      const pos = currentPositionRef.current
+      if (pos >= 1) {
+        const done = reachedEnd(pos)
+        saveProgress(video._id, pos, done)
+        onProgressUpdate(video._id, pos, done)
+      }
+    } catch {
+      // Best-effort save — going back still has to happen below.
+    }
+    setStarted(false)
+  }
 
   const handleClose = () => {
     // Closing must never get stuck just because saving progress or tearing down
@@ -248,13 +267,38 @@ function VideoPlayerModal({ video, progress, onClose, onProgressUpdate }: {
       onClick={handleClose}
     >
       <div className="max-w-3xl w-full" onClick={(e) => e.stopPropagation()}>
-        <div className="flex justify-end mb-2">
+        <div className="flex items-center justify-between mb-2">
+          {started ? (
+            <button onClick={handleBack} className="text-white text-sm min-h-[44px] px-3">← Back</button>
+          ) : (
+            <span />
+          )}
           <button onClick={handleClose} className="text-white text-sm min-h-[44px] px-3">Close ✕</button>
         </div>
         {vimeo?.id && !playerError ? (
-          <div className="rounded-xl overflow-hidden" style={{ background: '#000', position: 'relative', paddingBottom: '56.25%', height: 0 }}>
-            <div ref={containerRef} style={{ position: 'absolute', inset: 0 }} />
-          </div>
+          started ? (
+            <div className="rounded-xl overflow-hidden" style={{ background: '#000', position: 'relative', paddingBottom: '56.25%', height: 0 }}>
+              <div ref={containerRef} style={{ position: 'absolute', inset: 0 }} />
+            </div>
+          ) : (
+            <button
+              onClick={() => setStarted(true)}
+              aria-label={`Play ${video.title}`}
+              className="group w-full rounded-xl overflow-hidden relative aspect-video bg-charcoal/20"
+            >
+              {video.thumbnailUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element -- external Vimeo CDN thumbnail
+                <img src={video.thumbnailUrl} alt="" className="w-full h-full object-cover" />
+              ) : null}
+              <div className="absolute inset-0 flex items-center justify-center bg-black/25 group-hover:bg-black/35 transition-colors">
+                <span className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor" className="text-charcoal ml-0.5">
+                    <path d="M3 2.5l13 6.5-13 6.5V2.5z" />
+                  </svg>
+                </span>
+              </div>
+            </button>
+          )
         ) : (
           <div className="rounded-xl bg-charcoal/6 aspect-video flex items-center justify-center">
             <p className="text-sm text-charcoal/65">Video not available.</p>
