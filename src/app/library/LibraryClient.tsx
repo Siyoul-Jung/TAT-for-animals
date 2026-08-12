@@ -47,7 +47,7 @@ function VideoCard({ video, progress, onOpen }: {
   return (
     <button
       onClick={() => onOpen(video)}
-      className="text-left rounded-2xl border border-charcoal/10 bg-white overflow-hidden shadow-sm hover:shadow-md hover:border-brand/30 transition-all focus-visible:[outline-offset:-2px]"
+      className="group text-left rounded-2xl border border-charcoal/10 bg-white overflow-hidden shadow-sm hover:shadow-md hover:border-brand/30 hover:scale-[1.02] transition-all focus-visible:[outline-offset:-2px]"
     >
       <div className="aspect-video bg-charcoal/10 relative border-b border-charcoal/8">
         {video.thumbnailUrl ? (
@@ -60,6 +60,15 @@ function VideoCard({ video, progress, onOpen }: {
         ) : (
           <div className="w-full h-full flex items-center justify-center text-charcoal/30 text-sm">No preview</div>
         )}
+        {/* Play affordance on hover — mouse-only by nature (group-hover), same
+            as the card scale-up above; touch users just tap the card. */}
+        <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/10 transition-colors pointer-events-none">
+          <span className="w-11 h-11 rounded-full bg-white/90 opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 transition-all flex items-center justify-center shadow-md">
+            <svg width="16" height="16" viewBox="0 0 18 18" fill="currentColor" className="text-charcoal ml-0.5">
+              <path d="M3 2.5l13 6.5-13 6.5V2.5z" />
+            </svg>
+          </span>
+        </div>
         {hasProgress && (
           <div className="absolute bottom-0 inset-x-0 h-1 bg-black/20">
             <div
