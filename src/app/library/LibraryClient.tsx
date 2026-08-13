@@ -101,7 +101,7 @@ function VideoCard({ video, progress, onOpen }: {
               onClick={() => setExpanded((v) => !v)}
               aria-expanded={expanded}
               aria-label={expanded ? 'Show less' : 'Show more'}
-              className="shrink-0 mt-0.5 w-6 h-6 rounded-full border border-charcoal/15 flex items-center justify-center text-charcoal/60 hover:text-charcoal hover:border-charcoal/30 transition-colors focus-visible:[outline-offset:2px]"
+              className="shrink-0 -mt-1 -mr-1 w-11 h-11 rounded-full border border-charcoal/15 flex items-center justify-center text-charcoal/60 hover:text-charcoal hover:border-charcoal/30 transition-colors focus-visible:[outline-offset:2px]"
             >
               <svg
                 width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth={1.5}
@@ -129,24 +129,49 @@ function MobileVideoRow({ video, onOpen }: {
   video: Video
   onOpen: (v: Video) => void
 }) {
+  // Same split as the desktop card, and for the same reason — the expand
+  // toggle is its own button, and a button can't contain another button.
+  const [expanded, setExpanded] = useState(false)
   return (
-    <button
-      onClick={() => onOpen(video)}
-      className="w-full flex items-center gap-3 py-3 text-left border-b border-charcoal/8 last:border-0 min-h-[64px] focus-visible:[outline-offset:-2px]"
-    >
-      <div className="w-20 h-14 rounded-lg bg-charcoal/10 overflow-hidden shrink-0">
-        {video.thumbnailUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element -- external Vimeo CDN thumbnail
-          <img src={video.thumbnailUrl} alt="" loading="lazy" className="w-full h-full object-cover" />
-        ) : null}
-      </div>
-      <div className="min-w-0 flex-1">
-        <p className="font-medium text-base text-charcoal leading-snug line-clamp-1">{video.title}</p>
-        {video.summary && (
-          <p className="text-sm text-charcoal/65 leading-snug mt-0.5 line-clamp-2">{video.summary}</p>
-        )}
-      </div>
-    </button>
+    <div className="border-b border-charcoal/8 last:border-0 py-3">
+      <button
+        onClick={() => onOpen(video)}
+        aria-label={`Play ${video.title}`}
+        className="w-full flex items-center gap-3 text-left min-h-[64px] focus-visible:[outline-offset:-2px]"
+      >
+        <div className="w-20 h-14 rounded-lg bg-charcoal/10 overflow-hidden shrink-0">
+          {video.thumbnailUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element -- external Vimeo CDN thumbnail
+            <img src={video.thumbnailUrl} alt="" loading="lazy" className="w-full h-full object-cover" />
+          ) : null}
+        </div>
+        <p className="min-w-0 flex-1 font-medium text-base text-charcoal leading-snug line-clamp-1">{video.title}</p>
+      </button>
+      {video.summary && (
+        // Indented to align under the title, past the thumbnail (80px + 12px gap).
+        <div className="flex items-start gap-2 mt-1 pl-[92px]">
+          <p
+            className={`text-sm text-charcoal/65 leading-snug flex-1 overflow-hidden transition-[max-height] duration-[400ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${expanded ? 'max-h-[400px]' : 'max-h-10'}`}
+          >
+            {video.summary}
+          </p>
+          <button
+            onClick={() => setExpanded((v) => !v)}
+            aria-expanded={expanded}
+            aria-label={expanded ? 'Show less' : 'Show more'}
+            className="shrink-0 -mt-1 -mr-1 w-11 h-11 rounded-full flex items-center justify-center text-charcoal/60 hover:text-charcoal transition-colors focus-visible:[outline-offset:-2px]"
+          >
+            <svg
+              width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth={1.5}
+              className={`transition-transform duration-[400ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${expanded ? 'rotate-180' : ''}`}
+              aria-hidden="true"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M1.5 3.5L5 7l3.5-3.5" />
+            </svg>
+          </button>
+        </div>
+      )}
+    </div>
   )
 }
 
