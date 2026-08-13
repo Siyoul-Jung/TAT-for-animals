@@ -372,7 +372,10 @@ function VideoTab({ videos, progressMap, onOpen }: {
             <MobileVideoRow key={video._id} video={video} onOpen={onOpen} />
           ))}
         </div>
-        <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        {/* items-start: without it, CSS grid stretches every card in a row to
+            match its tallest sibling — so expanding one card's description
+            visually "grows" its neighbors too, leaving empty space in them. */}
+        <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-5 items-start">
           {groupVideos.map((video) => (
             <VideoCard key={video._id} video={video} progress={progressMap[video._id]} onOpen={onOpen} />
           ))}
