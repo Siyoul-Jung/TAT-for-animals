@@ -94,7 +94,12 @@ function VideoCard({ video, progress, onOpen }: {
       <div className="px-4 pb-4">
         {video.summary && (
           <div className="mt-1 flex items-start gap-2">
-            <p className={`text-sm text-charcoal/65 leading-relaxed flex-1 ${expanded ? '' : 'line-clamp-2'}`}>
+            {/* max-height (not line-clamp) so the expand/collapse can animate —
+                line-clamp's overflow is an all-or-nothing box, it can't tween.
+                400px comfortably covers even the longest real summary. */}
+            <p
+              className={`text-sm text-charcoal/65 leading-relaxed flex-1 overflow-hidden transition-[max-height] duration-[400ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${expanded ? 'max-h-[400px]' : 'max-h-[3.3rem]'}`}
+            >
               {video.summary}
             </p>
             <button
@@ -105,7 +110,7 @@ function VideoCard({ video, progress, onOpen }: {
             >
               <svg
                 width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth={1.5}
-                className={`transition-transform ${expanded ? 'rotate-180' : ''}`}
+                className={`transition-transform duration-[400ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${expanded ? 'rotate-180' : ''}`}
                 aria-hidden="true"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M1.5 3.5L5 7l3.5-3.5" />
@@ -246,22 +251,6 @@ function VideoPlayerModal({ video, progress, onClose, onProgressUpdate }: {
     }
   }, [started, vimeo?.id, vimeo?.hash])
 
-  // "Back" steps out of playback to the paused thumbnail, without closing the
-  // modal — distinct from Close, which exits back to the library grid.
-  const handleBack = () => {
-    try {
-      const pos = currentPositionRef.current
-      if (pos >= 1) {
-        const done = reachedEnd(pos)
-        saveProgress(video._id, pos, done)
-        onProgressUpdate(video._id, pos, done)
-      }
-    } catch {
-      // Best-effort save — going back still has to happen below.
-    }
-    setStarted(false)
-  }
-
   const handleClose = () => {
     // Closing must never get stuck just because saving progress or tearing down
     // the Vimeo player throws (e.g. destroy() on a player that hasn't finished
@@ -297,12 +286,7 @@ function VideoPlayerModal({ video, progress, onClose, onProgressUpdate }: {
       onClick={handleClose}
     >
       <div className="max-w-3xl w-full" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-center justify-between mb-2">
-          {started ? (
-            <button onClick={handleBack} className="text-white text-sm min-h-[44px] px-3">← Back</button>
-          ) : (
-            <span />
-          )}
+        <div className="flex justify-end mb-2">
           <button onClick={handleClose} className="text-white text-sm min-h-[44px] px-3">Close ✕</button>
         </div>
         {vimeo?.id && !playerError ? (
