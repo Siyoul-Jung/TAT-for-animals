@@ -88,7 +88,14 @@ function VideoCard({ video, progress, onOpen }: {
           )}
         </div>
         <div className="px-4 pt-4">
-          <p className="font-medium text-base text-charcoal leading-snug line-clamp-2 text-left">{video.title}</p>
+          {/* Tied to the same expanded state as the summary below — pressing the
+              arrow should reveal the whole video, not just its description, so a
+              long title doesn't stay stuck behind "…" once the card is open.
+              min-h reserves 2 lines' worth of space even for a short one-line
+              title — otherwise items-start (needed so expand doesn't stretch
+              siblings) lets each card size to its own title length, and a row
+              of 1-line and 2-line titles ends up visibly uneven in height. */}
+          <p className={`font-medium text-base text-charcoal leading-snug text-left ${expanded ? '' : 'line-clamp-2 min-h-[2.75rem]'}`}>{video.title}</p>
         </div>
       </button>
       <div className="px-4 pb-4">
@@ -98,18 +105,24 @@ function VideoCard({ video, progress, onOpen }: {
                 line-clamp's overflow is an all-or-nothing box, it can't tween.
                 400px comfortably covers even the longest real summary. */}
             <p
-              className={`text-sm text-charcoal/65 leading-relaxed flex-1 overflow-hidden transition-[max-height] duration-[400ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${expanded ? 'max-h-[400px]' : 'max-h-[3.3rem]'}`}
+              className={`text-sm text-charcoal/65 leading-relaxed flex-1 overflow-hidden transition-[max-height] duration-[400ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${expanded ? 'max-h-[400px]' : 'max-h-[3.3rem] min-h-[3.3rem]'}`}
             >
               {video.summary}
             </p>
+            {/* No drawn border/ring (was too heavy) — the 44px box is still the
+                full tap target (WCAG touch-target minimum). The soft fill stays
+                on at rest rather than only appearing on hover: Netflix, Disney+
+                and YouTube all keep their "more" affordance visible without a
+                hover, so a first-time or low-vision visitor doesn't have to
+                discover it by accident. */}
             <button
               onClick={() => setExpanded((v) => !v)}
               aria-expanded={expanded}
               aria-label={expanded ? 'Show less' : 'Show more'}
-              className="shrink-0 -mt-1 -mr-1 w-11 h-11 rounded-full border border-charcoal/15 flex items-center justify-center text-charcoal/60 hover:text-charcoal hover:border-charcoal/30 transition-colors focus-visible:[outline-offset:2px]"
+              className="shrink-0 -mt-1 -mr-1 w-11 h-11 rounded-full bg-charcoal/6 flex items-center justify-center text-charcoal/60 hover:text-charcoal hover:bg-charcoal/10 transition-colors focus-visible:[outline-offset:-2px]"
             >
               <svg
-                width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth={1.5}
+                width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth={1.5}
                 className={`transition-transform duration-[400ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${expanded ? 'rotate-180' : ''}`}
                 aria-hidden="true"
               >
@@ -150,7 +163,7 @@ function MobileVideoRow({ video, onOpen }: {
             <img src={video.thumbnailUrl} alt="" loading="lazy" className="w-full h-full object-cover" />
           ) : null}
         </div>
-        <p className="min-w-0 flex-1 font-medium text-base text-charcoal leading-snug line-clamp-1">{video.title}</p>
+        <p className={`min-w-0 flex-1 font-medium text-base text-charcoal leading-snug ${expanded ? '' : 'line-clamp-1'}`}>{video.title}</p>
       </button>
       {video.summary && (
         // Indented to align under the title, past the thumbnail (80px + 12px gap).
@@ -164,10 +177,10 @@ function MobileVideoRow({ video, onOpen }: {
             onClick={() => setExpanded((v) => !v)}
             aria-expanded={expanded}
             aria-label={expanded ? 'Show less' : 'Show more'}
-            className="shrink-0 -mt-1 -mr-1 w-11 h-11 rounded-full flex items-center justify-center text-charcoal/60 hover:text-charcoal transition-colors focus-visible:[outline-offset:-2px]"
+            className="shrink-0 -mt-1 -mr-1 w-11 h-11 rounded-full bg-charcoal/6 flex items-center justify-center text-charcoal/60 hover:text-charcoal hover:bg-charcoal/10 transition-colors focus-visible:[outline-offset:-2px]"
           >
             <svg
-              width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth={1.5}
+              width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth={1.5}
               className={`transition-transform duration-[400ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${expanded ? 'rotate-180' : ''}`}
               aria-hidden="true"
             >
