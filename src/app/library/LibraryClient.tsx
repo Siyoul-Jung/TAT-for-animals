@@ -109,14 +109,17 @@ function VideoCard({ video, progress, onOpen }: {
             >
               {video.summary}
             </p>
+            {/* No visible border/ring — the 44px box below is still the full tap
+                target (WCAG touch-target minimum), just without a heavy circle
+                drawn around it; a soft hover fill is the only visual weight. */}
             <button
               onClick={() => setExpanded((v) => !v)}
               aria-expanded={expanded}
               aria-label={expanded ? 'Show less' : 'Show more'}
-              className="shrink-0 -mt-1 -mr-1 w-11 h-11 rounded-full border border-charcoal/15 flex items-center justify-center text-charcoal/60 hover:text-charcoal hover:border-charcoal/30 transition-colors focus-visible:[outline-offset:2px]"
+              className="shrink-0 -mt-1 -mr-1 w-11 h-11 rounded-full flex items-center justify-center text-charcoal/60 hover:text-charcoal hover:bg-charcoal/6 transition-colors focus-visible:[outline-offset:-2px]"
             >
               <svg
-                width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth={1.5}
+                width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth={1.5}
                 className={`transition-transform duration-[400ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${expanded ? 'rotate-180' : ''}`}
                 aria-hidden="true"
               >
@@ -171,10 +174,10 @@ function MobileVideoRow({ video, onOpen }: {
             onClick={() => setExpanded((v) => !v)}
             aria-expanded={expanded}
             aria-label={expanded ? 'Show less' : 'Show more'}
-            className="shrink-0 -mt-1 -mr-1 w-11 h-11 rounded-full flex items-center justify-center text-charcoal/60 hover:text-charcoal transition-colors focus-visible:[outline-offset:-2px]"
+            className="shrink-0 -mt-1 -mr-1 w-11 h-11 rounded-full flex items-center justify-center text-charcoal/60 hover:text-charcoal hover:bg-charcoal/6 transition-colors focus-visible:[outline-offset:-2px]"
           >
             <svg
-              width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth={1.5}
+              width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth={1.5}
               className={`transition-transform duration-[400ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${expanded ? 'rotate-180' : ''}`}
               aria-hidden="true"
             >
