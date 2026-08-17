@@ -8,6 +8,7 @@ import { usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { membershipHasLapsed } from '@/lib/access';
 import { cn } from '@/lib/utils';
+import { Search } from 'lucide-react';
 
 
 
@@ -139,6 +140,20 @@ export default function Navbar() {
             next to the logo). font-medium keeps it visually lighter than the active-page
             underline treatment without going below 14px. */}
         <div className="flex items-center justify-end gap-5 sm:gap-6">
+          {/* Search — icon at the upper right, where people expect it. Links to a
+              full search page (not a cramped dropdown) so it stays senior-friendly
+              and works the same before and after subscription. */}
+          <Link
+            href="/search"
+            aria-label="Search"
+            aria-current={pathname === '/search' ? 'page' : undefined}
+            className={cn(
+              'inline-flex items-center justify-center min-h-[44px] min-w-[44px] -mx-1.5 transition-colors',
+              pathname === '/search' ? 'text-green' : 'text-charcoal/65 hover:text-green'
+            )}
+          >
+            <Search className="h-5 w-5" aria-hidden="true" />
+          </Link>
           {pathname === '/about' ? (
             <span aria-current="page" className="inline-flex items-center min-h-[44px] text-sm font-semibold whitespace-nowrap cursor-default select-none underline underline-offset-4 text-green">
               About
