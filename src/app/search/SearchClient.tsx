@@ -173,10 +173,18 @@ export default function SearchClient({
         {/* Results */}
         {!loading && results.length === 0 ? (
           <div className="mt-10 rounded-2xl border border-green/15 bg-white/60 px-6 py-12 text-center">
-            <p className="text-lg text-charcoal">No matches for “{query.trim()}”.</p>
-            <p className="mt-2 text-base leading-relaxed text-muted">
-              Try a simpler word — an animal, a feeling, or a situation like “fireworks”.
-            </p>
+            {hasQuery ? (
+              <>
+                <p className="text-lg text-charcoal">No matches for “{query.trim()}”.</p>
+                <p className="mt-2 text-base leading-relaxed text-muted">
+                  Try a simpler word — an animal, a feeling, or a situation like “fireworks”.
+                </p>
+              </>
+            ) : (
+              <p className="text-base leading-relaxed text-muted">
+                New videos and recordings are on their way — please check back soon.
+              </p>
+            )}
           </div>
         ) : (
           <ul className="mt-6 flex flex-col gap-3">
