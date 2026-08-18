@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils'
 import { membershipHasLapsed } from '@/lib/access'
 import type { SearchItem } from '@/lib/search'
 import { PLAN_NAMES } from '@/lib/plans'
+import { buildLibraryHref } from '@/lib/libraryLink'
 
 type ViewerRole = 'guest' | 'subscriber' | 'pro_subscriber'
 
@@ -135,8 +136,7 @@ export default function SearchClient({
   // already knows (server-side) whether this viewer's role/tier can actually
   // watch it. A guest or under-tiered member gets the existing locked-card
   // prompt there automatically; we don't duplicate that access logic here.
-  const watchHrefFor = (item: SearchItem) =>
-    `/library?tab=${item.kind === 'recording' ? 'live' : 'animals'}&video=${item.id}`
+  const watchHrefFor = buildLibraryHref
   // Per-item, not just per-login: a Calm Connection member can open any
   // "library" item but not a "circle" one, so the label must never promise
   // "open" for content the click won't actually deliver.
@@ -176,7 +176,7 @@ export default function SearchClient({
             placeholder="Try “anxiety” or “cats”…"
             className={cn(
               'w-full appearance-none rounded-full border-2 border-green/25 bg-white py-4 pl-12 pr-12 text-base sm:text-lg text-charcoal',
-              'placeholder:text-muted focus:border-green focus:outline-none focus-visible:outline-none!'
+              'placeholder:text-muted focus:border-green focus:outline-none focus-visible:outline-none! focus-visible:ring-2 focus-visible:ring-green'
             )}
           />
           {query && (
