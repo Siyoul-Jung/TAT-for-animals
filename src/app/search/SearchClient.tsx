@@ -6,8 +6,11 @@ import { useSearchParams } from 'next/navigation'
 import { Search, X } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
+import { membershipHasLapsed } from '@/lib/access'
 import type { SearchItem } from '@/lib/search'
 import { PLAN_NAMES } from '@/lib/plans'
+
+type ViewerRole = 'guest' | 'subscriber' | 'pro_subscriber'
 
 // Full-page search — chosen over a cramped navbar dropdown on purpose:
 // a full page with one big input is the simplest, most senior-friendly shape,
@@ -58,13 +61,27 @@ export default function SearchClient({
   const searchParams = useSearchParams()
   const [query, setQuery] = useState(() => searchParams.get('q') ?? '')
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null)
+  const [role, setRole] = useState<ViewerRole>('guest')
 
-  // Auth state decides where "watch" sends people — same read as the Navbar.
+  // Auth + role decide each result's label — same read as the Navbar. Role
+  // (not just login state) is needed so a Calm Connection member never sees
+  // "Open in your library" on a Circle-only recording they can't actually
+  // watch yet.
   useEffect(() => {
     let active = true
     const supabase = createClient()
-    supabase.auth.getUser().then(({ data }) => {
-      if (active) setIsLoggedIn(!!data.user)
+    supabase.auth.getUser().then(async ({ data }) => {
+      if (!active) return
+      setIsLoggedIn(!!data.user)
+      if (!data.user) return
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role, cancel_at')
+        .eq('id', data.user.id)
+        .single()
+      if (!active) return
+      const resolvedRole = membershipHasLapsed(profile?.cancel_at) ? 'guest' : (profile?.role ?? 'guest')
+      setRole(resolvedRole === 'subscriber' || resolvedRole === 'pro_subscriber' ? resolvedRole : 'guest')
     })
     return () => {
       active = false
@@ -120,7 +137,14 @@ export default function SearchClient({
   // prompt there automatically; we don't duplicate that access logic here.
   const watchHrefFor = (item: SearchItem) =>
     `/library?tab=${item.kind === 'recording' ? 'live' : 'animals'}&video=${item.id}`
-  const watchLabel = isLoggedIn ? 'Open in your library' : 'Join to watch'
+  // Per-item, not just per-login: a Calm Connection member can open any
+  // "library" item but not a "circle" one, so the label must never promise
+  // "open" for content the click won't actually deliver.
+  const watchLabelFor = (item: SearchItem) => {
+    if (!isLoggedIn) return 'Join to watch'
+    if (item.access === 'circle' && role !== 'pro_subscriber') return 'Upgrade to watch'
+    return 'Open in your library'
+  }
 
   return (
     <div className="min-h-screen bg-cream px-4 pb-24 pt-28 sm:pt-32">
@@ -202,7 +226,7 @@ export default function SearchClient({
                     'group block rounded-2xl border border-green/15 bg-white px-5 py-4 transition-colors',
                     'hover:border-green/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green'
                   )}
-                  aria-label={`${item.title} — ${watchLabel}`}
+                  aria-label={`${item.title} — ${watchLabelFor(item)}`}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <h2 className="min-w-0 flex-1 font-serif text-xl leading-snug text-charcoal">
@@ -222,7 +246,7 @@ export default function SearchClient({
                     {item.category && item.date && <span aria-hidden="true">·</span>}
                     {item.date && <span>{formatDate(item.date)}</span>}
                     <span className="ml-auto font-medium text-green group-hover:underline">
-                      {watchLabel} →
+                      {watchLabelFor(item)} →
                     </span>
                   </div>
                 </Link>

@@ -483,12 +483,13 @@ function formatDateTime(iso: string): string {
 }
 
 function RecordingCard({ recording, autoPlay = false }: { recording: WebinarRecording; autoPlay?: boolean }) {
-  const [playing, setPlaying] = useState(autoPlay)
+  // autoPlay only scrolls the matched card into view — it must never start
+  // playback itself (site-wide no-autoplay rule, CLAUDE.md). Watching still
+  // requires the member to press Play, same as every other card.
+  const [playing, setPlaying] = useState(false)
   const vimeo = parseVimeo(recording.videoUrl)
   const cardRef = useRef<HTMLDivElement>(null)
 
-  // Deep link from search — scroll the matched card into view once, same
-  // pattern as the archive's own "show all" reveal.
   useEffect(() => {
     if (autoPlay) cardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
   }, [autoPlay])
@@ -555,6 +556,14 @@ function JoinPromptModal({ onClose }: { onClose: () => void }) {
           className="block w-full min-h-[44px] flex items-center justify-center rounded-full bg-brand text-white text-[17px] font-bold hover:opacity-90 transition-opacity mb-3"
         >
           See membership options
+        </Link>
+        {/* A signed-out existing member (cleared cookies, new device) hits this
+            same locked state — give them a way back in, not just a sales page. */}
+        <Link
+          href="/login"
+          className="block w-full min-h-[44px] flex items-center justify-center text-sm font-medium text-green hover:text-green transition-colors mb-1"
+        >
+          Already a member? Sign in
         </Link>
         <button
           onClick={onClose}
