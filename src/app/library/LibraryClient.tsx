@@ -40,6 +40,9 @@ function VideoCard({ video, progress, onOpen }: {
   onOpen: (v: Video) => void
 }) {
   const duration = formatDuration(video.duration)
+  // A guest browsing before joining — videoUrl is withheld server-side for
+  // any video they can't watch yet (see library/page.tsx).
+  const locked = !video.videoUrl
   // Boolean(...) matters here, not just style: without it, a lastPosition of
   // exactly 0 short-circuits the && chain to the number 0 — and {0 && <div/>}
   // renders the literal text "0" in JSX, unlike {false && <div/>} or {null && <div/>}.
@@ -55,7 +58,7 @@ function VideoCard({ video, progress, onOpen }: {
     <div className="group text-left rounded-2xl border border-charcoal/10 bg-white overflow-hidden shadow-sm hover:shadow-md hover:border-brand/30 hover:scale-[1.02] transition-all">
       <button
         onClick={() => onOpen(video)}
-        aria-label={`Play ${video.title}`}
+        aria-label={locked ? `Join to watch ${video.title}` : `Play ${video.title}`}
         className="block w-full focus-visible:[outline-offset:-2px]"
       >
         <div className="aspect-video bg-charcoal/10 relative border-b border-charcoal/8">
@@ -65,19 +68,32 @@ function VideoCard({ video, progress, onOpen }: {
             // frame edge — the border-b above gives the image its own boundary
             // instead of bleeding into the white card body below it.
             // eslint-disable-next-line @next/next/no-img-element -- external Vimeo CDN thumbnail, not a static/optimizable local asset
-            <img src={video.thumbnailUrl} alt="" loading="lazy" className="w-full h-full object-cover" />
+            <img src={video.thumbnailUrl} alt="" loading="lazy" className={`w-full h-full object-cover ${locked ? 'opacity-70' : ''}`} />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-charcoal/30 text-sm">No preview</div>
           )}
-          {/* Play affordance on hover — mouse-only by nature (group-hover), same
-              as the card scale-up above; touch users just tap the card. */}
-          <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/10 transition-colors pointer-events-none">
-            <span className="w-11 h-11 rounded-full bg-white/90 opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 transition-all flex items-center justify-center shadow-md">
-              <svg width="16" height="16" viewBox="0 0 18 18" fill="currentColor" className="text-charcoal ml-0.5">
-                <path d="M3 2.5l13 6.5-13 6.5V2.5z" />
-              </svg>
-            </span>
-          </div>
+          {locked ? (
+            // Always visible, not hover-only — a guest needs to see at a glance
+            // that this one requires joining, without having to hover first.
+            <div className="absolute inset-0 flex items-center justify-center bg-charcoal/15">
+              <span className="w-11 h-11 rounded-full bg-white/90 flex items-center justify-center shadow-md">
+                <svg width="15" height="15" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth={1.5} className="text-charcoal" aria-hidden="true">
+                  <rect x="2" y="5" width="8" height="6" rx="1" />
+                  <path strokeLinecap="round" d="M4 5V3.5a2 2 0 0 1 4 0V5" />
+                </svg>
+              </span>
+            </div>
+          ) : (
+            // Play affordance on hover — mouse-only by nature (group-hover), same
+            // as the card scale-up above; touch users just tap the card.
+            <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/10 transition-colors pointer-events-none">
+              <span className="w-11 h-11 rounded-full bg-white/90 opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 transition-all flex items-center justify-center shadow-md">
+                <svg width="16" height="16" viewBox="0 0 18 18" fill="currentColor" className="text-charcoal ml-0.5">
+                  <path d="M3 2.5l13 6.5-13 6.5V2.5z" />
+                </svg>
+              </span>
+            </div>
+          )}
           {hasProgress && (
             <div className="absolute bottom-0 inset-x-0 h-1 bg-black/20">
               <div
@@ -132,7 +148,11 @@ function VideoCard({ video, progress, onOpen }: {
           </div>
         )}
         <div className="flex items-center gap-2 mt-2">
-          {duration && <p className="text-xs text-charcoal/60">{duration}</p>}
+          {locked ? (
+            <p className="text-sm font-medium text-brand">Join to watch</p>
+          ) : (
+            duration && <p className="text-xs text-charcoal/60">{duration}</p>
+          )}
         </div>
       </div>
     </div>
@@ -150,20 +170,32 @@ function MobileVideoRow({ video, onOpen }: {
   // Same split as the desktop card, and for the same reason — the expand
   // toggle is its own button, and a button can't contain another button.
   const [expanded, setExpanded] = useState(false)
+  const locked = !video.videoUrl
   return (
     <div className="border-b border-charcoal/8 last:border-0 py-3">
       <button
         onClick={() => onOpen(video)}
-        aria-label={`Play ${video.title}`}
+        aria-label={locked ? `Join to watch ${video.title}` : `Play ${video.title}`}
         className="w-full flex items-center gap-3 text-left min-h-[64px] focus-visible:[outline-offset:-2px]"
       >
-        <div className="w-20 h-14 rounded-lg bg-charcoal/10 overflow-hidden shrink-0">
+        <div className="w-20 h-14 rounded-lg bg-charcoal/10 overflow-hidden shrink-0 relative">
           {video.thumbnailUrl ? (
             // eslint-disable-next-line @next/next/no-img-element -- external Vimeo CDN thumbnail
-            <img src={video.thumbnailUrl} alt="" loading="lazy" className="w-full h-full object-cover" />
+            <img src={video.thumbnailUrl} alt="" loading="lazy" className={`w-full h-full object-cover ${locked ? 'opacity-70' : ''}`} />
           ) : null}
+          {locked && (
+            <div className="absolute inset-0 flex items-center justify-center bg-charcoal/15">
+              <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth={1.5} className="text-white" aria-hidden="true">
+                <rect x="2" y="5" width="8" height="6" rx="1" />
+                <path strokeLinecap="round" d="M4 5V3.5a2 2 0 0 1 4 0V5" />
+              </svg>
+            </div>
+          )}
         </div>
-        <p className={`min-w-0 flex-1 font-medium text-base text-charcoal leading-snug ${expanded ? '' : 'line-clamp-1'}`}>{video.title}</p>
+        <div className="min-w-0 flex-1">
+          <p className={`font-medium text-base text-charcoal leading-snug ${expanded ? '' : 'line-clamp-1'}`}>{video.title}</p>
+          {locked && <p className="text-sm font-medium text-brand mt-0.5">Join to watch</p>}
+        </div>
       </button>
       {video.summary && (
         // Indented to align under the title, past the thumbnail (80px + 12px gap).
@@ -199,7 +231,9 @@ function VideoPlayerModal({ video, progress, onClose, onProgressUpdate }: {
   onClose: () => void
   onProgressUpdate: (contentId: string, lastPosition: number, completed: boolean) => void
 }) {
-  const vimeo = parseVimeo(video.videoUrl)
+  // This modal is only ever opened for a video the viewer can actually watch
+  // (see canOpenVideo below) — videoUrl is guaranteed non-null at that point.
+  const vimeo = parseVimeo(video.videoUrl ?? '')
   const [playerError, setPlayerError] = useState(false)
   // Jez's spec (2026-08-08): the modal opens paused on the thumbnail, not
   // autoplaying — playback only starts once the member presses Play.
@@ -487,6 +521,42 @@ function RecordingCard({ recording }: { recording: WebinarRecording }) {
   )
 }
 
+// Shown when a guest taps a locked video card — parity with the modal-per-
+// gate pattern already used for the Live tab's Calm Circle upgrade prompt.
+function JoinPromptModal({ onClose }: { onClose: () => void }) {
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Join to watch this video"
+      className="fixed inset-0 z-50 bg-charcoal/45 flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-2xl max-w-sm w-full p-7 text-center shadow-lg"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <p className="font-serif text-xl text-charcoal mb-2">Join to watch this video</p>
+        <p className="text-charcoal/65 text-base leading-relaxed mb-6">
+          Members get the full TAT for Animals video library, with new sessions added regularly.
+        </p>
+        <Link
+          href="/membership"
+          className="block w-full min-h-[44px] flex items-center justify-center rounded-full bg-brand text-white text-[17px] font-bold hover:opacity-90 transition-opacity mb-3"
+        >
+          See membership options
+        </Link>
+        <button
+          onClick={onClose}
+          className="w-full min-h-[44px] flex items-center justify-center text-sm text-charcoal/60 hover:text-charcoal/90 transition-colors"
+        >
+          Not now
+        </button>
+      </div>
+    </div>
+  )
+}
+
 type Tab = 'animals' | 'live'
 
 export default function LibraryClient({
@@ -524,6 +594,13 @@ export default function LibraryClient({
   const [activeTab, setActiveTab] = useState<Tab>(() => resolveTab(tabParam))
   const [progressMap, setProgressMap] = useState<ProgressMap>({})
   const [openVideo, setOpenVideo] = useState<Video | null>(null)
+  const [showJoinPrompt, setShowJoinPrompt] = useState(false)
+  // A locked card (no videoUrl — see library/page.tsx) prompts to join instead
+  // of opening the player, which only ever receives a watchable video.
+  const handleOpenVideo = (v: Video) => {
+    if (v.videoUrl) setOpenVideo(v)
+    else setShowJoinPrompt(true)
+  }
   const [upgrading, setUpgrading] = useState(false)
   const [upgradeError, setUpgradeError] = useState<string | null>(null)
   const [confirmingUpgrade, setConfirmingUpgrade] = useState(false)
@@ -730,12 +807,17 @@ export default function LibraryClient({
         {/* 인사말이 캡션에서 페이지 제목(H1)으로 승격 — "Your Video Library"는
             첫 탭 이름으로 이동 (Jez, 2026-07-31). Tapas 요청(2026-08-02): 인사말
             위에 여백을 더 줘 차분한 느낌으로. Jez 목업 2차 스펙(2026-08-04):
-            padding-top 40px + 가운데 정렬로 갱신. */}
+            padding-top 40px + 가운데 정렬로 갱신. 게스트(2026-08-16, Tapas 공개
+            브라우징 요청): 로그인한 회원 전용 인사말 대신 둘러보기 안내로 대체. */}
         <h1 className="font-serif text-3xl text-charcoal mb-2 leading-[2.5em] pt-[40px] text-center">
-          {firstName ? <>Welcome to Your Calm Space, {firstName}.</> : 'Welcome to Your Calm Space.'}
+          {role === 'guest'
+            ? 'Explore the Video Library.'
+            : firstName ? <>Welcome to Your Calm Space, {firstName}.</> : 'Welcome to Your Calm Space.'}
         </h1>
         <p className="text-base text-charcoal/65 text-center leading-[40px] mb-[30px]">
-          Watch and learn. Practice TAT anytime. Stay tuned for upcoming live webinars. All in one place.
+          {role === 'guest'
+            ? 'Browse every session by topic. Join to watch — cancel anytime.'
+            : 'Watch and learn. Practice TAT anytime. Stay tuned for upcoming live webinars. All in one place.'}
         </p>
 
         {/* 탭 */}
@@ -845,7 +927,7 @@ export default function LibraryClient({
             {!(isSearching && search.trim() && filteredAnimalsVideos.length === 0) &&
               !(!isSearching && activeCategory === null) && (
               <div role="tabpanel" id="panel-category" aria-label={isSearching ? 'Search results' : activeCategory ?? ''} tabIndex={0}>
-                <VideoTab videos={displayedAnimalsVideos} progressMap={progressMap} onOpen={setOpenVideo} />
+                <VideoTab videos={displayedAnimalsVideos} progressMap={progressMap} onOpen={handleOpenVideo} />
               </div>
             )}
           </div>
@@ -1063,7 +1145,18 @@ export default function LibraryClient({
                           Sessions card. Green (#467826, ~5.3:1) is the AA-safe color
                           for small text links; orange would fail (globals.css:27). The
                           price isn't shown here — it appears in the confirm step. */}
-                      {isAnnual ? (
+                      {role === 'guest' ? (
+                        // A guest has no plan to change — this is a join, not an
+                        // upgrade, so it goes straight to the membership page
+                        // rather than the change-plan flow below (which assumes
+                        // an existing subscriber session).
+                        <Link
+                          href="/membership"
+                          className="inline-flex items-center min-h-[44px] text-sm font-medium text-green hover:text-green transition-colors"
+                        >
+                          Join The Calm Circle →
+                        </Link>
+                      ) : isAnnual ? (
                         <Link
                           href="/contact"
                           className="inline-flex items-center min-h-[44px] text-sm font-medium text-green hover:text-green transition-colors"
@@ -1101,6 +1194,8 @@ export default function LibraryClient({
           onProgressUpdate={handleProgressUpdate}
         />
       )}
+
+      {showJoinPrompt && <JoinPromptModal onClose={() => setShowJoinPrompt(false)} />}
 
       <BackToTopButton />
     </main>

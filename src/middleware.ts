@@ -2,7 +2,9 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 // 로그인이 필요한 경로
-const PROTECTED_PATHS = ['/dashboard', '/library']
+// /library는 제외 — Tapas 요청(2026-08-16): 방문자도 로그인 전에 영상 제목/설명을
+// 둘러볼 수 있어야 함 (잠긴 영상은 서버에서 videoUrl 자체를 안 보내는 방식으로 보호).
+const PROTECTED_PATHS = ['/dashboard']
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
@@ -54,5 +56,5 @@ export const config = {
   // Edge function just to early-return next(), adding latency and blocking pure
   // static CDN serving. Public pages now skip middleware entirely — same behaviour
   // (it never did auth work for them), lower TTFB.
-  matcher: ['/dashboard', '/dashboard/:path*', '/library', '/library/:path*'],
+  matcher: ['/dashboard', '/dashboard/:path*'],
 }

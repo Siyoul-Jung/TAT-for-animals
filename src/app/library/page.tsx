@@ -17,7 +17,10 @@ export type Video = {
   category: string
   duration: number | null
   summary: string | null
-  videoUrl: string
+  // null for a visitor/tier that can't watch it yet — title/summary/duration/
+  // thumbnail are public-safe browsing info, but the actual Vimeo link is the
+  // access boundary and is withheld server-side (never gated client-only).
+  videoUrl: string | null
   topicTags: string[] | null
   keywords: string | null
   dateRecorded: string | null
@@ -55,25 +58,45 @@ export default async function LibraryPage({
 }: {
   searchParams: Promise<{ tab?: string }>
 }) {
-  const { tab } = await searchParams
+  await searchParams
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect(`/login?next=${encodeURIComponent(tab ? `/library?tab=${tab}` : '/library')}`)
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('role, full_name, subscription_status, cancel_at, paypal_subscription_id, billing_interval')
-    .eq('id', user.id)
-    .single()
+  // Tapas (2026-08-16): visitors should be able to browse the whole library —
+  // titles, descriptions, thumbnails — before joining, not just after. So
+  // there's no redirect here anymore; an unauthenticated or non-member visitor
+  // just becomes 'guest' and sees the same shelves with locked cards.
+  let role: 'guest' | 'subscriber' | 'pro_subscriber' = 'guest'
+  let fullName: string | null = null
+  let isPayPal = false
+  let billingInterval: string | null = null
 
-  // A cancelled membership lapses once the paid period ends (PayPal has no
-  // period-end event, so enforce it here).
-  const role = membershipHasLapsed(profile?.cancel_at) ? 'guest' : (profile?.role ?? 'none')
-  if (role !== 'subscriber' && role !== 'pro_subscriber') redirect('/membership')
-  // past_due members are bounced to the dashboard, where the payment-failed
-  // notice renders from subscription_status (no query param needed).
-  if (profile?.subscription_status === 'past_due') redirect('/dashboard')
+  if (user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role, full_name, subscription_status, cancel_at, paypal_subscription_id, billing_interval')
+      .eq('id', user.id)
+      .single()
 
+    // A cancelled membership lapses once the paid period ends (PayPal has no
+    // period-end event, so enforce it here).
+    const resolvedRole = membershipHasLapsed(profile?.cancel_at) ? 'guest' : (profile?.role ?? 'guest')
+    role = resolvedRole === 'subscriber' || resolvedRole === 'pro_subscriber' ? resolvedRole : 'guest'
+    // past_due members are bounced to the dashboard, where the payment-failed
+    // notice renders from subscription_status (no query param needed) — this is
+    // the one case still worth redirecting for, since it's an account problem
+    // that needs their attention, not just a browsing state.
+    if (profile?.subscription_status === 'past_due') redirect('/dashboard')
+
+    fullName = profile?.full_name ?? null
+    isPayPal = !!profile?.paypal_subscription_id
+    billingInterval = profile?.billing_interval ?? null
+  }
+
+  // Every current video (all categories) is included with either paid tier —
+  // only Live Webinars are Calm Circle-exclusive. A guest can't watch anything
+  // yet, so gets browsing info only.
+  const canWatchVideos = role === 'subscriber' || role === 'pro_subscriber'
   const isPro = role === 'pro_subscriber'
 
   // Degrade gracefully if Sanity is slow/down: the member is already
@@ -84,13 +107,15 @@ export default async function LibraryPage({
   let upcoming: WebinarSession[] = []
   let lockedRecordings: RecordingPreview[] = []
   try {
-    let rawVideos: Omit<Video, 'thumbnailUrl'>[]
+    // Always a real string straight from Sanity — the union with null on
+    // Video.videoUrl only applies after the per-viewer gating below.
+    let rawVideos: (Omit<Video, 'thumbnailUrl' | 'videoUrl'> & { videoUrl: string })[]
     // Only "TAT for Animals" videos surface here. "Healing ACEs Plus" is a separate
     // program that lives solely on tatlife.com (it's for healing people, not animals),
     // so it is intentionally NOT queried or shown on this site (Tapas, 2026-06-25).
     // The library option still exists in the Sanity schema to keep Jez's data intact.
     [rawVideos, recordings, upcoming, lockedRecordings] = await Promise.all([
-      sanityClient.fetch<Omit<Video, 'thumbnailUrl'>[]>(
+      sanityClient.fetch<(Omit<Video, 'thumbnailUrl' | 'videoUrl'> & { videoUrl: string })[]>(
         `*[_type == "video" && status == "published" && library == "TAT for Animals"] | order(category asc, dateRecorded asc) {
           _id, title, category, duration, summary, videoUrl, topicTags, keywords, dateRecorded
         }`
@@ -120,8 +145,15 @@ export default async function LibraryPage({
     // Fetched separately (not blocked on the query above finishing render) —
     // a thumbnail fetch failing must never take the video list down with it;
     // fetchVimeoThumbnail already swallows its own errors and returns null.
+    // Thumbnails are public-safe (just a preview image) and fetched for every
+    // video regardless of tier, so a guest still sees what's on each shelf —
+    // only the playable videoUrl is withheld below.
     const thumbnails = await Promise.all(rawVideos.map((v) => fetchVimeoThumbnail(v.videoUrl)))
-    animalsVideos = rawVideos.map((v, i) => ({ ...v, thumbnailUrl: thumbnails[i] }))
+    animalsVideos = rawVideos.map((v, i) => ({
+      ...v,
+      thumbnailUrl: thumbnails[i],
+      videoUrl: canWatchVideos ? v.videoUrl : null,
+    }))
   } catch (e) {
     console.error('Library: Sanity fetch failed, showing empty library:', e)
   }
@@ -134,9 +166,9 @@ export default async function LibraryPage({
         upcoming={upcoming}
         lockedRecordings={lockedRecordings}
         role={role}
-        fullName={profile?.full_name ?? null}
-        isPayPal={!!profile?.paypal_subscription_id}
-        billingInterval={profile?.billing_interval ?? null}
+        fullName={fullName}
+        isPayPal={isPayPal}
+        billingInterval={billingInterval}
       />
     </Suspense>
   )

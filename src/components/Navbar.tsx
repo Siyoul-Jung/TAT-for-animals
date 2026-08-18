@@ -170,6 +170,10 @@ export default function Navbar() {
             </>
           ) : (
             <>
+              {/* /library is public now (Tapas, 2026-08-16) — visitors can browse
+                  titles and descriptions before joining, so the link belongs in
+                  the signed-out nav too, not just after login. */}
+              {renderNavLink('/library', 'Video Library')}
               <Link href="/login" className={navLinkClasses}>
                 Sign in
               </Link>
