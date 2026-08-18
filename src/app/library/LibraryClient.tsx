@@ -479,12 +479,19 @@ function formatDateTime(iso: string): string {
   })
 }
 
-function RecordingCard({ recording }: { recording: WebinarRecording }) {
-  const [playing, setPlaying] = useState(false)
+function RecordingCard({ recording, autoPlay = false }: { recording: WebinarRecording; autoPlay?: boolean }) {
+  const [playing, setPlaying] = useState(autoPlay)
   const vimeo = parseVimeo(recording.videoUrl)
+  const cardRef = useRef<HTMLDivElement>(null)
+
+  // Deep link from search — scroll the matched card into view once, same
+  // pattern as the archive's own "show all" reveal.
+  useEffect(() => {
+    if (autoPlay) cardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }, [autoPlay])
 
   return (
-    <div className="bg-white rounded-2xl border border-charcoal/10 overflow-hidden shadow-sm">
+    <div ref={cardRef} className="bg-white rounded-2xl border border-charcoal/10 overflow-hidden shadow-sm">
       <div className="relative aspect-video bg-charcoal">
         {playing && vimeo ? (
           <iframe
@@ -585,6 +592,7 @@ export default function LibraryClient({
   const firstName = displayFirstName(fullName)
   const searchParams = useSearchParams()
   const tabParam = searchParams.get('tab')
+  const videoParam = searchParams.get('video')
 
   function resolveTab(p: string | null): Tab {
     if (p === 'live') return 'live'
@@ -633,6 +641,37 @@ export default function LibraryClient({
     return counts
   }, [animalsVideos])
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
+  const [autoPlayRecordingId, setAutoPlayRecordingId] = useState<string | null>(null)
+
+  // Deep link from /search (?tab=&video=<sanity id>) — runs once per landing.
+  // The actual "can this viewer watch it" call already lives where the data
+  // does: animalsVideos/recordings only ever carry a real videoUrl for a
+  // viewer whose role qualifies (see library/page.tsx), so we don't re-derive
+  // access here — we just find the item and let the existing open/locked
+  // paths (handleOpenVideo, the Live tab's upgrade prompt) do what they
+  // already do for every other card.
+  const deepLinkHandled = useRef(false)
+  useEffect(() => {
+    if (!videoParam || deepLinkHandled.current) return
+    deepLinkHandled.current = true
+    if (activeTab === 'live') {
+      const rec = recordings.find((r) => r._id === videoParam)
+      if (rec) {
+        setShowAllRecordings(true)
+        setAutoPlayRecordingId(rec._id)
+      }
+      // No match means this viewer's tier never received the recording list
+      // (or it's an old link) — landing on the Live tab as-is already shows
+      // the right upgrade messaging, so there's nothing more to do.
+    } else {
+      const match = animalsVideos.find((v) => v._id === videoParam)
+      if (match) {
+        setActiveCategory(CATEGORY_ORDER.includes(match.category) ? match.category : 'Other')
+        handleOpenVideo(match)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [videoParam, activeTab, recordings, animalsVideos])
   // A search spans every category — showing the tab row while its selection no
   // longer applies would be confusing, so results ignore the active tab and are
   // grouped by category automatically (VideoTab already does this).
@@ -994,7 +1033,7 @@ export default function LibraryClient({
                   <>
                     <div className="grid sm:grid-cols-2 gap-4">
                       {(showAllRecordings ? recordings : recordings.slice(0, 3)).map((rec) => (
-                        <RecordingCard key={rec._id} recording={rec} />
+                        <RecordingCard key={rec._id} recording={rec} autoPlay={rec._id === autoPlayRecordingId} />
                       ))}
                     </div>
                     {/* Full archive stays reachable for every Pro member — this just
