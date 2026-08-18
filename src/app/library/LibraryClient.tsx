@@ -111,7 +111,10 @@ function VideoCard({ video, progress, onOpen }: {
               title — otherwise items-start (needed so expand doesn't stretch
               siblings) lets each card size to its own title length, and a row
               of 1-line and 2-line titles ends up visibly uneven in height. */}
-          <p className={`font-medium text-base text-charcoal leading-snug text-left ${expanded ? '' : 'line-clamp-2 min-h-[2.75rem]'}`}>{video.title}</p>
+          {/* min-h always on (not just collapsed) — dropping it on expand let a
+              short 1-line title's box shrink the instant the arrow was pressed,
+              yanking the summary up to visibly collide with the title. */}
+          <p className={`font-medium text-base text-charcoal leading-snug text-left min-h-[2.75rem] ${expanded ? '' : 'line-clamp-2'}`}>{video.title}</p>
         </div>
       </button>
       <div className="px-4 pb-4">

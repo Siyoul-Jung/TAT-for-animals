@@ -48,10 +48,6 @@ export default function AboutClient() {
       <section className="pt-28 sm:pt-32 pb-4 px-6">
         <div className="max-w-6xl mx-auto">
           <motion.div {...fadeUp}>
-            <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-5"
-              style={{ color: '#467826' }}>
-              The Founder
-            </p>
             <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl text-charcoal font-medium leading-tight mb-4">
               Tapas Fleming
             </h1>

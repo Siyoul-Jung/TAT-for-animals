@@ -103,9 +103,6 @@ export default function Hero({ images }: { images: HeroImage[] }) {
             className="lg:!pb-0"
             style={{ paddingBottom: 'calc(var(--cookie-banner-offset, 0px) + env(safe-area-inset-bottom))' }}
           >
-            <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-2 lg:mb-5" style={{ color: '#467826' }}>
-              TAT for Animals
-            </p>
             <h1 className="font-serif text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl leading-[1.2] text-charcoal mb-2 lg:mb-5 font-semibold text-balance">
               {/* Break right before the last word so "connected." always lands
                   alone on the final line, at every width (Tapas's request).
