@@ -7,6 +7,7 @@ import { Search, X } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
 import type { SearchItem } from '@/lib/search'
+import { PLAN_NAMES } from '@/lib/plans'
 
 // Full-page search — chosen over a cramped navbar dropdown on purpose:
 // a full page with one big input is the simplest, most senior-friendly shape,
@@ -113,7 +114,12 @@ export default function SearchClient({
   }, [items, tokens])
 
   const hasQuery = tokens.length > 0
-  const watchHref = isLoggedIn ? '/library' : '/membership'
+  // Always land on /library with the specific video — it's the one place that
+  // already knows (server-side) whether this viewer's role/tier can actually
+  // watch it. A guest or under-tiered member gets the existing locked-card
+  // prompt there automatically; we don't duplicate that access logic here.
+  const watchHrefFor = (item: SearchItem) =>
+    `/library?tab=${item.kind === 'recording' ? 'live' : 'animals'}&video=${item.id}`
   const watchLabel = isLoggedIn ? 'Open in your library' : 'Join to watch'
 
   return (
@@ -143,10 +149,10 @@ export default function SearchClient({
             autoFocus
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Try “anxiety”, “cats”, or “thunderstorm”…"
+            placeholder="Try “anxiety” or “cats”…"
             className={cn(
-              'w-full rounded-full border-2 border-green/25 bg-white py-4 pl-12 pr-12 text-lg text-charcoal',
-              'placeholder:text-muted/70 focus:border-green focus:outline-none focus-visible:ring-2 focus-visible:ring-green'
+              'w-full appearance-none rounded-full border-2 border-green/25 bg-white py-4 pl-12 pr-12 text-base sm:text-lg text-charcoal',
+              'placeholder:text-muted focus:border-green focus:outline-none focus-visible:outline-none!'
             )}
           />
           {query && (
@@ -191,7 +197,7 @@ export default function SearchClient({
             {results.map(({ item }) => (
               <li key={item.id}>
                 <Link
-                  href={watchHref}
+                  href={watchHrefFor(item)}
                   className={cn(
                     'group block rounded-2xl border border-green/15 bg-white px-5 py-4 transition-colors',
                     'hover:border-green/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green'
@@ -199,7 +205,7 @@ export default function SearchClient({
                   aria-label={`${item.title} — ${watchLabel}`}
                 >
                   <div className="flex items-start justify-between gap-3">
-                    <h2 className="font-serif text-xl leading-snug text-charcoal">
+                    <h2 className="min-w-0 flex-1 font-serif text-xl leading-snug text-charcoal">
                       <Highlight text={item.title} tokens={tokens} />
                     </h2>
                     <AccessBadge access={item.access} />
@@ -233,13 +239,13 @@ function AccessBadge({ access }: { access: SearchItem['access'] }) {
   if (access === 'circle') {
     return (
       <span className="shrink-0 whitespace-nowrap rounded-full border border-brand-dark/40 px-3 py-1 text-xs font-semibold text-brand-dark">
-        The Calm Circle
+        {PLAN_NAMES.pro_subscriber}
       </span>
     )
   }
   return (
     <span className="shrink-0 whitespace-nowrap rounded-full bg-green-light px-3 py-1 text-xs font-semibold text-green">
-      The Calm Library
+      {PLAN_NAMES.subscriber}
     </span>
   )
 }
