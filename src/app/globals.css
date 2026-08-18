@@ -58,8 +58,12 @@
   --color-charcoal: var(--charcoal);
   --color-muted:    var(--muted);
 
-  --font-sans:  var(--font-dm-sans), system-ui, sans-serif;
-  --font-serif: var(--font-cormorant), Georgia, serif;
+  /* JUST Sans Regular for both — one voice, headlines and body (Tapas,
+     2026-08-16). font-serif kept as a token (not removed) since many
+     components already reference it for headings; it now resolves to the
+     same face as font-sans. */
+  --font-sans:  var(--font-just-sans), system-ui, sans-serif;
+  --font-serif: var(--font-just-sans), system-ui, sans-serif;
 }
 
 body {

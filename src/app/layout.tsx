@@ -1,21 +1,18 @@
 import type { Metadata } from "next";
-import { Playfair_Display, DM_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import CookieBanner from "@/components/CookieBanner";
 import ScrollToTop from "@/components/ScrollToTop";
 
-const playfair = Playfair_Display({
-  variable: "--font-cormorant",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  style: ["normal", "italic"],
-});
-
-const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
+// JUST Sans Regular — Bruce's pick, one font for headlines and body so the
+// site reads as a single voice with the logo (Tapas, 2026-08-16). Replaces
+// the previous Playfair Display + DM Sans pairing.
+const justSans = localFont({
+  src: "./fonts/JustSans-Regular.otf",
+  variable: "--font-just-sans",
+  weight: "400",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -50,7 +47,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${playfair.variable} ${dmSans.variable} h-full antialiased`}
+      className={`${justSans.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans bg-cream text-charcoal selection:bg-brand/20">
         <MotionProvider>
