@@ -8,6 +8,7 @@ import type { Video, WebinarRecording, WebinarSession, RecordingPreview } from '
 import { loadAllProgress, saveProgress, type ProgressMap } from '@/lib/videoProgress'
 import { parseVimeo, formatDuration } from '@/lib/video'
 import { displayFirstName } from '@/lib/utils'
+import type { Tab } from '@/lib/libraryLink'
 import BackToTopButton from '@/components/BackToTopButton'
 import AskTapasForm from './AskTapasForm'
 
@@ -43,10 +44,13 @@ function VideoCard({ video, progress, onOpen }: {
   // A guest browsing before joining — videoUrl is withheld server-side for
   // any video they can't watch yet (see library/page.tsx).
   const locked = !video.videoUrl
-  // Boolean(...) matters here, not just style: without it, a lastPosition of
-  // exactly 0 short-circuits the && chain to the number 0 — and {0 && <div/>}
-  // renders the literal text "0" in JSX, unlike {false && <div/>} or {null && <div/>}.
-  const hasProgress = Boolean(progress?.lastPosition && progress.lastPosition > 5 && video.duration)
+  // A plain percentage (not a boolean flag) so TS narrows progress/duration
+  // naturally at the point of use below, instead of needing non-null
+  // assertions to work around a separately-computed boolean.
+  const progressPercent =
+    progress?.lastPosition && progress.lastPosition > 5 && video.duration
+      ? Math.min((progress.lastPosition / video.duration) * 100, 100)
+      : null
   // Jez's checklist item 2: description starts collapsed, with a circled
   // arrow to expand it — a per-card disclosure rather than the always-hidden
   // accordion pattern the project otherwise avoids, since the summary is
@@ -94,11 +98,11 @@ function VideoCard({ video, progress, onOpen }: {
               </span>
             </div>
           )}
-          {hasProgress && (
+          {progressPercent !== null && (
             <div className="absolute bottom-0 inset-x-0 h-1 bg-black/20">
               <div
                 className="h-full"
-                style={{ width: `${Math.min((progress!.lastPosition / video.duration!) * 100, 100)}%`, backgroundColor: '#D4703A' }}
+                style={{ width: `${progressPercent}%`, backgroundColor: '#D4703A' }}
               />
             </div>
           )}
@@ -111,7 +115,10 @@ function VideoCard({ video, progress, onOpen }: {
               title — otherwise items-start (needed so expand doesn't stretch
               siblings) lets each card size to its own title length, and a row
               of 1-line and 2-line titles ends up visibly uneven in height. */}
-          <p className={`font-medium text-base text-charcoal leading-snug text-left ${expanded ? '' : 'line-clamp-2 min-h-[2.75rem]'}`}>{video.title}</p>
+          {/* min-h always on (not just collapsed) — dropping it on expand let a
+              short 1-line title's box shrink the instant the arrow was pressed,
+              yanking the summary up to visibly collide with the title. */}
+          <p className={`font-medium text-base text-charcoal leading-snug text-left min-h-[2.75rem] ${expanded ? '' : 'line-clamp-2'}`}>{video.title}</p>
         </div>
       </button>
       <div className="px-4 pb-4">
@@ -149,7 +156,7 @@ function VideoCard({ video, progress, onOpen }: {
         )}
         <div className="flex items-center gap-2 mt-2">
           {locked ? (
-            <p className="text-sm font-medium text-brand">Join to watch</p>
+            <p className="text-sm font-medium text-green">Join to watch</p>
           ) : (
             duration && <p className="text-xs text-charcoal/60">{duration}</p>
           )}
@@ -194,7 +201,7 @@ function MobileVideoRow({ video, onOpen }: {
         </div>
         <div className="min-w-0 flex-1">
           <p className={`font-medium text-base text-charcoal leading-snug ${expanded ? '' : 'line-clamp-1'}`}>{video.title}</p>
-          {locked && <p className="text-sm font-medium text-brand mt-0.5">Join to watch</p>}
+          {locked && <p className="text-sm font-medium text-green mt-0.5">Join to watch</p>}
         </div>
       </button>
       {video.summary && (
@@ -479,16 +486,17 @@ function formatDateTime(iso: string): string {
   })
 }
 
-function RecordingCard({ recording, autoPlay = false }: { recording: WebinarRecording; autoPlay?: boolean }) {
-  const [playing, setPlaying] = useState(autoPlay)
+function RecordingCard({ recording, scrollIntoViewOnMount = false }: { recording: WebinarRecording; scrollIntoViewOnMount?: boolean }) {
+  // Only ever scrolls the matched card into view — it must never start
+  // playback itself (site-wide no-autoplay rule, CLAUDE.md). Watching still
+  // requires the member to press Play, same as every other card.
+  const [playing, setPlaying] = useState(false)
   const vimeo = parseVimeo(recording.videoUrl)
   const cardRef = useRef<HTMLDivElement>(null)
 
-  // Deep link from search — scroll the matched card into view once, same
-  // pattern as the archive's own "show all" reveal.
   useEffect(() => {
-    if (autoPlay) cardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-  }, [autoPlay])
+    if (scrollIntoViewOnMount) cardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }, [scrollIntoViewOnMount])
 
   return (
     <div ref={cardRef} className="bg-white rounded-2xl border border-charcoal/10 overflow-hidden shadow-sm">
@@ -553,6 +561,14 @@ function JoinPromptModal({ onClose }: { onClose: () => void }) {
         >
           See membership options
         </Link>
+        {/* A signed-out existing member (cleared cookies, new device) hits this
+            same locked state — give them a way back in, not just a sales page. */}
+        <Link
+          href="/login"
+          className="block w-full min-h-[44px] flex items-center justify-center text-sm font-medium text-green hover:text-green transition-colors mb-1"
+        >
+          Already a member? Sign in
+        </Link>
         <button
           onClick={onClose}
           className="w-full min-h-[44px] flex items-center justify-center text-sm text-charcoal/60 hover:text-charcoal/90 transition-colors"
@@ -563,8 +579,6 @@ function JoinPromptModal({ onClose }: { onClose: () => void }) {
     </div>
   )
 }
-
-type Tab = 'animals' | 'live'
 
 export default function LibraryClient({
   animalsVideos,
@@ -641,7 +655,7 @@ export default function LibraryClient({
     return counts
   }, [animalsVideos])
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
-  const [autoPlayRecordingId, setAutoPlayRecordingId] = useState<string | null>(null)
+  const [highlightedRecordingId, setHighlightedRecordingId] = useState<string | null>(null)
 
   // Deep link from /search (?tab=&video=<sanity id>) — runs once per landing.
   // The actual "can this viewer watch it" call already lives where the data
@@ -658,7 +672,7 @@ export default function LibraryClient({
       const rec = recordings.find((r) => r._id === videoParam)
       if (rec) {
         setShowAllRecordings(true)
-        setAutoPlayRecordingId(rec._id)
+        setHighlightedRecordingId(rec._id)
       }
       // No match means this viewer's tier never received the recording list
       // (or it's an old link) — landing on the Live tab as-is already shows
@@ -670,7 +684,6 @@ export default function LibraryClient({
         handleOpenVideo(match)
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [videoParam, activeTab, recordings, animalsVideos])
   // A search spans every category — showing the tab row while its selection no
   // longer applies would be confusing, so results ignore the active tab and are
@@ -1033,7 +1046,7 @@ export default function LibraryClient({
                   <>
                     <div className="grid sm:grid-cols-2 gap-4">
                       {(showAllRecordings ? recordings : recordings.slice(0, 3)).map((rec) => (
-                        <RecordingCard key={rec._id} recording={rec} autoPlay={rec._id === autoPlayRecordingId} />
+                        <RecordingCard key={rec._id} recording={rec} scrollIntoViewOnMount={rec._id === highlightedRecordingId} />
                       ))}
                     </div>
                     {/* Full archive stays reachable for every Pro member — this just

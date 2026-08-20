@@ -55,7 +55,7 @@ tatlife.com과 완전히 분리된 독립 사이트입니다.
 src/
 ├── middleware.ts                         — 보호 라우트(/dashboard·/library) 세션 검사
 ├── app/
-│   ├── layout.tsx                        — 폰트(Playfair Display + DM Sans) + Navbar/Footer
+│   ├── layout.tsx                        — 폰트(JUST Sans Regular, 헤딩+본문 공통) + Navbar/Footer
 │   ├── globals.css                       — CSS 변수 및 Tailwind @theme 토큰
 │   ├── error.tsx · global-error.tsx      — 에러 바운더리(레이아웃 / 루트 크래시)
 │   ├── not-found.tsx                     — 404
@@ -157,9 +157,8 @@ TAT®의 핵심 사용자층은 **시니어 및 기술에 익숙하지 않은 �
 - 골드 강조색: `rgba(212,168,67,...)` (#D4A843의 rgba 표현)
 
 ### 폰트
-- 헤딩: `className="font-serif"` → Playfair Display
-- 본문: `className="font-sans"` → DM Sans (기본값)
-- 이탤릭 강조: `className="font-serif italic"`
+- 헤딩+본문 모두 JUST Sans Regular 한 가지 (Bruce 선택, 로고와 통일감, 2026-08-16) — `font-serif`/`font-sans` 토큰 둘 다 같은 폰트로 매핑됨 (`src/app/layout.tsx`, `src/app/globals.css`)
+- Regular 굵기만 로드됨 — `italic` 클래스는 진짜 이탤릭체가 아니라 브라우저가 만든 기울임(합성 이탤릭)으로 렌더링됨
 
 ### 다크 섹션 vs 라이트 섹션
 | 섹션 | 배경 | 텍스트 |
