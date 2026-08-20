@@ -262,7 +262,7 @@ export default function SearchClient({
 function AccessBadge({ access }: { access: SearchItem['access'] }) {
   if (access === 'circle') {
     return (
-      <span className="shrink-0 whitespace-nowrap rounded-full border border-brand-dark/40 px-3 py-1 text-xs font-semibold text-brand-dark">
+      <span className="shrink-0 whitespace-nowrap rounded-full bg-green px-3 py-1 text-xs font-semibold text-cream">
         {PLAN_NAMES.pro_subscriber}
       </span>
     )
