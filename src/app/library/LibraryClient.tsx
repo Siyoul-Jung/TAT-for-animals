@@ -77,16 +77,10 @@ function VideoCard({ video, progress, onOpen }: {
             <div className="w-full h-full flex items-center justify-center text-charcoal/30 text-sm">No preview</div>
           )}
           {locked ? (
-            // Always visible, not hover-only — a guest needs to see at a glance
-            // that this one requires joining, without having to hover first.
-            <div className="absolute inset-0 flex items-center justify-center bg-charcoal/15">
-              <span className="w-11 h-11 rounded-full bg-white/90 flex items-center justify-center shadow-md">
-                <svg width="15" height="15" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth={1.5} className="text-charcoal" aria-hidden="true">
-                  <rect x="2" y="5" width="8" height="6" rx="1" />
-                  <path strokeLinecap="round" d="M4 5V3.5a2 2 0 0 1 4 0V5" />
-                </svg>
-              </span>
-            </div>
+            // No lock icon (Tapas, 2026-08-19: "nicer if the locks... were
+            // removed") — the dimmed thumbnail (opacity-70 above) plus the
+            // "Join to watch" label below the card is enough of a signal.
+            null
           ) : (
             // Play affordance on hover — mouse-only by nature (group-hover), same
             // as the card scale-up above; touch users just tap the card.
@@ -190,14 +184,8 @@ function MobileVideoRow({ video, onOpen }: {
             // eslint-disable-next-line @next/next/no-img-element -- external Vimeo CDN thumbnail
             <img src={video.thumbnailUrl} alt="" loading="lazy" className={`w-full h-full object-cover ${locked ? 'opacity-70' : ''}`} />
           ) : null}
-          {locked && (
-            <div className="absolute inset-0 flex items-center justify-center bg-charcoal/15">
-              <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth={1.5} className="text-white" aria-hidden="true">
-                <rect x="2" y="5" width="8" height="6" rx="1" />
-                <path strokeLinecap="round" d="M4 5V3.5a2 2 0 0 1 4 0V5" />
-              </svg>
-            </div>
-          )}
+          {/* No lock icon (Tapas, 2026-08-19) — dimmed thumbnail + the
+              "Join to watch" label below is enough. */}
         </div>
         <div className="min-w-0 flex-1">
           <p className={`font-medium text-base text-charcoal leading-snug ${expanded ? '' : 'line-clamp-1'}`}>{video.title}</p>
@@ -1095,9 +1083,17 @@ export default function LibraryClient({
               <div className="bg-white rounded-2xl border border-charcoal/10 shadow-sm overflow-hidden">
                 {lockedRecordings.length > 0 && (
                   <>
-                    <div className="px-6 pt-5 pb-3 border-b border-charcoal/6">
-                      <p className="text-xs font-semibold uppercase tracking-widest text-charcoal/65">
-                        In the recording archive
+                    {/* Calm Circle banner — Tapas asked (2026-08-16) for a way to mark
+                        that the recordings below need the Circle tier. Soft tint (not a
+                        saturated fill) so it reads as a calm label, not an ad — matches
+                        the same green-light treatment as the search-result tier badges. */}
+                    <div className="px-6 py-3 bg-green-light flex items-center gap-2">
+                      <svg width="13" height="13" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth={1.5} className="text-green shrink-0" aria-hidden="true">
+                        <rect x="2" y="5" width="8" height="6" rx="1" />
+                        <path strokeLinecap="round" d="M4 5V3.5a2 2 0 0 1 4 0V5" />
+                      </svg>
+                      <p className="text-sm font-medium text-green">
+                        The recordings below are included with The Calm Circle
                       </p>
                     </div>
                     <div className="px-6">
