@@ -351,7 +351,10 @@ export default function AboutClient() {
               href={BOOKING_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center min-h-[44px] gap-1.5 text-base sm:text-lg font-semibold underline underline-offset-4 hover:opacity-70 transition-opacity"
+              // Tapas asked (2026-08-20) for this invitation to be as large as the
+              // section headings — reusing the page's own h2 size/weight/font
+              // classes (see line ~305) rather than inventing a new scale.
+              className="inline-flex items-center min-h-[44px] gap-2 font-serif text-2xl sm:text-3xl lg:text-4xl font-medium leading-snug underline underline-offset-4 hover:opacity-70 transition-opacity"
               style={{ color: '#467826' }}
             >
               Book a session for your animal&rsquo;s calm and well-being ↗

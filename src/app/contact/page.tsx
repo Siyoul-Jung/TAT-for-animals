@@ -77,6 +77,20 @@ export default function Contact() {
             </a>
             .
           </p>
+          {/* Same warm invitation as the dashboard/library links (Tapas, 2026-08-20:
+              "repeat the same warm invitation... in our Contact form text"). Members-only
+              destination — a guest who clicks is routed to join by /share-story itself. */}
+          <p>
+            How has TAT helped your animal, and you? We&rsquo;d love to hear it — you can{' '}
+            <Link
+              href="/share-story"
+              className="underline underline-offset-2"
+              style={{ color: '#467826' }}
+            >
+              share your story
+            </Link>
+            , and with your okay, we&rsquo;ll share it to encourage others.
+          </p>
         </div>
 
       </div>
