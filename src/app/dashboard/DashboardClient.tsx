@@ -559,6 +559,23 @@ export default function DashboardClient({
                 Personalized support for your animal&rsquo;s calm and well-being.
               </p>
             </div>
+
+            {/* Quiet "share your story" entry — same treatment as the booking link
+                above (Tapas asked, 2026-08-14, for this to appear "fairly
+                prominently"; approved copy, 2026-08-15). Open to both tiers, so it
+                sits here rather than inside the Circle-only Live Webinars card. */}
+            <div className="pt-1">
+              <Link
+                href="/share-story"
+                className="inline-block font-medium underline underline-offset-2 hover:opacity-70 transition-opacity"
+                style={{ color: '#467826' }}
+              >
+                Share your story
+              </Link>
+              <p className="text-sm text-charcoal/65 leading-relaxed mt-1">
+                How has TAT helped your animal, and you? We&rsquo;d love to hear it.
+              </p>
+            </div>
           </section>
         )}
 

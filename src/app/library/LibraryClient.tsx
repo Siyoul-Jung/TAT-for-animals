@@ -12,11 +12,25 @@ import type { Tab } from '@/lib/libraryLink'
 import BackToTopButton from '@/components/BackToTopButton'
 import AskTapasForm from './AskTapasForm'
 
-// Display order for library shelves. Must stay identical to the category options
-// in sanity/schemaTypes/video.ts — see the note there. (Jez's names, 2026-06-26.)
-const CATEGORY_ORDER = ['Foundational Content', 'Main Content', 'Bonus Content 2025', 'Bonus Content 2026', 'Legacy Content']
+// Display order for library shelves, grouped into Tapas's renamed/consolidated
+// shelves (2026-08-20 "Library changes" doc): Main + Legacy merge into one
+// open shelf, Foundational becomes the welcoming "Start Here" label, and the
+// two Bonus years become Calm Circle-branded names. This is a display-only
+// grouping — the underlying category values must stay identical to the
+// options in sanity/schemaTypes/video.ts, so Jez's existing per-video category
+// picks in Studio don't need any data migration.
+const CATEGORY_GROUPS: { label: string; categories: string[] }[] = [
+  { label: 'Start Here', categories: ['Foundational Content'] },
+  { label: 'Full Library', categories: ['Main Content', 'Legacy Content'] },
+  { label: 'Calm Circle Webinars 2025', categories: ['Bonus Content 2025'] },
+  { label: 'Calm Circle Webinars 2026', categories: ['Bonus Content 2026'] },
+]
+const CATEGORY_ORDER = CATEGORY_GROUPS.flatMap((g) => g.categories)
+function groupLabelFor(category: string): string | null {
+  return CATEGORY_GROUPS.find((g) => g.categories.includes(category))?.label ?? null
+}
 
-// HTML ids can't contain spaces — category names can ("Bonus Content 2025").
+// HTML ids can't contain spaces — shelf labels can ("Calm Circle Webinars 2025").
 function slugify(s: string): string {
   return s.toLowerCase().replace(/\s+/g, '-')
 }
@@ -398,12 +412,12 @@ function VideoTab({ videos, progressMap, onOpen }: {
   progressMap: ProgressMap
   onOpen: (v: Video) => void
 }) {
-  const categorized = CATEGORY_ORDER.filter((cat) => videos.some((v) => v.category === cat))
+  const presentGroups = CATEGORY_GROUPS.filter((g) => videos.some((v) => g.categories.includes(v.category)))
   const uncategorized = videos.filter((v) => !CATEGORY_ORDER.includes(v.category))
   // A category tab already labels the shelf being shown, so the header would
   // just repeat it — only show it when more than one group is present (e.g.
   // "All", or search results spanning categories).
-  const showHeaders = categorized.length + (uncategorized.length > 0 ? 1 : 0) > 1
+  const showHeaders = presentGroups.length + (uncategorized.length > 0 ? 1 : 0) > 1
 
   if (videos.length === 0) {
     return (
@@ -437,12 +451,12 @@ function VideoTab({ videos, progressMap, onOpen }: {
 
   return (
     <div className="space-y-6">
-      {categorized.map((cat) => (
-        <div key={cat}>
+      {presentGroups.map((g) => (
+        <div key={g.label}>
           {showHeaders && (
-            <p className="text-sm font-bold uppercase tracking-wide text-green mb-4 pb-2 border-b border-green/15">{cat}</p>
+            <p className="text-sm font-bold uppercase tracking-wide text-green mb-4 pb-2 border-b border-green/15">{g.label}</p>
           )}
-          {renderGroup(videos.filter((v) => v.category === cat))}
+          {renderGroup(videos.filter((v) => g.categories.includes(v.category)))}
         </div>
       ))}
       {uncategorized.length > 0 && (
@@ -631,14 +645,16 @@ export default function LibraryClient({
   // always-visible button for browsing everything at once.
   const hasUncategorized = animalsVideos.some((v) => !CATEGORY_ORDER.includes(v.category))
   const categoryTabs = useMemo(() => {
-    const present = CATEGORY_ORDER.filter((cat) => animalsVideos.some((v) => v.category === cat))
+    const present = CATEGORY_GROUPS.filter((g) => animalsVideos.some((v) => g.categories.includes(v.category))).map((g) => g.label)
     return ['All', ...present, ...(hasUncategorized ? ['Other'] : [])]
   }, [animalsVideos, hasUncategorized])
   // Video count shown after each category name (Jez's request, 2026-07-06) —
-  // tells the member how much is on a shelf before opening it.
+  // tells the member how much is on a shelf before opening it. Recomputed from
+  // animalsVideos every time, so a merged shelf's count (e.g. Full Library)
+  // updates automatically with no separate migration step.
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = { All: animalsVideos.length }
-    for (const cat of CATEGORY_ORDER) counts[cat] = animalsVideos.filter((v) => v.category === cat).length
+    for (const g of CATEGORY_GROUPS) counts[g.label] = animalsVideos.filter((v) => g.categories.includes(v.category)).length
     counts.Other = animalsVideos.filter((v) => !CATEGORY_ORDER.includes(v.category)).length
     return counts
   }, [animalsVideos])
@@ -668,7 +684,7 @@ export default function LibraryClient({
     } else {
       const match = animalsVideos.find((v) => v._id === videoParam)
       if (match) {
-        setActiveCategory(CATEGORY_ORDER.includes(match.category) ? match.category : 'Other')
+        setActiveCategory(groupLabelFor(match.category) ?? 'Other')
         handleOpenVideo(match)
       }
     }
@@ -682,7 +698,7 @@ export default function LibraryClient({
     : activeCategory === null
     ? []
     : filteredAnimalsVideos.filter((v) =>
-        activeCategory === 'Other' ? !CATEGORY_ORDER.includes(v.category) : v.category === activeCategory
+        activeCategory === 'Other' ? !CATEGORY_ORDER.includes(v.category) : groupLabelFor(v.category) === activeCategory
       )
   const handleCategoryKeyDown = (e: React.KeyboardEvent, currentCat: string) => {
     const idx = categoryTabs.indexOf(currentCat)
@@ -914,10 +930,10 @@ export default function LibraryClient({
 
             {/* Category filters — stacked full-width rather than a horizontal
                 scroller. A row would overflow on mobile with names this long
-                ("Foundational Content", "Bonus Content 2025"), and a horizontal
-                scroll hides categories off-screen with no clear sign there's
-                more — exactly the kind of hidden UI this project avoids.
-                Stacked, all five (plus "All") are visible at once. "All" is a
+                ("Calm Circle Webinars 2025"), and a horizontal scroll hides
+                categories off-screen with no clear sign there's more —
+                exactly the kind of hidden UI this project avoids. Stacked,
+                all four shelves (plus "All") are visible at once. "All" is a
                 real, always-visible tab rather than a "click the active one
                 again to clear it" toggle — recognition over recall. Hidden
                 while searching, since a result can span every category. */}
@@ -968,6 +984,28 @@ export default function LibraryClient({
               !(!isSearching && activeCategory === null) && (
               <div role="tabpanel" id="panel-category" aria-label={isSearching ? 'Search results' : activeCategory ?? ''} tabIndex={0}>
                 <VideoTab videos={displayedAnimalsVideos} progressMap={progressMap} onOpen={handleOpenVideo} />
+              </div>
+            )}
+
+            {/* Quiet "share your story" entry, members only (Tapas asked,
+                2026-08-14, for this to appear "fairly prominently" in the
+                library; approved copy, 2026-08-15). Placed after the shelves so
+                it doesn't compete with browsing, mirroring AskTapasForm's
+                placement on the Live tab. */}
+            {role !== 'guest' && (
+              <div className="max-w-3xl mx-auto mt-8 bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm">
+                <p className="font-serif text-xl text-charcoal leading-snug">Share your story</p>
+                <p className="text-base text-charcoal/65 leading-relaxed mt-1.5 mb-4">
+                  How has TAT helped your animal, and you? We&rsquo;d love to hear it, and with your
+                  okay, share it to encourage others.
+                </p>
+                <Link
+                  href="/share-story"
+                  className="inline-flex items-center min-h-[44px] text-base font-semibold underline underline-offset-4 hover:opacity-70 transition-opacity"
+                  style={{ color: '#467826' }}
+                >
+                  Share your story →
+                </Link>
               </div>
             )}
           </div>
