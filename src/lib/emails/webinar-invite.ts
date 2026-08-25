@@ -62,7 +62,7 @@ export function webinarInviteEmail(
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:32px;">
                 <tr>
                   <td style="padding-top:28px;border-top:1px solid rgba(28,16,7,0.08);text-align:center;">
-                    <p style="margin:0 0 6px;font-size:13px;letter-spacing:0.15em;text-transform:uppercase;color:#467826;font-weight:600;">
+                    <p style="margin:0 0 6px;font-size:13px;letter-spacing:0.15em;text-transform:uppercase;color:#38601E;font-weight:600;">
                       When
                     </p>
                     <p style="margin:0;font-size:18px;color:#1C1007;font-weight:600;line-height:1.5;">
@@ -88,7 +88,7 @@ export function webinarInviteEmail(
               ${showCalendar ? `
               <p style="margin:20px 0 0;">
                 <a href="${calendarUrl(webinar)}"
-                  style="color:#467826;font-size:15px;font-weight:600;text-decoration:underline;">
+                  style="color:#38601E;font-size:15px;font-weight:600;text-decoration:underline;">
                   Add to your calendar &rarr;
                 </a>
               </p>

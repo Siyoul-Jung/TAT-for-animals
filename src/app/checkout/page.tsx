@@ -119,7 +119,7 @@ function CheckoutContent() {
     return (
       <div className="min-h-screen bg-cream flex items-center justify-center px-6 py-20">
         <div className="w-full max-w-sm text-center">
-          <p className="text-[13px] tracking-[0.2em] uppercase font-medium mb-3" style={{ color: '#467826' }}>
+          <p className="text-[13px] tracking-[0.2em] uppercase font-medium mb-3" style={{ color: '#38601E' }}>
             You're already a member
           </p>
           <h1 className="font-serif text-3xl text-charcoal font-medium mb-4">
@@ -200,7 +200,7 @@ function CheckoutContent() {
 
         {/* Plan summary */}
         <div className="text-center mb-8">
-          <p className="text-[13px] tracking-[0.2em] uppercase font-medium mb-3" style={{ color: '#467826' }}>
+          <p className="text-[13px] tracking-[0.2em] uppercase font-medium mb-3" style={{ color: '#38601E' }}>
             You're joining
           </p>
           <h1 className="font-serif text-3xl text-charcoal font-medium mb-2">
@@ -231,7 +231,7 @@ function CheckoutContent() {
           <ul className="space-y-1.5">
             {disclosureLines.map((line) => (
               <li key={line} className="flex gap-2.5 text-sm leading-relaxed" style={{ color: '#3F3128' }}>
-                <span aria-hidden className="font-bold" style={{ color: '#467826' }}>·</span>
+                <span aria-hidden className="font-bold" style={{ color: '#38601E' }}>·</span>
                 <span>{line}</span>
               </li>
             ))}

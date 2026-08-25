@@ -160,7 +160,7 @@ export default function AboutClient() {
           <Link
             href="/faq"
             className="inline-flex items-center min-h-[44px] gap-1.5 text-base sm:text-lg font-semibold underline underline-offset-4 hover:opacity-70 transition-opacity"
-            style={{ color: '#467826' }}
+            style={{ color: '#38601E' }}
           >
             Questions? Read more FAQs →
           </Link>
@@ -174,7 +174,7 @@ export default function AboutClient() {
           <motion.div {...fadeUp} className="mb-12">
             <div className="w-12 h-0.5 mb-8" style={{ backgroundColor: '#467826' }} />
             <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-5"
-              style={{ color: '#467826' }}>
+              style={{ color: '#38601E' }}>
               TAT for Animals
             </p>
             <h2 className="font-serif text-3xl lg:text-4xl text-charcoal font-medium leading-tight text-balance">
@@ -299,7 +299,7 @@ export default function AboutClient() {
         <div className="max-w-3xl mx-auto">
           <motion.div {...fadeUp} className="mb-14 sm:mb-20 text-center">
             <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-4"
-              style={{ color: '#467826' }}>
+              style={{ color: '#38601E' }}>
               Sessions with Tapas
             </p>
             <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl text-charcoal font-medium leading-snug text-balance">
@@ -328,7 +328,7 @@ export default function AboutClient() {
                 <figcaption className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1">
                   <span className="w-7 h-px flex-shrink-0" style={{ backgroundColor: '#467826' }} />
                   <span className="font-serif text-lg text-charcoal">{t.name}</span>
-                  <span className="text-[12px] uppercase tracking-[0.12em]" style={{ color: '#467826' }}>
+                  <span className="text-[12px] uppercase tracking-[0.12em]" style={{ color: '#38601E' }}>
                     {t.context}
                   </span>
                 </figcaption>
@@ -355,7 +355,7 @@ export default function AboutClient() {
               // section headings — reusing the page's own h2 size/weight/font
               // classes (see line ~305) rather than inventing a new scale.
               className="inline-flex items-center min-h-[44px] gap-2 font-serif text-2xl sm:text-3xl lg:text-4xl font-medium leading-snug underline underline-offset-4 hover:opacity-70 transition-opacity"
-              style={{ color: '#467826' }}
+              style={{ color: '#38601E' }}
             >
               Book a session for your animal&rsquo;s calm and well-being ↗
             </a>

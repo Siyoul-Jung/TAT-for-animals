@@ -954,7 +954,7 @@ export default function LibraryClient({
                 <Link
                   href="/share-story"
                   className="inline-flex items-center min-h-[44px] text-base font-semibold underline underline-offset-4 hover:opacity-70 transition-opacity"
-                  style={{ color: '#467826' }}
+                  style={{ color: '#38601E' }}
                 >
                   Share your story →
                 </Link>

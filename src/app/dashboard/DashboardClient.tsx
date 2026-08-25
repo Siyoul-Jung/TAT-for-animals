@@ -564,7 +564,7 @@ export default function DashboardClient({
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-block font-medium underline underline-offset-2 hover:opacity-70 transition-opacity"
-                style={{ color: '#467826' }}
+                style={{ color: '#38601E' }}
               >
                 Book a private session with <span className="whitespace-nowrap">Tapas ↗</span>
               </a>
@@ -581,7 +581,7 @@ export default function DashboardClient({
               <Link
                 href="/share-story"
                 className="inline-block font-medium underline underline-offset-2 hover:opacity-70 transition-opacity"
-                style={{ color: '#467826' }}
+                style={{ color: '#38601E' }}
               >
                 Share your story
               </Link>

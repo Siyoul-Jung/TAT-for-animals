@@ -12,7 +12,7 @@ export default function Contact() {
 
         <p
           className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-5"
-          style={{ color: '#467826' }}
+          style={{ color: '#38601E' }}
         >
           Contact
         </p>
@@ -42,7 +42,7 @@ export default function Contact() {
           <a
             href="mailto:hello@tatforanimals.com"
             className="font-medium underline underline-offset-2 transition-opacity hover:opacity-70"
-            style={{ color: '#467826' }}
+            style={{ color: '#38601E' }}
           >
             hello@tatforanimals.com
           </a>
@@ -58,7 +58,7 @@ export default function Contact() {
             <Link
               href="/faq"
               className="underline underline-offset-2"
-              style={{ color: '#467826' }}
+              style={{ color: '#38601E' }}
             >
               FAQ
             </Link>
@@ -71,7 +71,7 @@ export default function Contact() {
               target="_blank"
               rel="noopener noreferrer"
               className="underline underline-offset-2"
-              style={{ color: '#467826' }}
+              style={{ color: '#38601E' }}
             >
               book a private session ↗
             </a>
@@ -85,7 +85,7 @@ export default function Contact() {
             <Link
               href="/share-story"
               className="underline underline-offset-2"
-              style={{ color: '#467826' }}
+              style={{ color: '#38601E' }}
             >
               share your story
             </Link>

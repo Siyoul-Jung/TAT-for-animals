@@ -58,7 +58,7 @@ export default function AboutTapas() {
           <Link
             href="/about"
             className="inline-flex items-center min-h-[44px] text-sm font-medium transition-opacity hover:opacity-70"
-            style={{ color: '#467826' }}
+            style={{ color: '#38601E' }}
           >
             Learn more about Tapas →
           </Link>
@@ -119,7 +119,7 @@ export default function AboutTapas() {
             <Link
               href="/about"
               className="inline-flex items-center min-h-[44px] text-sm font-medium transition-opacity hover:opacity-70"
-              style={{ color: '#467826' }}
+              style={{ color: '#38601E' }}
             >
               Learn more about Tapas →
             </Link>

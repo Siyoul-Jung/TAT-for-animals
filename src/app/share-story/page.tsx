@@ -29,7 +29,7 @@ export default async function ShareStoryPage() {
     <main className="min-h-screen bg-cream pt-24 pb-16 px-6">
       <div className="max-w-2xl mx-auto space-y-8">
         <div className="text-center">
-          <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-4" style={{ color: '#467826' }}>
+          <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-4" style={{ color: '#38601E' }}>
             Share your story
           </p>
           <h1 className="font-serif text-3xl text-charcoal font-medium leading-tight">

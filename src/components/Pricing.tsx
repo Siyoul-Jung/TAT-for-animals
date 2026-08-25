@@ -130,7 +130,7 @@ export default function Pricing({ showHeader = true, bg = 'bg-white', showBookin
           >
             <p
               className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-5"
-              style={{ color: '#467826' }}
+              style={{ color: '#38601E' }}
             >
               Membership
             </p>
@@ -168,7 +168,7 @@ export default function Pricing({ showHeader = true, bg = 'bg-white', showBookin
           </div>
           <p
             className="mt-3 text-sm font-medium h-5"
-            style={{ color: isAnnual ? '#467826' : 'transparent' }}
+            style={{ color: isAnnual ? '#38601E' : 'transparent' }}
             aria-hidden={!isAnnual}
           >
             ✓ Two months free
@@ -234,7 +234,7 @@ export default function Pricing({ showHeader = true, bg = 'bg-white', showBookin
                     toggling. */}
                 <p
                   className="mt-1.5 text-sm h-5"
-                  style={{ color: isAnnual ? '#467826' : 'transparent' }}
+                  style={{ color: isAnnual ? '#38601E' : 'transparent' }}
                   aria-hidden={!isAnnual}
                 >
                   ≈ ${(Number(tier.annual) / 12).toFixed(2)} / mo
@@ -300,7 +300,7 @@ export default function Pricing({ showHeader = true, bg = 'bg-white', showBookin
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center min-h-[44px] gap-1.5 mt-2 text-base font-semibold underline underline-offset-4 hover:opacity-70 transition-opacity whitespace-nowrap"
-              style={{ color: '#467826' }}
+              style={{ color: '#38601E' }}
             >
               Book a private session ↗
             </a>

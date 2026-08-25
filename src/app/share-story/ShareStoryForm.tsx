@@ -134,7 +134,7 @@ export default function ShareStoryForm() {
           type="file"
           accept="image/jpeg,image/png,image/webp,image/heic"
           onChange={handlePhotoChange}
-          className="block w-full text-base file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-base file:font-medium file:bg-[#467826]/10 file:text-[#467826] hover:file:bg-[#467826]/15"
+          className="block w-full text-base file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-base file:font-medium file:bg-[#467826]/10 file:text-[#38601E] hover:file:bg-[#467826]/15"
         />
         <p className="text-sm leading-relaxed mt-1.5" style={{ color: 'rgba(28,16,7,0.65)' }}>
           You and your animal together, or just your animal — whatever you&rsquo;d like to share.

@@ -29,7 +29,7 @@ const CHECK = (
     className="inline-flex w-6 h-6 rounded-full items-center justify-center"
     style={{ backgroundColor: 'rgba(70,120,38,0.12)' }}
   >
-    <Check size={13} strokeWidth={3} style={{ color: '#467826' }} aria-hidden />
+    <Check size={13} strokeWidth={3} style={{ color: '#38601E' }} aria-hidden />
   </span>
 );
 
@@ -45,7 +45,7 @@ function ColumnHeader({ name, monthly, yearly, highlighted }: {
           height and their prices align across columns. */}
       <p
         className="text-[12px] tracking-[0.18em] uppercase font-semibold mb-2"
-        style={{ color: highlighted ? '#467826' : 'transparent' }}
+        style={{ color: highlighted ? '#38601E' : 'transparent' }}
         aria-hidden={!highlighted}
       >
         ★ Most popular

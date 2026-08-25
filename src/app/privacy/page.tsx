@@ -15,7 +15,7 @@ export default function Privacy() {
 
         <p
           className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-5"
-          style={{ color: '#467826' }}
+          style={{ color: '#38601E' }}
         >
           Legal
         </p>

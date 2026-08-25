@@ -154,7 +154,7 @@ export default function FAQ() {
       <div className="max-w-2xl mx-auto">
 
         <div className="mb-12 lg:mb-16">
-          <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-5" style={{ color: '#467826' }}>
+          <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-5" style={{ color: '#38601E' }}>
             FAQ
           </p>
           <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-charcoal font-semibold leading-tight mb-4">
