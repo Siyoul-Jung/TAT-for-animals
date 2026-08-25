@@ -4,9 +4,11 @@ import { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import ManageSubscriptionButton from './ManageSubscriptionButton'
+import RecordingCard from '@/components/RecordingCard'
 import { BOOKING_URL } from '@/lib/links'
 import { createClient } from '@/lib/supabase/client'
 import { displayFirstName } from '@/lib/utils'
+import type { WebinarRecording } from '@/app/library/page'
 
 type WebinarSession = {
   _id: string
@@ -36,6 +38,7 @@ type Props = {
   refundEligible: boolean
   refunded: boolean
   upcoming: WebinarSession[]
+  latestRecording: WebinarRecording | null
 }
 
 // Price varies by billing cadence (monthly vs yearly = ×10). The dashboard reads
@@ -78,6 +81,7 @@ export default function DashboardClient({
   refundEligible,
   refunded,
   upcoming,
+  latestRecording,
 }: Props) {
   const [changingPlan, setChangingPlan] = useState(false)
   // Upgrade now charges immediately (we replaced Stripe's hosted confirm screen
@@ -472,6 +476,15 @@ export default function DashboardClient({
                 isLoading={false}
               />
             </div>
+
+            {/* Latest recording preview — Pro only, same card/player as the
+                Video Library's Live tab (Jez, 2026-08-24: match that page,
+                show just the newest one here rather than the full archive). */}
+            {role === 'pro_subscriber' && latestRecording && (
+              <div className="max-w-sm">
+                <RecordingCard recording={latestRecording} />
+              </div>
+            )}
 
             {/* Upgrade confirm — opens inline right under the Live Webinars card
                 (the single upgrade entry point). The change is immediate and
