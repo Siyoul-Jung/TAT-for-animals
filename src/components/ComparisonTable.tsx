@@ -17,7 +17,7 @@ import { Check } from 'lucide-react';
 // column tints (Connection faint neutral, Circle green wash) run the full
 // height in both layouts, so the eye can track which column is which.
 const ROWS: { label: string; connection: boolean; circle: boolean }[] = [
-  { label: 'Simple, essential TAT® tools to calm your animal — and yourself', connection: true, circle: true },
+  { label: 'Simple, essential TAT tools to calm your animal — and yourself', connection: true, circle: true },
   { label: 'A growing library of monthly Calm Tips', connection: true, circle: true },
   { label: 'Live monthly webinars with Tapas', connection: false, circle: true },
   { label: 'Recordings of past live webinars', connection: false, circle: true },

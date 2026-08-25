@@ -130,8 +130,13 @@ export default function Navbar() {
               style={{ width: 'auto' }}
               priority
             />
+            {/* ® marked here only — the nav is the first thing on every page,
+                so per Tapas's rule (2026-08-23: first use per page, superscript,
+                nowhere else) this is the site's one "first use" and every other
+                mention stays plain. The Footer's copyright paragraph is the one
+                exception, since it's the trademark-ownership notice itself. */}
             <span className="hidden sm:inline text-base sm:text-2xl font-semibold tracking-normal whitespace-nowrap font-serif text-charcoal/65">
-              TAT for Animals
+              TAT<span className="text-xs sm:text-sm align-super">®</span> for Animals
             </span>
           </Link>
         </div>

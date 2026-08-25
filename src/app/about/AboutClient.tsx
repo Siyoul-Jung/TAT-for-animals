@@ -52,7 +52,7 @@ export default function AboutClient() {
               Tapas Fleming
             </h1>
             <p className="font-sans text-lg text-muted">
-              Creator and Founder of TAT®
+              Creator and Founder of TAT
             </p>
           </motion.div>
         </div>
@@ -101,7 +101,7 @@ export default function AboutClient() {
                 style={{ boxShadow: '0 8px 32px rgba(28,16,7,0.10), 0 0 0 1px rgba(28,16,7,0.07)' }}
               >
                 <span className="font-serif text-2xl font-semibold text-charcoal">1993</span>
-                <span className="text-xs text-charcoal/65 font-light tracking-wide">TAT® created</span>
+                <span className="text-xs text-charcoal/65 font-light tracking-wide">TAT created</span>
               </motion.div>
             </div>
 

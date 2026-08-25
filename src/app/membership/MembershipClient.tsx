@@ -102,7 +102,7 @@ export default function MembershipClient() {
                   </h3>
                   <ul className="flex flex-col gap-2.5">
                     {[
-                      `${LIBRARY_VIDEO_COUNT_LABEL} video recordings of TAT® sessions for animals`,
+                      `${LIBRARY_VIDEO_COUNT_LABEL} video recordings of TAT sessions for animals`,
                       'Fear, anxiety, and past trauma, gently released',
                       'As your animal settles, something in you shifts too',
                     ].map((item) => (
@@ -184,7 +184,7 @@ export default function MembershipClient() {
               &ldquo;I love to help people find peace — one person, and one animal at a time.&rdquo;
             </blockquote>
             <p className="text-xs tracking-[0.25em] uppercase text-charcoal/65">
-              — Tapas Fleming, Founder of TAT®
+              — Tapas Fleming, Founder of TAT
             </p>
           </motion.div>
 
