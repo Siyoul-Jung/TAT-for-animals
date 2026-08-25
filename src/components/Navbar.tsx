@@ -101,7 +101,10 @@ export default function Navbar() {
   return (
     <nav
       className={cn(
-        'fixed top-0 left-0 right-0 z-40 transition-all duration-300 px-4 sm:px-6 pt-2 pb-5',
+        // More breathing room above/below the logo (Tapas, 2026-08-23) — bg-cream
+        // is already the site's own soft peach-tinted background, so this is just
+        // more of that same color as padding, not a stark white gap.
+        'fixed top-0 left-0 right-0 z-40 transition-all duration-300 px-4 sm:px-6 pt-4 pb-6',
         'bg-cream/95 backdrop-blur-xl'
       )}
       style={{

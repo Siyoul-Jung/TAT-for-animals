@@ -93,11 +93,16 @@ export default async function LibraryPage({
     billingInterval = profile?.billing_interval ?? null
   }
 
-  // Every current video (all categories) is included with either paid tier —
-  // only Live Webinars are Calm Circle-exclusive. A guest can't watch anything
-  // yet, so gets browsing info only.
+  // Every video is included with either paid tier, EXCEPT the two Calm Circle
+  // Webinars categories — Tapas confirmed (2026-08-23) these really are the
+  // past live monthly webinar recordings, so they're Circle-exclusive same as
+  // the separate Live Webinars archive. A guest can't watch anything yet, so
+  // gets browsing info only.
   const canWatchVideos = role === 'subscriber' || role === 'pro_subscriber'
   const isPro = role === 'pro_subscriber'
+  // Must stay identical to the Bonus Content values in sanity/schemaTypes/video.ts
+  // and the "Calm Circle Webinars" group in LibraryClient.tsx's CATEGORY_GROUPS.
+  const CIRCLE_ONLY_CATEGORIES = new Set(['Bonus Content 2025', 'Bonus Content 2026'])
 
   // Degrade gracefully if Sanity is slow/down: the member is already
   // authenticated and access-checked from Supabase above, so show an empty
@@ -149,11 +154,14 @@ export default async function LibraryPage({
     // video regardless of tier, so a guest still sees what's on each shelf —
     // only the playable videoUrl is withheld below.
     const thumbnails = await Promise.all(rawVideos.map((v) => fetchVimeoThumbnail(v.videoUrl)))
-    animalsVideos = rawVideos.map((v, i) => ({
-      ...v,
-      thumbnailUrl: thumbnails[i],
-      videoUrl: canWatchVideos ? v.videoUrl : null,
-    }))
+    animalsVideos = rawVideos.map((v, i) => {
+      const canWatchThis = CIRCLE_ONLY_CATEGORIES.has(v.category) ? isPro : canWatchVideos
+      return {
+        ...v,
+        thumbnailUrl: thumbnails[i],
+        videoUrl: canWatchThis ? v.videoUrl : null,
+      }
+    })
   } catch (e) {
     console.error('Library: Sanity fetch failed, showing empty library:', e)
   }

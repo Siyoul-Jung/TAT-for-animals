@@ -9,6 +9,8 @@ type Status = 'idle' | 'sending' | 'sent' | 'error'
 const MAX_PHOTO_BYTES = 4 * 1024 * 1024
 
 export default function ShareStoryForm() {
+  const [animalName, setAnimalName] = useState('')
+  const [displayName, setDisplayName] = useState('')
   const [story, setStory] = useState('')
   const [consent, setConsent] = useState(false)
   const [photo, setPhoto] = useState<File | null>(null)
@@ -34,6 +36,8 @@ export default function ShareStoryForm() {
     setError('')
     try {
       const formData = new FormData()
+      formData.set('animalName', animalName)
+      formData.set('displayName', displayName)
       formData.set('story', story)
       formData.set('consent', String(consent))
       if (photo) formData.set('photo', photo)
@@ -75,6 +79,35 @@ export default function ShareStoryForm() {
 
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-6">
+      <div className="grid sm:grid-cols-2 gap-6">
+        <div>
+          <label htmlFor="animalName" className={labelStyle} style={{ color: '#1C1007' }}>
+            Your animal&rsquo;s name <span className="font-normal" style={{ color: 'rgba(28,16,7,0.65)' }}>(optional)</span>
+          </label>
+          <input
+            id="animalName"
+            type="text"
+            maxLength={100}
+            value={animalName}
+            onChange={(e) => setAnimalName(e.target.value)}
+            className={inputStyle}
+          />
+        </div>
+        <div>
+          <label htmlFor="displayName" className={labelStyle} style={{ color: '#1C1007' }}>
+            Your name, as you&rsquo;d like it to appear <span className="font-normal" style={{ color: 'rgba(28,16,7,0.65)' }}>(optional)</span>
+          </label>
+          <input
+            id="displayName"
+            type="text"
+            maxLength={100}
+            value={displayName}
+            onChange={(e) => setDisplayName(e.target.value)}
+            className={inputStyle}
+          />
+        </div>
+      </div>
+
       <div>
         <label htmlFor="story" className={labelStyle} style={{ color: '#1C1007' }}>
           Your story

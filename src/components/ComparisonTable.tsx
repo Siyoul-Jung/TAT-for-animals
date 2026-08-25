@@ -154,7 +154,7 @@ export default function ComparisonTable() {
               </span>
             </div>
             <div className="px-2 sm:px-4 py-5 sm:py-6 flex justify-center items-center bg-charcoal/2 border-t sm:border-l border-charcoal/6">
-              <JoinButton plan="calm_library" label="Join Calm Connection" />
+              <JoinButton plan="calm_library" label="Join the Calm Connection" />
             </div>
             <div className="px-2 sm:px-4 py-5 sm:py-6 flex justify-center items-center bg-green/5 border-t border-l border-charcoal/6">
               <JoinButton plan="calm_circle" label="Join the Calm Circle" />

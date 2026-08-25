@@ -620,10 +620,15 @@ export default function LibraryClient({
   const [openVideo, setOpenVideo] = useState<Video | null>(null)
   const [showJoinPrompt, setShowJoinPrompt] = useState(false)
   // A locked card (no videoUrl — see library/page.tsx) prompts to join instead
-  // of opening the player, which only ever receives a watchable video.
+  // of opening the player, which only ever receives a watchable video. A
+  // signed-in Basic member hits this too now that Calm Circle Webinars are
+  // gated (Tapas, 2026-08-23) — "join" copy would be wrong for them (they're
+  // already a member), so send them to the Live tab's existing "Move up to
+  // The Calm Circle" upgrade card instead of the guest-oriented modal.
   const handleOpenVideo = (v: Video) => {
     if (v.videoUrl) setOpenVideo(v)
-    else setShowJoinPrompt(true)
+    else if (role === 'guest') setShowJoinPrompt(true)
+    else handleTabChange('live')
   }
   const [upgrading, setUpgrading] = useState(false)
   const [upgradeError, setUpgradeError] = useState<string | null>(null)
@@ -646,7 +651,9 @@ export default function LibraryClient({
   const hasUncategorized = animalsVideos.some((v) => !CATEGORY_ORDER.includes(v.category))
   const categoryTabs = useMemo(() => {
     const present = CATEGORY_GROUPS.filter((g) => animalsVideos.some((v) => g.categories.includes(v.category))).map((g) => g.label)
-    return ['All', ...present, ...(hasUncategorized ? ['Other'] : [])]
+    // "All" moved to the end of the list, per Tapas (2026-08-23) — the named
+    // shelves now come first, with "All" as the last, catch-everything option.
+    return [...present, ...(hasUncategorized ? ['Other'] : []), 'All']
   }, [animalsVideos, hasUncategorized])
   // Video count shown after each category name (Jez's request, 2026-07-06) —
   // tells the member how much is on a shelf before opening it. Recomputed from

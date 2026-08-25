@@ -12,9 +12,10 @@ import { returnScrollKey } from '@/lib/scrollReturn';
 // Annual = monthly × 10 (two months free), per Tapas's request.
 // Card copy is Tapas's spec verbatim (2026-07-14 "Homepage Tier Copy Spec"):
 // one description sentence per card, no feature bullets — the detail now
-// lives in the ComparisonTable directly below. The asymmetric CTA articles
-// ("Join Calm Connection" / "Join the Calm Circle") are the spec's own,
-// repeated consistently there — don't "fix" them.
+// lives in the ComparisonTable directly below. The CTAs were originally
+// asymmetric ("Join Calm Connection" / "Join the Calm Circle") per that
+// spec, but Tapas asked (2026-08-23) to add "the" to every Calm Connection
+// button — now consistent with the Circle CTA.
 const tiers = [
   {
     plan: 'calm_library',
@@ -22,7 +23,7 @@ const tiers = [
     monthly: '27',
     annual: '270',
     description: 'Simple, essential TAT® tools to calm your animal — and yourself. Plus a growing library of monthly Calm Tips.',
-    cta: 'Join Calm Connection',
+    cta: 'Join the Calm Connection',
     popular: false,
   },
   {
