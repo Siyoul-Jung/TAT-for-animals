@@ -41,7 +41,7 @@ export default function RecordingTestimonials() {
             <blockquote className="font-serif text-lg sm:text-xl text-charcoal/80 leading-relaxed">
               &ldquo;{michele.quote}&rdquo;
             </blockquote>
-            <figcaption className="text-[12px] uppercase tracking-[0.12em]" style={{ color: '#467826' }}>
+            <figcaption className="text-[12px] uppercase tracking-[0.12em]" style={{ color: '#38601E' }}>
               {michele.name} &middot; {michele.context}
             </figcaption>
           </figure>
@@ -54,7 +54,7 @@ export default function RecordingTestimonials() {
             <blockquote className="font-serif text-lg sm:text-xl text-charcoal/80 leading-relaxed">
               &ldquo;{betsey.quote}&rdquo;
             </blockquote>
-            <figcaption className="text-[12px] uppercase tracking-[0.12em]" style={{ color: '#467826' }}>
+            <figcaption className="text-[12px] uppercase tracking-[0.12em]" style={{ color: '#38601E' }}>
               {betsey.name} &middot; {betsey.context}
             </figcaption>
           </figure>

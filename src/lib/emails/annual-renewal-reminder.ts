@@ -41,7 +41,7 @@ export function annualRenewalReminderEmail(
               <!-- Quiet text link, not a filled CTA: this is an FYI notice, so the
                    action shouldn't dominate or read as "act now". -->
               <p style="margin:28px 0 0;">
-                <a href="${DASHBOARD_URL}" style="display:inline-block;min-height:44px;line-height:44px;font-size:16px;font-weight:600;color:#467826;text-decoration:underline;">
+                <a href="${DASHBOARD_URL}" style="display:inline-block;min-height:44px;line-height:44px;font-size:16px;font-weight:600;color:#38601E;text-decoration:underline;">
                   Manage membership &rarr;
                 </a>
               </p>`;

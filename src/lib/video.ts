@@ -11,6 +11,12 @@ export function parseVimeo(url: string): { id: string; hash: string | null } | n
   return { id: match[1], hash: match[2] ?? null }
 }
 
+export function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString('en-US', {
+    month: 'long', day: 'numeric', year: 'numeric',
+  })
+}
+
 export function formatDuration(seconds: number | null): string | null {
   if (!seconds) return null
   const h = Math.floor(seconds / 3600)

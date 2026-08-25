@@ -53,7 +53,7 @@ export default function AskTapasForm() {
           <button
             onClick={() => setStatus('idle')}
             className="inline-flex items-center min-h-[44px] text-base font-semibold underline underline-offset-4 hover:opacity-70 transition-opacity"
-            style={{ color: '#467826' }}
+            style={{ color: '#38601E' }}
           >
             Ask another question
           </button>

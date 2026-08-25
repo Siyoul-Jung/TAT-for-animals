@@ -41,7 +41,7 @@ export default function MembershipClient() {
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           className="max-w-5xl mx-auto text-center"
         >
-          <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-5" style={{ color: '#467826' }}>
+          <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-5" style={{ color: '#38601E' }}>
             Membership
           </p>
           <h1 className="font-serif text-4xl sm:text-5xl text-charcoal font-semibold leading-tight mb-4">
@@ -67,7 +67,7 @@ export default function MembershipClient() {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="mb-10"
           >
-            <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-4" style={{ color: '#467826' }}>
+            <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-4" style={{ color: '#38601E' }}>
               What's included
             </p>
             <h2 className="font-serif text-2xl sm:text-3xl text-charcoal font-medium leading-tight">
@@ -83,7 +83,7 @@ export default function MembershipClient() {
           >
             {/* The Calm Connection */}
             <div className="rounded-3xl bg-cream border border-charcoal/8 p-6 sm:p-9 lg:p-10 mb-6">
-              <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-6" style={{ color: '#467826' }}>
+              <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-6" style={{ color: '#38601E' }}>
                 The Calm Connection — $27 / mo
               </p>
               <div className="max-w-xl">
@@ -93,7 +93,7 @@ export default function MembershipClient() {
                     <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: '#fff', boxShadow: '0 0 0 1px rgba(28,16,7,0.06)' }}>
                       <PawPrint size={20} strokeWidth={1.75} style={{ color: '#D4703A' }} />
                     </div>
-                    <p className="text-[13px] tracking-[0.15em] uppercase font-medium" style={{ color: '#467826' }}>
+                    <p className="text-[13px] tracking-[0.15em] uppercase font-medium" style={{ color: '#38601E' }}>
                       TAT for Animals
                     </p>
                   </div>
@@ -108,7 +108,7 @@ export default function MembershipClient() {
                     ].map((item) => (
                       <li key={item} className="flex items-start gap-2.5">
                         <span className="mt-1 w-4 h-4 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(70,120,38,0.12)' }}>
-                          <Check size={10} strokeWidth={3} style={{ color: '#467826' }} />
+                          <Check size={10} strokeWidth={3} style={{ color: '#38601E' }} />
                         </span>
                         <span className="text-base text-charcoal/80 leading-snug">{item}</span>
                       </li>
@@ -120,7 +120,7 @@ export default function MembershipClient() {
 
             {/* The Calm Circle */}
             <div className="rounded-3xl bg-cream border border-charcoal/8 p-6 sm:p-9 lg:p-10">
-              <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-6" style={{ color: '#467826' }}>
+              <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-6" style={{ color: '#38601E' }}>
                 The Calm Circle — $47 / mo
               </p>
               <div className="max-w-xl">
@@ -128,7 +128,7 @@ export default function MembershipClient() {
                   <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: '#fff', boxShadow: '0 0 0 1px rgba(28,16,7,0.06)' }}>
                     <Video size={20} strokeWidth={1.75} style={{ color: '#D4703A' }} />
                   </div>
-                  <p className="text-[13px] tracking-[0.15em] uppercase font-medium" style={{ color: '#467826' }}>
+                  <p className="text-[13px] tracking-[0.15em] uppercase font-medium" style={{ color: '#38601E' }}>
                     Live with Tapas
                   </p>
                 </div>
@@ -143,7 +143,7 @@ export default function MembershipClient() {
                   ].map((item) => (
                     <li key={item} className="flex items-start gap-2.5">
                       <span className="mt-1 w-4 h-4 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(70,120,38,0.12)' }}>
-                        <Check size={10} strokeWidth={3} style={{ color: '#467826' }} />
+                        <Check size={10} strokeWidth={3} style={{ color: '#38601E' }} />
                       </span>
                       <span className="text-base text-charcoal/80 leading-snug">{item}</span>
                     </li>
@@ -203,7 +203,7 @@ export default function MembershipClient() {
             <Link
               href="/faq"
               className="inline-flex items-center min-h-[44px] text-base font-medium transition-opacity hover:opacity-70 whitespace-nowrap"
-              style={{ color: '#467826' }}
+              style={{ color: '#38601E' }}
             >
               Read the FAQ →
             </Link>

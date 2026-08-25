@@ -57,7 +57,7 @@ export default function TrySession() {
           className="text-center mb-8"
         >
           <p className="text-[13px] tracking-[0.2em] uppercase font-medium mb-5"
-            style={{ color: '#467826' }}>
+            style={{ color: '#38601E' }}>
             TAT for Animals
           </p>
           <h2 className="font-serif text-3xl lg:text-4xl text-charcoal font-medium leading-tight">
@@ -90,7 +90,7 @@ export default function TrySession() {
             <ul className="grid sm:grid-cols-2 gap-x-10 gap-y-4">
               {SIGNS.map((q) => (
                 <li key={q} className="flex gap-2.5 text-base sm:text-lg leading-relaxed text-charcoal/80">
-                  <Check size={20} strokeWidth={2.5} aria-hidden="true" className="mt-1 shrink-0" style={{ color: '#467826' }} />
+                  <Check size={20} strokeWidth={2.5} aria-hidden="true" className="mt-1 shrink-0" style={{ color: '#38601E' }} />
                   <span>{q}</span>
                 </li>
               ))}
@@ -244,7 +244,7 @@ export default function TrySession() {
           <Link
             href="/about"
             className="inline-flex items-center min-h-[44px] gap-1 mt-1 text-base font-medium transition-opacity hover:opacity-70"
-            style={{ color: '#467826' }}
+            style={{ color: '#38601E' }}
           >
             Read Tapas&rsquo;s story &rarr;
           </Link>

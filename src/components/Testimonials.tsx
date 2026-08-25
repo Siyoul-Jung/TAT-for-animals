@@ -44,15 +44,18 @@ const INTERVAL = 7000;
 
 function SlideLayout({ t }: { t: Testimonial }) {
   return (
-    <div className="grid lg:grid-cols-[1fr_1fr] gap-5 lg:gap-12 items-center">
+    // Always a single column — photo stacked above the quote at the same
+    // width, not side-by-side (Tapas, 2026-08-24). max-w-xl keeps the photo
+    // from ballooning to the full section width on desktop.
+    <div className="flex flex-col gap-5 lg:gap-8 max-w-xl mx-auto lg:mx-0">
       {/* 사진 — next/image: WebP/AVIF 변환 + 리사이즈 + 기본 lazy 로딩.
           후기는 스크롤 아래라 priority 없음(Hero LCP에 대역폭 양보). */}
-      <div className="relative aspect-square">
+      <div className="relative aspect-square w-full">
         <Image
           src={t.image}
           alt={t.animal.split('—')[0].trim()}
           fill
-          sizes="(min-width: 1024px) 512px, 100vw"
+          sizes="(min-width: 1024px) 576px, 100vw"
           className="object-contain object-center"
         />
       </div>
@@ -61,7 +64,7 @@ function SlideLayout({ t }: { t: Testimonial }) {
       <div className="flex flex-col justify-center">
         <p
           className="text-[13px] tracking-[0.15em] uppercase font-medium mb-3 lg:mb-5"
-          style={{ color: '#467826' }}
+          style={{ color: '#38601E' }}
         >
           {t.animal}
         </p>
@@ -75,7 +78,9 @@ function SlideLayout({ t }: { t: Testimonial }) {
           </p>
         )}
         <div>
-          <p className="font-medium text-charcoal">{t.name}</p>
+          {/* Darker + heavier (Tapas, 2026-08-24) — charcoal was already the
+              site's darkest text token, so semibold carries the emphasis. */}
+          <p className="font-semibold text-charcoal">{t.name}</p>
           {t.location && (
             <p className="text-sm mt-0.5" style={{ color: 'rgba(28,16,7,0.65)' }}>
               {t.location}
@@ -132,7 +137,7 @@ export default function Testimonials() {
         >
           <p
             className="text-[13px] tracking-[0.2em] uppercase font-medium mb-5"
-            style={{ color: '#467826' }}
+            style={{ color: '#38601E' }}
           >
             Real Stories
           </p>
@@ -191,11 +196,14 @@ export default function Testimonials() {
                 <span
                   style={{
                     display: 'block',
-                    width: i === current ? 12 : 8,
-                    height: i === current ? 12 : 8,
+                    // Bigger and darker (Tapas, 2026-08-24) — inactive dots now
+                    // filled rather than just a faint ring, so they read clearly
+                    // rather than nearly disappearing against the cream background.
+                    width: i === current ? 16 : 12,
+                    height: i === current ? 16 : 12,
                     borderRadius: '50%',
-                    backgroundColor: i === current ? '#D4703A' : 'transparent',
-                    boxShadow: i === current ? 'none' : 'inset 0 0 0 1.5px rgba(28,16,7,0.3)',
+                    backgroundColor: i === current ? '#D4703A' : 'rgba(28,16,7,0.35)',
+                    boxShadow: i === current ? 'none' : 'inset 0 0 0 1.5px rgba(28,16,7,0.45)',
                     transition: 'all 0.4s ease',
                     flexShrink: 0,
                   }}

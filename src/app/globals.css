@@ -29,8 +29,11 @@
   --brand-light:     #ECC4A0;  /* light orange tint — subtle bg / hover */
   --brand-dark:      #B05A28;  /* deep orange — hover/active (4.8:1 on white, text-safe) */
 
-  /* Green — accent: labels, icons, checks, text-safe links (4.9:1 on cream) */
-  --green:       #467826;  /* forest green — labels, links, icons, checks */
+  /* Green — accent: labels, icons, checks, text-safe links. Darkened from the
+     original #467826 (Tapas, 2026-08-24: "text throughout the site... quite
+     a bit darker, including the green occasional headers") — improves on the
+     already-passing 4.9:1 contrast on cream, so no AA regression risk. */
+  --green:       #38601E;  /* forest green — labels, links, icons, checks */
   --green-light: #EBF5E1;  /* very light green tint — subtle bg accent */
 
   /* Neutrals */

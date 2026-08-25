@@ -109,7 +109,7 @@ function Shell({ heading, children }: { heading: string; children: React.ReactNo
   return (
     <main className="min-h-screen bg-cream flex items-center justify-center px-6 pt-24 pb-16">
       <div className="w-full max-w-md text-center space-y-6">
-        <p className="text-[13px] tracking-[0.2em] uppercase font-semibold" style={{ color: '#467826' }}>
+        <p className="text-[13px] tracking-[0.2em] uppercase font-semibold" style={{ color: '#38601E' }}>
           TAT for Animals
         </p>
         <h1 className="font-serif text-3xl text-charcoal leading-[1.2]">{heading}</h1>

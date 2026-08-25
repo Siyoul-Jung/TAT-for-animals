@@ -121,7 +121,7 @@ function ThankYouContent() {
               className="flex items-center justify-center w-9 h-9 rounded-full shrink-0"
               style={{ backgroundColor: 'rgba(70,120,38,0.14)' }}
             >
-              <Check size={18} strokeWidth={2.5} style={{ color: '#467826' }} />
+              <Check size={18} strokeWidth={2.5} style={{ color: '#38601E' }} />
             </span>
             <p className="text-base font-semibold text-charcoal">
               Payment confirmed
@@ -169,7 +169,7 @@ function ThankYouContent() {
               </>
             ) : (
               <p className="flex items-center justify-center gap-2.5 text-base text-charcoal/65">
-                <Loader2 size={18} className="animate-spin" style={{ color: '#467826' }} />
+                <Loader2 size={18} className="animate-spin" style={{ color: '#38601E' }} />
                 Setting up your access…
               </p>
             )}

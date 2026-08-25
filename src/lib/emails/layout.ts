@@ -77,7 +77,7 @@ export function emailShell({ title, eyebrow, content, footerNote, preheader }: S
               <img src="${SITE_URL}/images/logo2.png" alt="TAT for Animals" width="44" height="44" style="display:block;margin:0 auto 16px;border:0;outline:none;text-decoration:none;" />
 
               <!-- Eyebrow -->
-              <p style="margin:0 0 24px;font-size:13px;letter-spacing:0.2em;text-transform:uppercase;color:#467826;font-weight:600;">
+              <p style="margin:0 0 24px;font-size:13px;letter-spacing:0.2em;text-transform:uppercase;color:#38601E;font-weight:600;">
                 ${eyebrow}
               </p>
 
@@ -94,7 +94,7 @@ export function emailShell({ title, eyebrow, content, footerNote, preheader }: S
                       You're receiving this because you have a TAT for Animals account.
                     </p>
                     <p style="margin:0 0 6px;font-size:13px;color:rgba(28,16,7,0.6);line-height:1.6;">
-                      Questions? <a href="mailto:hello@tatforanimals.com" style="color:#467826;text-decoration:underline;">hello@tatforanimals.com</a>
+                      Questions? <a href="mailto:hello@tatforanimals.com" style="color:#38601E;text-decoration:underline;">hello@tatforanimals.com</a>
                     </p>
                     <!-- Postal address (CAN-SPAM): provided by Tapas 2026-06-23.
                          Currently her home address; swap for a PO box if she moves to one. -->

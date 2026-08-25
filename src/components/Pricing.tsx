@@ -12,9 +12,10 @@ import { returnScrollKey } from '@/lib/scrollReturn';
 // Annual = monthly × 10 (two months free), per Tapas's request.
 // Card copy is Tapas's spec verbatim (2026-07-14 "Homepage Tier Copy Spec"):
 // one description sentence per card, no feature bullets — the detail now
-// lives in the ComparisonTable directly below. The asymmetric CTA articles
-// ("Join Calm Connection" / "Join the Calm Circle") are the spec's own,
-// repeated consistently there — don't "fix" them.
+// lives in the ComparisonTable directly below. The CTAs were originally
+// asymmetric ("Join Calm Connection" / "Join the Calm Circle") per that
+// spec, but Tapas asked (2026-08-23) to add "the" to every Calm Connection
+// button — now consistent with the Circle CTA.
 const tiers = [
   {
     plan: 'calm_library',
@@ -22,7 +23,7 @@ const tiers = [
     monthly: '27',
     annual: '270',
     description: 'Simple, essential TAT® tools to calm your animal — and yourself. Plus a growing library of monthly Calm Tips.',
-    cta: 'Join Calm Connection',
+    cta: 'Join the Calm Connection',
     popular: false,
   },
   {
@@ -129,7 +130,7 @@ export default function Pricing({ showHeader = true, bg = 'bg-white', showBookin
           >
             <p
               className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-5"
-              style={{ color: '#467826' }}
+              style={{ color: '#38601E' }}
             >
               Membership
             </p>
@@ -167,7 +168,7 @@ export default function Pricing({ showHeader = true, bg = 'bg-white', showBookin
           </div>
           <p
             className="mt-3 text-sm font-medium h-5"
-            style={{ color: isAnnual ? '#467826' : 'transparent' }}
+            style={{ color: isAnnual ? '#38601E' : 'transparent' }}
             aria-hidden={!isAnnual}
           >
             ✓ Two months free
@@ -233,7 +234,7 @@ export default function Pricing({ showHeader = true, bg = 'bg-white', showBookin
                     toggling. */}
                 <p
                   className="mt-1.5 text-sm h-5"
-                  style={{ color: isAnnual ? '#467826' : 'transparent' }}
+                  style={{ color: isAnnual ? '#38601E' : 'transparent' }}
                   aria-hidden={!isAnnual}
                 >
                   ≈ ${(Number(tier.annual) / 12).toFixed(2)} / mo
@@ -299,7 +300,7 @@ export default function Pricing({ showHeader = true, bg = 'bg-white', showBookin
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center min-h-[44px] gap-1.5 mt-2 text-base font-semibold underline underline-offset-4 hover:opacity-70 transition-opacity whitespace-nowrap"
-              style={{ color: '#467826' }}
+              style={{ color: '#38601E' }}
             >
               Book a private session ↗
             </a>

@@ -1,9 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse, after } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { resend, FROM_EMAIL } from '@/lib/resend'
 import { checkRateLimit, RATE_LIMIT_MESSAGE } from '@/lib/rateLimit'
 import { membershipHasLapsed } from '@/lib/access'
 import { escapeHtml } from '@/lib/emails/layout'
+import { storyThankYouEmail } from '@/lib/emails/story-thank-you'
 
 // "Share your story" (Tapas, 2026-08-14): both tiers can submit their TAT
 // experience with an optional photo. Stories go to hello@ (same inbox as the
@@ -52,6 +53,8 @@ export async function POST(request: NextRequest) {
   }
 
   const story = String(form.get('story') ?? '').trim()
+  const animalName = String(form.get('animalName') ?? '').trim().slice(0, 100)
+  const displayName = String(form.get('displayName') ?? '').trim().slice(0, 100)
   const consent = form.get('consent') === 'true'
   const photo = form.get('photo')
 
@@ -104,8 +107,10 @@ export async function POST(request: NextRequest) {
   const html = `
     <div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:#1C1007;">
       <p style="margin:0 0 12px;"><strong>New shared story from TAT for Animals</strong></p>
-      <p style="margin:0 0 4px;"><strong>From:</strong> ${escapeHtml(memberName)}</p>
-      <p style="margin:0 0 12px;"><strong>Email:</strong> ${escapeHtml(memberEmail)}</p>
+      <p style="margin:0 0 4px;"><strong>From (account):</strong> ${escapeHtml(memberName)}</p>
+      <p style="margin:0 0 4px;"><strong>Email:</strong> ${escapeHtml(memberEmail)}</p>
+      ${displayName ? `<p style="margin:0 0 4px;"><strong>Wants to appear as:</strong> ${escapeHtml(displayName)}</p>` : ''}
+      ${animalName ? `<p style="margin:0 0 4px;"><strong>Animal's name:</strong> ${escapeHtml(animalName)}</p>` : ''}
       <p style="margin:0 0 12px;"><strong>Sharing consent:</strong> Checked (TATLife Participant Release &amp; License Agreement)</p>
       <p style="margin:0;padding-top:12px;border-top:1px solid #eee;white-space:pre-wrap;">${escapeHtml(story)}</p>
     </div>`
@@ -132,6 +137,20 @@ export async function POST(request: NextRequest) {
       { error: "We couldn't send your story just now. Please try again in a moment." },
       { status: 502 },
     )
+  }
+
+  // Best-effort thank-you to the member — the story itself is already safely
+  // delivered above, so a failure here shouldn't turn into an error for them
+  // (same pattern as the thumbnail fetch elsewhere: log it, don't block on it).
+  // Scheduled via after() rather than a bare fire-and-forget promise — on
+  // Vercel the function can be frozen the instant the response is returned,
+  // which would silently drop an unawaited send.
+  if (memberEmail) {
+    after(async () => {
+      const { subject, html: thankYouHtml } = storyThankYouEmail(profile.full_name)
+      const { error } = await resend.emails.send({ from: FROM_EMAIL, to: memberEmail, subject, html: thankYouHtml })
+      if (error) console.error('Share story thank-you send failed:', error)
+    })
   }
 
   return NextResponse.json({ ok: true })

@@ -26,7 +26,7 @@ export default function GlobalError({ reset }: { error: Error & { digest?: strin
                 letterSpacing: '0.2em',
                 textTransform: 'uppercase',
                 fontWeight: 600,
-                color: '#467826',
+                color: '#38601E',
                 margin: '0 0 20px',
               }}
             >
@@ -46,7 +46,7 @@ export default function GlobalError({ reset }: { error: Error & { digest?: strin
             >
               We hit an unexpected problem. Please try again — if it keeps happening,
               email us at{' '}
-              <a href="mailto:hello@tatforanimals.com" style={{ color: '#467826', textDecoration: 'underline' }}>
+              <a href="mailto:hello@tatforanimals.com" style={{ color: '#38601E', textDecoration: 'underline' }}>
                 hello@tatforanimals.com
               </a>
               .

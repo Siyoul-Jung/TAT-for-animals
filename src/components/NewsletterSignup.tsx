@@ -93,7 +93,9 @@ export default function NewsletterSignup() {
               지정값 그대로. line-height: 2.5em은 Jez 지정값(2026-08-03) — em
               단위라 폰트 크기 비율대로 커져 모바일에서도 그대로 안전. */}
           <p className="font-serif text-[26px] sm:text-[40px] leading-[2.5em] text-cream/90">Stay close to the stories.</p>
-          <p className="text-base sm:text-[22px] font-light leading-relaxed mt-1" style={{ color: '#FFFFFF' }}>
+          {/* Much larger than before (Tapas, 2026-08-24: "not as big as the
+              'Stay close' header") — sized proportionately with the header bump above. */}
+          <p className="text-xl sm:text-[30px] font-light leading-relaxed mt-1" style={{ color: '#FFFFFF' }}>
             Uplifting animal stories and the occasional special offer, straight to your inbox.
           </p>
         </div>
