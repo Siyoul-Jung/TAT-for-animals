@@ -16,13 +16,13 @@ const fadeUp = {
 // closing note. Quotes verbatim from TATLife (emojis/brackets tidied).
 const michele = {
   name: 'Michele',
-  context: 'On the TAT® recording for pets',
+  context: 'On the TAT recording for pets',
   quote:
     'My pets love TAT in general and usually wander over when there is some going on, but they have a notable reaction to the tape specifically for pets. I was surprised the first time because I hadn’t thought there was anything out of sorts with them when I put it on, and yet they were noticeably calmer, more peaceful and more cheerful for at least 2 days after.',
 }
 const betsey = {
   name: 'Betsey',
-  context: 'After watching TAT® for Dogs',
+  context: 'After watching TAT for Dogs',
   quote:
     'I just watched the video for TAT for Dogs. That was amazing! I’m still crying with joy! Thank you, what a gift! You’re always an inspiration!',
 }

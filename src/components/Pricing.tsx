@@ -22,7 +22,7 @@ const tiers = [
     name: 'The Calm Connection',
     monthly: '27',
     annual: '270',
-    description: 'Simple, essential TAT® tools to calm your animal — and yourself. Plus a growing library of monthly Calm Tips.',
+    description: 'Simple, essential TAT tools to calm your animal — and yourself. Plus a growing library of monthly Calm Tips.',
     cta: 'Join the Calm Connection',
     popular: false,
   },
