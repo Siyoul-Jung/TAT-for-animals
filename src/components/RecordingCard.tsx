@@ -4,10 +4,8 @@ import { useState, useRef, useEffect } from 'react'
 import { parseVimeo, formatDate } from '@/lib/video'
 import type { WebinarRecording } from '@/app/library/page'
 
-// Shared by the Video Library's "Live" tab and the Dashboard's latest-recording
-// preview — pulled out so both stay visually identical by construction rather
-// than by hand-matched copies (Jez, 2026-08-24: dashboard card should match
-// the library page).
+// Used by the Video Library's "Live" tab, for both the collapsed "Latest
+// Recording" card and the expanded full archive grid.
 export default function RecordingCard({
   recording,
   scrollIntoViewOnMount = false,
