@@ -4,11 +4,9 @@ import { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import ManageSubscriptionButton from './ManageSubscriptionButton'
-import RecordingCard from '@/components/RecordingCard'
 import { BOOKING_URL } from '@/lib/links'
 import { createClient } from '@/lib/supabase/client'
 import { displayFirstName } from '@/lib/utils'
-import type { WebinarRecording } from '@/app/library/page'
 
 type WebinarSession = {
   _id: string
@@ -38,7 +36,6 @@ type Props = {
   refundEligible: boolean
   refunded: boolean
   upcoming: WebinarSession[]
-  latestRecording: WebinarRecording | null
 }
 
 // Price varies by billing cadence (monthly vs yearly = ×10). The dashboard reads
@@ -81,7 +78,6 @@ export default function DashboardClient({
   refundEligible,
   refunded,
   upcoming,
-  latestRecording,
 }: Props) {
   const [changingPlan, setChangingPlan] = useState(false)
   // Upgrade now charges immediately (we replaced Stripe's hosted confirm screen
@@ -580,18 +576,6 @@ export default function DashboardClient({
                 How has TAT helped your animal, and you? We&rsquo;d love to hear it.
               </p>
             </div>
-          </section>
-        )}
-
-        {/* Latest recording — Pro only, same card/player as the Video Library's
-            Live tab, just the single newest one (Jez, 2026-08-26: one recording
-            only, titled "Latest Recording", a bit wider than the Library grid). */}
-        {role === 'pro_subscriber' && latestRecording && (
-          <section className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm space-y-5">
-            <h2 className="text-xs font-semibold uppercase tracking-widest text-green">
-              Latest Recording
-            </h2>
-            <RecordingCard recording={latestRecording} />
           </section>
         )}
 

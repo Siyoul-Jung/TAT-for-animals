@@ -1012,7 +1012,7 @@ export default function LibraryClient({
 
               <div className="space-y-4">
                 <h2 className="text-xs font-semibold uppercase tracking-widest text-green">
-                  Most Recent Recordings
+                  Latest Recording
                 </h2>
                 {recordings.length === 0 ? (
                   <div className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm">
@@ -1022,15 +1022,18 @@ export default function LibraryClient({
                   </div>
                 ) : (
                   <>
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      {(showAllRecordings ? recordings : recordings.slice(0, 3)).map((rec) => (
+                    {/* Collapsed: a single wider card for just the newest recording.
+                        Expanded (via "Show all"): the full archive grid (Jez,
+                        2026-08-26: retain only 1 by default, titled "Latest Recording"). */}
+                    <div className={showAllRecordings ? 'grid sm:grid-cols-2 gap-4' : 'max-w-md'}>
+                      {(showAllRecordings ? recordings : recordings.slice(0, 1)).map((rec) => (
                         <RecordingCard key={rec._id} recording={rec} scrollIntoViewOnMount={rec._id === highlightedRecordingId} />
                       ))}
                     </div>
                     {/* Full archive stays reachable for every Pro member — this just
-                        keeps the default view short (Jez, 2026-07-01). A plain button,
-                        not a tab or accordion, so nothing is hidden, only collapsed. */}
-                    {recordings.length > 3 && (
+                        keeps the default view short. A plain button, not a tab or
+                        accordion, so nothing is hidden, only collapsed. */}
+                    {recordings.length > 1 && (
                       <button
                         onClick={() => setShowAllRecordings((v) => !v)}
                         className="inline-flex items-center min-h-[44px] text-sm font-medium text-green hover:text-green transition-colors"

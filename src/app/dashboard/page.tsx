@@ -5,7 +5,6 @@ import { reconcileAccess } from '@/lib/reconcileAccess'
 import { redirect } from 'next/navigation'
 import type { Metadata } from 'next'
 import { sanityClient } from '@/lib/sanity'
-import type { WebinarRecording } from '@/app/library/page'
 import DashboardClient from './DashboardClient'
 
 type WebinarSession = {
@@ -66,28 +65,14 @@ export default async function DashboardPage({
   // Degrade gracefully if Sanity is slow/down — the member's account and
   // subscription data (from Supabase) must still render, not crash the page.
   let upcoming: WebinarSession[] = []
-  let latestRecording: WebinarRecording | null = null
   try {
-    const [upcomingResult, recordingResult] = await Promise.all([
-      sanityClient.fetch<WebinarSession[]>(
-        `*[_type == "webinarSchedule" && date > now()] | order(date asc) [0..0] {
-          _id, title, date, description, meetingUrl
-        }`
-      ),
-      // Pro only — same recordings as the Video Library's Live tab, just the
-      // single newest one (Jez, 2026-08-26).
-      effectiveRole === 'pro_subscriber'
-        ? sanityClient.fetch<WebinarRecording[]>(
-            `*[_type == "webinarRecording" && status == "published"] | order(date desc) [0..0] {
-              _id, title, date, videoUrl, summary
-            }`
-          )
-        : Promise.resolve([]),
-    ])
-    upcoming = upcomingResult
-    latestRecording = recordingResult[0] ?? null
+    upcoming = await sanityClient.fetch<WebinarSession[]>(
+      `*[_type == "webinarSchedule" && date > now()] | order(date asc) [0..0] {
+        _id, title, date, description, meetingUrl
+      }`
+    )
   } catch (e) {
-    console.error('Dashboard: Sanity fetch failed, showing none:', e)
+    console.error('Dashboard: webinar fetch failed, showing none:', e)
   }
 
   // Offer the 14-day cancel-with-refund only to annual members whose estimated
@@ -121,7 +106,6 @@ export default async function DashboardPage({
       refundEligible={refundEligible}
       refunded={refunded === '1'}
       upcoming={upcoming}
-      latestRecording={latestRecording}
     />
   )
 }
