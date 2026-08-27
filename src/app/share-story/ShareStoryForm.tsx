@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
+import Link from 'next/link'
 
 type Status = 'idle' | 'sending' | 'sent' | 'error'
 
@@ -154,8 +155,17 @@ export default function ShareStoryForm() {
         />
         <span className="text-sm leading-relaxed" style={{ color: 'rgba(28,16,7,0.75)' }}>
           I grant TATLife the right to use my story, name, and any submitted photos for
-          marketing, educational, and promotional purposes. I have read and agree to the
-          TATLife Participant Release and License Agreement.
+          marketing, educational, and promotional purposes. I have read and agree to the{' '}
+          <Link
+            href="/release"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-2 hover:opacity-70 transition-opacity"
+            style={{ color: '#38601E' }}
+          >
+            TATLife Participant Release and License Agreement
+          </Link>
+          .
         </span>
       </label>
 
