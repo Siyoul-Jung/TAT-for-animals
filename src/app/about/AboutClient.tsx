@@ -122,7 +122,7 @@ export default function AboutClient() {
           >
             <p>
               After years of searching for a gentler way to help people heal &mdash; without
-              asking them to relive their pain &mdash; Tapas developed TAT&reg; in 1993.
+              asking them to relive their pain &mdash; Tapas developed TAT in 1993.
             </p>
             <p>
               What began as a quiet discovery in her acupuncture practice gradually became
@@ -178,7 +178,7 @@ export default function AboutClient() {
               TAT for Animals
             </p>
             <h2 className="font-serif text-3xl lg:text-4xl text-charcoal font-medium leading-tight text-balance">
-              How TAT&reg; for Animals Began
+              How TAT for Animals Began
             </h2>
           </motion.div>
 
@@ -234,8 +234,8 @@ export default function AboutClient() {
             <p>
               Celeste told me that Juliet had never quite been the same after having her first
               litter. She also felt that a medication Juliet had received had affected her
-              negatively. We addressed each of these experiences using TAT&reg; (Tapas Acupressure
-              Technique&reg;).
+              negatively. We addressed each of these experiences using TAT (Tapas Acupressure
+              Technique).
             </p>
             <p>When we finished, Juliet let out a deep sigh.</p>
             <p>She stood up, gave herself a full-body shake, and calmly walked away.</p>
@@ -250,7 +250,7 @@ export default function AboutClient() {
               she was doing fine.
             </p>
             <p className="text-charcoal/85 font-normal">
-              That experience marked the beginning of my work with animals using TAT&reg;.
+              That experience marked the beginning of my work with animals using TAT.
             </p>
             <Image
               src="/images/about/Photo10.jpg"
@@ -272,7 +272,7 @@ export default function AboutClient() {
               animals and their human companions.
             </p>
             <p>
-              Today, TAT&reg; for Animals continues that journey&mdash;offering a gentle way to
+              Today, TAT for Animals continues that journey&mdash;offering a gentle way to
               support emotional well-being, ease stress, and deepen the connection between animals
               and their humans.
             </p>

@@ -101,7 +101,7 @@ export default function TrySession() {
             If you recognized your animal in even one of these situations, <span className="whitespace-nowrap">you&rsquo;re not alone.</span>
           </p>
           <p className="text-base sm:text-lg leading-relaxed text-charcoal/80 max-w-xl mx-auto mb-5">
-            For more than 30 years, I&rsquo;ve used TAT&reg; to help animals move through fear,
+            For more than 30 years, I&rsquo;ve used TAT to help animals move through fear,
             anxiety, and stress by helping the nervous system feel safe enough to let go.
           </p>
           <p className="text-base sm:text-lg leading-relaxed text-charcoal/80 max-w-xl mx-auto">
@@ -239,7 +239,7 @@ export default function TrySession() {
           className="text-center mt-7"
         >
           <p className="text-sm sm:text-base text-charcoal font-medium">
-            Tapas Fleming, Founder and Creator of TAT&reg;
+            Tapas Fleming, Founder and Creator of TAT
           </p>
           <Link
             href="/about"

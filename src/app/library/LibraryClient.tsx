@@ -13,15 +13,19 @@ import BackToTopButton from '@/components/BackToTopButton'
 import AskTapasForm from './AskTapasForm'
 
 // Display order for library shelves, grouped into Tapas's renamed/consolidated
-// shelves (2026-08-20 "Library changes" doc): Main + Legacy merge into one
-// open shelf, Foundational becomes the welcoming "Start Here" label, and the
+// shelves: Main + Legacy merge into one open "Core Sessions" shelf (renamed
+// from "Full Library" so it no longer reads as a near-duplicate of the "All"
+// tab — Tapas/Jez, 2026-08-27), Foundational becomes the welcoming "Start
+// Here" label, testimonial videos (animals' TAT experiences with their
+// humans) get their own "Stories To Enjoy" shelf (Jez, 2026-08-27), and the
 // two Bonus years become Calm Circle-branded names. This is a display-only
 // grouping — the underlying category values must stay identical to the
 // options in sanity/schemaTypes/video.ts, so Jez's existing per-video category
 // picks in Studio don't need any data migration.
 const CATEGORY_GROUPS: { label: string; categories: string[] }[] = [
   { label: 'Start Here', categories: ['Foundational Content'] },
-  { label: 'Full Library', categories: ['Main Content', 'Legacy Content'] },
+  { label: 'Core Sessions', categories: ['Main Content', 'Legacy Content'] },
+  { label: 'Stories To Enjoy', categories: ['Stories To Enjoy'] },
   { label: 'Calm Circle Webinars 2025', categories: ['Bonus Content 2025'] },
   { label: 'Calm Circle Webinars 2026', categories: ['Bonus Content 2026'] },
 ]
@@ -598,7 +602,7 @@ export default function LibraryClient({
   }, [animalsVideos, hasUncategorized])
   // Video count shown after each category name (Jez's request, 2026-07-06) —
   // tells the member how much is on a shelf before opening it. Recomputed from
-  // animalsVideos every time, so a merged shelf's count (e.g. Full Library)
+  // animalsVideos every time, so a merged shelf's count (e.g. Core Sessions)
   // updates automatically with no separate migration step.
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = { All: animalsVideos.length }

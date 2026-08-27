@@ -39,13 +39,16 @@ export const videoType = defineType({
         // Category values defined by Jez (2026-06-26). Must stay identical to
         // the values inside CATEGORY_GROUPS in LibraryClient.tsx — a mismatch
         // drops videos into the ungrouped pile. The site groups/renames these
-        // into shelves ("Start Here", "Full Library", "Calm Circle Webinars
-        // 2025/2026" — Tapas, 2026-08-20) for display only; pick the value that
-        // matches what the video actually is, the display label is handled
-        // for you.
+        // into shelves ("Start Here", "Core Sessions", "Stories To Enjoy",
+        // "Calm Circle Webinars 2025/2026" — Tapas/Jez, 2026-08-27) for display
+        // only; pick the value that matches what the video actually is, the
+        // display label is handled for you. "Stories To Enjoy" (Jez,
+        // 2026-08-27) is for testimonial videos — animals' TAT experiences with
+        // their humans — kept apart from the teaching "Core Sessions".
         list: [
           { title: 'Foundational Content', value: 'Foundational Content' },
           { title: 'Main Content', value: 'Main Content' },
+          { title: 'Stories To Enjoy', value: 'Stories To Enjoy' },
           { title: 'Bonus Content 2025', value: 'Bonus Content 2025' },
           { title: 'Bonus Content 2026', value: 'Bonus Content 2026' },
           { title: 'Legacy Content', value: 'Legacy Content' },
