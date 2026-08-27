@@ -4,13 +4,12 @@ import { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Player from '@vimeo/player'
-import type { Video, WebinarRecording, WebinarSession, RecordingPreview } from './page'
+import type { Video, WebinarSession, RecordingPreview } from './page'
 import { loadAllProgress, saveProgress, type ProgressMap } from '@/lib/videoProgress'
 import { parseVimeo, formatDuration, formatDate } from '@/lib/video'
 import { displayFirstName } from '@/lib/utils'
 import type { Tab } from '@/lib/libraryLink'
 import BackToTopButton from '@/components/BackToTopButton'
-import RecordingCard from '@/components/RecordingCard'
 import AskTapasForm from './AskTapasForm'
 
 // Display order for library shelves, grouped into Tapas's renamed/consolidated
@@ -529,7 +528,6 @@ function JoinPromptModal({ onClose }: { onClose: () => void }) {
 
 export default function LibraryClient({
   animalsVideos,
-  recordings,
   upcoming,
   lockedRecordings,
   role,
@@ -538,7 +536,6 @@ export default function LibraryClient({
   billingInterval,
 }: {
   animalsVideos: Video[]
-  recordings: WebinarRecording[]
   upcoming: WebinarSession[]
   lockedRecordings: RecordingPreview[]
   role: string
@@ -580,7 +577,6 @@ export default function LibraryClient({
   const [confirmingUpgrade, setConfirmingUpgrade] = useState(false)
   const [previewLoading, setPreviewLoading] = useState(false)
   const [previewAmount, setPreviewAmount] = useState<string | null>(null)
-  const [showAllRecordings, setShowAllRecordings] = useState(false)
   const [search, setSearch] = useState('')
   const filteredAnimalsVideos = useMemo(
     () => animalsVideos.filter((v) => videoMatchesSearch(v, search)),
@@ -611,36 +607,24 @@ export default function LibraryClient({
     return counts
   }, [animalsVideos])
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
-  const [highlightedRecordingId, setHighlightedRecordingId] = useState<string | null>(null)
 
-  // Deep link from /search (?tab=&video=<sanity id>) — runs once per landing.
+  // Deep link from /search (?video=<sanity id>) — runs once per landing.
   // The actual "can this viewer watch it" call already lives where the data
-  // does: animalsVideos/recordings only ever carry a real videoUrl for a
-  // viewer whose role qualifies (see library/page.tsx), so we don't re-derive
-  // access here — we just find the item and let the existing open/locked
-  // paths (handleOpenVideo, the Live tab's upgrade prompt) do what they
-  // already do for every other card.
+  // does: animalsVideos only ever carries a real videoUrl for a viewer whose
+  // role qualifies (see library/page.tsx), so we don't re-derive access
+  // here — we just find the item and let handleOpenVideo do what it already
+  // does for every other card. Search no longer indexes recordings (Jez,
+  // 2026-08-26), so this only ever matches a video now.
   const deepLinkHandled = useRef(false)
   useEffect(() => {
     if (!videoParam || deepLinkHandled.current) return
     deepLinkHandled.current = true
-    if (activeTab === 'live') {
-      const rec = recordings.find((r) => r._id === videoParam)
-      if (rec) {
-        setShowAllRecordings(true)
-        setHighlightedRecordingId(rec._id)
-      }
-      // No match means this viewer's tier never received the recording list
-      // (or it's an old link) — landing on the Live tab as-is already shows
-      // the right upgrade messaging, so there's nothing more to do.
-    } else {
-      const match = animalsVideos.find((v) => v._id === videoParam)
-      if (match) {
-        setActiveCategory(groupLabelFor(match.category) ?? 'Other')
-        handleOpenVideo(match)
-      }
+    const match = animalsVideos.find((v) => v._id === videoParam)
+    if (match) {
+      setActiveCategory(groupLabelFor(match.category) ?? 'Other')
+      handleOpenVideo(match)
     }
-  }, [videoParam, activeTab, recordings, animalsVideos])
+  }, [videoParam, animalsVideos])
   // A search spans every category — showing the tab row while its selection no
   // longer applies would be confusing, so results ignore the active tab and are
   // grouped by category automatically (VideoTab already does this).
@@ -1009,41 +993,6 @@ export default function LibraryClient({
               {/* 웨비나용 질문 보내기 — Upcoming 바로 아래(질문이 향하는 대상 옆).
                   Circle 전용 탭 안이지만 API가 역할을 서버에서 재검증한다. */}
               <AskTapasForm />
-
-              <div className="space-y-4">
-                <h2 className="text-xs font-semibold uppercase tracking-widest text-green">
-                  Latest Recording
-                </h2>
-                {recordings.length === 0 ? (
-                  <div className="bg-white rounded-2xl border border-charcoal/10 p-7 shadow-sm">
-                    <p className="text-charcoal/65 text-base">
-                      Recordings will appear here after each live webinar.
-                    </p>
-                  </div>
-                ) : (
-                  <>
-                    {/* Collapsed: a single wider card for just the newest recording.
-                        Expanded (via "Show all"): the full archive grid (Jez,
-                        2026-08-26: retain only 1 by default, titled "Latest Recording"). */}
-                    <div className={showAllRecordings ? 'grid sm:grid-cols-2 gap-4' : 'max-w-md'}>
-                      {(showAllRecordings ? recordings : recordings.slice(0, 1)).map((rec) => (
-                        <RecordingCard key={rec._id} recording={rec} scrollIntoViewOnMount={rec._id === highlightedRecordingId} />
-                      ))}
-                    </div>
-                    {/* Full archive stays reachable for every Pro member — this just
-                        keeps the default view short. A plain button, not a tab or
-                        accordion, so nothing is hidden, only collapsed. */}
-                    {recordings.length > 1 && (
-                      <button
-                        onClick={() => setShowAllRecordings((v) => !v)}
-                        className="inline-flex items-center min-h-[44px] text-sm font-medium text-green hover:text-green transition-colors"
-                      >
-                        {showAllRecordings ? 'Show fewer' : `Show all ${recordings.length} recordings`}
-                      </button>
-                    )}
-                  </>
-                )}
-              </div>
             </div>
           ) : (
             <div className="space-y-8">

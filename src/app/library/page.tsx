@@ -27,14 +27,6 @@ export type Video = {
   thumbnailUrl: string | null
 }
 
-export type WebinarRecording = {
-  _id: string
-  title: string
-  date: string
-  videoUrl: string
-  summary: string | null
-}
-
 export type WebinarSession = {
   _id: string
   title: string
@@ -108,7 +100,6 @@ export default async function LibraryPage({
   // authenticated and access-checked from Supabase above, so show an empty
   // library rather than crashing the whole page to the error boundary.
   let animalsVideos: Video[] = []
-  let recordings: WebinarRecording[] = []
   let upcoming: WebinarSession[] = []
   let lockedRecordings: RecordingPreview[] = []
   try {
@@ -119,21 +110,15 @@ export default async function LibraryPage({
     // program that lives solely on tatlife.com (it's for healing people, not animals),
     // so it is intentionally NOT queried or shown on this site (Tapas, 2026-06-25).
     // The library option still exists in the Sanity schema to keep Jez's data intact.
-    [rawVideos, recordings, upcoming, lockedRecordings] = await Promise.all([
+    [rawVideos, upcoming, lockedRecordings] = await Promise.all([
       sanityClient.fetch<(Omit<Video, 'thumbnailUrl' | 'videoUrl'> & { videoUrl: string })[]>(
         `*[_type == "video" && status == "published" && library == "TAT for Animals"] | order(category asc, dateRecorded asc) {
           _id, title, category, duration, summary, videoUrl, topicTags, keywords, dateRecorded
         }`
       ),
-      isPro
-        ? sanityClient.fetch<WebinarRecording[]>(
-            `*[_type == "webinarRecording" && status == "published"] | order(date desc) {
-              _id, title, date, videoUrl, summary
-            }`
-          )
-        : Promise.resolve([]),
+      // Three upcoming dates (Jez, 2026-08-26 — was two).
       sanityClient.fetch<WebinarSession[]>(
-        `*[_type == "webinarSchedule" && date > now()] | order(date asc) [0..1] {
+        `*[_type == "webinarSchedule" && date > now()] | order(date asc) [0..2] {
           _id, title, date, description, meetingUrl, imageUrl
         }`
       ),
@@ -170,7 +155,6 @@ export default async function LibraryPage({
     <Suspense fallback={<div className="min-h-screen bg-cream" />}>
       <LibraryClient
         animalsVideos={animalsVideos}
-        recordings={recordings}
         upcoming={upcoming}
         lockedRecordings={lockedRecordings}
         role={role}

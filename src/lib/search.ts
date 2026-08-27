@@ -39,30 +39,20 @@ type RawVideo = {
   dateRecorded: string | null
 }
 
-type RawRecording = {
-  _id: string
-  title: string
-  summary: string | null
-  date: string | null
-}
-
 /**
  * Fetch the public search index. Throws on Sanity failure — callers should
  * wrap in try/catch and degrade to an empty index (mirrors library/page.tsx).
+ *
+ * Webinar recordings are excluded (Jez, 2026-08-26): the Live tab no longer
+ * has anywhere to land a recording deep link, since the "Latest Recording"
+ * section was removed. Recordings going forward are added as regular videos.
  */
 export async function fetchSearchIndex(): Promise<SearchItem[]> {
-  const [videos, recordings] = await Promise.all([
-    sanityClient.fetch<RawVideo[]>(
-      `*[_type == "video" && status == "published" && library == "TAT for Animals"] | order(dateRecorded desc) {
-        _id, title, summary, category, keywords, topicTags, dateRecorded
-      }`
-    ),
-    sanityClient.fetch<RawRecording[]>(
-      `*[_type == "webinarRecording" && status == "published"] | order(date desc) {
-        _id, title, summary, date
-      }`
-    ),
-  ])
+  const videos = await sanityClient.fetch<RawVideo[]>(
+    `*[_type == "video" && status == "published" && library == "TAT for Animals"] | order(dateRecorded desc) {
+      _id, title, summary, category, keywords, topicTags, dateRecorded
+    }`
+  )
 
   const videoItems: SearchItem[] = videos.map((v) => ({
     id: v._id,
@@ -75,19 +65,6 @@ export async function fetchSearchIndex(): Promise<SearchItem[]> {
     date: v.dateRecorded ?? null,
   }))
 
-  const recordingItems: SearchItem[] = recordings.map((r) => ({
-    id: r._id,
-    kind: 'recording',
-    access: 'circle',
-    title: r.title,
-    summary: r.summary ?? null,
-    category: null,
-    haystack: '',
-    date: r.date ?? null,
-  }))
-
-  // Newest first across both types (null dates sink to the bottom).
-  return [...videoItems, ...recordingItems].sort((a, b) =>
-    (b.date ?? '').localeCompare(a.date ?? '')
-  )
+  // Newest first (null dates sink to the bottom).
+  return videoItems.sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''))
 }
