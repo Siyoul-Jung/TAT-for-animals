@@ -180,7 +180,7 @@ export default function SignupClient() {
             style={{ width: 'auto' }}
           />
           <span className="font-serif text-xl text-charcoal/65 group-hover:text-green transition-colors">
-            TAT<span className="text-green text-xs align-super">®</span> for Animals
+            TAT for Animals
           </span>
         </Link>
 
