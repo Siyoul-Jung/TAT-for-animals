@@ -104,6 +104,14 @@ export default function DashboardClient({
   // re-entry form and send the reset link straight to it (mirrors the delete flow).
   const [sendingReset, setSendingReset] = useState(false)
   const [passwordResetSent, setPasswordResetSent] = useState(false)
+  // Name edit — self-service in the Account section. RLS already grants a
+  // member write access to only full_name/avatar_url on their own row
+  // (20260715_profiles_lock_privileged_columns.sql), so this is a direct
+  // client-side update, same as the rest of that migration intended.
+  const [currentFullName, setCurrentFullName] = useState(fullName)
+  const [editingName, setEditingName] = useState(false)
+  const [nameInput, setNameInput] = useState(fullName)
+  const [savingName, setSavingName] = useState(false)
 
   // Returning to the dashboard should never show a half-open confirm card. Reset
   // every transient confirm on (re)entry to this route and on browser back/forward
@@ -172,7 +180,7 @@ export default function DashboardClient({
   }
 
   const nextChargeDate = formatPeriodEnd(currentPeriodEnd)
-  const displayName = displayFirstName(fullName)
+  const displayName = displayFirstName(currentFullName)
   const plan = PLAN_INFO[role]
   const planPrice = plan ? (billingInterval === 'year' ? plan.year : plan.month) : ''
   const badge = STATUS_BADGE[subscriptionStatus] ?? STATUS_BADGE.inactive
@@ -285,6 +293,27 @@ export default function DashboardClient({
       setActionError('Something went wrong on our end. Please try again in a moment.')
     } finally {
       setSendingReset(false)
+    }
+  }
+
+  const handleSaveName = async () => {
+    const trimmed = nameInput.trim()
+    if (!trimmed) return
+    setSavingName(true)
+    setActionError(null)
+    try {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error('Not signed in')
+      const { error } = await supabase.from('profiles').update({ full_name: trimmed }).eq('id', user.id)
+      if (error) throw error
+      setCurrentFullName(trimmed)
+      setEditingName(false)
+    } catch (err) {
+      console.error('Name update error:', err)
+      setActionError('Something went wrong on our end. Please try again in a moment.')
+    } finally {
+      setSavingName(false)
     }
   }
 
@@ -761,6 +790,50 @@ export default function DashboardClient({
             Account
           </h2>
           <div className="divide-y divide-charcoal/8">
+            <div className="py-3.5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-charcoal/65">Name</p>
+                  {!editingName && (
+                    <p className="text-base text-charcoal mt-0.5">{currentFullName || '—'}</p>
+                  )}
+                </div>
+                {!editingName && (
+                  <button
+                    onClick={() => { setNameInput(currentFullName); setEditingName(true) }}
+                    className="text-sm text-green hover:text-green font-medium underline underline-offset-2 min-h-[44px] flex items-center px-2"
+                  >
+                    Edit
+                  </button>
+                )}
+              </div>
+              {editingName && (
+                <div className="mt-3 flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={nameInput}
+                    onChange={(e) => setNameInput(e.target.value)}
+                    maxLength={100}
+                    autoFocus
+                    className="flex-1 min-h-[44px] rounded-xl border border-charcoal/15 px-3.5 text-base text-charcoal focus:outline-none focus:border-green"
+                  />
+                  <button
+                    onClick={handleSaveName}
+                    disabled={savingName || !nameInput.trim()}
+                    className="min-h-[44px] px-5 py-2 rounded-full bg-brand text-cream text-base font-semibold hover:opacity-90 transition-all disabled:opacity-50"
+                  >
+                    {savingName ? 'Saving…' : 'Save'}
+                  </button>
+                  <button
+                    onClick={() => setEditingName(false)}
+                    disabled={savingName}
+                    className="min-h-[44px] px-3 text-sm text-charcoal/65 hover:text-charcoal transition-colors disabled:opacity-50"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              )}
+            </div>
             <div className="py-3.5">
               <p className="text-sm text-charcoal/65">Email address</p>
               <p className="text-base text-charcoal mt-0.5">{email}</p>
