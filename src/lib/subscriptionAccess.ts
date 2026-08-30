@@ -12,6 +12,10 @@ export const PRICE_ROLE_MAP: Record<string, string> = {
   [process.env.STRIPE_PRICE_CALM_CIRCLE!]:         'pro_subscriber',
   [process.env.STRIPE_PRICE_CALM_LIBRARY_ANNUAL!]: 'subscriber',
   [process.env.STRIPE_PRICE_CALM_CIRCLE_ANNUAL!]:  'pro_subscriber',
+  // Grandfathered $10/mo rate for tatlife subscribers moving over — same
+  // access as Calm Circle, per Jez (2026-08-28: "Calm Circle, since they
+  // are current subscribers to both recordings and live sessions").
+  [process.env.STRIPE_PRICE_FOUNDING_MEMBER!]:     'pro_subscriber',
 }
 
 // The role a subscription's current price maps to. Unknown price → 'subscriber'
