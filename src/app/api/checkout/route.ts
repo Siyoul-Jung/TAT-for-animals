@@ -10,6 +10,7 @@ const PRICE_IDS: Record<string, string | undefined> = {
   calm_circle:         process.env.STRIPE_PRICE_CALM_CIRCLE,
   calm_library_annual: process.env.STRIPE_PRICE_CALM_LIBRARY_ANNUAL,
   calm_circle_annual:  process.env.STRIPE_PRICE_CALM_CIRCLE_ANNUAL,
+  founding_member:     process.env.STRIPE_PRICE_FOUNDING_MEMBER,
 }
 
 const ALREADY_SUBSCRIBED =
@@ -91,8 +92,16 @@ export async function POST(request: NextRequest) {
     // recorded. Ask Stripe directly so a delayed or missed webhook can't let the
     // same customer open a second subscription. Check all non-terminal statuses
     // (not just 'active') so a trialing or past_due subscription also blocks.
+    //
+    // Only count subscriptions tagged with our own metadata — the Stripe
+    // account is shared with tatlife.com, so the same email/customer can
+    // already have a live tatlife subscription (e.g. the $10/mo founding-
+    // member resubscribe flow is for exactly these customers). Without this
+    // filter their existing tatlife subscription would block them from ever
+    // subscribing here. Mirrors the same distinction the webhook's
+    // customer.subscription.updated handler already makes.
     const existingSubs = await stripe.subscriptions.list({ customer: customerId, status: 'all', limit: 10 })
-    if (existingSubs.data.some((s) => LIVE_SUB_STATUSES.has(s.status))) {
+    if (existingSubs.data.some((s) => LIVE_SUB_STATUSES.has(s.status) && s.metadata?.supabase_user_id === user.id)) {
       return NextResponse.json({ error: ALREADY_SUBSCRIBED }, { status: 400 })
     }
 
