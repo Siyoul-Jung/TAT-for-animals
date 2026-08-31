@@ -7,7 +7,7 @@ import { sendWelcomeOnce } from '@/lib/sendWelcomeOnce'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { claimOnce, releaseOnce, hasClaim } from '@/lib/onceGuard'
 import { reportOpsError } from '@/lib/alertOps'
-import { PRICE_ROLE_MAP, roleForSubscription, getBillingInterval, getPeriodEndISO } from '@/lib/subscriptionAccess'
+import { PRICE_ROLE_MAP, roleForSubscription, getBillingInterval, getPeriodEndISO, getPriceId } from '@/lib/subscriptionAccess'
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 
@@ -127,6 +127,7 @@ export async function POST(request: NextRequest) {
           subscription_status: 'active',
           current_period_end: getPeriodEndISO(subscription),
           billing_interval: billingInterval,
+          plan_price_id: getPriceId(subscription),
           cancel_at: null,
         }
         if (customerName) updatePayload.full_name = customerName
@@ -265,6 +266,7 @@ export async function POST(request: NextRequest) {
             pending_tier_at: pending.at,
             cancel_at: cancelAt,
             billing_interval: getBillingInterval(subscription),
+            plan_price_id: getPriceId(subscription),
             ...(periodEndISO ? { current_period_end: periodEndISO } : {}),
           })
           .eq('id', userId)

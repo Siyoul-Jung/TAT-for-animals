@@ -84,6 +84,7 @@ export async function POST(request: NextRequest) {
             paypal_pending_subscription_id: null,
             subscription_status: 'active',
             billing_interval: getPlanInterval(resource.plan_id),
+            plan_price_id: resource.plan_id ?? null,
             pending_tier: null,
             pending_tier_at: null,
             // A fresh activation is, by definition, not cancelling — clear any
@@ -155,7 +156,7 @@ export async function POST(request: NextRequest) {
           // Upgrade (or revert to same tier) — apply now, clear any pending change.
           await supabaseAdmin
             .from('profiles')
-            .update({ role: newRole, pending_tier: null, pending_tier_at: null })
+            .update({ role: newRole, plan_price_id: resource.plan_id ?? null, pending_tier: null, pending_tier_at: null })
             .eq('id', userId)
 
           // Upgrade confirmation — parity with the Stripe path, where

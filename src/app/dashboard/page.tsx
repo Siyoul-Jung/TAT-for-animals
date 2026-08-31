@@ -5,6 +5,7 @@ import { reconcileAccess } from '@/lib/reconcileAccess'
 import { redirect } from 'next/navigation'
 import type { Metadata } from 'next'
 import { sanityClient } from '@/lib/sanity'
+import { PRICE_ID_LABELS } from '@/lib/plans'
 import DashboardClient from './DashboardClient'
 
 type WebinarSession = {
@@ -39,7 +40,7 @@ export default async function DashboardPage({
 
   const { data: profileRow } = await supabase
     .from('profiles')
-    .select('full_name, role, subscription_status, stripe_customer_id, stripe_subscription_id, paypal_subscription_id, current_period_end, billing_interval, pending_tier, pending_tier_at, cancel_at')
+    .select('full_name, role, subscription_status, stripe_customer_id, stripe_subscription_id, paypal_subscription_id, current_period_end, billing_interval, plan_price_id, pending_tier, pending_tier_at, cancel_at')
     .eq('id', user.id)
     .single()
 
@@ -97,6 +98,7 @@ export default async function DashboardPage({
       isPayPal={!!profile?.paypal_subscription_id}
       currentPeriodEnd={profile?.current_period_end ?? null}
       billingInterval={profile?.billing_interval ?? null}
+      planPriceLabel={profile?.plan_price_id ? (PRICE_ID_LABELS[profile.plan_price_id] ?? null) : null}
       pendingTier={lapsed ? null : (profile?.pending_tier ?? null)}
       pendingTierAt={lapsed ? null : (profile?.pending_tier_at ?? null)}
       cancelAt={lapsed ? null : (profile?.cancel_at ?? null)}

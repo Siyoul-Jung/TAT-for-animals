@@ -1,6 +1,6 @@
 import { stripe } from '@/lib/stripe'
 import { supabaseAdmin } from '@/lib/supabase/admin'
-import { roleForSubscription, getBillingInterval, getPeriodEndISO } from '@/lib/subscriptionAccess'
+import { roleForSubscription, getBillingInterval, getPeriodEndISO, getPriceId } from '@/lib/subscriptionAccess'
 import { paypalRequest, PLAN_ROLE_MAP, getPlanInterval } from '@/lib/paypal'
 import { sendWelcomeOnce } from '@/lib/sendWelcomeOnce'
 
@@ -15,6 +15,7 @@ export type ReconcileResult = {
   role: string
   subscription_status: string
   billing_interval: 'month' | 'year'
+  plan_price_id: string | null
   stripe_subscription_id?: string
   current_period_end?: string | null
   cancel_at?: string | null
@@ -53,6 +54,7 @@ export async function reconcileAccess(profile: ProfileLike): Promise<ReconcileRe
           subscription_status: 'active',
           current_period_end: getPeriodEndISO(sub),
           billing_interval: getBillingInterval(sub),
+          plan_price_id: getPriceId(sub),
           cancel_at: null,
         }
         await supabaseAdmin.from('profiles').update(update).eq('id', profile.id)
@@ -74,6 +76,7 @@ export async function reconcileAccess(profile: ProfileLike): Promise<ReconcileRe
           role: PLAN_ROLE_MAP[sub.plan_id] ?? 'subscriber',
           subscription_status: 'active',
           billing_interval: getPlanInterval(sub.plan_id),
+          plan_price_id: sub.plan_id,
         }
         await supabaseAdmin.from('profiles').update(update).eq('id', profile.id)
         await sendWelcome(profile.id, profile.paypal_subscription_id, update.role, getPlanInterval(sub.plan_id))
