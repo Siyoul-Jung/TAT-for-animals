@@ -132,6 +132,7 @@ export async function POST(request: NextRequest) {
       }),
     })
     data = await res.json()
+    if (!res.ok) console.error('PayPal subscription create non-OK:', res.status, JSON.stringify(data))
   } catch (error) {
     console.error('PayPal subscription create failed:', error)
     return NextResponse.json(
@@ -144,7 +145,7 @@ export async function POST(request: NextRequest) {
 
   if (!approveLink) {
     return NextResponse.json(
-      { error: "We couldn't start your PayPal checkout — nothing was charged. Please try again in a moment, or pay with a card." },
+      { error: "We couldn't start your PayPal checkout — nothing was charged. Please try again in a moment, or pay with a card.", _debug: data },
       { status: 500 }
     )
   }
