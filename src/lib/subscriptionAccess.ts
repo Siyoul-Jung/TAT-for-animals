@@ -34,6 +34,14 @@ export function getBillingInterval(subscription: Stripe.Subscription): 'month' |
   return subscription.items.data[0]?.price?.recurring?.interval === 'year' ? 'year' : 'month'
 }
 
+// The subscription's current price ID — stored on profiles.plan_price_id so
+// the dashboard can show what the member actually pays instead of a role-based
+// guess (needed since Founding Member and Calm Circle share a role but not a
+// price).
+export function getPriceId(subscription: Stripe.Subscription): string | null {
+  return subscription.items.data[0]?.price?.id ?? null
+}
+
 // Stripe API 2025-03-31 (basil) and later moved `current_period_end` off the
 // Subscription object onto each Subscription Item. Read it from there.
 export function getPeriodEndISO(subscription: Stripe.Subscription): string | null {

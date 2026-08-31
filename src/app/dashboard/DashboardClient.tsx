@@ -25,6 +25,10 @@ type Props = {
   isPayPal: boolean
   currentPeriodEnd: string | null
   billingInterval: 'month' | 'year' | null
+  // Resolved server-side (needs process.env price IDs, unavailable client-side) —
+  // the member's actual price label (e.g. "$10 / month" for a Founding Member),
+  // or null if their stored plan_price_id doesn't match a known price/plan id.
+  planPriceLabel: string | null
   pendingTier: string | null
   pendingTierAt: string | null
   cancelAt: string | null
@@ -69,6 +73,7 @@ export default function DashboardClient({
   isPayPal,
   currentPeriodEnd,
   billingInterval,
+  planPriceLabel,
   pendingTier,
   pendingTierAt,
   cancelAt,
@@ -182,7 +187,11 @@ export default function DashboardClient({
   const nextChargeDate = formatPeriodEnd(currentPeriodEnd)
   const displayName = displayFirstName(currentFullName)
   const plan = PLAN_INFO[role]
-  const planPrice = plan ? (billingInterval === 'year' ? plan.year : plan.month) : ''
+  // The member's actual price (e.g. Founding Member's $10/mo) takes priority
+  // over the role-based default — role alone can't distinguish a grandfathered
+  // rate from the standard price for the same tier. Falls back to the
+  // role-based label for rows with no stored price id (pre-dates this field).
+  const planPrice = planPriceLabel || (plan ? (billingInterval === 'year' ? plan.year : plan.month) : '')
   const badge = STATUS_BADGE[subscriptionStatus] ?? STATUS_BADGE.inactive
   const pendingPlan = pendingTier ? PLAN_INFO[pendingTier] : null
   const pendingDate = formatPeriodEnd(pendingTierAt)

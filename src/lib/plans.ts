@@ -23,3 +23,24 @@ export const PLAN_NAMES: Record<Plan, string> = {
 // page itself shows exact live counts from the data.
 export const LIBRARY_VIDEO_COUNT_LABEL = '40+';
 
+// Price label by the actual price/plan the member is on — keyed by Stripe
+// price ID or PayPal plan ID (both are just strings, so one map covers both
+// providers). Needed because role alone doesn't determine price: Founding
+// Member ($10/mo, grandfathered) shares the pro_subscriber role with Calm
+// Circle ($47/mo) but must show its own rate, not Calm Circle's.
+// profiles.plan_price_id (set by the webhooks/success handlers) is looked up
+// here; a row with no match (not yet backfilled, or an unrecognized id) falls
+// back to the role-based label in DashboardClient's PLAN_INFO.
+export const PRICE_ID_LABELS: Record<string, string> = {
+  ...(process.env.STRIPE_PRICE_CALM_LIBRARY && { [process.env.STRIPE_PRICE_CALM_LIBRARY]: '$27 / month' }),
+  ...(process.env.STRIPE_PRICE_CALM_CIRCLE && { [process.env.STRIPE_PRICE_CALM_CIRCLE]: '$47 / month' }),
+  ...(process.env.STRIPE_PRICE_CALM_LIBRARY_ANNUAL && { [process.env.STRIPE_PRICE_CALM_LIBRARY_ANNUAL]: '$270 / year' }),
+  ...(process.env.STRIPE_PRICE_CALM_CIRCLE_ANNUAL && { [process.env.STRIPE_PRICE_CALM_CIRCLE_ANNUAL]: '$470 / year' }),
+  ...(process.env.STRIPE_PRICE_FOUNDING_MEMBER && { [process.env.STRIPE_PRICE_FOUNDING_MEMBER]: '$10 / month' }),
+  ...(process.env.PAYPAL_PLAN_CALM_LIBRARY && { [process.env.PAYPAL_PLAN_CALM_LIBRARY]: '$27 / month' }),
+  ...(process.env.PAYPAL_PLAN_CALM_CIRCLE && { [process.env.PAYPAL_PLAN_CALM_CIRCLE]: '$47 / month' }),
+  ...(process.env.PAYPAL_PLAN_CALM_LIBRARY_ANNUAL && { [process.env.PAYPAL_PLAN_CALM_LIBRARY_ANNUAL]: '$270 / year' }),
+  ...(process.env.PAYPAL_PLAN_CALM_CIRCLE_ANNUAL && { [process.env.PAYPAL_PLAN_CALM_CIRCLE_ANNUAL]: '$470 / year' }),
+  ...(process.env.PAYPAL_PLAN_FOUNDING_MEMBER && { [process.env.PAYPAL_PLAN_FOUNDING_MEMBER]: '$10 / month' }),
+};
+
