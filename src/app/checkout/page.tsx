@@ -99,10 +99,6 @@ function CheckoutContent() {
 
   if (!tier || !plan) return <div className="min-h-screen bg-cream" />;
 
-  // Founding-member rate has no PayPal plan set up yet (a handful of invited
-  // members, card-only keeps this simple) — card only for this one.
-  const cardOnly = plan === 'founding_member';
-
   // Brief loader while we check membership status — keeps a member from ever
   // seeing the payment form before we can redirect them.
   if (status === 'checking') {
@@ -273,16 +269,14 @@ function CheckoutContent() {
             {loading === 'stripe' ? 'Taking you to payment…' : 'Pay with card'}
           </button>
 
-          {!cardOnly && (
-            <button
-              onClick={() => handlePayment('paypal')}
-              disabled={loading !== null || !agreed}
-              className="w-full py-4 rounded-xl font-bold text-[19px] transition-all hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{ backgroundColor: '#FFC439', color: '#003087' }}
-            >
-              {loading === 'paypal' ? 'Taking you to payment…' : 'Pay with PayPal'}
-            </button>
-          )}
+          <button
+            onClick={() => handlePayment('paypal')}
+            disabled={loading !== null || !agreed}
+            className="w-full py-4 rounded-xl font-bold text-[19px] transition-all hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{ backgroundColor: '#FFC439', color: '#003087' }}
+          >
+            {loading === 'paypal' ? 'Taking you to payment…' : 'Pay with PayPal'}
+          </button>
         </div>
 
         {!agreed && (
