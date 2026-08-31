@@ -85,6 +85,7 @@ export const PLAN_IDS: Record<string, string> = {
   calm_circle:         process.env.PAYPAL_PLAN_CALM_CIRCLE!,
   calm_library_annual: process.env.PAYPAL_PLAN_CALM_LIBRARY_ANNUAL!,
   calm_circle_annual:  process.env.PAYPAL_PLAN_CALM_CIRCLE_ANNUAL!,
+  founding_member:     process.env.PAYPAL_PLAN_FOUNDING_MEMBER!,
 };
 
 // Both billing intervals of a tier grant the same role — the role is the tier,
@@ -94,6 +95,9 @@ export const PLAN_ROLE_MAP: Record<string, string> = {
   [process.env.PAYPAL_PLAN_CALM_CIRCLE!]:         'pro_subscriber',
   [process.env.PAYPAL_PLAN_CALM_LIBRARY_ANNUAL!]: 'subscriber',
   [process.env.PAYPAL_PLAN_CALM_CIRCLE_ANNUAL!]:  'pro_subscriber',
+  // Grandfathered $10/mo rate for tatlife subscribers moving over — same
+  // access as Calm Circle. Mirrors subscriptionAccess.ts on the Stripe side.
+  [process.env.PAYPAL_PLAN_FOUNDING_MEMBER!]:     'pro_subscriber',
 };
 
 // PayPal events don't carry the billing cadence, but the plan does. Map the two
