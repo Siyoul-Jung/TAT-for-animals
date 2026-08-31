@@ -145,7 +145,7 @@ export async function POST(request: NextRequest) {
 
   if (!approveLink) {
     return NextResponse.json(
-      { error: "We couldn't start your PayPal checkout — nothing was charged. Please try again in a moment, or pay with a card.", _debug: data },
+      { error: "We couldn't start your PayPal checkout — nothing was charged. Please try again in a moment, or pay with a card." },
       { status: 500 }
     )
   }
