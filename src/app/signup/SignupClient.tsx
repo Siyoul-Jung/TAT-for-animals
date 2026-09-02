@@ -83,7 +83,7 @@ export default function SignupClient() {
     })
 
     if (error) {
-      if (error.message.includes('already registered')) {
+      if (error.code === 'user_already_exists') {
         setError('An account with this email already exists.')
         setExistingAccount(true)
       } else {

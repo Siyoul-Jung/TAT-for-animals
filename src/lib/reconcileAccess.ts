@@ -77,6 +77,7 @@ export async function reconcileAccess(profile: ProfileLike): Promise<ReconcileRe
           subscription_status: 'active',
           billing_interval: getPlanInterval(sub.plan_id),
           plan_price_id: sub.plan_id,
+          cancel_at: null,
         }
         await supabaseAdmin.from('profiles').update(update).eq('id', profile.id)
         await sendWelcome(profile.id, profile.paypal_subscription_id, update.role, getPlanInterval(sub.plan_id))
