@@ -108,7 +108,7 @@ describe('SignupClient — client-side validation', () => {
 describe('SignupClient — Supabase errors', () => {
   it('shows "already exists" message when email is already registered', async () => {
     mockSignUp.mockResolvedValueOnce({
-      error: { message: 'User already registered' },
+      error: { message: 'User already registered', code: 'user_already_exists' },
     })
     render(<SignupClient />)
     await fillForm('existing@test.com', 'password123', 'password123')

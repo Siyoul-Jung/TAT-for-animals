@@ -65,7 +65,7 @@ export default function ResetPasswordClient() {
               We sent a password reset link to
             </p>
             <p className="text-base font-medium text-charcoal mb-8">{email}</p>
-            <p className="text-xs text-muted mb-4">
+            <p className="text-sm text-muted mb-4">
               Didn't receive it?{' '}
               <button onClick={() => setSent(false)} className="text-green hover:underline">
                 Try again
