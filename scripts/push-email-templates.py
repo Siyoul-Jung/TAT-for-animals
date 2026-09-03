@@ -20,6 +20,7 @@ def html(path):
 body = {
     "mailer_templates_recovery_content": html("docs/email-templates/reset-password.html"),
     "mailer_templates_confirmation_content": html("docs/email-templates/confirm-signup.html"),
+    "mailer_templates_magic_link_content": html("docs/email-templates/magic-link.html"),
 }
 
 req = urllib.request.Request(
@@ -38,7 +39,7 @@ try:
         data = json.loads(r.read().decode("utf-8"))
         print("STATUS", r.status)
         # confirm the stored content now matches what we sent
-        for k in ("mailer_templates_recovery_content", "mailer_templates_confirmation_content"):
+        for k in body:
             stored = data.get(k, "")
             print(k, "->", "OK match" if stored == body[k] else f"MISMATCH (len stored={len(stored)})")
 except urllib.error.HTTPError as e:
