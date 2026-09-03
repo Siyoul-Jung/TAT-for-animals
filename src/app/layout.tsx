@@ -19,8 +19,6 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://tatforanimals.com"),
   title: "TAT® for Animals | Help Your Animal Feel Calm and at Ease",
   description: "Experience the calming power of TAT for your animals and yourself. Experience first, simplicity always.",
-  // PRE-LAUNCH: keep the unfinished site out of Google. REMOVE this line at launch.
-  robots: { index: false, follow: false },
   // Social share card (link previews in Messages, Facebook, Slack, …).
   openGraph: {
     type: "website",
