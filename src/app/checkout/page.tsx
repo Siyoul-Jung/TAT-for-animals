@@ -103,7 +103,7 @@ function CheckoutContent() {
   // seeing the payment form before we can redirect them.
   if (status === 'checking') {
     return (
-      <div className="min-h-screen bg-cream flex items-center justify-center px-6 py-20">
+      <div className="min-h-screen bg-cream flex items-center justify-center px-6 pt-28 pb-16">
         <div className="flex flex-col items-center gap-4 text-center">
           <span
             className="h-8 w-8 rounded-full border-2 animate-spin"
@@ -119,7 +119,7 @@ function CheckoutContent() {
   // Already a member — no payment form, just a warm hand-off to their account.
   if (status === 'member') {
     return (
-      <div className="min-h-screen bg-cream flex items-center justify-center px-6 py-20">
+      <div className="min-h-screen bg-cream flex items-center justify-center px-6 pt-28 pb-16">
         <div className="w-full max-w-sm text-center">
           <p className="text-[13px] tracking-[0.2em] uppercase font-medium mb-5" style={{ color: '#38601E' }}>
             You're already a member
@@ -197,7 +197,7 @@ function CheckoutContent() {
   }
 
   return (
-    <div className="min-h-screen bg-cream flex items-center justify-center px-6 py-20">
+    <div className="min-h-screen bg-cream flex items-center justify-center px-6 pt-28 pb-16">
       <div className="w-full max-w-sm">
 
         {/* Plan summary */}
