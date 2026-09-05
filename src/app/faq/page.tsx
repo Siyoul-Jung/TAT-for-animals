@@ -11,7 +11,7 @@ import { BOOKING_URL } from '@/lib/links';
 // by dropping it into the right group's `items` — the headings render themselves.
 const faqSections = [
   {
-    category: 'About TAT for Animals',
+    category: '',
     items: [
       {
         q: 'What is TAT for Animals?',
@@ -167,10 +167,17 @@ export default function FAQ() {
 
         <div key={resetKey} className="space-y-12">
           {faqSections.map(({ category, items }) => (
-            <section key={category}>
-              <h2 className="font-serif text-2xl text-charcoal font-medium mb-2">
-                {category}
-              </h2>
+            <section key={category || 'general'}>
+              {/* The general questions carry no heading — the page subtitle
+                  already says "Everything you're wondering about TAT for
+                  Animals", so a heading repeating it read as duplication
+                  (Jez, 2026-09-05). "Membership and Billing" stays, since it
+                  marks a genuine shift in subject. */}
+              {category && (
+                <h2 className="font-serif text-2xl text-charcoal font-medium mb-2">
+                  {category}
+                </h2>
+              )}
               <div>
                 {items.map(({ q, a }, i) => (
                   <FAQItem key={i} q={q} a={a} />

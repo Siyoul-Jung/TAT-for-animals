@@ -120,7 +120,7 @@ export default function Navbar() {
 
         {/* Logo + Brand — always left, with the menu grouped on the right */}
         <div className="flex">
-          <Link href="/" className="flex items-center gap-0.5">
+          <Link href="/" className="flex items-center gap-2">
             <Image
               src="/images/logo2.png"
               alt="TAT for Animals logo"
