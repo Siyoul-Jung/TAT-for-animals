@@ -59,7 +59,27 @@ export interface PayPalWebhookEvent {
     billing_agreement_id?: string
     status?: string
     billing_info?: { next_billing_time?: string }
+    // PAYMENT.SALE.* carries the money. `total` is the sale/refund amount on
+    // the v1 sale resource; `value` is the v2 spelling — PayPal sends one or
+    // the other depending on how the payment was taken.
+    amount?: { total?: string; value?: string; currency?: string; currency_code?: string }
   }
+}
+
+// The regular (non-trial) price of a billing plan, used to tell a full refund
+// from a partial one. Returns null when the plan or its price can't be read.
+export async function getPlanPrice(planId: string): Promise<number | null> {
+  const res = await paypalRequest(`/v1/billing/plans/${planId}`)
+  if (!res.ok) return null
+  const plan = (await res.json()) as {
+    billing_cycles?: Array<{
+      tenure_type?: string
+      pricing_scheme?: { fixed_price?: { value?: string } }
+    }>
+  }
+  const regular = plan.billing_cycles?.find((c) => c.tenure_type === 'REGULAR')
+  const value = Number(regular?.pricing_scheme?.fixed_price?.value)
+  return Number.isFinite(value) ? value : null
 }
 
 // A bounded fallback "paid-through" date for the rare case where we can't read

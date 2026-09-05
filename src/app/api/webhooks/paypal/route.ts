@@ -1,7 +1,7 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { claimOnce, releaseOnce, hasClaim } from '@/lib/onceGuard'
 import { reportOpsError } from '@/lib/alertOps'
-import { paypalRequest, PLAN_ROLE_MAP, getPayPalSubscription, getPlanInterval, estimatePaidThrough, type PayPalWebhookEvent } from '@/lib/paypal'
+import { paypalRequest, PLAN_ROLE_MAP, getPayPalSubscription, getPlanInterval, getPlanPrice, estimatePaidThrough, type PayPalWebhookEvent } from '@/lib/paypal'
 import { sendWelcomeOnce } from '@/lib/sendWelcomeOnce'
 import { resend, FROM_EMAIL } from '@/lib/resend'
 import { planChangeEmail } from '@/lib/emails/plan-change'
@@ -212,6 +212,77 @@ export async function POST(request: NextRequest) {
           .from('profiles')
           .update(update)
           .eq('paypal_subscription_id', subscriptionId)
+        break
+      }
+
+      // A refund issued from the PayPal dashboard rather than through the app.
+      // Without this the money goes back and the member keeps watching — found
+      // in live QA on 2026-09-05. The app's own annual-refund route revokes
+      // access itself, so this is the backstop for refunds made outside it.
+      case 'PAYMENT.SALE.REFUNDED': {
+        const subscriptionId = resource.billing_agreement_id
+        if (!subscriptionId) break
+
+        const { data: profile } = await supabaseAdmin
+          .from('profiles')
+          .select('id, plan_price_id')
+          .eq('paypal_subscription_id', subscriptionId)
+          .single()
+        // No profile on this subscription means access is already gone — either
+        // our refund route cleared it, or the member moved to a new one.
+        if (!profile) break
+
+        // Partial refunds are a goodwill gesture, not a withdrawal of the
+        // membership — only a full refund of the charge ends access. PayPal
+        // reports the refunded amount here and the plan's price on the plan.
+        const refunded = Number(resource.amount?.total ?? resource.amount?.value ?? NaN)
+        if (!Number.isFinite(refunded)) break
+        let planPrice: number | null = null
+        try {
+          if (profile.plan_price_id) planPrice = await getPlanPrice(profile.plan_price_id)
+        } catch (e) {
+          // Can't read the plan price — treat the refund as full rather than
+          // leave a refunded member with access. Over-revoking is recoverable
+          // by re-granting the role; under-revoking gives away the content.
+          console.error('PayPal getPlan (refund) failed:', e)
+        }
+        if (planPrice !== null && refunded < planPrice) break
+
+        if (await hasClaim(`refund-cancel-${subscriptionId}`)) break
+        await claimOnce(`refund-cancel-${subscriptionId}`)
+
+        // Cancel so the member isn't billed again next cycle. 204 is success
+        // and 422 means it was already cancelled — both fine here.
+        try {
+          const res = await paypalRequest(
+            `/v1/billing/subscriptions/${subscriptionId}/cancel`,
+            { method: 'POST', body: JSON.stringify({ reason: 'Payment refunded' }) },
+          )
+          if (res.status !== 204 && res.status !== 422) {
+            throw new Error(`PayPal cancel returned ${res.status}: ${await res.text()}`)
+          }
+        } catch (cancelError) {
+          // Access still gets revoked below; surface the billing half so
+          // nobody keeps getting charged silently.
+          await reportOpsError('paypal-webhook', cancelError, {
+            eventType: event.event_type, eventId: event.id, subscriptionId,
+            note: 'refunded sale — access revoked but the subscription could not be cancelled',
+          })
+        }
+
+        await supabaseAdmin
+          .from('profiles')
+          .update({
+            role: 'guest',
+            paypal_subscription_id: null,
+            paypal_pending_subscription_id: null,
+            subscription_status: 'inactive',
+            current_period_end: null,
+            pending_tier: null,
+            pending_tier_at: null,
+            cancel_at: null,
+          })
+          .eq('id', profile.id)
         break
       }
 

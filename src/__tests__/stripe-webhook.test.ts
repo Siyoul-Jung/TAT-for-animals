@@ -38,8 +38,10 @@ jest.mock('@supabase/supabase-js', () => {
 jest.mock('@/lib/stripe', () => ({
   stripe: {
     webhooks: { constructEvent: jest.fn() },
-    subscriptions: { retrieve: jest.fn() },
+    subscriptions: { retrieve: jest.fn(), cancel: jest.fn().mockResolvedValue({}) },
     customers: { retrieve: jest.fn() },
+    invoices: { retrieve: jest.fn() },
+    invoicePayments: { list: jest.fn() },
   },
 }))
 
@@ -74,6 +76,9 @@ const mockMaybeSingle: jest.Mock = __mocks.mockMaybeSingle
 const mockConstructEvent      = stripe.webhooks.constructEvent as jest.Mock
 const mockRetrieveSubscription = stripe.subscriptions.retrieve as jest.Mock
 const mockRetrieveCustomer    = stripe.customers.retrieve as jest.Mock
+const mockCancelSubscription  = stripe.subscriptions.cancel as jest.Mock
+const mockRetrieveInvoice     = stripe.invoices.retrieve as jest.Mock
+const mockListInvoicePayments = stripe.invoicePayments.list as jest.Mock
 const mockSendEmail           = resend.emails.send as jest.Mock
 
 // ── Helpers ───────────────────────────────────────────────────
@@ -462,5 +467,103 @@ describe('Stripe webhook — idempotency', () => {
     expect(res.status).toBe(500)
     expect(mockDelete).toHaveBeenCalled()
     expect(mockDeleteEq).toHaveBeenCalledWith('id', 'evt_boom')
+  })
+})
+
+// ── charge.refunded — the safety net for refunds issued outside the app ──
+describe('charge.refunded', () => {
+  function makeRefundEvent(overrides = {}) {
+    return {
+      id: 'evt_refund',
+      type: 'charge.refunded',
+      data: {
+        object: {
+          id: 'ch_123',
+          refunded: true,
+          payment_intent: 'pi_123',
+          ...overrides,
+        },
+      },
+    }
+  }
+
+  function armHappyPath() {
+    mockListInvoicePayments.mockResolvedValue({ data: [{ invoice: 'in_123' }] })
+    mockRetrieveInvoice.mockResolvedValue({
+      id: 'in_123',
+      parent: { subscription_details: { subscription: 'sub_123' } },
+    })
+    mockRetrieveSubscription.mockResolvedValue(
+      makeSubscription({ status: 'active', latest_invoice: 'in_123' }),
+    )
+    // profiles.select(...).eq(...).single() → the tracked subscription
+    mockSingle.mockResolvedValue({ data: { stripe_subscription_id: 'sub_123' }, error: null })
+  }
+
+  it('revokes access and cancels the subscription on a full refund', async () => {
+    armHappyPath()
+    mockConstructEvent.mockReturnValue(makeRefundEvent())
+
+    const res = await POST(makeRequest({}))
+    expect(res.status).toBe(200)
+
+    expect(mockCancelSubscription).toHaveBeenCalledWith('sub_123')
+    expect(mockUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        role: 'guest',
+        stripe_subscription_id: null,
+        subscription_status: 'inactive',
+      }),
+    )
+  })
+
+  it('leaves a partial refund alone — goodwill is not a cancellation', async () => {
+    armHappyPath()
+    mockConstructEvent.mockReturnValue(makeRefundEvent({ refunded: false }))
+
+    await POST(makeRequest({}))
+
+    expect(mockCancelSubscription).not.toHaveBeenCalled()
+    expect(mockUpdate).not.toHaveBeenCalledWith(
+      expect.objectContaining({ role: 'guest' }),
+    )
+  })
+
+  it('ignores a refund of an older invoice — a still-paying member keeps access', async () => {
+    armHappyPath()
+    mockRetrieveSubscription.mockResolvedValue(
+      makeSubscription({ status: 'active', latest_invoice: 'in_NEWER' }),
+    )
+    mockConstructEvent.mockReturnValue(makeRefundEvent())
+
+    await POST(makeRequest({}))
+
+    expect(mockCancelSubscription).not.toHaveBeenCalled()
+    expect(mockUpdate).not.toHaveBeenCalledWith(
+      expect.objectContaining({ role: 'guest' }),
+    )
+  })
+
+  it('ignores a one-off charge that belongs to no invoice', async () => {
+    armHappyPath()
+    mockListInvoicePayments.mockResolvedValue({ data: [] })
+    mockConstructEvent.mockReturnValue(makeRefundEvent())
+
+    await POST(makeRequest({}))
+
+    expect(mockCancelSubscription).not.toHaveBeenCalled()
+  })
+
+  it('does not evict a member who has since moved to a newer subscription', async () => {
+    armHappyPath()
+    mockSingle.mockResolvedValue({ data: { stripe_subscription_id: 'sub_NEWER' }, error: null })
+    mockConstructEvent.mockReturnValue(makeRefundEvent())
+
+    await POST(makeRequest({}))
+
+    expect(mockCancelSubscription).not.toHaveBeenCalled()
+    expect(mockUpdate).not.toHaveBeenCalledWith(
+      expect.objectContaining({ role: 'guest' }),
+    )
   })
 })

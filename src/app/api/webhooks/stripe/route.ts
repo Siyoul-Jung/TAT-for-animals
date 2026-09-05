@@ -316,6 +316,97 @@ export async function POST(request: NextRequest) {
       }
 
       // Subscription cancelled → reset role
+      // A refund issued from the Stripe dashboard rather than through the app.
+      // Without this, the money goes back and the member keeps watching —
+      // found in live QA on 2026-09-05, where a hand-issued refund left the
+      // profile fully active. The app's own annual-refund route revokes access
+      // itself, so this is the backstop for refunds made outside it.
+      case 'charge.refunded': {
+        const charge = event.data.object as Stripe.Charge
+
+        // Partial refunds are a goodwill gesture, not a withdrawal of the
+        // membership — only a full refund ends access.
+        if (!charge.refunded) break
+
+        // `Charge.invoice` was removed in 2026-03-25.dahlia; the link now runs
+        // the other way, through the invoice's payment records.
+        const paymentIntentId = typeof charge.payment_intent === 'string'
+          ? charge.payment_intent
+          : charge.payment_intent?.id
+        if (!paymentIntentId) break
+
+        const payments = await stripe.invoicePayments.list({
+          payment: { type: 'payment_intent', payment_intent: paymentIntentId },
+          limit: 1,
+        })
+        const invoiceRef = payments.data[0]?.invoice
+        const invoiceId = typeof invoiceRef === 'string' ? invoiceRef : invoiceRef?.id
+        if (!invoiceId) break // a one-off charge, not a membership payment
+
+        const invoice = await stripe.invoices.retrieve(invoiceId)
+        const subId = getInvoiceSubscriptionId(invoice)
+        if (!subId) break
+
+        const subscription = await stripe.subscriptions.retrieve(subId)
+        const userId = subscription.metadata?.supabase_user_id
+        if (!userId) break
+
+        // Refunding an OLD invoice (say, a goodwill refund of a charge from
+        // three months ago) must not evict a member who has kept paying since.
+        // Only the charge that paid for the CURRENT period ends access.
+        if (subscription.latest_invoice) {
+          const latestId = typeof subscription.latest_invoice === 'string'
+            ? subscription.latest_invoice
+            : subscription.latest_invoice.id
+          if (latestId !== invoice.id) break
+        }
+
+        // Our own refund route already revoked access and emailed the member.
+        if (await hasClaim(`refund-cancel-${subId}`)) break
+
+        // Same stale-event guard the deleted handler uses: if the profile has
+        // moved on to a newer subscription, this refund belongs to an old one.
+        const { data: profile } = await supabaseAdmin
+          .from('profiles')
+          .select('stripe_subscription_id')
+          .eq('id', userId)
+          .single()
+        if (profile?.stripe_subscription_id && profile.stripe_subscription_id !== subId) break
+
+        // Claim BEFORE cancelling so the deleted handler that follows skips its
+        // "access until the end of your billing period" email — untrue here,
+        // since a refunded member loses access immediately.
+        await claimOnce(`refund-cancel-${subId}`)
+
+        if (subscription.status !== 'canceled') {
+          try {
+            await stripe.subscriptions.cancel(subId)
+          } catch (cancelError) {
+            // Access still gets revoked below; surface the billing half so
+            // nobody keeps getting charged silently.
+            await reportOpsError('stripe-webhook', cancelError, {
+              eventType: event.type, eventId: event.id, subscriptionId: subId,
+              note: 'refunded charge — access revoked but the subscription could not be cancelled',
+            })
+          }
+        }
+
+        await supabaseAdmin
+          .from('profiles')
+          .update({
+            role: 'guest',
+            stripe_subscription_id: null,
+            subscription_status: 'inactive',
+            current_period_end: null,
+            pending_tier: null,
+            pending_tier_at: null,
+            cancel_at: null,
+          })
+          .eq('id', userId)
+
+        break
+      }
+
       case 'customer.subscription.deleted': {
         const subscription = event.data.object as Stripe.Subscription
         const userId = subscription.metadata?.supabase_user_id
