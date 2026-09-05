@@ -30,7 +30,7 @@ jest.mock('@/lib/onceGuard', () => ({
 // the two functions that hit PayPal's API.
 jest.mock('@/lib/paypal', () => {
   const actual = jest.requireActual('@/lib/paypal')
-  return { ...actual, paypalRequest: jest.fn(), getPayPalSubscription: jest.fn() }
+  return { ...actual, paypalRequest: jest.fn(), getPayPalSubscription: jest.fn(), getPlanPrice: jest.fn() }
 })
 
 jest.mock('@/lib/sendWelcomeOnce', () => ({ sendWelcomeOnce: jest.fn().mockResolvedValue(undefined) }))
@@ -43,11 +43,12 @@ jest.mock('@/lib/emails/plan-change', () => ({
 }))
 
 import { POST } from '@/app/api/webhooks/paypal/route'
-import { paypalRequest, getPayPalSubscription } from '@/lib/paypal'
+import { paypalRequest, getPayPalSubscription, getPlanPrice } from '@/lib/paypal'
 import { claimOnce, releaseOnce, hasClaim } from '@/lib/onceGuard'
 
 const mockPaypalRequest = paypalRequest as jest.Mock
 const mockGetSub = getPayPalSubscription as jest.Mock
+const mockGetPlanPrice = getPlanPrice as jest.Mock
 const mockClaimOnce = claimOnce as jest.Mock
 const mockReleaseOnce = releaseOnce as jest.Mock
 const mockHasClaim = hasClaim as jest.Mock
@@ -201,5 +202,78 @@ describe('PayPal webhook — failure rollback', () => {
     }))
     expect(res.status).toBe(500)
     expect(mockReleaseOnce).toHaveBeenCalledWith('boom')
+  })
+})
+
+// ── PAYMENT.SALE.REFUNDED — the safety net for refunds issued outside the app ──
+describe('PayPal webhook — refund issued outside the app', () => {
+  function refundEvent(total = '27.00') {
+    return {
+      id: 'e-refund',
+      event_type: 'PAYMENT.SALE.REFUNDED',
+      resource: { billing_agreement_id: 'I-1', amount: { total, currency: 'USD' } },
+    }
+  }
+
+  function armProfile() {
+    mockSingle.mockResolvedValue({ data: { id: 'u1', plan_price_id: 'P-library-monthly' } })
+    mockGetPlanPrice.mockResolvedValue(27)
+    // Answer by path rather than by call order: `mockResolvedValueOnce` queues
+    // survive jest.clearAllMocks(), so a test that stops early leaves its unused
+    // response to be swallowed by the next test's signature check.
+    mockPaypalRequest.mockImplementation(async (path: string) => {
+      if (path.includes('verify-webhook-signature')) {
+        return { json: async () => ({ verification_status: 'SUCCESS' }) }
+      }
+      return { status: 204, text: async () => '' } // cancel
+    })
+  }
+
+  it('revokes access and cancels the subscription on a full refund', async () => {
+    armProfile()
+    const res = await POST(makeReq(refundEvent()))
+    expect(res.status).toBe(200)
+    expect(mockUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        role: 'guest',
+        paypal_subscription_id: null,
+        subscription_status: 'inactive',
+      }),
+    )
+  })
+
+  it('leaves a partial refund alone — goodwill is not a cancellation', async () => {
+    armProfile()
+    await POST(makeReq(refundEvent('5.00')))
+    expect(mockUpdate).not.toHaveBeenCalledWith(
+      expect.objectContaining({ role: 'guest' }),
+    )
+  })
+
+  it('revokes anyway when the plan price cannot be read', async () => {
+    armProfile()
+    mockGetPlanPrice.mockResolvedValue(null)
+    await POST(makeReq(refundEvent('27.00')))
+    expect(mockUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({ role: 'guest' }),
+    )
+  })
+
+  it('does nothing when our own refund route already handled it', async () => {
+    armProfile()
+    mockHasClaim.mockResolvedValue(true)
+    await POST(makeReq(refundEvent()))
+    expect(mockUpdate).not.toHaveBeenCalledWith(
+      expect.objectContaining({ role: 'guest' }),
+    )
+  })
+
+  it('does nothing when no profile is on that subscription', async () => {
+    armProfile()
+    mockSingle.mockResolvedValue({ data: null })
+    await POST(makeReq(refundEvent()))
+    expect(mockUpdate).not.toHaveBeenCalledWith(
+      expect.objectContaining({ role: 'guest' }),
+    )
   })
 })
