@@ -103,7 +103,7 @@ function CheckoutContent() {
   // seeing the payment form before we can redirect them.
   if (status === 'checking') {
     return (
-      <div className="min-h-screen bg-cream flex items-center justify-center px-6 py-20">
+      <div className="min-h-screen bg-cream flex items-center justify-center px-6 pt-28 pb-16">
         <div className="flex flex-col items-center gap-4 text-center">
           <span
             className="h-8 w-8 rounded-full border-2 animate-spin"
@@ -119,9 +119,9 @@ function CheckoutContent() {
   // Already a member — no payment form, just a warm hand-off to their account.
   if (status === 'member') {
     return (
-      <div className="min-h-screen bg-cream flex items-center justify-center px-6 py-20">
+      <div className="min-h-screen bg-cream flex items-center justify-center px-6 pt-28 pb-16">
         <div className="w-full max-w-sm text-center">
-          <p className="text-[13px] tracking-[0.2em] uppercase font-medium mb-3" style={{ color: '#38601E' }}>
+          <p className="text-[13px] tracking-[0.2em] uppercase font-medium mb-5" style={{ color: '#38601E' }}>
             You're already a member
           </p>
           <h1 className="font-serif text-3xl text-charcoal font-medium mb-4">
@@ -197,12 +197,12 @@ function CheckoutContent() {
   }
 
   return (
-    <div className="min-h-screen bg-cream flex items-center justify-center px-6 py-20">
+    <div className="min-h-screen bg-cream flex items-center justify-center px-6 pt-28 pb-16">
       <div className="w-full max-w-sm">
 
         {/* Plan summary */}
         <div className="text-center mb-8">
-          <p className="text-[13px] tracking-[0.2em] uppercase font-medium mb-3" style={{ color: '#38601E' }}>
+          <p className="text-[13px] tracking-[0.2em] uppercase font-medium mb-5" style={{ color: '#38601E' }}>
             You're joining
           </p>
           <h1 className="font-serif text-3xl text-charcoal font-medium mb-2">
@@ -285,7 +285,20 @@ function CheckoutContent() {
           </p>
         )}
 
-        <p className="text-center text-sm mt-6" style={{ color: '#7A5F4F' }}>
+        {/* A way back out. Without it the only exits from the last screen
+            before payment are the browser's back button and the navbar —
+            neither of which our older members reliably reach for. */}
+        <div className="text-center mt-5">
+          <Link
+            href="/membership"
+            className="inline-flex items-center justify-center min-h-[44px] text-[15px] underline underline-offset-2 hover:no-underline transition-colors"
+            style={{ color: '#7A5F4F' }}
+          >
+            ← Choose a different plan
+          </Link>
+        </div>
+
+        <p className="text-center text-sm mt-2" style={{ color: '#7A5F4F' }}>
           Cancel anytime · Secure payment ·{' '}
           <Link href="/terms" className="underline underline-offset-2 hover:text-charcoal transition-colors">Terms</Link>
           {' '}·{' '}
