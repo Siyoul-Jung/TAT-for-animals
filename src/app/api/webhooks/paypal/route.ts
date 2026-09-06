@@ -358,8 +358,26 @@ export async function POST(request: NextRequest) {
         break
       }
 
-      // Authorization revoked, or the term ended naturally → access ends now.
-      case 'BILLING.SUBSCRIPTION.CONSENT.REVOKED':
+      // PayPal suspends a subscription when it stops being able to collect —
+      // repeated payment failures, or the payer pausing it on PayPal's side.
+      // Money has stopped but the member could still watch, which is the same
+      // hole `invoice.payment_failed` already closes on the Stripe side.
+      // past_due rather than guest: the block on access is what matters, and a
+      // suspension can be lifted (BILLING.SUBSCRIPTION.ACTIVATED restores it).
+      case 'BILLING.SUBSCRIPTION.SUSPENDED': {
+        const userId = resource.custom_id
+        if (!userId) break
+
+        await supabaseAdmin
+          .from('profiles')
+          .update({ subscription_status: 'past_due' })
+          .eq('id', userId)
+        break
+      }
+
+      // The term ended naturally → access ends now.
+      // (There is no BILLING.SUBSCRIPTION.CONSENT.REVOKED in PayPal's event
+      // catalogue — it was listed here but could never fire, so it's gone.)
       case 'BILLING.SUBSCRIPTION.EXPIRED': {
         const userId = resource.custom_id
         if (!userId) break

@@ -277,3 +277,36 @@ describe('PayPal webhook — refund issued outside the app', () => {
     )
   })
 })
+
+// ── SUSPENDED — PayPal stopped collecting, so access has to stop too ──
+describe('PayPal webhook — subscription suspended', () => {
+  it('marks the member past_due so the library closes', async () => {
+    const res = await POST(makeReq({
+      id: 'e-susp',
+      event_type: 'BILLING.SUBSCRIPTION.SUSPENDED',
+      resource: { id: 'I-1', custom_id: 'u1' },
+    }))
+    expect(res.status).toBe(200)
+    expect(mockUpdate).toHaveBeenCalledWith({ subscription_status: 'past_due' })
+  })
+
+  it('does not strip the role — a suspension can be lifted', async () => {
+    await POST(makeReq({
+      id: 'e-susp2',
+      event_type: 'BILLING.SUBSCRIPTION.SUSPENDED',
+      resource: { id: 'I-1', custom_id: 'u1' },
+    }))
+    expect(mockUpdate).not.toHaveBeenCalledWith(
+      expect.objectContaining({ role: 'guest' }),
+    )
+  })
+
+  it('ignores an event with no user id', async () => {
+    await POST(makeReq({
+      id: 'e-susp3',
+      event_type: 'BILLING.SUBSCRIPTION.SUSPENDED',
+      resource: { id: 'I-1' },
+    }))
+    expect(mockUpdate).not.toHaveBeenCalled()
+  })
+})
