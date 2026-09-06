@@ -492,23 +492,40 @@ export default function DashboardClient({
             <h2 className="text-xs font-semibold uppercase tracking-widest text-green">
               Your Content
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <ContentCard
-                title="Video Library"
-                description="TAT for Animals"
-                href="/library"
-                badge="The Calm Connection"
-              />
-              <ContentCard
-                title="Live Webinars"
-                description={role === 'pro_subscriber' ? 'Monthly webinars with Tapas · Past recordings included' : 'Connect live with Tapas every month for your animal—and for you'}
-                href={role === 'pro_subscriber' ? '/library?tab=live' : ''}
-                badge="The Calm Circle"
-                locked={role !== 'pro_subscriber'}
-                onClick={canUpgrade ? () => openUpgrade() : undefined}
-                contactToUpgrade={canUpgradeViaContact}
-                isLoading={false}
-              />
+            {/* A Circle member already has everything, so the separate
+                "The Calm Connection" card only named a lesser tier back at
+                them. One card, both offerings, one way in (Jez, 2026-09-05;
+                "sessions" → "webinars" per Tapas, 2026-09-06). Connection
+                members still see two — the second is their upgrade path. */}
+            <div className={`grid grid-cols-1 gap-4 ${role === 'pro_subscriber' ? '' : 'sm:grid-cols-2'}`}>
+              {role === 'pro_subscriber' ? (
+                <ContentCard
+                  title="Monthly live webinars with Tapas"
+                  description="Video Library"
+                  href="/library?tab=live"
+                  badge="The Calm Circle"
+                  cta="View webinar schedule and access Video Library →"
+                />
+              ) : (
+                <>
+                  <ContentCard
+                    title="Video Library"
+                    description="TAT for Animals"
+                    href="/library"
+                    badge="The Calm Connection"
+                  />
+                  <ContentCard
+                    title="Live Webinars"
+                    description="Connect live with Tapas every month for your animal—and for you"
+                    href=""
+                    badge="The Calm Circle"
+                    locked
+                    onClick={canUpgrade ? () => openUpgrade() : undefined}
+                    contactToUpgrade={canUpgradeViaContact}
+                    isLoading={false}
+                  />
+                </>
+              )}
             </div>
 
             {/* Upgrade confirm — opens inline right under the Live Webinars card
@@ -1024,6 +1041,7 @@ function ContentCard({
   onClick,
   isLoading,
   contactToUpgrade,
+  cta,
 }: {
   title: string
   description: string
@@ -1033,10 +1051,12 @@ function ContentCard({
   onClick?: () => void
   isLoading?: boolean
   contactToUpgrade?: boolean
+  /** Label for the unlocked card's link. Defaults to "Watch →". */
+  cta?: string
 }) {
   const cardClasses = `block p-5 rounded-xl border border-charcoal/10 transition-all`
 
-  const titleClasses = `font-semibold transition-colors whitespace-nowrap ${
+  const titleClasses = `font-semibold transition-colors ${
     locked ? 'text-charcoal/65' : 'text-charcoal'
   }`
 
@@ -1110,7 +1130,7 @@ function ContentCard({
       </p>
       <p className="text-sm text-charcoal/65 leading-relaxed">{description}</p>
       <p className="mt-3 text-sm font-medium text-green group-hover:text-green transition-colors">
-        Watch →
+        {cta ?? 'Watch →'}
       </p>
     </Link>
   )

@@ -15,7 +15,7 @@ export function cancellationScheduledEmail(
 
   const content = `
               <h1 class="email-h1" style="margin:0 0 16px;font-family:'Georgia',serif;font-size:30px;font-weight:500;color:#1C1007;line-height:1.3;">
-                We're sorry to see you go, ${escapeHtml(firstName)}.
+                We're sorry to see you go${firstName ? `, ${escapeHtml(firstName)}` : ''}.
               </h1>
               <p style="margin:0 0 8px;font-size:17px;color:#1C1007;line-height:1.7;">
                 Your cancellation has been scheduled.

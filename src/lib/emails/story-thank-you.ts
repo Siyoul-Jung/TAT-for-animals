@@ -2,11 +2,13 @@ import { emailShell, escapeHtml, firstNameOf } from './layout';
 
 export function storyThankYouEmail(name: string | null): { subject: string; html: string } {
   const firstName = firstNameOf(name);
-  const subject = `Thank you for sharing your story, ${firstName}`;
+  const subject = firstName
+    ? `Thank you for sharing your story, ${firstName}`
+    : `Thank you for sharing your story`;
 
   const content = `
               <h1 class="email-h1" style="margin:0 0 16px;font-family:'Georgia',serif;font-size:28px;font-weight:500;color:#1C1007;line-height:1.3;">
-                Thank you, ${escapeHtml(firstName)}.
+                Thank you${firstName ? `, ${escapeHtml(firstName)}` : ''}.
               </h1>
               <p style="margin:0 0 8px;font-size:17px;color:#1C1007;line-height:1.7;">
                 Your story means so much to us — and to every animal and person it might touch.

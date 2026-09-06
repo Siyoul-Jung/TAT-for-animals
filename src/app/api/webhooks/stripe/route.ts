@@ -446,9 +446,8 @@ export async function POST(request: NextRequest) {
           if (customer.deleted) break
 
           const toEmail = (customer as Stripe.Customer).email
-          const name = (customer as Stripe.Customer).name
           if (toEmail) {
-            const { subject, html } = cancellationEmail(name ?? null)
+            const { subject, html } = cancellationEmail()
             await resend.emails.send({ from: FROM_EMAIL, to: toEmail, subject, html })
           }
         } catch (emailError) {

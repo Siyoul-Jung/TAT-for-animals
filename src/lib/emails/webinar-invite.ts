@@ -40,7 +40,7 @@ export function webinarInviteEmail(
   name: string | null,
   webinar: WebinarInviteData
 ): { subject: string; html: string } {
-  const firstName = name?.split(' ')[0] ?? 'there';
+  const firstName = name?.trim().split(/\s+/)[0] || null;
   const subject = `Upcoming live webinar with Tapas — ${webinar.title}`;
 
   // If the date parses as ISO we get a clean PT label + a working calendar link.
@@ -55,7 +55,7 @@ export function webinarInviteEmail(
                 ${webinar.title}
               </h1>
               <p style="margin:0;font-size:17px;color:rgba(28,16,7,0.65);line-height:1.7;">
-                Hi ${escapeHtml(firstName)}, your next live webinar with Tapas is coming up.
+                ${firstName ? `Hi ${escapeHtml(firstName)}, your` : 'Your'} next live webinar with Tapas is coming up.
               </p>
 
               <!-- When -->

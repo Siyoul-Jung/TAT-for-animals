@@ -58,7 +58,7 @@ export default function Hero({ images }: { images: HeroImage[] }) {
       {/* Desktop ambient glow */}
       <div
         className="hidden lg:block absolute inset-0 pointer-events-none z-0"
-        style={{ background: 'radial-gradient(ellipse 60% 50% at 30% 60%, rgba(212,112,58,0.07) 0%, transparent 65%)' }}
+        style={{ background: 'radial-gradient(ellipse 60% 50% at 30% 60%, rgba(212,112,58,0.07) 0%, rgba(212,112,58,0) 65%)' }}
       />
 
       {/* One layout for both breakpoints: stacked on mobile, 2-column on desktop.
@@ -89,12 +89,20 @@ export default function Hero({ images }: { images: HeroImage[] }) {
             );
           })}
 
+          {/* The stripes Bruce saw (2026-09-06) are a colour-temperature
+              mismatch, not a gradient artifact: the page cream reads R-B 8, the
+              photos R-B 0, so the veil thinning out slides the tone sideways.
+              Measured, gradient shape barely moves it (8 -> 7) — the fix is on
+              the photo side, warming their white point to match the page. */}
           {/* Mobile gradient — fade into the cream text band below */}
-          <div className="lg:hidden absolute inset-0 z-10" style={{ background: 'linear-gradient(to bottom, transparent 50%, rgba(251,245,243,0.6) 78%, rgba(251,245,243,1) 94%)' }} />
-          {/* Desktop gradients — blend the image into the left text column */}
-          <div className="hidden lg:block absolute inset-0 z-10" style={{ background: 'linear-gradient(to right, rgba(251,245,243,1) 0%, rgba(251,245,243,0.6) 8%, rgba(251,245,243,0.1) 25%, transparent 45%)' }} />
-          <div className="hidden lg:block absolute inset-0 z-10" style={{ background: 'linear-gradient(to top, rgba(251,245,243,0.7) 0%, rgba(251,245,243,0.2) 15%, transparent 35%)' }} />
-          <div className="hidden lg:block absolute inset-0 z-10" style={{ background: 'linear-gradient(to bottom, rgba(251,245,243,0.7) 0%, rgba(251,245,243,0.2) 10%, transparent 25%)' }} />
+          <div className="lg:hidden absolute inset-0 z-10" style={{ background: 'linear-gradient(to bottom, rgba(251,245,243,0) 45%, rgba(251,245,243,0.35) 65%, rgba(251,245,243,0.75) 82%, rgba(251,245,243,1) 94%)' }} />
+          {/* Desktop gradients — blend the image into the left text column.
+              More stops than before so the veil thins evenly rather than in two
+              steps; ends at rgba(...,0) rather than the keyword `transparent`
+              (same result in current browsers, but it states the intent). */}
+          <div className="hidden lg:block absolute inset-0 z-10" style={{ background: 'linear-gradient(to right, rgba(251,245,243,1) 0%, rgba(251,245,243,0.80) 10%, rgba(251,245,243,0.52) 20%, rgba(251,245,243,0.28) 32%, rgba(251,245,243,0.10) 44%, rgba(251,245,243,0) 58%)' }} />
+          <div className="hidden lg:block absolute inset-0 z-10" style={{ background: 'linear-gradient(to top, rgba(251,245,243,0.7) 0%, rgba(251,245,243,0.2) 15%, rgba(251,245,243,0) 35%)' }} />
+          <div className="hidden lg:block absolute inset-0 z-10" style={{ background: 'linear-gradient(to bottom, rgba(251,245,243,0.7) 0%, rgba(251,245,243,0.2) 10%, rgba(251,245,243,0) 25%)' }} />
         </div>
 
         {/* ── Text — mobile: below image; desktop: left column ── */}
@@ -109,10 +117,10 @@ export default function Hero({ images }: { images: HeroImage[] }) {
                   Everything before it wraps naturally; text-balance evens it. */}
               Help your animal feel safe, calm and <br />connected.
             </h1>
-            <p className="font-sans text-sm lg:text-xl mb-5 lg:mb-8 font-normal text-charcoal/65">
+            <p className="font-sans text-base lg:text-2xl xl:text-[28px] mb-5 lg:mb-8 font-normal text-charcoal/65">
               When they settle, you do too.
             </p>
-            <p className="hidden lg:block text-lg leading-relaxed mb-12" style={{ color: 'rgba(28,16,7,0.65)' }}>
+            <p className="hidden lg:block text-xl xl:text-[26px] leading-relaxed mb-12" style={{ color: 'rgba(28,16,7,0.65)' }}>
               No special training. No reliving anything painful.
               Just you, your animal, and a gentle process that works.
             </p>

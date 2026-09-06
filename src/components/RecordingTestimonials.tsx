@@ -38,10 +38,10 @@ export default function RecordingTestimonials() {
         >
           {/* Michele — a calm observation (quiet evidence) */}
           <figure className="flex flex-col items-center gap-4">
-            <blockquote className="font-serif text-lg sm:text-xl text-charcoal/80 leading-relaxed">
+            <blockquote className="font-serif text-xl sm:text-2xl text-charcoal/80 leading-relaxed">
               &ldquo;{michele.quote}&rdquo;
             </blockquote>
-            <figcaption className="text-[12px] uppercase tracking-[0.12em]" style={{ color: '#38601E' }}>
+            <figcaption className="text-[13px] uppercase tracking-[0.12em]" style={{ color: '#38601E' }}>
               {michele.name} &middot; {michele.context}
             </figcaption>
           </figure>
@@ -51,10 +51,10 @@ export default function RecordingTestimonials() {
 
           {/* Betsey — the warm closing note */}
           <figure className="flex flex-col items-center gap-4">
-            <blockquote className="font-serif text-lg sm:text-xl text-charcoal/80 leading-relaxed">
+            <blockquote className="font-serif text-xl sm:text-2xl text-charcoal/80 leading-relaxed">
               &ldquo;{betsey.quote}&rdquo;
             </blockquote>
-            <figcaption className="text-[12px] uppercase tracking-[0.12em]" style={{ color: '#38601E' }}>
+            <figcaption className="text-[13px] uppercase tracking-[0.12em]" style={{ color: '#38601E' }}>
               {betsey.name} &middot; {betsey.context}
             </figcaption>
           </figure>

@@ -3,6 +3,13 @@ import path from "path";
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
+  images: {
+    // Next 16 only optimizes qualities named here — anything else silently
+    // falls back to 75, which is why quality={90} did nothing at first. 90 is
+    // for the flat-colour logo and Tapas's portrait, where 75 left visible
+    // softness on a high-density screen (Tapas, 2026-09-06).
+    qualities: [75, 90],
+  },
   experimental: {
     instantNavigationDevToolsToggle: true,
   },

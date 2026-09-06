@@ -69,7 +69,20 @@ export default function Footer() {
           #6DA076으로 교체. 초록이 밝아서 흰색 계열 텍스트는 3.03:1로 AA 미달 —
           Jez 지시대로 어두운 글자로 전환했다. charcoal 0.85 = 5.03:1로 통과하며,
           0.75까지 내리면 4.23:1로 떨어지니 이 아래로는 낮추지 말 것. */}
-      <div className="px-6 pt-6 pb-8" style={{ backgroundColor: '#6DA076' }}>
+      {/* The trademark notice read as "chopped short" (Tapas, 2026-09-06). The
+          text is complete — it matches tatlife.com word for word — but two
+          things were cutting it off. 32px of padding left it flush against the
+          page edge, and the cookie banner is fixed to the bottom and was
+          covering the last line outright: --cookie-banner-offset existed for
+          exactly this, but only the Hero was reading it. 64px plus the banner's
+          own height, so the notice clears both. */}
+      <div
+        className="px-6 pt-6"
+        style={{
+          backgroundColor: '#6DA076',
+          paddingBottom: 'calc(4rem + var(--cookie-banner-offset, 0px))',
+        }}
+      >
       <div className="max-w-6xl mx-auto">
 
         {/* Top row — logo + socials */}
@@ -78,11 +91,14 @@ export default function Footer() {
         >
           {/* Logo */}
           <div className="flex items-center gap-2">
+            {/* Declared larger than it draws so Next generates a file a 3x
+                screen can use — see the note in Navbar.tsx. */}
             <Image
               src="/images/logo2.png"
               alt="TAT for Animals logo"
-              width={28}
-              height={28}
+              width={96}
+              height={96}
+              quality={90}
               className="h-7 w-auto object-contain"
               style={{ width: 'auto' }}
             />

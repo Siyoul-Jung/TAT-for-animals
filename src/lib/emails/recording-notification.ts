@@ -24,7 +24,7 @@ export function recordingNotificationEmail(
                 ${safeTitle}
               </h1>
               <p style="margin:0 0 8px;font-size:17px;color:#1C1007;line-height:1.7;">
-                Dear ${escapeHtml(firstName)},
+                ${firstName ? `Dear ${escapeHtml(firstName)},` : 'Hello,'}
               </p>
               <p style="margin:0 0 8px;font-size:17px;color:rgba(28,16,7,0.65);line-height:1.7;">
                 The recording of ${safeTitle} is now available for replay! Happy watching!

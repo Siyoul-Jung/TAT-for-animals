@@ -56,10 +56,9 @@ export default function TrySession() {
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           className="text-center mb-8"
         >
-          <p className="text-[13px] tracking-[0.2em] uppercase font-medium mb-5"
-            style={{ color: '#38601E' }}>
-            TAT for Animals
-          </p>
+          {/* No eyebrow here. "TAT for Animals" sat above the heading while the
+              same words are already in the navbar a few hundred pixels up, so it
+              read as the page introducing itself twice (Tapas, 2026-09-06). */}
           <h2 className="font-serif text-3xl lg:text-4xl text-charcoal font-medium leading-tight">
             Feel calm, together.
           </h2>
@@ -74,10 +73,10 @@ export default function TrySession() {
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           className="mb-12 max-w-2xl mx-auto text-center"
         >
-          <p className="text-xl sm:text-2xl font-serif text-charcoal font-medium mb-1">
+          <p className="text-2xl sm:text-3xl font-serif text-charcoal font-medium mb-1">
             Does this sound familiar?
           </p>
-          <p className="text-base text-charcoal/65 mb-7">
+          <p className="text-lg text-charcoal/65 mb-7">
             Is your animal showing signs of stress or fear?
           </p>
 
@@ -89,7 +88,7 @@ export default function TrySession() {
           >
             <ul className="grid sm:grid-cols-2 gap-x-10 gap-y-4">
               {SIGNS.map((q) => (
-                <li key={q} className="flex gap-2.5 text-base sm:text-lg leading-relaxed text-charcoal/80">
+                <li key={q} className="flex gap-2.5 text-lg sm:text-xl leading-relaxed text-charcoal/80">
                   <Check size={20} strokeWidth={2.5} aria-hidden="true" className="mt-1 shrink-0" style={{ color: '#38601E' }} />
                   <span>{q}</span>
                 </li>
@@ -97,14 +96,14 @@ export default function TrySession() {
             </ul>
           </div>
 
-          <p className="text-base sm:text-lg leading-relaxed text-charcoal/80 max-w-xl mx-auto mb-5">
+          <p className="text-lg sm:text-xl leading-relaxed text-charcoal/80 max-w-xl mx-auto mb-5">
             If you recognized your animal in even one of these situations, <span className="whitespace-nowrap">you&rsquo;re not alone.</span>
           </p>
-          <p className="text-base sm:text-lg leading-relaxed text-charcoal/80 max-w-xl mx-auto mb-5">
+          <p className="text-lg sm:text-xl leading-relaxed text-charcoal/80 max-w-xl mx-auto mb-5">
             For more than 30 years, I&rsquo;ve used TAT to help animals move through fear,
             anxiety, and stress by helping the nervous system feel safe enough to let go.
           </p>
-          <p className="text-base sm:text-lg leading-relaxed text-charcoal/80 max-w-xl mx-auto">
+          <p className="text-lg sm:text-xl leading-relaxed text-charcoal/80 max-w-xl mx-auto">
             When animals feel safe, they often become calmer, more connected, and more able to
             be themselves.
           </p>
@@ -121,18 +120,18 @@ export default function TrySession() {
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           className="mb-8 max-w-2xl mx-auto text-center"
         >
-          <h3 className="text-xl sm:text-2xl font-serif text-charcoal font-medium mb-4">
+          <h3 className="text-2xl sm:text-3xl font-serif text-charcoal font-medium mb-4">
             Experience TAT Together
           </h3>
-          <p className="text-base sm:text-lg leading-relaxed text-charcoal/80 max-w-xl mx-auto mb-3">
+          <p className="text-lg sm:text-xl leading-relaxed text-charcoal/80 max-w-xl mx-auto mb-3">
             You don&rsquo;t have to wonder whether TAT is right for your animal. In the short video
             below, I&rsquo;ll guide you through a simple TAT process you can try with your own animal
             as you watch.
           </p>
-          <p className="text-base sm:text-lg leading-relaxed text-charcoal/80 max-w-xl mx-auto mb-3">
+          <p className="text-lg sm:text-xl leading-relaxed text-charcoal/80 max-w-xl mx-auto mb-3">
             Find a comfortable place to sit, press play, and simply follow along.
           </p>
-          <p className="text-base sm:text-lg leading-relaxed text-charcoal/80 max-w-xl mx-auto">
+          <p className="text-lg sm:text-xl leading-relaxed text-charcoal/80 max-w-xl mx-auto">
             Many people notice their animals becoming more relaxed during their very first experience.
           </p>
         </motion.div>
@@ -150,7 +149,7 @@ export default function TrySession() {
           <div
             className="absolute -inset-4 rounded-[2.5rem] blur-2xl opacity-30 pointer-events-none"
             style={{
-              background: 'radial-gradient(ellipse at center, rgba(212,112,58,0.4) 0%, transparent 70%)',
+              background: 'radial-gradient(ellipse at center, rgba(212,112,58,0.4) 0%, rgba(212,112,58,0) 70%)',
             }}
           />
 
@@ -238,12 +237,12 @@ export default function TrySession() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="text-center mt-7"
         >
-          <p className="text-sm sm:text-base text-charcoal font-medium">
+          <p className="text-base sm:text-lg text-charcoal font-medium">
             Tapas Fleming, Founder and Creator of TAT
           </p>
           <Link
             href="/about"
-            className="inline-flex items-center min-h-[44px] gap-1 mt-1 text-base font-medium transition-opacity hover:opacity-70"
+            className="inline-flex items-center min-h-[44px] gap-1 mt-1 text-lg font-medium transition-opacity hover:opacity-70"
             style={{ color: '#38601E' }}
           >
             Read Tapas&rsquo;s story &rarr;

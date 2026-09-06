@@ -13,7 +13,9 @@ import BackToTopButton from '@/components/BackToTopButton'
 import AskTapasForm from './AskTapasForm'
 
 // Display order for library shelves, grouped into Tapas's renamed/consolidated
-// shelves: Main + Legacy merge into one open "Core Sessions" shelf (renamed
+// shelves: Main + Legacy merge into one open "Core Basics" shelf (renamed
+// from "Core Sessions" so it doesn't collide with the sessions/webinars
+// distinction — Tapas, 2026-09-06; before that renamed
 // from "Full Library" so it no longer reads as a near-duplicate of the "All"
 // tab — Tapas/Jez, 2026-08-27), Foundational becomes the welcoming "Start
 // Here" label, testimonial videos (animals' TAT experiences with their
@@ -24,10 +26,11 @@ import AskTapasForm from './AskTapasForm'
 // picks in Studio don't need any data migration.
 const CATEGORY_GROUPS: { label: string; categories: string[] }[] = [
   { label: 'Start Here', categories: ['Foundational Content'] },
-  { label: 'Core Sessions', categories: ['Main Content', 'Legacy Content'] },
+  { label: 'Core Basics', categories: ['Main Content', 'Legacy Content'] },
   { label: 'Stories To Enjoy', categories: ['Stories To Enjoy'] },
   { label: 'Calm Circle Webinars 2025', categories: ['Bonus Content 2025'] },
   { label: 'Calm Circle Webinars 2026', categories: ['Bonus Content 2026'] },
+  { label: 'Calm Tips', categories: ['Calm Tips'] },
 ]
 const CATEGORY_ORDER = CATEGORY_GROUPS.flatMap((g) => g.categories)
 function groupLabelFor(category: string): string | null {
@@ -602,7 +605,7 @@ export default function LibraryClient({
   }, [animalsVideos, hasUncategorized])
   // Video count shown after each category name (Jez's request, 2026-07-06) —
   // tells the member how much is on a shelf before opening it. Recomputed from
-  // animalsVideos every time, so a merged shelf's count (e.g. Core Sessions)
+  // animalsVideos every time, so a merged shelf's count (e.g. Core Basics)
   // updates automatically with no separate migration step.
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = { All: animalsVideos.length }
