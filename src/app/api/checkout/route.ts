@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { checkRateLimit, RATE_LIMIT_MESSAGE } from '@/lib/rateLimit'
 import { membershipHasLapsed } from '@/lib/access'
+import { isWelcomeBackExpired } from '@/lib/welcomeBack'
 import { NextRequest, NextResponse } from 'next/server'
 
 const PRICE_IDS: Record<string, string | undefined> = {
@@ -40,6 +41,13 @@ export async function POST(request: NextRequest) {
 
   if (!priceId) {
     return NextResponse.json({ error: 'Invalid plan' }, { status: 400 })
+  }
+
+  // Defense in depth — the /welcome-back page itself already closes past the
+  // window, but a stale bookmark straight to this checkout URL shouldn't be
+  // able to open a founding-member subscription after it.
+  if (plan === 'founding_member' && isWelcomeBackExpired()) {
+    return NextResponse.json({ error: 'This offer is no longer available.' }, { status: 410 })
   }
 
   // Look up existing Stripe customer ID or create a new one
