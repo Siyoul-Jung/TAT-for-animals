@@ -1,4 +1,5 @@
 import { checkRateLimit, getClientIp, RATE_LIMIT_MESSAGE } from '@/lib/rateLimit'
+import { isWelcomeBackExpired } from '@/lib/welcomeBack'
 import { NextRequest, NextResponse } from 'next/server'
 
 // Shared-password gate for the founding-member resubscribe page (Jez asked,
@@ -9,6 +10,12 @@ const COOKIE_NAME = 'welcome_back_unlocked'
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 60 // 60 days — long enough to outlast a slow signup
 
 export async function POST(request: NextRequest) {
+  // The page itself already shows "no longer available" past the window —
+  // this is defense in depth against a stale client still holding the form.
+  if (isWelcomeBackExpired()) {
+    return NextResponse.json({ error: 'This page is no longer available.' }, { status: 410 })
+  }
+
   // Bound password-guessing attempts against this endpoint.
   if (!(await checkRateLimit('welcome-back-unlock', getClientIp(request), 10, 600))) {
     return NextResponse.json({ error: RATE_LIMIT_MESSAGE }, { status: 429 })
