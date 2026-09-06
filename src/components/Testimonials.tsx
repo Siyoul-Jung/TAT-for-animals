@@ -63,17 +63,17 @@ function SlideLayout({ t }: { t: Testimonial }) {
       {/* 텍스트 */}
       <div className="flex flex-col justify-center">
         <p
-          className="text-[13px] tracking-[0.15em] uppercase font-medium mb-3 lg:mb-5"
+          className="text-[14px] tracking-[0.15em] uppercase font-medium mb-3 lg:mb-5"
           style={{ color: '#38601E' }}
         >
           {t.animal}
         </p>
         {t.isQuote ? (
-          <blockquote className="font-serif text-lg sm:text-xl lg:text-2xl text-charcoal leading-[1.6] mb-5 lg:mb-8">
+          <blockquote className="font-serif text-xl sm:text-2xl lg:text-3xl text-charcoal leading-[1.6] mb-5 lg:mb-8">
             &ldquo;{t.quote}&rdquo;
           </blockquote>
         ) : (
-          <p className="font-serif text-lg sm:text-xl lg:text-2xl text-charcoal/80 leading-[1.6] mb-5 lg:mb-8">
+          <p className="font-serif text-xl sm:text-2xl lg:text-3xl text-charcoal/80 leading-[1.6] mb-5 lg:mb-8">
             {t.quote}
           </p>
         )}
@@ -82,7 +82,7 @@ function SlideLayout({ t }: { t: Testimonial }) {
               site's darkest text token, so semibold carries the emphasis. */}
           <p className="font-semibold text-charcoal">{t.name}</p>
           {t.location && (
-            <p className="text-sm mt-0.5" style={{ color: 'rgba(28,16,7,0.65)' }}>
+            <p className="text-base mt-0.5" style={{ color: 'rgba(28,16,7,0.65)' }}>
               {t.location}
             </p>
           )}
@@ -136,7 +136,7 @@ export default function Testimonials() {
           className="mb-7 lg:mb-10"
         >
           <p
-            className="text-[13px] tracking-[0.2em] uppercase font-medium mb-5"
+            className="text-[14px] tracking-[0.2em] uppercase font-medium mb-5"
             style={{ color: '#38601E' }}
           >
             Real Stories

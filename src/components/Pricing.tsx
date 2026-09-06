@@ -129,7 +129,7 @@ export default function Pricing({ showHeader = true, bg = 'bg-white', showBookin
             className="text-center mb-10 lg:mb-16"
           >
             <p
-              className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-5"
+              className="text-[14px] tracking-[0.2em] uppercase font-semibold mb-5"
               style={{ color: '#38601E' }}
             >
               Membership
@@ -167,7 +167,7 @@ export default function Pricing({ showHeader = true, bg = 'bg-white', showBookin
             })}
           </div>
           <p
-            className="mt-3 text-sm font-medium h-5"
+            className="mt-3 text-base font-medium h-6"
             style={{ color: isAnnual ? '#38601E' : 'transparent' }}
             aria-hidden={!isAnnual}
           >
@@ -205,7 +205,7 @@ export default function Pricing({ showHeader = true, bg = 'bg-white', showBookin
               {tier.popular && (
                 <div className="mb-3">
                   <span
-                    className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full text-xs font-semibold tracking-widest uppercase text-cream"
+                    className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full text-[13px] font-semibold tracking-widest uppercase text-cream"
                     style={{ backgroundColor: '#467826' }}
                   >
                     ★ Most Popular
@@ -215,7 +215,7 @@ export default function Pricing({ showHeader = true, bg = 'bg-white', showBookin
 
               {/* Plan name + price */}
               <div className="mb-4">
-                <h3 className="font-serif text-xl sm:text-2xl font-medium mb-2 text-charcoal">
+                <h3 className="font-serif text-2xl sm:text-3xl font-medium mb-2 text-charcoal">
                   {tier.name}
                 </h3>
                 <div className="flex items-baseline gap-1.5">
@@ -223,7 +223,7 @@ export default function Pricing({ showHeader = true, bg = 'bg-white', showBookin
                   <span className="font-serif text-4xl sm:text-5xl font-semibold text-charcoal">
                     {isAnnual ? tier.annual : tier.monthly}
                   </span>
-                  <span className="text-sm font-light ml-0.5 text-charcoal/65">/ {isAnnual ? 'yr' : 'mo'}</span>
+                  <span className="text-base font-light ml-0.5 text-charcoal/65">/ {isAnnual ? 'yr' : 'mo'}</span>
                 </div>
 
                 {/* Annual reframe — the big yearly number shown as a per-month
@@ -233,7 +233,7 @@ export default function Pricing({ showHeader = true, bg = 'bg-white', showBookin
                     months free" hint above) so the card doesn't jump when
                     toggling. */}
                 <p
-                  className="mt-1.5 text-sm h-5"
+                  className="mt-1.5 text-base h-6"
                   style={{ color: isAnnual ? '#38601E' : 'transparent' }}
                   aria-hidden={!isAnnual}
                 >
@@ -246,7 +246,7 @@ export default function Pricing({ showHeader = true, bg = 'bg-white', showBookin
                   per the spec), so it stays visible on mobile too. grow keeps
                   the two CTAs bottom-aligned when the descriptions wrap
                   differently. */}
-              <p className="text-base leading-relaxed mb-5 grow text-charcoal/80">
+              <p className="text-lg leading-relaxed mb-5 grow text-charcoal/80">
                 {tier.description}
               </p>
 
@@ -265,7 +265,7 @@ export default function Pricing({ showHeader = true, bg = 'bg-white', showBookin
               </button>
 
               {/* Cancel note */}
-              <p className="text-center text-sm mt-4 flex items-center justify-center gap-1.5 text-charcoal/65">
+              <p className="text-center text-base mt-4 flex items-center justify-center gap-1.5 text-charcoal/65">
                 <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -274,7 +274,7 @@ export default function Pricing({ showHeader = true, bg = 'bg-white', showBookin
 
               {/* Billing disclosure — recurring terms at point of purchase.
                   Refund policy lives in Terms (not shouted on the card — see industry norm). */}
-              <p className="text-center text-sm mt-2 text-charcoal/65 leading-relaxed">
+              <p className="text-center text-base mt-2 text-charcoal/65 leading-relaxed">
                 Billed {isAnnual ? 'yearly' : 'monthly'} until you cancel.{' '}
                 <Link href="/terms" className="underline hover:text-green transition-colors">
                   See Terms
@@ -292,7 +292,7 @@ export default function Pricing({ showHeader = true, bg = 'bg-white', showBookin
             session for your animal's calm and well-being" wording right after the founder story. */}
         {showBooking && (
           <div className="mt-12 max-w-sm mx-auto text-center">
-            <p className="text-sm sm:text-base text-charcoal/65 leading-relaxed">
+            <p className="text-base sm:text-lg text-charcoal/65 leading-relaxed">
               Prefer to work one-on-one with Tapas?
             </p>
             <a

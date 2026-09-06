@@ -117,10 +117,10 @@ export default function Hero({ images }: { images: HeroImage[] }) {
                   Everything before it wraps naturally; text-balance evens it. */}
               Help your animal feel safe, calm and <br />connected.
             </h1>
-            <p className="font-sans text-sm lg:text-xl mb-5 lg:mb-8 font-normal text-charcoal/65">
+            <p className="font-sans text-base lg:text-2xl xl:text-[28px] mb-5 lg:mb-8 font-normal text-charcoal/65">
               When they settle, you do too.
             </p>
-            <p className="hidden lg:block text-lg leading-relaxed mb-12" style={{ color: 'rgba(28,16,7,0.65)' }}>
+            <p className="hidden lg:block text-xl xl:text-[26px] leading-relaxed mb-12" style={{ color: 'rgba(28,16,7,0.65)' }}>
               No special training. No reliving anything painful.
               Just you, your animal, and a gentle process that works.
             </p>
