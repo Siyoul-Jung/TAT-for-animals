@@ -121,11 +121,17 @@ export default function Navbar() {
         {/* Logo + Brand — always left, with the menu grouped on the right */}
         <div className="flex">
           <Link href="/" className="flex items-center gap-2">
+            {/* width/height here only decide which sizes Next generates — the
+                CSS classes set what's actually drawn. Declared at 40 it capped
+                out at a 96px file, short of the 120 a 3x phone asks for, and
+                Tapas saw a fuzzy mark (2026-09-06). Declaring 120 gives Next
+                room to emit 128 and 256. */}
             <Image
               src="/images/logo2.png"
               alt="TAT for Animals logo"
-              width={40}
-              height={40}
+              width={120}
+              height={120}
+              quality={90}
               className="h-9 sm:h-10 w-auto object-contain shrink-0"
               style={{ width: 'auto' }}
               priority

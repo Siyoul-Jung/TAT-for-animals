@@ -79,11 +79,14 @@ export default function NewsletterSignup() {
       {/* Lead-in — Tapas's photo slot (Jez, 2026-07-31): the funny card photo
           Tapas approved (2026-08-03: "the very funny pic of me with the card"). */}
       <div className="flex items-center gap-5 max-w-2xl">
+        {/* Drawn at 80 CSS px, so a 3x screen wants 240. Declared at 240 the
+            source (1600px) has plenty to give — Tapas found this one soft too. */}
         <Image
           src="/images/tapas-newsletter-photo.jpg"
           alt="Tapas Fleming"
-          width={80}
-          height={80}
+          width={160}
+          height={160}
+          quality={90}
           className="w-20 h-20 rounded-full object-cover shrink-0"
         />
         <div>

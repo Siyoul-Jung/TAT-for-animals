@@ -56,10 +56,9 @@ export default function TrySession() {
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           className="text-center mb-8"
         >
-          <p className="text-[13px] tracking-[0.2em] uppercase font-medium mb-5"
-            style={{ color: '#38601E' }}>
-            TAT for Animals
-          </p>
+          {/* No eyebrow here. "TAT for Animals" sat above the heading while the
+              same words are already in the navbar a few hundred pixels up, so it
+              read as the page introducing itself twice (Tapas, 2026-09-06). */}
           <h2 className="font-serif text-3xl lg:text-4xl text-charcoal font-medium leading-tight">
             Feel calm, together.
           </h2>
@@ -150,7 +149,7 @@ export default function TrySession() {
           <div
             className="absolute -inset-4 rounded-[2.5rem] blur-2xl opacity-30 pointer-events-none"
             style={{
-              background: 'radial-gradient(ellipse at center, rgba(212,112,58,0.4) 0%, transparent 70%)',
+              background: 'radial-gradient(ellipse at center, rgba(212,112,58,0.4) 0%, rgba(212,112,58,0) 70%)',
             }}
           />
 

@@ -26,15 +26,20 @@ export function escapeHtml(s: string): string {
     .replace(/'/g, '&#39;');
 }
 
-// First name for greetings, shared by every template. trim + whitespace split
-// so a padded name can't yield an empty string ("Welcome, ." — the ?? fallback
-// doesn't catch ''), matching the dashboard's derivation. Returned RAW: escape
-// with escapeHtml() at HTML interpolation sites, but use as-is in subjects —
-// a subject line is plain text, and "O&#39;Brien" there would be worse than
-// the problem being solved.
-export function firstNameOf(name: string | null | undefined): string {
+// First name for greetings, shared by every template, or null when we don't
+// have one. Returning null rather than a filler word is deliberate: the old
+// 'there' fallback read fine in "Hi there," but reached a member as "We're
+// sorry to see you go, there." (Tapas spotted it, 2026-09-06). Every caller
+// now has to write the name-less sentence out, so no placeholder can leak.
+//
+// trim + whitespace split so a padded name can't yield an empty string
+// ("Welcome, ." — the ?? fallback doesn't catch ''), matching the dashboard's
+// derivation. Returned RAW: escape with escapeHtml() at HTML interpolation
+// sites, but use as-is in subjects — a subject line is plain text, and
+// "O&#39;Brien" there would be worse than the problem being solved.
+export function firstNameOf(name: string | null | undefined): string | null {
   const first = name?.trim().split(/\s+/)[0];
-  if (!first) return 'there';
+  if (!first) return null;
   return first[0].toUpperCase() + first.slice(1).toLowerCase();
 }
 

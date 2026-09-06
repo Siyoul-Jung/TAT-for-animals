@@ -87,7 +87,7 @@ export default function AboutClient() {
                 />
                 <div
                   className="absolute inset-0"
-                  style={{ background: 'linear-gradient(to top, rgba(28,16,7,0.20) 0%, transparent 50%)' }}
+                  style={{ background: 'linear-gradient(to top, rgba(28,16,7,0.20) 0%, rgba(28,16,7,0) 50%)' }}
                 />
               </div>
 
@@ -173,10 +173,9 @@ export default function AboutClient() {
 
           <motion.div {...fadeUp} className="mb-12">
             <div className="w-12 h-0.5 mb-8" style={{ backgroundColor: '#467826' }} />
-            <p className="text-[13px] tracking-[0.2em] uppercase font-semibold mb-5"
-              style={{ color: '#38601E' }}>
-              TAT for Animals
-            </p>
+            {/* No eyebrow — it read "TAT for Animals" directly above "How TAT
+                for Animals Began" (Tapas, 2026-09-06). The green rule above
+                still marks the section. */}
             <h2 className="font-serif text-3xl lg:text-4xl text-charcoal font-medium leading-tight text-balance">
               How TAT for Animals Began
             </h2>

@@ -26,7 +26,7 @@ type Preview = { label: string; subject: string; html: string }
 function buildPreviews(): Record<string, Preview> {
   const wLibrary = welcomeEmail('Kai', 'subscriber', 'month')
   const wCircle = welcomeEmail('Marion Olsen', 'pro_subscriber', 'year')
-  const cancel = cancellationEmail('Marion')
+  const cancel = cancellationEmail()
   const webinar = webinarInviteEmail('Marion', {
     title: 'Calming an anxious dog — live with Tapas',
     date: 'Thursday, June 12 at 11:00 AM PT',

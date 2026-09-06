@@ -20,7 +20,7 @@ export function refundConfirmationEmail(
   // plainly — cancelled, refunded — and say when the money lands.
   const content = `
               <h1 class="email-h1" style="margin:0 0 16px;font-family:'Georgia',serif;font-size:30px;font-weight:500;color:#1C1007;line-height:1.3;">
-                All taken care of, ${escapeHtml(firstName)}.
+                All taken care of${firstName ? `, ${escapeHtml(firstName)}` : ''}.
               </h1>
               <p style="margin:0 0 8px;font-size:17px;color:#1C1007;line-height:1.7;">
                 Your membership has been cancelled, and ${amountPhrase} is being refunded

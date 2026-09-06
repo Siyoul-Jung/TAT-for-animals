@@ -13,7 +13,9 @@ export function welcomeEmail(
   const isCircle = plan === 'pro_subscriber';
   const isAnnual = interval === 'year';
 
-  const subject = `Welcome to TAT for Animals, ${firstName}`;
+  const subject = firstName
+    ? `Welcome to TAT for Animals, ${firstName}`
+    : `Welcome to TAT for Animals`;
 
   // What they get — one calm line, adapts to the tier (no decorative list).
   const summary = isCircle
@@ -30,7 +32,7 @@ export function welcomeEmail(
 
   const content = `
               <h1 class="email-h1" style="margin:0 0 16px;font-family:'Georgia',serif;font-size:30px;font-weight:500;color:#1C1007;line-height:1.3;">
-                Welcome to your Calm Space, ${escapeHtml(firstName)}.
+                Welcome to your Calm Space${firstName ? `, ${escapeHtml(firstName)}` : ''}.
               </h1>
               <p style="margin:0 0 8px;font-size:17px;color:#1C1007;line-height:1.7;">
                 You've joined <strong style="font-weight:600;">${planName}</strong>.

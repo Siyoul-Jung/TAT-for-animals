@@ -32,7 +32,7 @@ export function annualRenewalReminderEmail(
                 Your upcoming renewal
               </h1>
               <p style="margin:0 0 8px;font-size:17px;color:#1C1007;line-height:1.7;">
-                Hi ${escapeHtml(firstName)}, your <strong style="font-weight:600;">${planName}</strong> membership renews on
+                ${firstName ? `Hi ${escapeHtml(firstName)}, your` : 'Your'} <strong style="font-weight:600;">${planName}</strong> membership renews on
                 <strong style="font-weight:600;">${renewalDateLabel}</strong> for <strong style="font-weight:600;">${amount}</strong>.
               </p>
               <p style="margin:0;font-size:17px;color:rgba(28,16,7,0.65);line-height:1.7;">
