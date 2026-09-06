@@ -102,7 +102,11 @@ export default function MembershipClient() {
                   </h3>
                   <ul className="flex flex-col gap-2.5">
                     {[
-                      `${LIBRARY_VIDEO_COUNT_LABEL} video recordings of TAT sessions for animals`,
+                      // Not "TAT sessions": across the site a session is Tapas one-to-one, booked
+                      // and paid for separately, and a webinar is the monthly group call in
+                      // membership (Tapas, 2026-09-06). Naming these recordings "sessions"
+                      // reads as though private time were included in the plan.
+                      `${LIBRARY_VIDEO_COUNT_LABEL} video recordings of TAT for animals`,
                       'Fear, anxiety, and past trauma, gently released',
                       'As your animal settles, something in you shifts too',
                     ].map((item) => (

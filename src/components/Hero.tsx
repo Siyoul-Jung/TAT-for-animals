@@ -55,9 +55,16 @@ export default function Hero({ images }: { images: HeroImage[] }) {
   return (
     <section className="relative overflow-hidden bg-cream">
 
-      {/* Desktop ambient glow */}
+      {/* Desktop ambient glow. It sits ABOVE the photo and its cream veil (z-20,
+          not z-0) — underneath, the veil painted over it, so the page to the
+          left of the photo carried the warm tint and the photo's own edge did
+          not. The step between the two is what read as a pink stripe next to a
+          white one (Bruce/Tapas, 2026-09-06): measured across the fade, warmth
+          and lightness both fall smoothly, and the only discontinuity was that
+          single boundary. Above the veil the tint is continuous, so there is no
+          edge left to see. pointer-events-none keeps it out of the way. */}
       <div
-        className="hidden lg:block absolute inset-0 pointer-events-none z-0"
+        className="hidden lg:block absolute inset-0 pointer-events-none z-20"
         style={{ background: 'radial-gradient(ellipse 60% 50% at 30% 60%, rgba(212,112,58,0.07) 0%, rgba(212,112,58,0) 65%)' }}
       />
 
@@ -105,8 +112,36 @@ export default function Hero({ images }: { images: HeroImage[] }) {
           <div className="hidden lg:block absolute inset-0 z-10" style={{ background: 'linear-gradient(to bottom, rgba(251,245,243,0.7) 0%, rgba(251,245,243,0.2) 10%, rgba(251,245,243,0) 25%)' }} />
         </div>
 
+        {/* At fractional browser zoom (125%, 150%, 175%…) the photo column and
+            the cream veil over it round to different device pixels, and one
+            column of un-veiled photo shows through as a dark hairline —
+            measured 199,192,187 against 249,239,235 either side. Whole-number
+            zoom lines up, which is why it only appeared sometimes.
+
+            This has to straddle the boundary from outside the photo column: put
+            inside it, a cap rounds the same way the gap does and misses it. A
+            grid item on the same column, pulled 3px left, covers the seam
+            whichever way it rounds. The veil is already fully opaque here, so
+            solid cream over those pixels looks identical to what it replaces. */}
+        <div className="hidden lg:block lg:col-start-2 lg:row-start-1 justify-self-start -ml-[3px] w-[6px] h-full bg-cream relative z-10 pointer-events-none" />
+
         {/* ── Text — mobile: below image; desktop: left column ── */}
-        <div className="flex flex-1 flex-col justify-center px-6 pt-8 pb-12 [@media(max-height:740px)]:pt-4 [@media(max-height:740px)]:pb-8 lg:px-14 xl:px-20 2xl:px-28 lg:py-0 lg:col-start-1 lg:row-start-1 -mt-0.5 lg:mt-0 bg-cream lg:bg-transparent relative z-20">
+        {/* Two changes guard the top of this column, and they only matter
+            together. lg:py-24 reserves space, but plain `center` still pushes
+            overflow out BOTH ends, so on a short window the heading slid up
+            under the fixed navbar (measured -32px of clearance at 620px tall,
+            once the type sizes went up). `safe center` centres exactly as
+            before when there is room and falls back to top-aligned when there
+            isn't, which is what makes the padding hold. Browsers that don't
+            know the keyword drop the declaration and behave as they did.
+
+            The short-window overrides are scoped max-lg for the same reason:
+            written without a width they also fired on a wide-but-short desktop
+            window, where they quietly cancelled the padding below. */}
+        <div
+          className="flex flex-1 flex-col justify-center px-6 pt-8 pb-12 max-lg:[@media(max-height:740px)]:pt-4 max-lg:[@media(max-height:740px)]:pb-8 lg:px-14 xl:px-20 2xl:px-28 lg:py-28 lg:col-start-1 lg:row-start-1 -mt-0.5 lg:mt-0 bg-cream lg:bg-transparent relative z-20"
+          style={{ justifyContent: 'safe center' }}
+        >
           <div
             className="lg:!pb-0"
             style={{ paddingBottom: 'calc(var(--cookie-banner-offset, 0px) + env(safe-area-inset-bottom))' }}
